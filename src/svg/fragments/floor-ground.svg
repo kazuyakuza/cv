@@ -1,0 +1,13 @@
+<g id="floor-ground">
+  <path class="dw-slab-edge" d="M700,770 L1046.4,570 L1046.4,578 L700,778 Z" />
+  <path class="dw-slab-edge" d="M700,770 L492.2,650 L492.2,658 L700,778 Z" />
+  <path class="dw-wall" d="M492.2,650 L838.6,450 L838.6,382 L492.2,582 Z" />
+  <path class="dw-wall" d="M700,770 L492.2,650 L492.2,582 L700,702 Z" />
+  <path class="dw-partition" d="M810.9,706 L603.0,586 L603.0,518 L810.9,638 Z" />
+  <path class="dw-partition" d="M914.8,646 L706.9,526 L706.9,458 L914.8,578 Z" />
+  <path class="dw-partition" d="M977.1,610 L769.3,490 L769.3,422 L977.1,542 Z" />
+  <line class="dw-column" x1="700" y1="770" x2="700" y2="702" />
+  <line class="dw-column" x1="1046.4" y1="570" x2="1046.4" y2="502" />
+  <line class="dw-column" x1="492.2" y1="650" x2="492.2" y2="582" />
+  <line class="dw-column" x1="838.6" y1="450" x2="838.6" y2="382" />
+</g>

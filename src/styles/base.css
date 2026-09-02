@@ -29,9 +29,15 @@ body {
 }
 
 .shell {
-  max-width: 960px;
+  max-width: 1240px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1.5rem;
+}
+
+.diorama svg {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
 .status {

@@ -1,15 +1,13 @@
 <script setup lang="ts">
-// Stage 0 placeholder shell. The diorama wireframe replaces this in Stage 1;
-// no visual-design effort goes into this placeholder.
+// Stage 1: the diorama is a single assembled SVG rendered inline.
+// No component architecture, interaction, or information layers yet.
+import dioramaSvg from './svg/diorama.svg?raw'
 </script>
 
 <template>
   <main class="shell">
-    <h1>Professional Career Diorama</h1>
-    <p>
-      A professional software-development career represented as an isometric architectural diorama,
-      built from editable, modular SVG geometry.
-    </p>
-    <p class="status">Under construction — the architectural wireframe arrives in Stage 1.</p>
+    <!-- Static, trusted local asset assembled from src/svg/fragments. -->
+    <!-- eslint-disable-next-line vue/no-v-html -->
+    <div class="diorama" v-html="dioramaSvg" />
   </main>
 </template>

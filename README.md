@@ -35,6 +35,7 @@ npm run svg:optimize  # svgo → generated/svg (source in src/svg stays authorit
 
 ## Status
 
-Stage 0 (Project Foundation) — development environment and repository structure
-are in place; no diorama geometry exists yet. Stage 1 (Complete Building
-Wireframe) comes next.
+Stage 1 (Complete Building Wireframe) — the first full architectural wireframe
+lives in `src/svg/` (fragments + assembled `diorama.svg`, rendered by the app).
+Edit fragments, then run `npm run svg:assemble`. See `src/svg/README.md` for
+geometry parameters and conventions.

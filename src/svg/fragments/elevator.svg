@@ -1,0 +1,12 @@
+<g id="elevator">
+  <path class="dw-shaft" d="M769.3,566 L810.9,542 L785.9,527.6 L744.3,551.6 Z" />
+  <path class="dw-shaft-dash" d="M769.3,498 L810.9,474 L785.9,459.6 L744.3,483.6 Z" />
+  <path class="dw-shaft-dash" d="M769.3,430 L810.9,406 L785.9,391.6 L744.3,415.6 Z" />
+  <path class="dw-shaft-dash" d="M769.3,362 L810.9,338 L785.9,323.6 L744.3,347.6 Z" />
+  <path class="dw-shaft-dash" d="M769.3,294 L810.9,270 L785.9,255.6 L744.3,279.6 Z" />
+  <line class="dw-shaft" x1="769.3" y1="566" x2="769.3" y2="226" />
+  <line class="dw-shaft" x1="810.9" y1="542" x2="810.9" y2="202" />
+  <line class="dw-shaft" x1="785.9" y1="527.6" x2="785.9" y2="187.6" />
+  <line class="dw-shaft" x1="744.3" y1="551.6" x2="744.3" y2="211.6" />
+  <path class="dw-shaft" d="M769.3,226 L810.9,202 L785.9,187.6 L744.3,211.6 Z" />
+</g>
