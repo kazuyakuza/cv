@@ -1,0 +1,10 @@
+package-lock.json
+dist/
+generated/
+node_modules/
+
+# Source SVG is hand-maintained; automatic formatting must not churn it.
+src/svg/
+
+# Project documentation is maintained manually.
+.agent/

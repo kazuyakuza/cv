@@ -1,0 +1,39 @@
+/* Minimal CSS foundation (Stage 0): reset defaults, predictable sizing,
+   neutral background, and a container for the future SVG. No final palette,
+   typography, responsive behavior, or effects — desktop composition first. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  background: #f5f4f1;
+  color: #2b2b2b;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+}
+
+#app {
+  min-height: 100vh;
+}
+
+.shell {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.status {
+  color: #767269;
+}
