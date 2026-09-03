@@ -1,13 +1,13 @@
 <g id="floor-01">
-  <path class="dw-slab" d="M700,702 L1046.4,502 L838.6,382 L492.2,582 Z" />
-  <path class="dw-slab-edge" d="M700,702 L1046.4,502 L1046.4,510 L700,710 Z" />
-  <path class="dw-slab-edge" d="M700,702 L492.2,582 L492.2,590 L700,710 Z" />
-  <path class="dw-wall" d="M492.2,582 L838.6,382 L838.6,314 L492.2,514 Z" />
-  <path class="dw-wall" d="M700,702 L492.2,582 L492.2,514 L700,634 Z" />
-  <path class="dw-partition" d="M838.6,622 L630.7,502 L630.7,434 L838.6,554 Z" />
-  <path class="dw-partition" d="M907.9,582 L700.0,462 L700.0,394 L907.9,514 Z" />
-  <line class="dw-column" x1="700" y1="702" x2="700" y2="634" />
-  <line class="dw-column" x1="1046.4" y1="502" x2="1046.4" y2="434" />
-  <line class="dw-column" x1="492.2" y1="582" x2="492.2" y2="514" />
-  <line class="dw-column" x1="838.6" y1="382" x2="838.6" y2="314" />
+  <path class="dw-slab" d="M760,776 L912,662 L479.6,474 L327.6,588 Z" />
+  <path class="dw-slab-edge" d="M760,776 L912,662 L912,670 L760,784 Z" />
+  <path class="dw-slab-edge" d="M760,776 L327.6,588 L327.6,596 L760,784 Z" />
+  <path class="dw-wall" d="M912,662 L479.6,474 L479.6,390 L912,578 Z" />
+  <path class="dw-wall" d="M327.6,588 L479.6,474 L479.6,390 L327.6,504 Z" />
+  <path class="dw-partition" d="M608.7,710.2 L760.7,596.2 L760.7,512.2 L608.7,626.2 Z" />
+  <path class="dw-partition" d="M478.9,653.8 L630.9,539.8 L630.9,455.8 L478.9,569.8 Z" />
+  <line class="dw-column" x1="760" y1="776" x2="760" y2="692" />
+  <line class="dw-column" x1="912" y1="662" x2="912" y2="578" />
+  <line class="dw-column" x1="327.6" y1="588" x2="327.6" y2="504" />
+  <line class="dw-column" x1="479.6" y1="474" x2="479.6" y2="390" />
 </g>

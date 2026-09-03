@@ -70,7 +70,6 @@ ${indent(readFragment('path'), 1)}
 ${indent(readFragment('entrance'), 1)}
 ${indent(readFragment('career-sign'), 1)}
 ${building}
-${indent(readFragment('viewer'), 1)}
 ${indent(readFragment('labels'), 1)}
 </svg>
 `

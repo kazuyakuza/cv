@@ -1,14 +1,14 @@
 <g id="floor-05">
-  <path class="dw-slab" d="M700,430 L1046.4,230 L838.6,110 L492.2,310 Z" />
-  <path class="dw-slab-edge" d="M700,430 L1046.4,230 L1046.4,238 L700,438 Z" />
-  <path class="dw-slab-edge" d="M700,430 L492.2,310 L492.2,318 L700,438 Z" />
-  <line class="dw-column" x1="700" y1="430" x2="700" y2="394" />
-  <line class="dw-column" x1="1046.4" y1="230" x2="1046.4" y2="194" />
-  <line class="dw-column" x1="492.2" y1="310" x2="492.2" y2="274" />
-  <line class="dw-column" x1="838.6" y1="110" x2="838.6" y2="74" />
-  <line class="dw-open" x1="700" y1="394" x2="700" y2="362" />
-  <line class="dw-open" x1="1046.4" y1="194" x2="1046.4" y2="162" />
-  <line class="dw-open" x1="492.2" y1="274" x2="492.2" y2="242" />
-  <line class="dw-open" x1="838.6" y1="74" x2="838.6" y2="42" />
-  <path class="dw-open" d="M700,362 L1046.4,162 L838.6,42 L492.2,242 Z" />
+  <path class="dw-slab" d="M760,440 L912,326 L479.6,138 L327.6,252 Z" />
+  <path class="dw-slab-edge" d="M760,440 L912,326 L912,334 L760,448 Z" />
+  <path class="dw-slab-edge" d="M760,440 L327.6,252 L327.6,260 L760,448 Z" />
+  <line class="dw-column" x1="760" y1="440" x2="760" y2="400" />
+  <line class="dw-column" x1="912" y1="326" x2="912" y2="286" />
+  <line class="dw-column" x1="327.6" y1="252" x2="327.6" y2="212" />
+  <line class="dw-column" x1="479.6" y1="138" x2="479.6" y2="98" />
+  <line class="dw-open" x1="760" y1="400" x2="760" y2="356" />
+  <line class="dw-open" x1="912" y1="286" x2="912" y2="242" />
+  <line class="dw-open" x1="327.6" y1="212" x2="327.6" y2="168" />
+  <line class="dw-open" x1="479.6" y1="98" x2="479.6" y2="54" />
+  <path class="dw-open" d="M760,356 L912,242 L479.6,54 L327.6,168 Z" />
 </g>
