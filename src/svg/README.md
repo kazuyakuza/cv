@@ -43,13 +43,14 @@ levels at A: 860, 776, 692, 608, 524, 440, 356
 corner columns A, B, C, D; kept walls: B–D (long back) and C–D (short back)
 cutaway faces: front A–B (short) and long left A–C — slab edge bands run
 down the left side, so floor divisions read from the left, not the front
-ground floor (right → left): entrance hall (0–0.15d), Puelo Games (0.15–0.40d),
-BA Technology (0.40–0.68d), Freelancer + staircase (0.68–1.0d, stairs inside
-at 0.25w, rising 0.72d → 0.95d)
-floor-1 (right → left): Health Platforms (0–0.35d), elevator (0.35–0.65d),
-Nextcode (0.65–1.0d) — staircase arrives here
-elevator shaft plan: A + 0.34w + 0.44d, size 0.32w × 0.12d
-floor-3 partition at depth-fraction 0.75 (rear-left strip = Indelve)
+ground floor (right → left): Puelo Games (0–0.35d, entrance leads in),
+BA Technology (0.35–0.68d), Freelancer + staircase (0.68–1.0d, stairs inside
+at 0.25w, rising 0.72d → 0.95d); partitions at 0.35d / 0.68d
+floor-1: no partition walls — elevator shaft at the open left border
+(wf 0–0.30w, df 0.44–0.60) is the single division: Health Platforms (0–0.44d),
+Nextcode (0.60–1.0d) — staircase arrives here
+elevator shaft plan: wf 0–0.30w against the A–C edge, df 0.44–0.60
+floor-3 partition at depth-fraction 0.67 (rear-left third = Indelve)
 ```
 
 ## Group-ID naming

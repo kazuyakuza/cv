@@ -1,12 +1,12 @@
 <g id="elevator">
-  <path class="dw-shaft" d="M621.4,654.5 L670.0,618.0 L618.1,595.4 L569.5,631.9 Z" />
-  <path class="dw-shaft-dash" d="M621.4,570.5 L670.0,534.0 L618.1,511.4 L569.5,547.9 Z" />
-  <path class="dw-shaft-dash" d="M621.4,486.5 L670.0,450.0 L618.1,427.4 L569.5,463.9 Z" />
-  <path class="dw-shaft-dash" d="M621.4,402.5 L670.0,366.0 L618.1,343.4 L569.5,379.9 Z" />
-  <path class="dw-shaft-dash" d="M621.4,318.5 L670.0,282.0 L618.1,259.4 L569.5,295.9 Z" />
-  <line class="dw-shaft" x1="621.4" y1="654.5" x2="621.4" y2="234.5" />
-  <line class="dw-shaft" x1="670.0" y1="618.0" x2="670.0" y2="198.0" />
-  <line class="dw-shaft" x1="618.1" y1="595.4" x2="618.1" y2="175.4" />
-  <line class="dw-shaft" x1="569.5" y1="631.9" x2="569.5" y2="211.9" />
-  <path class="dw-shaft" d="M621.4,234.5 L670.0,198.0 L618.1,175.4 L569.5,211.9 Z" />
+  <path class="dw-shaft" d="M569.7,693.3 L615.3,659.1 L546.1,629.0 L500.5,663.2 Z" />
+  <path class="dw-shaft-dash" d="M569.7,609.3 L615.3,575.1 L546.1,545.0 L500.5,579.2 Z" />
+  <path class="dw-shaft-dash" d="M569.7,525.3 L615.3,491.1 L546.1,461.0 L500.5,495.2 Z" />
+  <path class="dw-shaft-dash" d="M569.7,441.3 L615.3,407.1 L546.1,377.0 L500.5,411.2 Z" />
+  <path class="dw-shaft-dash" d="M569.7,357.3 L615.3,323.1 L546.1,293.0 L500.5,327.2 Z" />
+  <line class="dw-shaft" x1="569.7" y1="693.3" x2="569.7" y2="273.3" />
+  <line class="dw-shaft" x1="615.3" y1="659.1" x2="615.3" y2="239.1" />
+  <line class="dw-shaft" x1="546.1" y1="629.0" x2="546.1" y2="209.0" />
+  <line class="dw-shaft" x1="500.5" y1="663.2" x2="500.5" y2="243.2" />
+  <path class="dw-shaft" d="M569.7,273.3 L615.3,239.1 L546.1,209.0 L500.5,243.2 Z" />
 </g>

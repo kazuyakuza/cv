@@ -3,8 +3,7 @@
   <path class="dw-slab-edge" d="M760,860 L327.6,672 L327.6,680 L760,868 Z" />
   <path class="dw-wall" d="M912,746 L479.6,558 L479.6,474 L912,662 Z" />
   <path class="dw-wall" d="M327.6,672 L479.6,558 L479.6,474 L327.6,588 Z" />
-  <path class="dw-partition" d="M695.1,831.8 L847.1,717.8 L847.1,633.8 L695.1,747.8 Z" />
-  <path class="dw-partition" d="M587.0,784.8 L739.0,670.8 L739.0,586.8 L587.0,700.8 Z" />
+  <path class="dw-partition" d="M608.7,794.2 L760.7,680.2 L760.7,596.2 L608.7,710.2 Z" />
   <path class="dw-partition" d="M466.0,732.2 L618.0,618.2 L618.0,534.2 L466.0,648.2 Z" />
   <line class="dw-column" x1="760" y1="860" x2="760" y2="776" />
   <line class="dw-column" x1="912" y1="746" x2="912" y2="662" />

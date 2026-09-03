@@ -4,7 +4,7 @@
   <path class="dw-slab-edge" d="M760,608 L327.6,420 L327.6,428 L760,616 Z" />
   <path class="dw-wall" d="M912,494 L479.6,306 L479.6,222 L912,410 Z" />
   <path class="dw-wall" d="M327.6,420 L479.6,306 L479.6,222 L327.6,336 Z" />
-  <path class="dw-partition" d="M435.7,467.0 L587.7,353.0 L587.7,269.0 L435.7,383.0 Z" />
+  <path class="dw-partition" d="M470.3,482.0 L622.3,368.0 L622.3,284.0 L470.3,398.0 Z" />
   <line class="dw-column" x1="760" y1="608" x2="760" y2="524" />
   <line class="dw-column" x1="912" y1="494" x2="912" y2="410" />
   <line class="dw-column" x1="327.6" y1="420" x2="327.6" y2="336" />
