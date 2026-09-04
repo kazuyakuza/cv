@@ -71,6 +71,7 @@ const svg = `<!--
     .dw-partition { fill: #fbfbfa; stroke: #8a8a88; stroke-width: 0.75; }
     .dw-column { fill: none; stroke: #5a5a58; stroke-width: 1.5; }
     .dw-shaft { fill: #f0efec; stroke: #8a8a88; stroke-width: 1; }
+    .dw-shaft-fill { fill: #f0efec; stroke: none; }
     .dw-door { fill: #dedcd9; stroke: #6b6b6b; stroke-width: 1; }
     .dw-shaft-dash { fill: none; stroke: #a5a5a3; stroke-width: 0.75; stroke-dasharray: 3 3; }
     .dw-stair { fill: #f2f1ee; stroke: #7a7a78; stroke-width: 1; }

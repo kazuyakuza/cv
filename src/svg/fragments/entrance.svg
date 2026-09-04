@@ -11,4 +11,8 @@
   <path class="dw-wall" d="M807.13,916.21 L871.76,893.59 L871.76,886.09 L807.13,908.71 Z" />
   <path class="dw-wall" d="M807.13,916.21 L801.83,914.36 L801.83,906.86 L807.13,908.71 Z" />
   <path class="dw-slab" d="M807.13,908.71 L871.76,886.09 L866.46,884.24 L801.83,906.86 Z" />
+  <path class="dw-tag" d="M830.61,915.24 L850.41,908.31 L850.41,894.31 L830.61,901.24 Z" />
+  <path class="dw-tag" d="M669.39,901.24 L670.45,900.87 L650.65,893.94 L649.59,894.31 Z" />
+  <path class="dw-tag" d="M830.61,915.24 L829.55,914.87 L829.55,900.87 L830.61,901.24 Z" />
+  <text class="dw-year" transform="matrix(0.7071 -0.2475 0 1 840.51 904.78)" text-anchor="middle" dominant-baseline="central">2013</text>
 </g>

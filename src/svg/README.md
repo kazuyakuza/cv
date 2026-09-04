@@ -36,6 +36,13 @@ and nothing pokes above it; the shaft's enclosure no longer breaks the floor
 base lines: the elevator group re-layers each floor's left cut-face band
 segment (across the shaft's depth) over the enclosure from floor 2 up, so
 every level's base line reads as passing in front of the shaft like floor-01.
+Revision 16 (Stage 3.5, user revision): the ground partitions abut the B-D
+wall's inner face (their faces end at u = LW − WALL_T), so the right end line
+starts at the junction with the building's right wall; the floor-03 section
+separation wall (W1 continuation) is fill-only with explicit end/top edges —
+its base line no longer reads on the Indelve floor; the entrance gained a
+2013 year sign attached to the portal's door head, proud of the header's
+front face, reading along +u like the entrance face.
 Revision 15 (Stage 3.5, user revision): the ground-floor passage jambs are cut
 by the head line on screen (their back-top corner drops by the screen-slope
 compensation 2 · 0.2475 · WALL_T), so the reveal's top edge lies exactly on

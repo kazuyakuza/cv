@@ -171,6 +171,7 @@ function partition(fv, hBase, { opening = false } = {}) {
   const hTop = hBase + STORY_H
   const v0 = fv - WALL_T / 2
   const v1 = fv + WALL_T / 2
+  const uEnd = LW - WALL_T // abut the B-D wall's inner face (user revision)
   const out = []
   if (opening) {
     // Front face (-v) with the passage notch reaching down to the floor.
@@ -180,8 +181,8 @@ function partition(fv, hBase, { opening = false } = {}) {
         path([
           p(0, v0, hBase),
           p(0, v0, hTop),
-          p(LW, v0, hTop),
-          p(LW, v0, hBase),
+          p(uEnd, v0, hTop),
+          p(uEnd, v0, hBase),
           p(PART_OPEN_U1, v0, hBase),
           p(PART_OPEN_U1, v0, hBase + DOOR_H),
           p(PART_OPEN_U0, v0, hBase + DOOR_H),
@@ -212,7 +213,7 @@ function partition(fv, hBase, { opening = false } = {}) {
     const [hx2, hy2] = p(PART_OPEN_U1, v0, hBase + DOOR_H).split(',')
     out.push(`<line class="dw-partition" x1="${hx1}" y1="${hy1}" x2="${hx2}" y2="${hy2}" />`)
   } else {
-    out.push(el('dw-partition', vFace(v0, 0, LW, hBase, hTop)))
+    out.push(el('dw-partition', vFace(v0, 0, uEnd, hBase, hTop)))
   }
   out.push(el('dw-slab-edge', uFace(0, v0, v1, hBase, hTop)))
   return out
@@ -355,7 +356,24 @@ const floor03 = group('floor-03', [
   ...slab(3 * FH),
   // Section separation continuing the shaft's left wall (W1) rearward to the
   // C-D wall: the rear-left strip beyond it becomes the distinct section.
-  el('dw-shaft', uFace(SHAFT_U, SHAFT_V1 + WALL_T, LD - WALL_T, 3 * FH, 3 * FH + STORY_H)),
+  // Fill-only with explicit end and top edges — the base stays unstroked so
+  // no stray line reads on the Indelve floor (user revision).
+  el('dw-shaft-fill', uFace(SHAFT_U, SHAFT_V1 + WALL_T, LD - WALL_T, 3 * FH, 3 * FH + STORY_H)),
+  el(
+    'dw-shaft',
+    path([p(SHAFT_U, SHAFT_V1 + WALL_T, 3 * FH), p(SHAFT_U, SHAFT_V1 + WALL_T, 3 * FH + STORY_H)]),
+  ),
+  el(
+    'dw-shaft',
+    path([p(SHAFT_U, LD - WALL_T, 3 * FH), p(SHAFT_U, LD - WALL_T, 3 * FH + STORY_H)]),
+  ),
+  el(
+    'dw-shaft',
+    path([
+      p(SHAFT_U, SHAFT_V1 + WALL_T, 3 * FH + STORY_H),
+      p(SHAFT_U, LD - WALL_T, 3 * FH + STORY_H),
+    ]),
+  ),
   ...backWalls(3 * FH),
 ])
 const floor03Front = group('floor-03-front', [
@@ -476,6 +494,15 @@ function entrance() {
   const jambD = 7.5 // jamb/header depth along v (sits on the threshold)
   const portalH = DOOR_H
   const headerH = 7.5
+  // Year sign attached to the door head (user revision): the same plaque
+  // language as the shaft's year signs, on a face proud of the header's
+  // front, reading toward the front corner like the entrance door.
+  const signHalf = 14
+  const signU = (u0 + u1) / 2
+  const signV = -jambD - 1.5
+  const signH0 = portalH + headerH - 14
+  const signH1 = portalH + headerH
+  const [sx, sy] = p(signU, signV, (signH0 + signH1) / 2).split(',')
   const out = [
     // Right jamb first: a layer below the entrance block (the block's front
     // region is nearer to the viewer and must occlude the jamb's base).
@@ -494,6 +521,11 @@ function entrance() {
     el('dw-wall', vFace(-jambD, u0 - jamb, u1 + jamb, portalH, portalH + headerH)),
     el('dw-wall', uFace(u0 - jamb, -jambD, 0, portalH, portalH + headerH)),
     el('dw-slab', hFace(u0 - jamb, u1 + jamb, -jambD, 0, portalH + headerH)),
+    // Year sign attached to the door head, proud of the header's front face.
+    el('dw-tag', vFace(signV, signU - signHalf, signU + signHalf, signH0, signH1)),
+    el('dw-tag', hFace(signV, -jambD, signU - signHalf, signU + signHalf, signH1)),
+    el('dw-tag', uFace(signU - signHalf, signV, -jambD, signH0, signH1)),
+    `<text class="dw-year" transform="matrix(0.7071 -0.2475 0 1 ${sx} ${sy})" text-anchor="middle" dominant-baseline="central">2013</text>`,
   ]
   return group('entrance', out)
 }
