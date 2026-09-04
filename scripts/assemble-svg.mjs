@@ -13,32 +13,49 @@ const readFragment = (name) => readFileSync(join(fragmentsDir, `${name}.svg`), '
 
 const indent = (text, spaces) => text.replace(/^/gm, ' '.repeat(spaces))
 
-// Vertical stacking order inside <g id="building"> (Stage 1 spec §10).
+// Root order inside the SVG (Stage 3 spec §7): background/base first, then
+// the building (rear elements → interior → slabs → foreground faces), then
+// entrance, then the exterior path and sign in the foreground.
+const rootOrder = ['terrain', 'building', 'entrance', 'path', 'career-sign']
+
+// Vertical stacking order inside <g id="building"> (Stage 3 revision): the
+// staircase sits under floor-01 (the slab occludes it); each shaft-crossing
+// floor is split into a rear shell (behind the shaft) and a front plane
+// (-front, rendered as a layer over the shaft). The experience tags mount on
+// the back walls, so they render after all floor geometry (Stage 3.5 §20).
 const buildingParts = [
   'floor-ground',
+  'staircase',
   'floor-01',
   'floor-02',
   'floor-03',
   'floor-04',
   'floor-05',
-  'staircase',
   'elevator',
+  'floor-02-front',
+  'floor-03-front',
+  'floor-04-front',
+  'floor-05-front',
+  'tags',
 ]
 
-const building = [
-  '  <g id="building">',
-  ...buildingParts.map((name) => indent(readFragment(name), 4)),
-  '  </g>',
-].join('\n')
+const fragmentsById = {
+  building: [
+    '  <g id="building">',
+    ...buildingParts.map((name) => indent(readFragment(name), 4)),
+    '  </g>',
+  ].join('\n'),
+}
 
 const svg = `<!--
-  Professional Career Diorama — Stage 1 architectural wireframe.
+  Professional Career Diorama — Stage 3 basic architectural structure.
   ASSEMBLED FILE: generated from src/svg/fragments/ by \`npm run svg:assemble\`.
-  Edit the fragments, not this file. Geometry parameters: see src/svg/README.md.
+  Fragment geometry is produced by \`npm run svg:generate\` from the shared
+  parameters in src/svg/README.md. Edit parameters/fragments, not this file.
 -->
 <svg
   xmlns="http://www.w3.org/2000/svg"
-  viewBox="0 0 1200 900"
+  viewBox="0 0 1200 1050"
   role="img"
   aria-labelledby="diorama-title"
 >
@@ -52,25 +69,18 @@ const svg = `<!--
     .dw-slab-edge { fill: #d9d8d5; stroke: #6b6b6b; stroke-width: 1; }
     .dw-partition { fill: #fbfbfa; stroke: #8a8a88; stroke-width: 0.75; }
     .dw-column { fill: none; stroke: #5a5a58; stroke-width: 1.5; }
-    .dw-shaft { fill: none; stroke: #8a8a88; stroke-width: 1; }
+    .dw-shaft { fill: #f0efec; stroke: #8a8a88; stroke-width: 1; }
+    .dw-door { fill: #dedcd9; stroke: #6b6b6b; stroke-width: 1; }
     .dw-shaft-dash { fill: none; stroke: #a5a5a3; stroke-width: 0.75; stroke-dasharray: 3 3; }
-    .dw-stair { fill: none; stroke: #7a7a78; stroke-width: 1.25; }
+    .dw-stair { fill: #f2f1ee; stroke: #7a7a78; stroke-width: 1; }
+    .dw-stair-riser { fill: #e3e2df; stroke: #7a7a78; stroke-width: 1; }
     .dw-open { fill: none; stroke: #9a9a98; stroke-width: 1; stroke-dasharray: 5 4; }
-    .dw-label {
-      fill: #555553;
-      stroke: #ffffff;
-      stroke-width: 3px;
-      paint-order: stroke;
-      stroke-linejoin: round;
-      font: 11px system-ui, sans-serif;
-    }
+    .dw-door-open { fill: #b3b1ad; stroke: #6b6b6b; stroke-width: 1; }
+    .dw-tag { fill: #ffffff; stroke: #6b6b6b; stroke-width: 1; }
+    .dw-tag-text { fill: #555553; font: 9.5px system-ui, sans-serif; }
+    .dw-year { fill: #555553; font: 9.5px system-ui, sans-serif; }
   </style>
-${indent(readFragment('terrain'), 1)}
-${indent(readFragment('path'), 1)}
-${indent(readFragment('entrance'), 1)}
-${indent(readFragment('career-sign'), 1)}
-${building}
-${indent(readFragment('labels'), 1)}
+${rootOrder.map((id) => indent(fragmentsById[id] ?? readFragment(id), 1)).join('\n')}
 </svg>
 `
 

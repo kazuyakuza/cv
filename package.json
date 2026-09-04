@@ -11,6 +11,7 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "svg:generate": "node scripts/generate-geometry.mjs",
     "svg:assemble": "node scripts/assemble-svg.mjs",
     "svg:optimize": "svgo -r -f src/svg -o generated/svg"
   },

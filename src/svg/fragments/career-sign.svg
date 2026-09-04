@@ -1,7 +1,7 @@
 <g id="career-sign">
-  <line class="dw-column" x1="1024" y1="840" x2="1024" y2="794" />
-  <rect class="dw-sign" x="990" y="750" width="68" height="46" />
-  <circle class="dw-shaft" cx="1008" cy="767" r="9" />
-  <rect x="1022" y="760" width="26" height="4" fill="#b5b3ae" />
-  <rect x="1022" y="768" width="18" height="4" fill="#b5b3ae" />
+  <line class="dw-column" x1="1110" y1="980" x2="1110" y2="1035" />
+  <rect class="dw-sign" x="1030" y="870" width="160" height="110" />
+  <circle class="dw-shaft" cx="1065" cy="905" r="22" />
+  <rect x="1100" y="890" width="60" height="10" fill="#b5b3ae" />
+  <rect x="1100" y="910" width="44" height="10" fill="#b5b3ae" />
 </g>
