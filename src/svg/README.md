@@ -29,6 +29,55 @@ fragments** — `terrain.svg` and `path.svg` are hand-authored.
 
 All generated fragments derive from these constants
 (`scripts/generate-geometry.mjs`). Coordinates are meaningless without them.
+Revision 15 (Stage 3.5, user revision): the passage jamb is cut by the head
+line on screen — its back-top corner drops by the screen-slope compensation
+(2 · 0.2475 · WALL_T), so the reveal's top edge lies exactly on the head line
+and nothing pokes above it; the shaft's enclosure no longer breaks the floor
+base lines: the elevator group re-layers each floor's left cut-face band
+segment (across the shaft's depth) over the enclosure from floor 2 up, so
+every level's base line reads as passing in front of the shaft like floor-01.
+Revision 15 (Stage 3.5, user revision): the ground-floor passage jambs are cut
+by the head line on screen (their back-top corner drops by the screen-slope
+compensation 2 · 0.2475 · WALL_T), so the reveal's top edge lies exactly on
+the head line and nothing pokes above it; the per-level shaft bands
+(shaftLevelBands) are removed and each completed floor's left cut face
+(u = 0, full depth) is re-layered OVER the shaft enclosure for floors 2–5,
+so every level's floor base line reads as one continuous band descending
+past the shaft's corner — exactly the floor-01 look.
+Revision 14 (Stage 3.5, user revision): ground-floor passages draw the
+door-height far jamb OVER the front face and re-draw the head line on top —
+the head line finishes on the jamb's front (right) line while the jamb's
+back-top corner caps just above it; the shaft-crossing floors re-layer the
+floor triangle at the shaft's front-right (between the left wall, the W2
+doors side and the shaft's width line) in floor-0X-front OVER the elevator
+as a fill-only piece (dw-slab-fill), so the W2 level band's lower sliver
+never paints over the floor while the shaft's right side stays visible.
+Revision 13 (Stage 3.5, user revision): the shaft-crossing floors' slab split
+is gone — each renders as ONE complete slab in its floor-0X group, below the
+elevator exactly like floor-01 (this removes the notch/slab-sliver artifacts
+at the shaft's right edge on floors 2–5); the -front groups now carry only
+the story columns (floor-05 also the stub walls and dashed perimeter);
+ground-floor passage jambs are plain door-height reveals (per reference
+image) — the head line finishes on the jamb, whose back-top corner caps just
+above it; no soffit, no clipping.
+Revision 12 (Stage 3.5, user revision): ground-floor passage jambs are
+door-height with the top edge clipped to the head line's screen height — no
+reveal line exceeds the door head; the Puelo Games ground section is reduced
+20% (first partition moved to 0.28d, Puelo Games tag re-centered at v ≈ 82,
+BA Technology at v ≈ 282); company tags gain the year plaques' thin depth
+(face proud of the wall at u = −1.5, top cap + front-end side); the shaft-
+crossing floors' front slab pieces notch their rear-right corner back to the
+W2 wall's outer face (u > SHAFT_U + WALL_T keeps full depth), so the slab
+never paints over the shaft wall's base on floors 2–5, matching floor-01.
+Revision 11 (Stage 3.5, user revision): ground-floor passages get a
+full-height far jamb with NO soffit (per reference image) — the right reveal
+runs to the ceiling and the head line ends on it, so the opening's top-right
+corner reads clean; the stair slab opening covers the flight's full footprint
+(STAIR_HOLE_U1 = STAIR_U1), keeping the whole final flight visible with the
+top step landing flush on the slab; front-row tags aligned at c = 135
+(Health Platforms, Interactica ×2, Pacer) and left-side tags at c = 470
+(Nextcode, Interactica, Indelve, Pacer); the fifth floor carries WIP markers
+(both tag positions) instead of a company name.
 Revision 10 (Stage 3.5, user revision): the stair slab opening extends all the
 way to the C-D wall (STAIR_HOLE_V1 = STAIR_V1) and each story's back walls
 extend up to the slab-above's top line (h + FH) — the rear wall reads
@@ -113,10 +162,11 @@ back walls B–D (long) and C–D (short) are thin volumes: visible inner face
 (-u / -v), cut end at the open side; each story's walls extend from its slab
 top up to the slab-above's top line (h + FH) so no gap shows at the slab band;
 tops are covered by the slab above
-ground floor (right → left): Puelo Games (0–0.35d, entrance leads in),
-BA Technology (0.35–0.68d), Freelancer + staircase (0.68–1.0d); partitions at
+ground floor (right → left): Puelo Games (0–0.28d, entrance leads in),
+BA Technology (0.28–0.68d), Freelancer + staircase (0.68–1.0d); partitions at
 0.35d / 0.68d (WALL_T thick, full width, height STORY_H) with door-height
-passages (u 15–70, height DOOR_H) near the open A–C side
+passages (u 15–70, height DOOR_H) near the open A–C side; each passage's far
+jamb (u = 70) runs the full story height so the head line ends on it
 floor-1: Health Platforms (0–0.46d), Nextcode (0.585–1.0d) — staircase arrives
 here; return walls continue the shaft's W2 / W3 walls (v-bands
 [SHAFT_V0−WALL_T, SHAFT_V0] and [SHAFT_V1, SHAFT_V1+WALL_T], u from SHAFT_U to
@@ -138,19 +188,20 @@ toward Health Platforms at every story except the fifth, where the doors stand
 open (dark dw-door-open quad + panels parked at the jambs); a small year-sign
 plaque (dw-tag + dw-year, wall-plane text) is mounted on the enclosure face at
 each story (2017/2019/2021/2025/2026); the shaft rises per story
-from floor 1 to the top; each crossing floor's slab is split — the mid strip
-(u 0.171w–LW, v 0.46–0.585d) and the rear piece (v 0.585d–1.0d) belong to
-floor-0X and render in layers BELOW the shaft, the front plane (v < 0.46d)
-belongs to floor-0X-front and renders over the front of the shaft;
-SLAB_T level bands cross the W1–W3 wall faces at every level
+from floor 1 to the top; each crossing floor's slab is one complete plane in
+floor-0X, rendering below the shaft like floor-01; the floor triangle at the
+shaft's front-right re-renders over the shaft in floor-0X-front (fill only,
+no seams); the story columns belong
+to floor-0X-front and render over the shaft; each completed floor's left cut
+face (u = 0, full depth) re-renders over the enclosure in the elevator group
+for floors 2–5, so the base line stays continuous like floor-01
 staircase: solid flight against the C–D rear wall (v 540.5–580.5), running along
 the width axis, rising u 22 → 127 in 12 steps (rise 8.75, going 8.75), with a
-clear gap to the open A-C side; floor-01 slab has a matching opening reaching
-the C–D wall (no cut faces; the left edge band is continuous), so the rear
-wall shows through it as one continuous surface crossed only by the floor
-separation line; drawn before floor-01 so the slab occludes the lower flight
-while the top re-emerges at the opening; the slab beyond u = 127 is the
-landing into Nextcode
+clear gap to the open A-C side; floor-01 slab has a matching opening covering
+the flight's full footprint (u 22–127, v to the C–D wall; no cut faces; the
+left edge band is continuous), so the final flight stays visible and the top
+step lands flush with the slab — the landing into Nextcode; drawn before
+floor-01 so the slab edges frame the opening
 entrance: threshold platform (u 0.35–0.65w, 37.5 deep, SLAB_T thick) abutting
 the A–B face at ground level, plus a minimal portal frame — two jambs (10 wide,
 7.5 deep, extending down to the block base at -SLAB_T) and a header (52.5–60)
@@ -159,15 +210,16 @@ entrance block; the hand-authored path starts exactly at the block's base
 edge (v = -37.5, h = -SLAB_T)
 career-sign: single central post + larger placeholder panel (160×110) on the
 terrain, outside the building coordinate system (screen-space geometry)
-experience tags: vertical signs flush with the invisible left wall (u = 0,
-like the year plaques), one per section over its own floor, at the floor's
+experience tags: vertical signs like the year plaques (thin depth: face proud
+of the invisible left wall at u = −1.5, top cap + front-end side), one per
+section over its own floor, at the floor's
 front level (band h −SLAB_T…−SLAB_T+16 — base on the slab's bottom line),
 length fitted to the text; text on the wall plane (matrix-skewed, reading
 toward the front corner); Freelancer Game Developer on a single line;
-whole-floor sections duplicate their sign on the floor's left side
-(Interactica on floor 2, Pacer on floor 4) — all left-side tags share
-v ≈ 470 (the rear stretch's center), so Nextcode / Interactica / Indelve /
-Pacer align vertically
+front-row tags share c = 135, left-side tags share c = 470 (both rows align
+vertically); whole-floor sections duplicate their sign on the floor's left
+side (Interactica on floor 2, Pacer on floor 4); the fifth floor carries
+WIP markers at both positions
 ```
 
 ### Layer order (Stage 3.5 revision)
@@ -188,7 +240,7 @@ IDs describe architectural meaning, never generated names (`group42`, `rect891`)
 | `path`                      | path from sign/foreground to entrance      |
 | `entrance`                  | entrance threshold + portal frame          |
 | `floor-ground`, `floor-01`… | stacked floor modules                      |
-| `floor-02-front`…           | front slab planes of shaft-crossing floors |
+| `floor-02-front`…           | story column layers of shaft-crossing floors |
 | `staircase`                 | stairs between stages (ground → floor 1)   |
 | `elevator`                  | persistent vertical shaft, floor 1 up      |
 | `tags`                      | career-stage signs on the left wall        |

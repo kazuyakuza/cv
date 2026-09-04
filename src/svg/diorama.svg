@@ -17,6 +17,7 @@
     .dw-sign { fill: #ffffff; stroke: #6b6b6b; stroke-width: 1; }
     .dw-wall { fill: #f4f4f2; stroke: #6b6b6b; stroke-width: 1; }
     .dw-slab { fill: #e9e8e6; stroke: #6b6b6b; stroke-width: 1; }
+    .dw-slab-fill { fill: #e9e8e6; stroke: none; }
     .dw-slab-edge { fill: #d9d8d5; stroke: #6b6b6b; stroke-width: 1; }
     .dw-partition { fill: #fbfbfa; stroke: #8a8a88; stroke-width: 0.75; }
     .dw-column { fill: none; stroke: #5a5a58; stroke-width: 1.5; }
@@ -43,13 +44,13 @@
        <path class="dw-slab-edge" d="M912.99,927.95 L918.29,926.1 L918.29,821.1 L912.99,822.95 Z" />
        <path class="dw-wall" d="M339.53,841.33 L507.82,782.42 L507.82,677.42 L339.53,736.33 Z" />
        <path class="dw-slab-edge" d="M339.53,841.33 L334.23,839.47 L334.23,734.47 L339.53,736.33 Z" />
-       <path class="dw-partition" d="M607.13,934.99 L607.13,842.49 L775.42,783.59 L775.42,876.09 L656.63,917.67 L656.63,865.17 L617.74,878.78 L617.74,931.28 Z" />
-       <path class="dw-partition" d="M617.74,878.78 L656.63,865.17 L651.32,863.31 L612.43,876.92 Z" />
-       <path class="dw-partition" d="M656.63,917.67 L651.32,915.81 L651.32,863.31 L656.63,865.17 Z" />
-       <path class="dw-slab-edge" d="M607.13,934.99 L601.83,933.14 L601.83,840.64 L607.13,842.49 Z" />
+       <path class="dw-partition" d="M636.23,945.18 L636.23,852.68 L804.52,793.77 L804.52,886.27 L685.73,927.85 L685.73,875.35 L646.84,888.97 L646.84,941.47 Z" />
+       <path class="dw-partition" d="M685.73,927.85 L680.43,926 L680.43,877.21 L685.73,875.35 Z" />
+       <line class="dw-partition" x1="646.84" y1="888.97" x2="685.73" y2="875.35" />
+       <path class="dw-slab-edge" d="M636.23,945.18 L630.93,943.32 L630.93,850.82 L636.23,852.68 Z" />
        <path class="dw-partition" d="M469.92,886.97 L469.92,794.47 L638.21,735.56 L638.21,828.06 L519.42,869.64 L519.42,817.14 L480.53,830.76 L480.53,883.26 Z" />
-       <path class="dw-partition" d="M480.53,830.76 L519.42,817.14 L514.12,815.29 L475.23,828.9 Z" />
-       <path class="dw-partition" d="M519.42,869.64 L514.12,867.79 L514.12,815.29 L519.42,817.14 Z" />
+       <path class="dw-partition" d="M519.42,869.64 L514.12,867.79 L514.12,819 L519.42,817.14 Z" />
+       <line class="dw-partition" x1="480.53" y1="830.76" x2="519.42" y2="817.14" />
        <path class="dw-slab-edge" d="M469.92,886.97 L464.62,885.11 L464.62,792.61 L469.92,794.47 Z" />
        <line class="dw-column" x1="750" y1="985" x2="750" y2="892.5" />
        <line class="dw-column" x1="918.29" y1="926.1" x2="918.29" y2="833.6" />
@@ -83,7 +84,7 @@
        <path class="dw-stair" d="M383.37,845.78 L383.37,837.03 L389.56,834.87 L389.56,826.12 L395.74,823.95 L395.74,815.2 L401.93,813.03 L401.93,804.28 L408.12,802.12 L408.12,793.37 L414.3,791.2 L414.3,782.45 L420.49,780.29 L420.49,771.54 L426.68,769.37 L426.68,760.62 L432.87,758.46 L432.87,749.71 L439.05,747.54 L439.05,738.79 L445.24,736.63 L445.24,727.88 L451.43,725.71 L451.43,716.96 L457.61,714.79 L457.61,819.79 Z" />
      </g>
      <g id="floor-01">
-       <path class="dw-slab" fill-rule="evenodd" d="M750,880 L918.29,821.1 L502.52,675.57 L334.23,734.47 Z M383.37,740.78 L444.18,719.5 L415.9,709.6 L355.08,730.88 Z" />
+       <path class="dw-slab" fill-rule="evenodd" d="M750,880 L918.29,821.1 L502.52,675.57 L334.23,734.47 Z M383.37,740.78 L457.61,714.79 L429.33,704.89 L355.08,730.88 Z" />
        <path class="dw-slab-edge" d="M750,880 L918.29,821.1 L918.29,833.6 L750,892.5 Z" />
        <path class="dw-slab-edge" d="M750,880 L334.23,734.47 L334.23,746.97 L750,892.5 Z" />
        <path class="dw-wall" d="M912.99,822.95 L502.52,679.28 L502.52,574.28 L912.99,717.95 Z" />
@@ -103,18 +104,18 @@
        <line class="dw-column" x1="334.23" y1="734.47" x2="334.23" y2="641.97" />
      </g>
      <g id="floor-02">
-       <path class="dw-slab" d="M587.52,697.98 L727.03,649.15 L675.06,630.96 L535.55,679.79 Z" />
-       <path class="dw-slab" d="M506.77,689.86 L675.06,630.96 L502.52,570.57 L334.23,629.47 Z" />
-       <path class="dw-slab-edge" d="M506.77,689.86 L334.23,629.47 L334.23,641.97 L506.77,702.36 Z" />
+       <path class="dw-slab" d="M750,775 L918.29,716.1 L502.52,570.57 L334.23,629.47 Z" />
+       <path class="dw-slab-edge" d="M750,775 L918.29,716.1 L918.29,728.6 L750,787.5 Z" />
+       <path class="dw-slab-edge" d="M750,775 L334.23,629.47 L334.23,641.97 L750,787.5 Z" />
        <path class="dw-wall" d="M912.99,717.95 L502.52,574.28 L502.52,469.28 L912.99,612.95 Z" />
        <path class="dw-slab-edge" d="M912.99,717.95 L918.29,716.1 L918.29,611.1 L912.99,612.95 Z" />
        <path class="dw-wall" d="M339.53,631.33 L507.82,572.42 L507.82,467.42 L339.53,526.33 Z" />
        <path class="dw-slab-edge" d="M339.53,631.33 L334.23,629.47 L334.23,524.47 L339.53,526.33 Z" />
      </g>
      <g id="floor-03">
-       <path class="dw-slab" d="M587.52,592.98 L727.03,544.15 L675.06,525.96 L535.55,574.79 Z" />
-       <path class="dw-slab" d="M506.77,584.86 L675.06,525.96 L502.52,465.57 L334.23,524.47 Z" />
-       <path class="dw-slab-edge" d="M506.77,584.86 L334.23,524.47 L334.23,536.97 L506.77,597.36 Z" />
+       <path class="dw-slab" d="M750,670 L918.29,611.1 L502.52,465.57 L334.23,524.47 Z" />
+       <path class="dw-slab-edge" d="M750,670 L918.29,611.1 L918.29,623.6 L750,682.5 Z" />
+       <path class="dw-slab-edge" d="M750,670 L334.23,524.47 L334.23,536.97 L750,682.5 Z" />
        <path class="dw-shaft" d="M530.25,572.94 L368.31,516.25 L368.31,423.75 L530.25,480.44 Z" />
        <path class="dw-wall" d="M912.99,612.95 L502.52,469.28 L502.52,364.28 L912.99,507.95 Z" />
        <path class="dw-slab-edge" d="M912.99,612.95 L918.29,611.1 L918.29,506.1 L912.99,507.95 Z" />
@@ -122,18 +123,18 @@
        <path class="dw-slab-edge" d="M339.53,526.33 L334.23,524.47 L334.23,419.47 L339.53,421.33 Z" />
      </g>
      <g id="floor-04">
-       <path class="dw-slab" d="M587.52,487.98 L727.03,439.15 L675.06,420.96 L535.55,469.79 Z" />
-       <path class="dw-slab" d="M506.77,479.86 L675.06,420.96 L502.52,360.57 L334.23,419.47 Z" />
-       <path class="dw-slab-edge" d="M506.77,479.86 L334.23,419.47 L334.23,431.97 L506.77,492.36 Z" />
+       <path class="dw-slab" d="M750,565 L918.29,506.1 L502.52,360.57 L334.23,419.47 Z" />
+       <path class="dw-slab-edge" d="M750,565 L918.29,506.1 L918.29,518.6 L750,577.5 Z" />
+       <path class="dw-slab-edge" d="M750,565 L334.23,419.47 L334.23,431.97 L750,577.5 Z" />
        <path class="dw-wall" d="M912.99,507.95 L502.52,364.28 L502.52,259.28 L912.99,402.95 Z" />
        <path class="dw-slab-edge" d="M912.99,507.95 L918.29,506.1 L918.29,401.1 L912.99,402.95 Z" />
        <path class="dw-wall" d="M339.53,421.33 L507.82,362.42 L507.82,257.42 L339.53,316.33 Z" />
        <path class="dw-slab-edge" d="M339.53,421.33 L334.23,419.47 L334.23,314.47 L339.53,316.33 Z" />
      </g>
      <g id="floor-05">
-       <path class="dw-slab" d="M587.52,382.98 L727.03,334.15 L675.06,315.96 L535.55,364.79 Z" />
-       <path class="dw-slab" d="M506.77,374.86 L675.06,315.96 L502.52,255.57 L334.23,314.47 Z" />
-       <path class="dw-slab-edge" d="M506.77,374.86 L334.23,314.47 L334.23,326.97 L506.77,387.36 Z" />
+       <path class="dw-slab" d="M750,460 L918.29,401.1 L502.52,255.57 L334.23,314.47 Z" />
+       <path class="dw-slab-edge" d="M750,460 L918.29,401.1 L918.29,413.6 L750,472.5 Z" />
+       <path class="dw-slab-edge" d="M750,460 L334.23,314.47 L334.23,326.97 L750,472.5 Z" />
        <line class="dw-column" x1="502.52" y1="255.57" x2="502.52" y2="150.57" />
        <path class="dw-wall" d="M440.5,280.98 L507.82,257.42 L507.82,152.42 L440.5,175.98 Z" />
        <path class="dw-slab-edge" d="M440.5,280.98 L435.2,279.13 L435.2,174.13 L440.5,175.98 Z" />
@@ -151,9 +152,6 @@
        <path class="dw-shaft" d="M564.05,814.91 L558.74,813.06 L558.74,720.56 L564.05,722.41 Z" />
        <path class="dw-door" d="M568.64,813.3 L581.09,808.95 L581.09,756.45 L568.64,760.8 Z" />
        <path class="dw-door" d="M581.09,808.95 L593.53,804.59 L593.53,752.09 L581.09,756.45 Z" />
-       <path class="dw-slab-edge" d="M587.52,710.48 L535.55,692.29 L535.55,679.79 L587.52,697.98 Z" />
-       <path class="dw-slab-edge" d="M506.77,702.36 L540.85,690.44 L540.85,677.94 L506.77,689.86 Z" />
-       <path class="dw-slab-edge" d="M564.05,722.41 L598.13,710.48 L598.13,697.98 L564.05,709.91 Z" />
        <path class="dw-shaft" d="M587.52,697.98 L535.55,679.79 L535.55,587.29 L587.52,605.48 Z" />
        <path class="dw-shaft" d="M587.52,697.98 L592.82,696.13 L592.82,603.63 L587.52,605.48 Z" />
        <path class="dw-shaft" d="M506.77,689.86 L540.85,677.94 L540.85,585.44 L506.77,597.36 Z" />
@@ -162,9 +160,6 @@
        <path class="dw-shaft" d="M564.05,709.91 L558.74,708.06 L558.74,615.56 L564.05,617.41 Z" />
        <path class="dw-door" d="M568.64,708.3 L581.09,703.95 L581.09,651.45 L568.64,655.8 Z" />
        <path class="dw-door" d="M581.09,703.95 L593.53,699.59 L593.53,647.09 L581.09,651.45 Z" />
-       <path class="dw-slab-edge" d="M587.52,605.48 L535.55,587.29 L535.55,574.79 L587.52,592.98 Z" />
-       <path class="dw-slab-edge" d="M506.77,597.36 L540.85,585.44 L540.85,572.94 L506.77,584.86 Z" />
-       <path class="dw-slab-edge" d="M564.05,617.41 L598.13,605.48 L598.13,592.98 L564.05,604.91 Z" />
        <path class="dw-shaft" d="M587.52,592.98 L535.55,574.79 L535.55,482.29 L587.52,500.48 Z" />
        <path class="dw-shaft" d="M587.52,592.98 L592.82,591.13 L592.82,498.63 L587.52,500.48 Z" />
        <path class="dw-shaft" d="M506.77,584.86 L540.85,572.94 L540.85,480.44 L506.77,492.36 Z" />
@@ -173,9 +168,6 @@
        <path class="dw-shaft" d="M564.05,604.91 L558.74,603.06 L558.74,510.56 L564.05,512.41 Z" />
        <path class="dw-door" d="M568.64,603.3 L581.09,598.95 L581.09,546.45 L568.64,550.8 Z" />
        <path class="dw-door" d="M581.09,598.95 L593.53,594.59 L593.53,542.09 L581.09,546.45 Z" />
-       <path class="dw-slab-edge" d="M587.52,500.48 L535.55,482.29 L535.55,469.79 L587.52,487.98 Z" />
-       <path class="dw-slab-edge" d="M506.77,492.36 L540.85,480.44 L540.85,467.94 L506.77,479.86 Z" />
-       <path class="dw-slab-edge" d="M564.05,512.41 L598.13,500.48 L598.13,487.98 L564.05,499.91 Z" />
        <path class="dw-shaft" d="M587.52,487.98 L535.55,469.79 L535.55,377.29 L587.52,395.48 Z" />
        <path class="dw-shaft" d="M587.52,487.98 L592.82,486.13 L592.82,393.63 L587.52,395.48 Z" />
        <path class="dw-shaft" d="M506.77,479.86 L540.85,467.94 L540.85,375.44 L506.77,387.36 Z" />
@@ -184,9 +176,6 @@
        <path class="dw-shaft" d="M564.05,499.91 L558.74,498.06 L558.74,405.56 L564.05,407.41 Z" />
        <path class="dw-door" d="M568.64,498.3 L581.09,493.95 L581.09,441.45 L568.64,445.8 Z" />
        <path class="dw-door" d="M581.09,493.95 L593.53,489.59 L593.53,437.09 L581.09,441.45 Z" />
-       <path class="dw-slab-edge" d="M587.52,395.48 L535.55,377.29 L535.55,364.79 L587.52,382.98 Z" />
-       <path class="dw-slab-edge" d="M506.77,387.36 L540.85,375.44 L540.85,362.94 L506.77,374.86 Z" />
-       <path class="dw-slab-edge" d="M564.05,407.41 L598.13,395.48 L598.13,382.98 L564.05,394.91 Z" />
        <path class="dw-shaft" d="M587.52,382.98 L535.55,364.79 L535.55,259.79 L587.52,277.98 Z" />
        <path class="dw-shaft" d="M587.52,382.98 L592.82,381.13 L592.82,276.13 L587.52,277.98 Z" />
        <path class="dw-shaft" d="M506.77,374.86 L540.85,362.94 L540.85,257.94 L506.77,269.86 Z" />
@@ -197,6 +186,10 @@
        <path class="dw-door" d="M568.64,393.3 L574.3,391.32 L574.3,338.82 L568.64,340.8 Z" />
        <path class="dw-door" d="M587.87,386.57 L593.53,384.59 L593.53,332.09 L587.87,334.07 Z" />
        <path class="dw-shaft" d="M558.74,813.06 L506.77,794.86 L506.77,269.86 L558.74,288.06 Z" />
+       <path class="dw-slab-edge" d="M750,787.5 L334.23,641.97 L334.23,629.47 L750,775 Z" />
+       <path class="dw-slab-edge" d="M750,682.5 L334.23,536.97 L334.23,524.47 L750,670 Z" />
+       <path class="dw-slab-edge" d="M750,577.5 L334.23,431.97 L334.23,419.47 L750,565 Z" />
+       <path class="dw-slab-edge" d="M750,472.5 L334.23,326.97 L334.23,314.47 L750,460 Z" />
        <path class="dw-tag" d="M541.6,773.8 L521.8,766.87 L521.8,752.87 L541.6,759.8 Z" />
        <path class="dw-tag" d="M541.6,759.8 L542.66,759.43 L522.86,752.5 L521.8,752.87 Z" />
        <path class="dw-tag" d="M541.6,773.8 L542.66,773.43 L542.66,759.43 L541.6,759.8 Z" />
@@ -223,33 +216,25 @@
        <path class="dw-slab" d="M506.77,269.86 L540.85,257.94 L535.55,256.08 L501.47,268.01 Z" />
      </g>
      <g id="floor-02-front">
-       <path class="dw-slab" d="M750,775 L918.29,716.1 L727.03,649.15 L558.74,708.06 Z" />
-       <path class="dw-slab-edge" d="M750,775 L918.29,716.1 L918.29,728.6 L750,787.5 Z" />
-       <path class="dw-slab-edge" d="M750,775 L558.74,708.06 L558.74,720.56 L750,787.5 Z" />
+       <path class="dw-slab-fill" d="M750,775 L784.08,763.07 L598.13,697.98 L564.05,709.91 Z" />
        <line class="dw-column" x1="750" y1="775" x2="750" y2="682.5" />
        <line class="dw-column" x1="918.29" y1="716.1" x2="918.29" y2="623.6" />
        <line class="dw-column" x1="334.23" y1="629.47" x2="334.23" y2="536.97" />
      </g>
      <g id="floor-03-front">
-       <path class="dw-slab" d="M750,670 L918.29,611.1 L727.03,544.15 L558.74,603.06 Z" />
-       <path class="dw-slab-edge" d="M750,670 L918.29,611.1 L918.29,623.6 L750,682.5 Z" />
-       <path class="dw-slab-edge" d="M750,670 L558.74,603.06 L558.74,615.56 L750,682.5 Z" />
+       <path class="dw-slab-fill" d="M750,670 L784.08,658.07 L598.13,592.98 L564.05,604.91 Z" />
        <line class="dw-column" x1="750" y1="670" x2="750" y2="577.5" />
        <line class="dw-column" x1="918.29" y1="611.1" x2="918.29" y2="518.6" />
        <line class="dw-column" x1="334.23" y1="524.47" x2="334.23" y2="431.97" />
      </g>
      <g id="floor-04-front">
-       <path class="dw-slab" d="M750,565 L918.29,506.1 L727.03,439.15 L558.74,498.06 Z" />
-       <path class="dw-slab-edge" d="M750,565 L918.29,506.1 L918.29,518.6 L750,577.5 Z" />
-       <path class="dw-slab-edge" d="M750,565 L558.74,498.06 L558.74,510.56 L750,577.5 Z" />
+       <path class="dw-slab-fill" d="M750,565 L784.08,553.07 L598.13,487.98 L564.05,499.91 Z" />
        <line class="dw-column" x1="750" y1="565" x2="750" y2="472.5" />
        <line class="dw-column" x1="918.29" y1="506.1" x2="918.29" y2="413.6" />
        <line class="dw-column" x1="334.23" y1="419.47" x2="334.23" y2="326.97" />
      </g>
      <g id="floor-05-front">
-       <path class="dw-slab" d="M750,460 L918.29,401.1 L727.03,334.15 L558.74,393.06 Z" />
-       <path class="dw-slab-edge" d="M750,460 L918.29,401.1 L918.29,413.6 L750,472.5 Z" />
-       <path class="dw-slab-edge" d="M750,460 L558.74,393.06 L558.74,405.56 L750,472.5 Z" />
+       <path class="dw-slab-fill" d="M750,460 L784.08,448.07 L598.13,382.98 L564.05,394.91 Z" />
        <line class="dw-column" x1="750" y1="460" x2="750" y2="355" />
        <line class="dw-column" x1="918.29" y1="401.1" x2="918.29" y2="296.1" />
        <line class="dw-column" x1="334.23" y1="314.47" x2="334.23" y2="209.47" />
@@ -262,28 +247,58 @@
        <path class="dw-open" d="M750,355 L918.29,296.1 L502.52,150.57 L334.23,209.47 Z" />
      </g>
      <g id="tags">
-       <path class="dw-tag" d="M703.05,981.07 L654.12,963.94 L654.12,947.94 L703.05,965.07 Z" />
-       <text class="dw-tag-text" transform="matrix(0.7071 0.2475 0 1 678.58 964.5)" text-anchor="middle" dominant-baseline="central">Puelo Games</text>
-       <path class="dw-tag" d="M574.5,936.07 L518.21,916.37 L518.21,900.37 L574.5,920.07 Z" />
-       <text class="dw-tag-text" transform="matrix(0.7071 0.2475 0 1 546.36 918.22)" text-anchor="middle" dominant-baseline="central">BA Technology</text>
-       <path class="dw-tag" d="M462.92,897.02 L362.51,861.87 L362.51,845.87 L462.92,881.02 Z" />
-       <text class="dw-tag-text" transform="matrix(0.7071 0.2475 0 1 412.71 871.44)" text-anchor="middle" dominant-baseline="central">Freelancer Game Developer</text>
-       <path class="dw-tag" d="M689.61,871.36 L622.3,847.8 L622.3,831.8 L689.61,855.36 Z" />
-       <text class="dw-tag-text" transform="matrix(0.7071 0.2475 0 1 655.96 851.58)" text-anchor="middle" dominant-baseline="central">Health Platforms</text>
-       <path class="dw-tag" d="M436.61,782.81 L398.71,769.54 L398.71,753.54 L436.61,766.81 Z" />
-       <text class="dw-tag-text" transform="matrix(0.7071 0.2475 0 1 417.66 768.18)" text-anchor="middle" dominant-baseline="central">Nextcode</text>
-       <path class="dw-tag" d="M674.06,760.92 L625.13,743.79 L625.13,727.79 L674.06,744.92 Z" />
-       <text class="dw-tag-text" transform="matrix(0.7071 0.2475 0 1 649.59 744.36)" text-anchor="middle" dominant-baseline="central">Interactica</text>
-       <path class="dw-tag" d="M442.13,679.74 L393.2,662.61 L393.2,646.61 L442.13,663.74 Z" />
-       <text class="dw-tag-text" transform="matrix(0.7071 0.2475 0 1 417.66 663.18)" text-anchor="middle" dominant-baseline="central">Interactica</text>
-       <path class="dw-tag" d="M674.06,655.92 L625.13,638.79 L625.13,622.79 L674.06,639.92 Z" />
-       <text class="dw-tag-text" transform="matrix(0.7071 0.2475 0 1 649.59 639.36)" text-anchor="middle" dominant-baseline="central">Interactica</text>
-       <path class="dw-tag" d="M434.77,572.16 L400.55,560.19 L400.55,544.19 L434.77,556.16 Z" />
-       <text class="dw-tag-text" transform="matrix(0.7071 0.2475 0 1 417.66 558.17)" text-anchor="middle" dominant-baseline="central">Indelve</text>
-       <path class="dw-tag" d="M663.03,547.06 L636.16,537.65 L636.16,521.65 L663.03,531.06 Z" />
-       <text class="dw-tag-text" transform="matrix(0.7071 0.2475 0 1 649.59 534.36)" text-anchor="middle" dominant-baseline="central">Pacer</text>
-       <path class="dw-tag" d="M431.1,465.88 L404.23,456.47 L404.23,440.47 L431.1,449.88 Z" />
-       <text class="dw-tag-text" transform="matrix(0.7071 0.2475 0 1 417.66 453.17)" text-anchor="middle" dominant-baseline="central">Pacer</text>
+       <path class="dw-tag" d="M715.42,986.14 L666.49,969.01 L666.49,953.01 L715.42,970.14 Z" />
+       <path class="dw-tag" d="M715.42,970.14 L716.48,969.77 L667.55,952.64 L666.49,953.01 Z" />
+       <path class="dw-tag" d="M715.42,986.14 L716.48,985.77 L716.48,969.77 L715.42,970.14 Z" />
+       <text class="dw-tag-text" transform="matrix(0.7071 0.2475 0 1 690.96 969.58)" text-anchor="middle" dominant-baseline="central">Puelo Games</text>
+       <path class="dw-tag" d="M577.68,937.93 L521.39,918.23 L521.39,902.23 L577.68,921.93 Z" />
+       <path class="dw-tag" d="M577.68,921.93 L578.74,921.56 L522.46,901.85 L521.39,902.23 Z" />
+       <path class="dw-tag" d="M577.68,937.93 L578.74,937.56 L578.74,921.56 L577.68,921.93 Z" />
+       <text class="dw-tag-text" transform="matrix(0.7071 0.2475 0 1 549.54 920.08)" text-anchor="middle" dominant-baseline="central">BA Technology</text>
+       <path class="dw-tag" d="M461.86,897.39 L361.45,862.24 L361.45,846.24 L461.86,881.39 Z" />
+       <path class="dw-tag" d="M461.86,881.39 L462.92,881.02 L362.51,845.87 L361.45,846.24 Z" />
+       <path class="dw-tag" d="M461.86,897.39 L462.92,897.02 L462.92,881.02 L461.86,881.39 Z" />
+       <text class="dw-tag-text" transform="matrix(0.7071 0.2475 0 1 411.65 871.81)" text-anchor="middle" dominant-baseline="central">Freelancer Game Developer</text>
+       <path class="dw-tag" d="M687.14,871.24 L619.82,847.68 L619.82,831.68 L687.14,855.24 Z" />
+       <path class="dw-tag" d="M687.14,855.24 L688.2,854.87 L620.88,831.31 L619.82,831.68 Z" />
+       <path class="dw-tag" d="M687.14,871.24 L688.2,870.87 L688.2,854.87 L687.14,855.24 Z" />
+       <text class="dw-tag-text" transform="matrix(0.7071 0.2475 0 1 653.48 851.46)" text-anchor="middle" dominant-baseline="central">Health Platforms</text>
+       <path class="dw-tag" d="M435.55,783.18 L397.65,769.91 L397.65,753.91 L435.55,767.18 Z" />
+       <path class="dw-tag" d="M435.55,767.18 L436.61,766.81 L398.71,753.54 L397.65,753.91 Z" />
+       <path class="dw-tag" d="M435.55,783.18 L436.61,782.81 L436.61,766.81 L435.55,767.18 Z" />
+       <text class="dw-tag-text" transform="matrix(0.7071 0.2475 0 1 416.6 768.55)" text-anchor="middle" dominant-baseline="central">Nextcode</text>
+       <path class="dw-tag" d="M677.95,763.02 L629.02,745.9 L629.02,729.9 L677.95,747.02 Z" />
+       <path class="dw-tag" d="M677.95,747.02 L679.01,746.65 L630.08,729.52 L629.02,729.9 Z" />
+       <path class="dw-tag" d="M677.95,763.02 L679.01,762.65 L679.01,746.65 L677.95,747.02 Z" />
+       <text class="dw-tag-text" transform="matrix(0.7071 0.2475 0 1 653.48 746.46)" text-anchor="middle" dominant-baseline="central">Interactica</text>
+       <path class="dw-tag" d="M441.07,680.11 L392.14,662.98 L392.14,646.98 L441.07,664.11 Z" />
+       <path class="dw-tag" d="M441.07,664.11 L442.13,663.74 L393.2,646.61 L392.14,646.98 Z" />
+       <path class="dw-tag" d="M441.07,680.11 L442.13,679.74 L442.13,663.74 L441.07,664.11 Z" />
+       <text class="dw-tag-text" transform="matrix(0.7071 0.2475 0 1 416.6 663.55)" text-anchor="middle" dominant-baseline="central">Interactica</text>
+       <path class="dw-tag" d="M677.95,658.02 L629.02,640.9 L629.02,624.9 L677.95,642.02 Z" />
+       <path class="dw-tag" d="M677.95,642.02 L679.01,641.65 L630.08,624.52 L629.02,624.9 Z" />
+       <path class="dw-tag" d="M677.95,658.02 L679.01,657.65 L679.01,641.65 L677.95,642.02 Z" />
+       <text class="dw-tag-text" transform="matrix(0.7071 0.2475 0 1 653.48 641.46)" text-anchor="middle" dominant-baseline="central">Interactica</text>
+       <path class="dw-tag" d="M433.71,572.54 L399.49,560.56 L399.49,544.56 L433.71,556.54 Z" />
+       <path class="dw-tag" d="M433.71,556.54 L434.77,556.16 L400.55,544.19 L399.49,544.56 Z" />
+       <path class="dw-tag" d="M433.71,572.54 L434.77,572.16 L434.77,556.16 L433.71,556.54 Z" />
+       <text class="dw-tag-text" transform="matrix(0.7071 0.2475 0 1 416.6 558.55)" text-anchor="middle" dominant-baseline="central">Indelve</text>
+       <path class="dw-tag" d="M666.92,549.16 L640.05,539.76 L640.05,523.76 L666.92,533.16 Z" />
+       <path class="dw-tag" d="M666.92,533.16 L667.98,532.79 L641.11,523.39 L640.05,523.76 Z" />
+       <path class="dw-tag" d="M666.92,549.16 L667.98,548.79 L667.98,532.79 L666.92,533.16 Z" />
+       <text class="dw-tag-text" transform="matrix(0.7071 0.2475 0 1 653.48 536.46)" text-anchor="middle" dominant-baseline="central">Pacer</text>
+       <path class="dw-tag" d="M430.04,466.25 L403.17,456.84 L403.17,440.84 L430.04,450.25 Z" />
+       <path class="dw-tag" d="M430.04,450.25 L431.1,449.88 L404.23,440.47 L403.17,440.84 Z" />
+       <path class="dw-tag" d="M430.04,466.25 L431.1,465.88 L431.1,449.88 L430.04,450.25 Z" />
+       <text class="dw-tag-text" transform="matrix(0.7071 0.2475 0 1 416.6 453.55)" text-anchor="middle" dominant-baseline="central">Pacer</text>
+       <path class="dw-tag" d="M663.24,442.87 L643.72,436.04 L643.72,420.04 L663.24,426.87 Z" />
+       <path class="dw-tag" d="M663.24,426.87 L664.3,426.5 L644.78,419.67 L643.72,420.04 Z" />
+       <path class="dw-tag" d="M663.24,442.87 L664.3,442.5 L664.3,426.5 L663.24,426.87 Z" />
+       <text class="dw-tag-text" transform="matrix(0.7071 0.2475 0 1 653.48 431.46)" text-anchor="middle" dominant-baseline="central">WIP</text>
+       <path class="dw-tag" d="M426.36,359.96 L406.84,353.13 L406.84,337.13 L426.36,343.96 Z" />
+       <path class="dw-tag" d="M426.36,343.96 L427.42,343.59 L407.91,336.76 L406.84,337.13 Z" />
+       <path class="dw-tag" d="M426.36,359.96 L427.42,359.59 L427.42,343.59 L426.36,343.96 Z" />
+       <text class="dw-tag-text" transform="matrix(0.7071 0.2475 0 1 416.6 348.55)" text-anchor="middle" dominant-baseline="central">WIP</text>
      </g>
    </g>
  <g id="entrance">

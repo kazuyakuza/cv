@@ -18,10 +18,10 @@ const indent = (text, spaces) => text.replace(/^/gm, ' '.repeat(spaces))
 // entrance, then the exterior path and sign in the foreground.
 const rootOrder = ['terrain', 'building', 'entrance', 'path', 'career-sign']
 
-// Vertical stacking order inside <g id="building"> (Stage 3 revision): the
-// staircase sits under floor-01 (the slab occludes it); each shaft-crossing
-// floor is split into a rear shell (behind the shaft) and a front plane
-// (-front, rendered as a layer over the shaft). The experience tags mount on
+// Vertical stacking order inside <g id="building"> (Stage 3.5 revision): the
+// staircase sits under floor-01 (the slab occludes it); every shaft-crossing
+// floor renders as one complete plane BELOW the elevator, while its story
+// columns (-front) render as a layer over it. The experience tags mount on
 // the back walls, so they render after all floor geometry (Stage 3.5 §20).
 const buildingParts = [
   'floor-ground',
@@ -66,6 +66,7 @@ const svg = `<!--
     .dw-sign { fill: #ffffff; stroke: #6b6b6b; stroke-width: 1; }
     .dw-wall { fill: #f4f4f2; stroke: #6b6b6b; stroke-width: 1; }
     .dw-slab { fill: #e9e8e6; stroke: #6b6b6b; stroke-width: 1; }
+    .dw-slab-fill { fill: #e9e8e6; stroke: none; }
     .dw-slab-edge { fill: #d9d8d5; stroke: #6b6b6b; stroke-width: 1; }
     .dw-partition { fill: #fbfbfa; stroke: #8a8a88; stroke-width: 0.75; }
     .dw-column { fill: none; stroke: #5a5a58; stroke-width: 1.5; }

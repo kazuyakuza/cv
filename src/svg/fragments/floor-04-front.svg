@@ -1,7 +1,5 @@
 <g id="floor-04-front">
-  <path class="dw-slab" d="M750,565 L918.29,506.1 L727.03,439.15 L558.74,498.06 Z" />
-  <path class="dw-slab-edge" d="M750,565 L918.29,506.1 L918.29,518.6 L750,577.5 Z" />
-  <path class="dw-slab-edge" d="M750,565 L558.74,498.06 L558.74,510.56 L750,577.5 Z" />
+  <path class="dw-slab-fill" d="M750,565 L784.08,553.07 L598.13,487.98 L564.05,499.91 Z" />
   <line class="dw-column" x1="750" y1="565" x2="750" y2="472.5" />
   <line class="dw-column" x1="918.29" y1="506.1" x2="918.29" y2="413.6" />
   <line class="dw-column" x1="334.23" y1="419.47" x2="334.23" y2="326.97" />

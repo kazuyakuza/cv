@@ -37,13 +37,13 @@ const STAIR_V0 = LD - WALL_T - STAIR_WIDTH // flight against the C-D rear wall
 const STAIR_U1 = STAIR_U0 + STAIR_RUN // top of flight, arrives at floor-1 slab edge
 const STAIR_V1 = STAIR_V0 + STAIR_WIDTH
 const STAIR_STEPS = 12
-// The floor-01 stair opening extends all the way to the C-D wall, so the
-// rear wall reads continuous there: only the floor separation line (the
-// slab's rear edge) crosses it, with wall above and below (user revision).
-const STAIR_HOLE_U1 = STAIR_U0 + 10 * (STAIR_RUN / STAIR_STEPS) - 1.5
+// The floor-01 stair opening covers the flight's full footprint and reaches
+// the C-D wall, so the whole final flight stays visible through it and the
+// top step lands flush with the slab (a clear union with the landing).
+const STAIR_HOLE_U1 = STAIR_U1
 const STAIR_HOLE_V1 = STAIR_V1
 
-const PARTITION_G = [0.35 * LD, 0.68 * LD] // ground floor partitions
+const PARTITION_G = [0.28 * LD, 0.68 * LD] // ground floor partitions (Puelo Games reduced 20%)
 const STUB_H = 50 // fifth-floor stub wall height
 const STUB_LEN = 0.4 // stub wall length fraction along back walls
 const D_CORNER_ARM = STUB_LEN * LW // fifth-floor D-corner wall arm length
@@ -96,9 +96,9 @@ const stairHoleAt = (h) =>
   ])
 
 // Slab construction for the slab whose TOP sits at height hTop. Emits the top
-// face (with optional stair hole), the two open-side edge bands and the
-// visible cut-face bands of the stair opening (floor-01 only). Floors crossed
-// by the shaft use slabRear / slabFront instead (split for layering).
+// face (with optional stair hole) and the two open-side edge bands. Every
+// floor uses one complete slab; shaft-crossing floors render whole below the
+// elevator (user revision).
 function slab(hTop, { stairOpening = false } = {}) {
   const hBot = hTop - SLAB_T
   const holes = []
@@ -121,47 +121,25 @@ function slab(hTop, { stairOpening = false } = {}) {
   return out
 }
 
-// Split-slab pieces for floors crossed by the shaft (Stage 3 revision): the
-// floor plane is emitted in two groups so the rear sections render in layers
-// BELOW the shaft while the front plane renders OVER it.
-// Rear group: mid strip beside the shaft (section behind it, rendered below
-// the shaft) + rear piece behind the shaft opening + its left band.
-function slabRear(hTop) {
-  const hBot = hTop - SLAB_T
+// Floor triangle at the shaft's front-right (user revision): the slab strip
+// between the building's left wall (u = 0), the elevator's doors side (W2
+// outer face, v = SHAFT_V0 - WALL_T) and the shaft's width line (u =
+// SHAFT_U + WALL_T). Re-layered in floor-0X-front OVER the elevator, so the
+// W2 level band's lower sliver never paints over the floor; the shaft walls
+// and doors sit exactly on the triangle's upper edge and stay fully visible.
+// Fill only: the slab below is continuous, so stroked edges would read as
+// spurious seams (its real edges coincide with the wall base and the open-
+// side bands, which carry their own strokes).
+function slabTriangle(hTop) {
   return [
     el(
-      'dw-slab',
+      'dw-slab-fill',
       path([
-        p(SHAFT_U, SHAFT_V0, hTop),
-        p(LW, SHAFT_V0, hTop),
-        p(LW, SHAFT_V1, hTop),
-        p(SHAFT_U, SHAFT_V1, hTop),
+        p(0, 0, hTop),
+        p(SHAFT_U + WALL_T, 0, hTop),
+        p(SHAFT_U + WALL_T, SHAFT_V0 - WALL_T, hTop),
+        p(0, SHAFT_V0 - WALL_T, hTop),
       ]),
-    ),
-    el(
-      'dw-slab',
-      path([p(0, SHAFT_V1, hTop), p(LW, SHAFT_V1, hTop), p(LW, LD, hTop), p(0, LD, hTop)]),
-    ),
-    el(
-      'dw-slab-edge',
-      path([p(0, SHAFT_V1, hTop), p(0, LD, hTop), p(0, LD, hBot), p(0, SHAFT_V1, hBot)]),
-    ),
-  ]
-}
-
-// Front plane: front piece in front of the shaft + front band + left band
-// segment in front of the opening.
-function slabFront(hTop) {
-  const hBot = hTop - SLAB_T
-  return [
-    el(
-      'dw-slab',
-      path([p(0, 0, hTop), p(LW, 0, hTop), p(LW, SHAFT_V0, hTop), p(0, SHAFT_V0, hTop)]),
-    ),
-    el('dw-slab-edge', path([p(0, 0, hTop), p(LW, 0, hTop), p(LW, 0, hBot), p(0, 0, hBot)])),
-    el(
-      'dw-slab-edge',
-      path([p(0, 0, hTop), p(0, SHAFT_V0, hTop), p(0, SHAFT_V0, hBot), p(0, 0, hBot)]),
     ),
   ]
 }
@@ -211,12 +189,28 @@ function partition(fv, hBase, { opening = false } = {}) {
         ]),
       ),
     )
-    // Passage lining (user revision): soffit and far jamb give the opening
-    // visible depth through the wall — identical to the floor-1 return-wall
-    // passages; without the soffit the jamb's top-back corner pokes above
-    // the head line and the opening's top-right corner reads broken.
-    out.push(el('dw-partition', hFace(PART_OPEN_U0, PART_OPEN_U1, v0, v1, hBase + DOOR_H)))
-    out.push(el('dw-partition', uFace(PART_OPEN_U1, v0, v1, hBase, hBase + DOOR_H)))
+    // Far jamb over the face (user revision): the reveal is cut by the head
+    // line on screen — its back-top corner drops by the screen-slope
+    // compensation (moving WALL_T back along +v raises the projection by
+    // 0.2475 · WALL_T, and the head line falls by the same amount over the
+    // same screen run), so the reveal's top edge lies exactly on the head
+    // line and nothing pokes above it. The front edge comes from the face
+    // notch; the head line is re-drawn over the jamb's fill. No soffit.
+    const jambDrop = 2 * -AXIS_D[1] * WALL_T
+    out.push(
+      el(
+        'dw-partition',
+        path([
+          p(PART_OPEN_U1, v0, hBase),
+          p(PART_OPEN_U1, v1, hBase),
+          p(PART_OPEN_U1, v1, hBase + DOOR_H - jambDrop),
+          p(PART_OPEN_U1, v0, hBase + DOOR_H),
+        ]),
+      ),
+    )
+    const [hx1, hy1] = p(PART_OPEN_U0, v0, hBase + DOOR_H).split(',')
+    const [hx2, hy2] = p(PART_OPEN_U1, v0, hBase + DOOR_H).split(',')
+    out.push(`<line class="dw-partition" x1="${hx1}" y1="${hy1}" x2="${hx2}" y2="${hy2}" />`)
   } else {
     out.push(el('dw-partition', vFace(v0, 0, LW, hBase, hTop)))
   }
@@ -328,17 +322,6 @@ function yearPlaque(year, hBase) {
   ]
 }
 
-// Floor band crossing the shaft walls at the slab level whose top is hTop:
-// the slabs read as passing over the shaft at every floor.
-function shaftLevelBands(hTop) {
-  const hBot = hTop - SLAB_T
-  return [
-    el('dw-slab-edge', uFace(SHAFT_U, SHAFT_V0, SHAFT_V1, hBot, hTop)), // across W1
-    el('dw-slab-edge', vFace(SHAFT_V1, 0, SHAFT_U + WALL_T, hBot, hTop)), // across W3
-    el('dw-slab-edge', vFace(SHAFT_V0 - WALL_T, 0, SHAFT_U + WALL_T, hBot, hTop)), // across W2
-  ]
-}
-
 const group = (id, lines) => `<g id="${id}">\n${lines.map((l) => `  ${l}`).join('\n')}\n</g>`
 
 // --- floor-ground: slab-0, story-0 walls, two partitions, columns -----------
@@ -358,35 +341,38 @@ const floor01 = group('floor-01', [
   ...columns(FH, FH + STORY_H),
 ])
 
-// --- floors 02-04: rear shell (before the shaft) + front plane (over it) ----
-const floor02 = group('floor-02', [...slabRear(2 * FH), ...backWalls(2 * FH)])
+// --- floors 02-04: full slab + story walls below the elevator, story
+// columns over it (user revision: each shaft-crossing floor renders as one
+// complete plane below the shaft, like floor-01 — no slab part may paint
+// over the elevator) ----------------------------------------------
+const floor02 = group('floor-02', [...slab(2 * FH), ...backWalls(2 * FH)])
 const floor02Front = group('floor-02-front', [
-  ...slabFront(2 * FH),
+  ...slabTriangle(2 * FH),
   ...columns(2 * FH, 2 * FH + STORY_H),
 ])
 
 const floor03 = group('floor-03', [
-  ...slabRear(3 * FH),
+  ...slab(3 * FH),
   // Section separation continuing the shaft's left wall (W1) rearward to the
   // C-D wall: the rear-left strip beyond it becomes the distinct section.
   el('dw-shaft', uFace(SHAFT_U, SHAFT_V1 + WALL_T, LD - WALL_T, 3 * FH, 3 * FH + STORY_H)),
   ...backWalls(3 * FH),
 ])
 const floor03Front = group('floor-03-front', [
-  ...slabFront(3 * FH),
+  ...slabTriangle(3 * FH),
   ...columns(3 * FH, 3 * FH + STORY_H),
 ])
 
-const floor04 = group('floor-04', [...slabRear(4 * FH), ...backWalls(4 * FH)])
+const floor04 = group('floor-04', [...slab(4 * FH), ...backWalls(4 * FH)])
 const floor04Front = group('floor-04-front', [
-  ...slabFront(4 * FH),
+  ...slabTriangle(4 * FH),
   ...columns(4 * FH, 4 * FH + STORY_H),
 ])
 
-// --- floor-05: rear piece + D column + D-corner wall section before the
-// shaft; front plane, stub walls and exposed A/B/C columns over it ----------
+// --- floor-05: full slab + D column + D-corner wall section below the
+// shaft; stub walls, exposed A/B/C columns and dashed perimeter over it ----
 const floor05 = group('floor-05', [
-  ...slabRear(5 * FH),
+  ...slab(5 * FH),
   ...columns(5 * FH, TOP_H, ['D']),
   // D-corner wall section (user revision): part of the building's rear and
   // right walls meeting at the D corner, over the full fifth-story height.
@@ -400,7 +386,7 @@ const floor05 = group('floor-05', [
   el('dw-slab', hFace(LW - WALL_T, LW, LD - D_CORNER_ARM, LD - WALL_T, TOP_H)),
 ])
 const floor05Front = group('floor-05-front', [
-  ...slabFront(5 * FH),
+  ...slabTriangle(5 * FH),
   ...columns(5 * FH, TOP_H, ['A', 'B', 'C']),
   // Stub walls (incomplete masonry) on the two back walls with visible tops.
   el('dw-wall', uFace(LW - WALL_T, 0, STUB_LEN * LD - WALL_T, 5 * FH, 5 * FH + STUB_H)),
@@ -454,13 +440,21 @@ function elevator() {
   for (let story = 1; story <= 5; story++) {
     const hBase = story * FH
     out.push(...shaftStory(hBase, story < 5 ? hBase + STORY_H : TOP_H, { openDoors: story === 5 }))
-    if (story < 5) out.push(...shaftLevelBands(hBase + FH))
   }
   // Enclosure, drawn after the story walls so it occludes the interior: the
   // building's invisible left wall closing the shaft's open A-C side from
   // floor 1 to the top — ONE face flush with the left-wall plane (u = 0),
   // no per-story cuts (user revision).
   out.push(el('dw-shaft', uFace(0, SHAFT_V0, SHAFT_V1, FH, TOP_H)))
+  // Floor base lines across the shaft (user revision): from floor 2 up the
+  // enclosure would hide each floor's left cut face, breaking the base line
+  // that floor-01 shows. Re-layer the FULL cut face over the enclosure (and
+  // the W2 / W3 cut ends) so every level's base line reads as one continuous
+  // band descending past the shaft's corner, exactly like floor-01. No level
+  // bands cross the shaft walls — floor-01 has none at its base either.
+  for (let n = 2; n <= 5; n++) {
+    out.push(el('dw-slab-edge', uFace(0, 0, LD, n * FH - SLAB_T, n * FH)))
+  }
   // Year signs on the enclosure wall, one per story.
   STORY_YEARS.forEach((year, i) => out.push(...yearPlaque(year, (i + 1) * FH)))
   // Visible top bands close the shaft at the fifth-floor story top.
@@ -523,9 +517,11 @@ function careerSign() {
 // User revision: vertical signs exactly like the elevator year plaques, but
 // mounted at floor level — flush with the building's invisible left wall
 // (u = 0, like part of it), each over its own section, on the low band of its
-// story (base on the floor slab's bottom line). Floors whose sign sits only
-// at the front (whole-floor sections) carry a duplicate on the floor's left
-// side. Freelancer fits on a single line.
+// story (base on the floor slab's bottom line). Front-row tags share
+// c = 135 and left-side tags share c = 470, so each row aligns vertically;
+// whole-floor sections carry a duplicate on the floor's left side. The
+// unfinished fifth floor carries WIP markers instead of a company name.
+// Freelancer fits on a single line.
 const TAG_H0 = -SLAB_T // floor-level band: base on the floor slab's bottom line
 const TAG_H1 = -SLAB_T + 16
 const TAG_MATRIX = '0.7071 0.2475 0 1' // reads toward the front corner (-v)
@@ -533,17 +529,19 @@ const TAG_MATRIX = '0.7071 0.2475 0 1' // reads toward the front corner (-v)
 const TAG_CHAR_W = 5.2
 const TAG_PADDING = 12
 const FLOOR_TAGS = [
-  { text: 'Puelo Games', floor: 0, c: 101 },
-  { text: 'BA Technology', floor: 0, c: 288 },
+  { text: 'Puelo Games', floor: 0, c: 82 },
+  { text: 'BA Technology', floor: 0, c: 282 },
   { text: 'Freelancer Game Developer', floor: 0, c: 477 },
-  { text: 'Health Platforms', floor: 1, c: 133 },
+  { text: 'Health Platforms', floor: 1, c: 135 },
   { text: 'Nextcode', floor: 1, c: 470 },
-  { text: 'Interactica', floor: 2, c: 142 },
+  { text: 'Interactica', floor: 2, c: 135 },
   { text: 'Interactica', floor: 2, c: 470 },
-  { text: 'Interactica', floor: 3, c: 142 },
+  { text: 'Interactica', floor: 3, c: 135 },
   { text: 'Indelve', floor: 3, c: 470 },
-  { text: 'Pacer', floor: 4, c: 142 },
+  { text: 'Pacer', floor: 4, c: 135 },
   { text: 'Pacer', floor: 4, c: 470 },
+  { text: 'WIP', floor: 5, c: 135 },
+  { text: 'WIP', floor: 5, c: 470 },
 ]
 
 function experienceTags() {
@@ -552,9 +550,13 @@ function experienceTags() {
     const h0 = tag.floor * FH + TAG_H0
     const h1 = tag.floor * FH + TAG_H1
     const half = (tag.text.length * TAG_CHAR_W + TAG_PADDING) / 2
-    // Flush with the invisible left wall: single face at u = 0, no standoff.
-    out.push(el('dw-tag', uFace(0, tag.c - half, tag.c + half, h0, h1)))
-    const [x, y] = p(0, tag.c, (h0 + h1) / 2).split(',')
+    // Thin depth like the year plaques: face proud of the wall (u = -1.5),
+    // top cap and front-end side closing the 1.5 gap to the wall plane.
+    const u = -1.5
+    out.push(el('dw-tag', uFace(u, tag.c - half, tag.c + half, h0, h1)))
+    out.push(el('dw-tag', hFace(u, 0, tag.c - half, tag.c + half, h1)))
+    out.push(el('dw-tag', vFace(tag.c - half, u, 0, h0, h1)))
+    const [x, y] = p(u, tag.c, (h0 + h1) / 2).split(',')
     out.push(
       `<text class="dw-tag-text" transform="matrix(${TAG_MATRIX} ${x} ${y})" text-anchor="middle" dominant-baseline="central">${tag.text}</text>`,
     )
