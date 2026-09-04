@@ -37,15 +37,16 @@ const STAIR_V0 = LD - WALL_T - STAIR_WIDTH // flight against the C-D rear wall
 const STAIR_U1 = STAIR_U0 + STAIR_RUN // top of flight, arrives at floor-1 slab edge
 const STAIR_V1 = STAIR_V0 + STAIR_WIDTH
 const STAIR_STEPS = 12
-// The floor-01 slab opening stays clear of the rear wall and of the slab
-// underside: a slab strip remains along the C-D wall (only the floor
-// separation line shows there) and the top steps stay hidden (user revision).
+// The floor-01 stair opening extends all the way to the C-D wall, so the
+// rear wall reads continuous there: only the floor separation line (the
+// slab's rear edge) crosses it, with wall above and below (user revision).
 const STAIR_HOLE_U1 = STAIR_U0 + 10 * (STAIR_RUN / STAIR_STEPS) - 1.5
-const STAIR_HOLE_V1 = LD - 2 * WALL_T
+const STAIR_HOLE_V1 = STAIR_V1
 
 const PARTITION_G = [0.35 * LD, 0.68 * LD] // ground floor partitions
 const STUB_H = 50 // fifth-floor stub wall height
 const STUB_LEN = 0.4 // stub wall length fraction along back walls
+const D_CORNER_ARM = STUB_LEN * LW // fifth-floor D-corner wall arm length
 const TOP_H = 6 * FH // intended top of fifth floor story
 
 const FRAGMENTS_DIR = join(dirname(fileURLToPath(import.meta.url)), '..', 'src', 'svg', 'fragments')
@@ -113,9 +114,9 @@ function slab(hTop, { stairOpening = false } = {}) {
   // reads as one coherent plane around the stair opening.
   out.push(el('dw-slab-edge', path([p(0, 0, hTop), p(0, LD, hTop), p(0, LD, hBot), p(0, 0, hBot)])))
   if (stairOpening) {
-    // No cut faces around the stair opening (user revision): the void reads
-    // plainly against the rear wall; the slab strip between the opening and
-    // the C-D wall keeps the floor separation line continuous.
+    // No cut faces around the stair opening (user revision): the opening
+    // reaches the C-D wall, so the rear wall shows through it as one
+    // continuous surface crossed only by the floor separation line.
   }
   return out
 }
@@ -165,12 +166,14 @@ function slabFront(hTop) {
   ]
 }
 
-// Back wall story between slab tops hBase and hBase + STORY_H. The wall top
-// is covered by the slab above, so no top band is emitted for completed
-// floors. B-D wall keeps u in [LW-WALL_T, LW], v in [0, LD-WALL_T]; C-D wall
-// covers the remaining corner strip.
+// Back wall story between slab tops hBase and hBase + FH. The wall extends
+// up to the slab-above's TOP line so no gap shows through the stair opening
+// at the slab band (user revision: extend the wall, no patch geometry). The
+// wall top is covered by the slab above, so no top band is emitted for
+// completed floors. B-D wall keeps u in [LW-WALL_T, LW], v in [0, LD-WALL_T];
+// C-D wall covers the remaining corner strip.
 function backWalls(hBase) {
-  const hTop = hBase + STORY_H
+  const hTop = hBase + FH
   const out = []
   // B-D wall (long back-right, plane u = LW): inner face + cut end at v = 0.
   out.push(el('dw-wall', uFace(LW - WALL_T, 0, LD - WALL_T, hBase, hTop)))
@@ -209,8 +212,9 @@ function partition(fv, hBase, { opening = false } = {}) {
       ),
     )
     // Passage lining (user revision): soffit and far jamb give the opening
-    // visible depth through the wall. Partition-colored so the lining reads
-    // as passage surfaces, not as a lintel band.
+    // visible depth through the wall — identical to the floor-1 return-wall
+    // passages; without the soffit the jamb's top-back corner pokes above
+    // the head line and the opening's top-right corner reads broken.
     out.push(el('dw-partition', hFace(PART_OPEN_U0, PART_OPEN_U1, v0, v1, hBase + DOOR_H)))
     out.push(el('dw-partition', uFace(PART_OPEN_U1, v0, v1, hBase, hBase + DOOR_H)))
   } else {
@@ -350,10 +354,6 @@ const floorGround = group('floor-ground', [
 const floor01 = group('floor-01', [
   ...slab(FH, { stairOpening: true }),
   ...backWalls(FH),
-  // Wall band behind the stair opening: the C-D wall is continuous, but at
-  // the slab band (FH - SLAB_T .. FH) it is exposed through the opening —
-  // emit that strip so no hole shows through (user revision).
-  el('dw-wall', vFace(LD - WALL_T, STAIR_U0, STAIR_HOLE_U1, FH - SLAB_T, FH)),
   ...shaftReturnWalls(FH),
   ...columns(FH, FH + STORY_H),
 ])
@@ -383,9 +383,22 @@ const floor04Front = group('floor-04-front', [
   ...columns(4 * FH, 4 * FH + STORY_H),
 ])
 
-// --- floor-05: rear piece + D column before the shaft; front plane, stub
-// walls and exposed A/B/C columns over it ------------------------------
-const floor05 = group('floor-05', [...slabRear(5 * FH), ...columns(5 * FH, TOP_H, ['D'])])
+// --- floor-05: rear piece + D column + D-corner wall section before the
+// shaft; front plane, stub walls and exposed A/B/C columns over it ----------
+const floor05 = group('floor-05', [
+  ...slabRear(5 * FH),
+  ...columns(5 * FH, TOP_H, ['D']),
+  // D-corner wall section (user revision): part of the building's rear and
+  // right walls meeting at the D corner, over the full fifth-story height.
+  // Rear wall arm from the C-corner stub's length toward the corner.
+  el('dw-wall', vFace(LD - WALL_T, LW - D_CORNER_ARM, LW, 5 * FH, TOP_H)),
+  el('dw-slab-edge', uFace(LW - D_CORNER_ARM, LD - WALL_T, LD, 5 * FH, TOP_H)),
+  el('dw-slab', hFace(LW - D_CORNER_ARM, LW, LD - WALL_T, LD, TOP_H)),
+  // Right wall arm from the corner toward the B-corner stub.
+  el('dw-wall', uFace(LW - WALL_T, LD - D_CORNER_ARM, LD - WALL_T, 5 * FH, TOP_H)),
+  el('dw-slab-edge', vFace(LD - D_CORNER_ARM, LW - WALL_T, LW, 5 * FH, TOP_H)),
+  el('dw-slab', hFace(LW - WALL_T, LW, LD - D_CORNER_ARM, LD - WALL_T, TOP_H)),
+])
 const floor05Front = group('floor-05-front', [
   ...slabFront(5 * FH),
   ...columns(5 * FH, TOP_H, ['A', 'B', 'C']),
@@ -510,7 +523,9 @@ function careerSign() {
 // User revision: vertical signs exactly like the elevator year plaques, but
 // mounted at floor level — flush with the building's invisible left wall
 // (u = 0, like part of it), each over its own section, on the low band of its
-// story (h +8…+24, just above its floor). Freelancer fits on a single line.
+// story (base on the floor slab's bottom line). Floors whose sign sits only
+// at the front (whole-floor sections) carry a duplicate on the floor's left
+// side. Freelancer fits on a single line.
 const TAG_H0 = -SLAB_T // floor-level band: base on the floor slab's bottom line
 const TAG_H1 = -SLAB_T + 16
 const TAG_MATRIX = '0.7071 0.2475 0 1' // reads toward the front corner (-v)
@@ -522,11 +537,13 @@ const FLOOR_TAGS = [
   { text: 'BA Technology', floor: 0, c: 288 },
   { text: 'Freelancer Game Developer', floor: 0, c: 477 },
   { text: 'Health Platforms', floor: 1, c: 133 },
-  { text: 'Nextcode', floor: 1, c: 417 },
+  { text: 'Nextcode', floor: 1, c: 470 },
   { text: 'Interactica', floor: 2, c: 142 },
+  { text: 'Interactica', floor: 2, c: 470 },
   { text: 'Interactica', floor: 3, c: 142 },
   { text: 'Indelve', floor: 3, c: 470 },
   { text: 'Pacer', floor: 4, c: 142 },
+  { text: 'Pacer', floor: 4, c: 470 },
 ]
 
 function experienceTags() {

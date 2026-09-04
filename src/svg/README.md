@@ -29,11 +29,24 @@ fragments** — `terrain.svg` and `path.svg` are hand-authored.
 
 All generated fragments derive from these constants
 (`scripts/generate-geometry.mjs`). Coordinates are meaningless without them.
+Revision 10 (Stage 3.5, user revision): the stair slab opening extends all the
+way to the C-D wall (STAIR_HOLE_V1 = STAIR_V1) and each story's back walls
+extend up to the slab-above's top line (h + FH) — the rear wall reads
+continuous behind the staircase with only the floor separation line crossing
+it (walls extended, no patch geometry); ground-floor passages keep the
+f1-identical lining (soffit + far jamb — without the soffit the jamb's
+top-back corner pokes above the head line and breaks the opening's top-right
+corner); whole-floor sections (Interactica on floor 2, Pacer on floor 4)
+duplicate their tag on the floor's left side, all left-side tags aligned at
+v ≈ 470 (the rear stretch's center, level with Nextcode and Indelve); the
+fifth floor gains a D-corner wall section (rear + right wall arms, length
+0.4w each, full story height) as part of the floor-05 rear group, rendering
+below the elevator.
 Revision 9 (Stage 3.5, user revision): passages keep a visible-depth lining —
-soffit + far jamb in partition color (reads as passage surfaces, not a lintel
-band); the stair slab opening stays clear of the C-D wall (STAIR_HOLE_V1) and
-stops below the slab underside with no cut faces (STAIR_HOLE_U1), while the
-wall band behind the opening is emitted so no hole shows through; shaft
+far jamb in partition color (reads as passage surfaces, not a lintel
+band); the stair slab opening stopped clear of the C-D wall (STAIR_HOLE_V1)
+and stopped below the slab underside with no cut faces (STAIR_HOLE_U1), with a
+wall band behind the opening so no hole showed through; shaft
 narrowed again (u 0–0.171w); the shaft's open A-C side is enclosed from floor
 1 to the top by ONE continuous face flush with the building's invisible left
 wall (u = 0, no per-story cuts), with the year signs mounted on it as small
@@ -97,7 +110,9 @@ the fifth floor
 cutaway faces: front A–B (short) and long left A–C — slab edge bands (SLAB_T
 deep) run down both open sides, so floor divisions read from the left and front
 back walls B–D (long) and C–D (short) are thin volumes: visible inner face
-(-u / -v), cut end at the open side; tops are covered by the slab above
+(-u / -v), cut end at the open side; each story's walls extend from its slab
+top up to the slab-above's top line (h + FH) so no gap shows at the slab band;
+tops are covered by the slab above
 ground floor (right → left): Puelo Games (0–0.35d, entrance leads in),
 BA Technology (0.35–0.68d), Freelancer + staircase (0.68–1.0d); partitions at
 0.35d / 0.68d (WALL_T thick, full width, height STORY_H) with door-height
@@ -130,11 +145,12 @@ belongs to floor-0X-front and renders over the front of the shaft;
 SLAB_T level bands cross the W1–W3 wall faces at every level
 staircase: solid flight against the C–D rear wall (v 540.5–580.5), running along
 the width axis, rising u 22 → 127 in 12 steps (rise 8.75, going 8.75), with a
-clear gap to the open A-C side; floor-01 slab has a matching opening (visible
-cut faces at the far u and v edges; the left edge band is continuous);
-drawn before floor-01 so the slab occludes the lower flight while the top
-re-emerges at the opening; the slab beyond u = 127 is the landing into
-Nextcode
+clear gap to the open A-C side; floor-01 slab has a matching opening reaching
+the C–D wall (no cut faces; the left edge band is continuous), so the rear
+wall shows through it as one continuous surface crossed only by the floor
+separation line; drawn before floor-01 so the slab occludes the lower flight
+while the top re-emerges at the opening; the slab beyond u = 127 is the
+landing into Nextcode
 entrance: threshold platform (u 0.35–0.65w, 37.5 deep, SLAB_T thick) abutting
 the A–B face at ground level, plus a minimal portal frame — two jambs (10 wide,
 7.5 deep, extending down to the block base at -SLAB_T) and a header (52.5–60)
@@ -147,7 +163,11 @@ experience tags: vertical signs flush with the invisible left wall (u = 0,
 like the year plaques), one per section over its own floor, at the floor's
 front level (band h −SLAB_T…−SLAB_T+16 — base on the slab's bottom line),
 length fitted to the text; text on the wall plane (matrix-skewed, reading
-toward the front corner); Freelancer Game Developer on a single line
+toward the front corner); Freelancer Game Developer on a single line;
+whole-floor sections duplicate their sign on the floor's left side
+(Interactica on floor 2, Pacer on floor 4) — all left-side tags share
+v ≈ 470 (the rear stretch's center), so Nextcode / Interactica / Indelve /
+Pacer align vertically
 ```
 
 ### Layer order (Stage 3.5 revision)
