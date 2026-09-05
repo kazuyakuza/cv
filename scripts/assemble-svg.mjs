@@ -1,6 +1,7 @@
 import { readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { svgDefs, svgStyle } from './style.mjs'
 
 // Assembles the single master diorama SVG (Stage 1 deliverable) from the
 // per-module fragments in src/svg/fragments/. Plain deterministic
@@ -48,10 +49,11 @@ const fragmentsById = {
 }
 
 const svg = `<!--
-  Professional Career Diorama — Stage 3 basic architectural structure.
+  Professional Career Diorama — Stage 4 hand-drawn sectional illustration.
   ASSEMBLED FILE: generated from src/svg/fragments/ by \`npm run svg:assemble\`.
   Fragment geometry is produced by \`npm run svg:generate\` from the shared
-  parameters in src/svg/README.md. Edit parameters/fragments, not this file.
+  parameters in src/svg/README.md; the palette lives in scripts/style.mjs.
+  Edit parameters/fragments/style, not this file.
 -->
 <svg
   xmlns="http://www.w3.org/2000/svg"
@@ -59,30 +61,13 @@ const svg = `<!--
   role="img"
   aria-labelledby="diorama-title"
 >
-  <title id="diorama-title">Professional Career Diorama — architectural wireframe</title>
-  <style>
-    .dw-terrain { fill: #f6f5f2; stroke: #c2c0bb; stroke-width: 1; }
-    .dw-path { fill: #efedea; stroke: #c2c0bb; stroke-width: 1; }
-    .dw-sign { fill: #ffffff; stroke: #6b6b6b; stroke-width: 1; }
-    .dw-wall { fill: #f4f4f2; stroke: #6b6b6b; stroke-width: 1; }
-    .dw-slab { fill: #e9e8e6; stroke: #6b6b6b; stroke-width: 1; }
-    .dw-slab-fill { fill: #e9e8e6; stroke: none; }
-    .dw-slab-edge { fill: #d9d8d5; stroke: #6b6b6b; stroke-width: 1; }
-    .dw-partition { fill: #fbfbfa; stroke: #8a8a88; stroke-width: 0.75; }
-    .dw-column { fill: none; stroke: #5a5a58; stroke-width: 1.5; }
-    .dw-shaft { fill: #f0efec; stroke: #8a8a88; stroke-width: 1; }
-    .dw-shaft-fill { fill: #f0efec; stroke: none; }
-    .dw-door { fill: #dedcd9; stroke: #6b6b6b; stroke-width: 1; }
-    .dw-shaft-dash { fill: none; stroke: #a5a5a3; stroke-width: 0.75; stroke-dasharray: 3 3; }
-    .dw-stair { fill: #f2f1ee; stroke: #7a7a78; stroke-width: 1; }
-    .dw-stair-riser { fill: #e3e2df; stroke: #7a7a78; stroke-width: 1; }
-    .dw-open { fill: none; stroke: #9a9a98; stroke-width: 1; stroke-dasharray: 5 4; }
-    .dw-door-open { fill: #b3b1ad; stroke: #6b6b6b; stroke-width: 1; }
-    .dw-tag { fill: #ffffff; stroke: #6b6b6b; stroke-width: 1; }
-    .dw-tag-text { fill: #555553; font: 9.5px system-ui, sans-serif; }
-    .dw-year { fill: #555553; font: 9.5px system-ui, sans-serif; }
-  </style>
+  <title id="diorama-title">Professional Career Diorama — sectional architectural illustration</title>
+  <style>${svgStyle}</style>
+  ${svgDefs}
+  <!-- Hand-drawn texture: one global displacement field over the whole drawing -->
+  <g filter="url(#dw-rough)">
 ${rootOrder.map((id) => indent(fragmentsById[id] ?? readFragment(id), 1)).join('\n')}
+  </g>
 </svg>
 `
 

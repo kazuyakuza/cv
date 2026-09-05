@@ -3,6 +3,60 @@
 SVG is the primary visual source of the diorama. Files here are **editable
 source artwork**, not generated output — they must stay hand-maintainable.
 
+## Illustration style (Stage 4)
+
+The visual language lives in two places, separate from the geometry:
+
+- **`scripts/style.mjs`** — the `.dw-*` palette embedded in `diorama.svg`,
+  organized as a three-tier line hierarchy (§5): primary (silhouette, slab
+  edges, columns, near walls), secondary (partitions, elevator, stairs, doors,
+  plaques), tertiary (terrain, path, guides). It also defines the cut-face
+  poché hatch (`#dw-cut` pattern, one 45° line per 6 px tile, user-space so
+  every cut face shares one hatch phase), the far-wall depth class
+  (`.dw-wall-far`, lighter rear inner faces, §8), and the plaque contact
+  shadows (`.dw-tag-group` drop-shadow, §17).
+- **`scripts/generate-geometry.mjs`** — deterministic hand-drawn jitter
+  (§6): every projected corner is perturbed ±0.55 px (`JITTER`) by a hash of
+  its quantized position, so all faces sharing a corner are perturbed
+  identically and no cracks open between faces. Regeneration is stable
+  (identical output). Columns route through the same projection and gain a
+  ≤0.55 px hand-drawn lean.
+- **Assembled master** — one global `feTurbulence` + `feDisplacementMap`
+  filter (`#dw-rough`, scale 1.4 → max ±0.7 px) wraps the whole drawing in
+  user space, so re-layered faces move together. Text wobbles ≤0.7 px with
+  it; exclude text if it reads blurry in review.
+- **Page background** — the warm paper tone (§21) is set in
+  `src/styles/base.css`; the SVG stays transparent.
+
+Tuning knobs: `JITTER` (generate-geometry.mjs), filter `scale`/`baseFrequency`
+and hatch tile (style.mjs).
+
+## Stage 4.5 — illustration fixes
+
+Corrective pass before Stage 5 (see `STAGE_04.5_ARCHITECTURAL_ILLUSTRATION_FIXES.md`):
+
+- **Entrance 2013 sign cap (§3.1)** — the cap's `hFace` call had swapped
+  u/v arguments, projecting a stray 1.5 px sliver near the first ground
+  partition (the "BA Technology door artifact"). Arguments now follow the
+  u-range/v-range order; the cap renders on the sign.
+- **Floor surfaces (§3.2)** — slab tops use `dw-floor` (distinct warm base
+  tone, no tiles); the re-layered shaft triangles use `dw-floor-fill` (same
+  tone, no stroke). `dw-slab` now covers only thin wall/shaft top caps in a
+  wall-family tone; the entrance threshold top shares `dw-floor` (walking
+  surface, §4).
+- **Floor-3 separation (§3.3)** — the Indelve section separation is rendered
+  with the far-wall logic: fill-only `dw-wall-far-fill` (blends with the C-D
+  wall face behind it; base unstroked) and `dw-far-line` outline edges. The
+  one-off shaft-tone patch (`dw-shaft-fill`) is retired, along with
+  `dw-slab-fill`.
+- **User addendum** — the fifth-floor dashed intended-top perimeter is
+  removed (`dw-open` class retired): the stub walls, exposed columns and
+  open shaft already communicate the unfinished state. All plaques (company
+  tags, elevator year plaques, the 2013 entrance sign) carry two
+  screw/nail dots (`dw-dot`) flanking their text; plaques are widened so
+  text + dots + clearance always fit (tag half = text half + 7.5, year
+  plaques half-length 17.5).
+
 ## Layout: fragments + assembled master (Stage 2)
 
 The diorama is authored as **modular fragments** — one `<g>` per architectural

@@ -1,6 +1,8 @@
 /* Minimal CSS foundation (Stage 0): reset defaults, predictable sizing,
    neutral background, and a container for the future SVG. No final palette,
-   typography, responsive behavior, or effects — desktop composition first. */
+   typography, responsive behavior, or effects — desktop composition first.
+   Stage 4 §21: the warm paper background lives here (page-level CSS), not
+   inside the SVG — the SVG stays transparent and self-contained. */
 
 *,
 *::before,
@@ -16,7 +18,7 @@ body {
 
 body {
   min-height: 100vh;
-  background: #f5f4f1;
+  background: #f7f3ea;
   color: #2b2b2b;
   font-family:
     system-ui,

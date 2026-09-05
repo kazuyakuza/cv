@@ -37,6 +37,8 @@ const STAIR_V0 = LD - WALL_T - STAIR_WIDTH // flight against the C-D rear wall
 const STAIR_U1 = STAIR_U0 + STAIR_RUN // top of flight, arrives at floor-1 slab edge
 const STAIR_V1 = STAIR_V0 + STAIR_WIDTH
 const STAIR_STEPS = 12
+
+const TAG_CHAR_W = 5.2 // plaque text width: approx glyph advance per char
 // The floor-01 stair opening covers the flight's full footprint and reaches
 // the C-D wall, so the whole final flight stays visible through it and the
 // top step lands flush with the slab (a clear union with the landing).
@@ -59,9 +61,31 @@ const round = (n) => {
   return Number.isInteger(r) ? String(r) : String(r)
 }
 
+// Hand-drawn character (Stage 4 §6): deterministic corner jitter, hashed on
+// the quantized projected position so every face sharing a corner is
+// perturbed identically — edges stay welded and no cracks open between
+// faces. Amplitude is extremely small on purpose: precise drawing made by
+// hand, not inaccurate drawing (±JITTER px per axis).
+const JITTER = 0.55
+const hash2 = (a, b) => {
+  let n = (Math.imul(a | 0, 374761393) + Math.imul(b | 0, 668265263)) >>> 0
+  n = Math.imul(n ^ (n >>> 13), 1274126177) >>> 0
+  return ((n ^ (n >>> 16)) >>> 0) / 4294967296
+}
+const jitter = (x, y) => {
+  const xi = Math.round(x * 100)
+  const yi = Math.round(y * 100)
+  return [x + (hash2(xi, yi) - 0.5) * 2 * JITTER, y + (hash2(yi, xi) - 0.5) * 2 * JITTER]
+}
+
 // Project a 3D point (u along width, v along depth, h above ground slab top).
-const p = (u, v, h) =>
-  `${round(CORNER_A[0] + AXIS_W[0] * u + AXIS_D[0] * v)},${round(CORNER_A[1] + AXIS_W[1] * u + AXIS_D[1] * v - h)}`
+const p = (u, v, h) => {
+  const [x, y] = jitter(
+    CORNER_A[0] + AXIS_W[0] * u + AXIS_D[0] * v,
+    CORNER_A[1] + AXIS_W[1] * u + AXIS_D[1] * v - h,
+  )
+  return `${round(x)},${round(y)}`
+}
 
 const path = (pts) => `M${pts.join(' L')} Z`
 
@@ -76,10 +100,13 @@ const uFace = (u, v0, v1, h0, h1) => path([p(u, v0, h0), p(u, v1, h0), p(u, v1, 
 // smaller coordinate of the material it bounds).
 const vFace = (v, u0, u1, h0, h1) => path([p(u0, v, h0), p(u1, v, h0), p(u1, v, h1), p(u0, v, h1)])
 
-// Vertical column line.
+// Vertical column line. Routed through p() so its endpoints share the same
+// jittered corners as the slabs they meet; the tiny per-endpoint difference
+// reads as a hand-drawn lean (Stage 4 §6).
 const column = (u, v, h0, h1) => {
-  const [x, y] = p(u, v, 0).split(',')
-  return `<line class="dw-column" x1="${x}" y1="${round(Number(y) - h0)}" x2="${x}" y2="${round(Number(y) - h1)}" />`
+  const [x1, y1] = p(u, v, h0).split(',').map(Number)
+  const [x2, y2] = p(u, v, h1).split(',').map(Number)
+  return `<line class="dw-column" x1="${round(x1)}" y1="${round(y1)}" x2="${round(x2)}" y2="${round(y2)}" />`
 }
 
 const el = (cls, d) => `<path class="${cls}" d="${d}" />`
@@ -104,8 +131,12 @@ function slab(hTop, { stairOpening = false } = {}) {
   const holes = []
   if (stairOpening) holes.push(stairHoleAt(hTop))
   const topD = `${path([p(0, 0, hTop), p(LW, 0, hTop), p(LW, LD, hTop), p(0, LD, hTop)])}${holes.map((d) => ` ${d}`).join('')}`
+  // Floor top surfaces use dw-floor (Stage 4.5 §3.2): a distinct warm base
+  // tone so floors read as physical surfaces, not white polygons.
   const out = [
-    holes.length ? `<path class="dw-slab" fill-rule="evenodd" d="${topD}" />` : el('dw-slab', topD),
+    holes.length
+      ? `<path class="dw-floor" fill-rule="evenodd" d="${topD}" />`
+      : el('dw-floor', topD),
   ]
   // Front edge band (A-B side, cut face at v = 0).
   out.push(el('dw-slab-edge', path([p(0, 0, hTop), p(LW, 0, hTop), p(LW, 0, hBot), p(0, 0, hBot)])))
@@ -133,7 +164,7 @@ function slab(hTop, { stairOpening = false } = {}) {
 function slabTriangle(hTop) {
   return [
     el(
-      'dw-slab-fill',
+      'dw-floor-fill',
       path([
         p(0, 0, hTop),
         p(SHAFT_U + WALL_T, 0, hTop),
@@ -154,10 +185,12 @@ function backWalls(hBase) {
   const hTop = hBase + FH
   const out = []
   // B-D wall (long back-right, plane u = LW): inner face + cut end at v = 0.
-  out.push(el('dw-wall', uFace(LW - WALL_T, 0, LD - WALL_T, hBase, hTop)))
+  // Inner faces use dw-wall-far: they sit deep inside the section and read
+  // lighter for depth (Stage 4 §8); their cut ends stay section poché.
+  out.push(el('dw-wall-far', uFace(LW - WALL_T, 0, LD - WALL_T, hBase, hTop)))
   out.push(el('dw-slab-edge', vFace(0, LW - WALL_T, LW, hBase, hTop)))
   // C-D wall (short back, plane v = LD): inner face + cut end at u = 0.
-  out.push(el('dw-wall', vFace(LD - WALL_T, 0, LW, hBase, hTop)))
+  out.push(el('dw-wall-far', vFace(LD - WALL_T, 0, LW, hBase, hTop)))
   out.push(el('dw-slab-edge', uFace(0, LD - WALL_T, LD, hBase, hTop)))
   return out
 }
@@ -211,7 +244,9 @@ function partition(fv, hBase, { opening = false } = {}) {
     )
     const [hx1, hy1] = p(PART_OPEN_U0, v0, hBase + DOOR_H).split(',')
     const [hx2, hy2] = p(PART_OPEN_U1, v0, hBase + DOOR_H).split(',')
-    out.push(`<line class="dw-partition" x1="${hx1}" y1="${hy1}" x2="${hx2}" y2="${hy2}" />`)
+    // Head line slightly stronger than the partition itself: the opening
+    // reads as intentional architecture (Stage 4 §11), no door frames.
+    out.push(`<line class="dw-opening" x1="${hx1}" y1="${hy1}" x2="${hx2}" y2="${hy2}" />`)
   } else {
     out.push(el('dw-partition', vFace(v0, 0, uEnd, hBase, hTop)))
   }
@@ -307,23 +342,47 @@ function shaftStory(hBase, hTop, { openDoors = false } = {}) {
 // Compact chronological marker per story: a small sign plaque mounted on the
 // enclosure wall (the building's left wall around the shaft), not above the
 // door (user revision). The exact information design belongs to later stages.
+// Each plaque carries two screw/nail dots flanking its text (Stage 4.5 user
+// revision); plaques are sized so text + dots + clearance always fit.
 const STORY_YEARS = [2017, 2019, 2021, 2025, 2026]
-const YEAR_SIGN_HALF = 14 // plaque half-length along v
+const YEAR_SIGN_HALF = 17.5 // plaque half-length along v (widened for the dots)
+const YEAR_TEXT_HALF = (4 * TAG_CHAR_W) / 2 // "2017"-style text half-length
+const DOT_R = 1.4 // screw head radius, screen px
+const DOT_GAP = 4.5 // clearance between text edge and dot center (v-units)
+
+// Screw/nail head on a plaque face. Dots live on the face's constant plane;
+// at this size the projected ellipse reads as a plain circle.
+const dot = (u, v, h) => {
+  const [x, y] = p(u, v, h).split(',').map(Number)
+  return `<circle class="dw-dot" cx="${round(x)}" cy="${round(y)}" r="${DOT_R}" />`
+}
+
 function yearPlaque(year, hBase) {
   const u = -1.5 // plaque proud of the u = 0 enclosure face
   const vMid = (SHAFT_V0 + SHAFT_V1) / 2
   const h0 = hBase + 34
   const h1 = hBase + 48
-  const [x, y] = p(u, vMid, (h0 + h1) / 2).split(',')
+  const hMid = (h0 + h1) / 2
+  const [x, y] = p(u, vMid, hMid).split(',')
   return [
-    el('dw-tag', uFace(u, vMid - YEAR_SIGN_HALF, vMid + YEAR_SIGN_HALF, h0, h1)),
-    el('dw-tag', hFace(u, u + 1.5, vMid - YEAR_SIGN_HALF, vMid + YEAR_SIGN_HALF, h1)),
-    el('dw-tag', vFace(vMid - YEAR_SIGN_HALF, u, u + 1.5, h0, h1)),
-    `<text class="dw-year" transform="matrix(0.7071 0.2475 0 1 ${x} ${y})" text-anchor="middle" dominant-baseline="central">${year}</text>`,
+    tagGroup([
+      el('dw-tag', uFace(u, vMid - YEAR_SIGN_HALF, vMid + YEAR_SIGN_HALF, h0, h1)),
+      el('dw-tag', hFace(u, u + 1.5, vMid - YEAR_SIGN_HALF, vMid + YEAR_SIGN_HALF, h1)),
+      el('dw-tag', vFace(vMid - YEAR_SIGN_HALF, u, u + 1.5, h0, h1)),
+      dot(u, vMid - YEAR_TEXT_HALF - DOT_GAP, hMid),
+      dot(u, vMid + YEAR_TEXT_HALF + DOT_GAP, hMid),
+      `<text class="dw-year" transform="matrix(0.7071 0.2475 0 1 ${x} ${y})" text-anchor="middle" dominant-baseline="central">${year}</text>`,
+    ]),
   ]
 }
 
 const group = (id, lines) => `<g id="${id}">\n${lines.map((l) => `  ${l}`).join('\n')}\n</g>`
+
+// Physical plaques (Stage 4 §16–17): each sign is wrapped so a single subtle
+// drop-shadow can attach it to the wall — small identification plaques, not
+// floating UI labels.
+const tagGroup = (lines, cls = 'dw-tag-group') =>
+  `<g class="${cls}">\n${lines.map((l) => `  ${l}`).join('\n')}\n</g>`
 
 // --- floor-ground: slab-0, story-0 walls, two partitions, columns -----------
 const floorGround = group('floor-ground', [
@@ -356,19 +415,21 @@ const floor03 = group('floor-03', [
   ...slab(3 * FH),
   // Section separation continuing the shaft's left wall (W1) rearward to the
   // C-D wall: the rear-left strip beyond it becomes the distinct section.
-  // Fill-only with explicit end and top edges — the base stays unstroked so
-  // no stray line reads on the Indelve floor (user revision).
-  el('dw-shaft-fill', uFace(SHAFT_U, SHAFT_V1 + WALL_T, LD - WALL_T, 3 * FH, 3 * FH + STORY_H)),
+  // Stage 4.5 §3.3: rendered with the standard far-wall logic — fill-only in
+  // the rear-wall tone (it overlaps the C-D wall face, so both blend; no
+  // color spill) with explicit end/top edges in the far-line stroke. The
+  // base stays unstroked so no stray line reads on the Indelve floor.
+  el('dw-wall-far-fill', uFace(SHAFT_U, SHAFT_V1 + WALL_T, LD - WALL_T, 3 * FH, 3 * FH + STORY_H)),
   el(
-    'dw-shaft',
+    'dw-far-line',
     path([p(SHAFT_U, SHAFT_V1 + WALL_T, 3 * FH), p(SHAFT_U, SHAFT_V1 + WALL_T, 3 * FH + STORY_H)]),
   ),
   el(
-    'dw-shaft',
+    'dw-far-line',
     path([p(SHAFT_U, LD - WALL_T, 3 * FH), p(SHAFT_U, LD - WALL_T, 3 * FH + STORY_H)]),
   ),
   el(
-    'dw-shaft',
+    'dw-far-line',
     path([
       p(SHAFT_U, SHAFT_V1 + WALL_T, 3 * FH + STORY_H),
       p(SHAFT_U, LD - WALL_T, 3 * FH + STORY_H),
@@ -394,8 +455,9 @@ const floor05 = group('floor-05', [
   ...columns(5 * FH, TOP_H, ['D']),
   // D-corner wall section (user revision): part of the building's rear and
   // right walls meeting at the D corner, over the full fifth-story height.
+  // Far faces like the other rear walls (Stage 4 §8).
   // Rear wall arm from the C-corner stub's length toward the corner.
-  el('dw-wall', vFace(LD - WALL_T, LW - D_CORNER_ARM, LW, 5 * FH, TOP_H)),
+  el('dw-wall-far', vFace(LD - WALL_T, LW - D_CORNER_ARM, LW, 5 * FH, TOP_H)),
   el('dw-slab-edge', uFace(LW - D_CORNER_ARM, LD - WALL_T, LD, 5 * FH, TOP_H)),
   el('dw-slab', hFace(LW - D_CORNER_ARM, LW, LD - WALL_T, LD, TOP_H)),
   // Right wall arm from the corner toward the B-corner stub.
@@ -406,15 +468,17 @@ const floor05 = group('floor-05', [
 const floor05Front = group('floor-05-front', [
   ...slabTriangle(5 * FH),
   ...columns(5 * FH, TOP_H, ['A', 'B', 'C']),
-  // Stub walls (incomplete masonry) on the two back walls with visible tops.
-  el('dw-wall', uFace(LW - WALL_T, 0, STUB_LEN * LD - WALL_T, 5 * FH, 5 * FH + STUB_H)),
+  // Stub walls (incomplete masonry) on the two back walls with visible tops;
+  // far faces like the completed floors' rear walls (Stage 4 §8).
+  el('dw-wall-far', uFace(LW - WALL_T, 0, STUB_LEN * LD - WALL_T, 5 * FH, 5 * FH + STUB_H)),
   el('dw-slab-edge', vFace(0, LW - WALL_T, LW, 5 * FH, 5 * FH + STUB_H)),
   el('dw-slab', hFace(LW - WALL_T, LW, 0, STUB_LEN * LD - WALL_T, 5 * FH + STUB_H)),
-  el('dw-wall', vFace(LD - WALL_T, 0, STUB_LEN * LW, 5 * FH, 5 * FH + STUB_H)),
+  el('dw-wall-far', vFace(LD - WALL_T, 0, STUB_LEN * LW, 5 * FH, 5 * FH + STUB_H)),
   el('dw-slab-edge', uFace(0, LD - WALL_T, LD, 5 * FH, 5 * FH + STUB_H)),
   el('dw-slab', hFace(0, STUB_LEN * LW, LD - WALL_T, LD, 5 * FH + STUB_H)),
-  // Dashed intended top perimeter (unfinished state, geometry only).
-  `<path class="dw-open" d="${path([p(0, 0, TOP_H), p(LW, 0, TOP_H), p(LW, LD, TOP_H), p(0, LD, TOP_H)])}" />`,
+  // The dashed intended-top perimeter was removed (Stage 4.5 user revision):
+  // the stub walls, exposed columns and open shaft already communicate the
+  // unfinished state; the dashed guides read as construction leftovers.
 ])
 
 // --- staircase: solid flight rising through the floor-01 opening ------------
@@ -448,7 +512,9 @@ function staircase() {
     profile.push(p(STAIR_U0 + going * i, v0, rise * i))
   }
   profile.push(p(STAIR_U1, v0, 0))
-  out.push(el('dw-stair', path(profile)))
+  // Solid side face slightly darker than the treads: reads as the stair's
+  // solid mass, a restrained depth cue (Stage 4 §22).
+  out.push(el('dw-stair-side', path(profile)))
   return group('staircase', out)
 }
 
@@ -497,20 +563,23 @@ function entrance() {
   // Year sign attached to the door head (user revision): the same plaque
   // language as the shaft's year signs, on a face proud of the header's
   // front, reading toward the front corner like the entrance door.
-  const signHalf = 14
+  // Widened for the screw dots like the other plaques (Stage 4.5).
+  const signHalf = YEAR_SIGN_HALF
   const signU = (u0 + u1) / 2
   const signV = -jambD - 1.5
   const signH0 = portalH + headerH - 14
   const signH1 = portalH + headerH
-  const [sx, sy] = p(signU, signV, (signH0 + signH1) / 2).split(',')
+  const signHMid = (signH0 + signH1) / 2
+  const [sx, sy] = p(signU, signV, signHMid).split(',')
   const out = [
     // Right jamb first: a layer below the entrance block (the block's front
     // region is nearer to the viewer and must occlude the jamb's base).
     el('dw-wall', vFace(-jambD, u1, u1 + jamb, -SLAB_T, portalH)),
     el('dw-wall', uFace(u1, -jambD, 0, -SLAB_T, portalH)),
     el('dw-slab', hFace(u1, u1 + jamb, -jambD, 0, portalH)),
-    // Threshold platform abutting the A-B face at ground level.
-    el('dw-slab', hFace(u0, u1, -depth, 0, 0)),
+    // Threshold platform abutting the A-B face at ground level; its top is a
+    // walking surface, so it shares the floor tone (Stage 4.5 §4).
+    el('dw-floor', hFace(u0, u1, -depth, 0, 0)),
     el('dw-slab-edge', vFace(-depth, u0, u1, -SLAB_T, 0)),
     el('dw-slab-edge', uFace(u0, -depth, 0, -SLAB_T, 0)),
     // Left jamb, extending down to the base level of the entrance block.
@@ -522,10 +591,17 @@ function entrance() {
     el('dw-wall', uFace(u0 - jamb, -jambD, 0, portalH, portalH + headerH)),
     el('dw-slab', hFace(u0 - jamb, u1 + jamb, -jambD, 0, portalH + headerH)),
     // Year sign attached to the door head, proud of the header's front face.
-    el('dw-tag', vFace(signV, signU - signHalf, signU + signHalf, signH0, signH1)),
-    el('dw-tag', hFace(signV, -jambD, signU - signHalf, signU + signHalf, signH1)),
-    el('dw-tag', uFace(signU - signHalf, signV, -jambD, signH0, signH1)),
-    `<text class="dw-year" transform="matrix(0.7071 -0.2475 0 1 ${sx} ${sy})" text-anchor="middle" dominant-baseline="central">2013</text>`,
+    // Cap arguments follow the uFace/vFace order (u-range, v-range) — the
+    // swapped form previously projected the cap as a stray sliver near the
+    // first ground partition (Stage 4.5 §3.1).
+    tagGroup([
+      el('dw-tag', vFace(signV, signU - signHalf, signU + signHalf, signH0, signH1)),
+      el('dw-tag', hFace(signU - signHalf, signU + signHalf, signV, -jambD, signH1)),
+      el('dw-tag', uFace(signU - signHalf, signV, -jambD, signH0, signH1)),
+      dot(signU - YEAR_TEXT_HALF - DOT_GAP, signV, signHMid),
+      dot(signU + YEAR_TEXT_HALF + DOT_GAP, signV, signHMid),
+      `<text class="dw-year" transform="matrix(0.7071 -0.2475 0 1 ${sx} ${sy})" text-anchor="middle" dominant-baseline="central">2013</text>`,
+    ]),
   ]
   return group('entrance', out)
 }
@@ -534,14 +610,21 @@ function entrance() {
 // The sign stands on the open terrain in front-right of the building, outside
 // the building's u/v coordinate system, so it is expressed in screen space.
 function careerSign() {
+  // Placeholder content stays (final content is Stage 7); the group wrapper
+  // gives the physical sign its drop-shadow attachment like the plaques.
   return group('career-sign', [
-    // Single central post anchored in the terrain beside the path.
-    '<line class="dw-column" x1="1110" y1="980" x2="1110" y2="1035" />',
-    // Placeholder panel with photo circle and text bars.
-    '<rect class="dw-sign" x="1030" y="870" width="160" height="110" />',
-    '<circle class="dw-shaft" cx="1065" cy="905" r="22" />',
-    '<rect x="1100" y="890" width="60" height="10" fill="#b5b3ae" />',
-    '<rect x="1100" y="910" width="44" height="10" fill="#b5b3ae" />',
+    tagGroup(
+      [
+        // Single central post anchored in the terrain beside the path.
+        '<line class="dw-column" x1="1110" y1="980" x2="1110" y2="1035" />',
+        // Placeholder panel with photo circle and text bars.
+        '<rect class="dw-sign" x="1030" y="870" width="160" height="110" />',
+        '<circle class="dw-shaft" cx="1065" cy="905" r="22" />',
+        '<rect x="1100" y="890" width="60" height="10" fill="#b5b3ae" />',
+        '<rect x="1100" y="910" width="44" height="10" fill="#b5b3ae" />',
+      ],
+      'dw-sign-group',
+    ),
   ])
 }
 
@@ -557,9 +640,9 @@ function careerSign() {
 const TAG_H0 = -SLAB_T // floor-level band: base on the floor slab's bottom line
 const TAG_H1 = -SLAB_T + 16
 const TAG_MATRIX = '0.7071 0.2475 0 1' // reads toward the front corner (-v)
-// Plaque length fits its content: approx glyph advance + padding.
-const TAG_CHAR_W = 5.2
-const TAG_PADDING = 12
+// Plaque length fits its content plus the screw-dot clearance: text half +
+// per-side padding covering dot gap, dot radius and edge margin.
+const TAG_HALF_PAD = 7.5
 const FLOOR_TAGS = [
   { text: 'Puelo Games', floor: 0, c: 82 },
   { text: 'BA Technology', floor: 0, c: 282 },
@@ -581,16 +664,22 @@ function experienceTags() {
   for (const tag of FLOOR_TAGS) {
     const h0 = tag.floor * FH + TAG_H0
     const h1 = tag.floor * FH + TAG_H1
-    const half = (tag.text.length * TAG_CHAR_W + TAG_PADDING) / 2
+    const textHalf = (tag.text.length * TAG_CHAR_W) / 2
+    const half = textHalf + TAG_HALF_PAD
     // Thin depth like the year plaques: face proud of the wall (u = -1.5),
     // top cap and front-end side closing the 1.5 gap to the wall plane.
     const u = -1.5
-    out.push(el('dw-tag', uFace(u, tag.c - half, tag.c + half, h0, h1)))
-    out.push(el('dw-tag', hFace(u, 0, tag.c - half, tag.c + half, h1)))
-    out.push(el('dw-tag', vFace(tag.c - half, u, 0, h0, h1)))
-    const [x, y] = p(u, tag.c, (h0 + h1) / 2).split(',')
+    const hMid = (h0 + h1) / 2
+    const [x, y] = p(u, tag.c, hMid).split(',')
     out.push(
-      `<text class="dw-tag-text" transform="matrix(${TAG_MATRIX} ${x} ${y})" text-anchor="middle" dominant-baseline="central">${tag.text}</text>`,
+      tagGroup([
+        el('dw-tag', uFace(u, tag.c - half, tag.c + half, h0, h1)),
+        el('dw-tag', hFace(u, 0, tag.c - half, tag.c + half, h1)),
+        el('dw-tag', vFace(tag.c - half, u, 0, h0, h1)),
+        dot(u, tag.c - textHalf - DOT_GAP, hMid),
+        dot(u, tag.c + textHalf + DOT_GAP, hMid),
+        `<text class="dw-tag-text" transform="matrix(${TAG_MATRIX} ${x} ${y})" text-anchor="middle" dominant-baseline="central">${tag.text}</text>`,
+      ]),
     )
   }
   return group('tags', out)
