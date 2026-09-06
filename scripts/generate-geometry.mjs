@@ -158,31 +158,28 @@ function slab(hTop, { stairOpening = false } = {}) {
   // flight is inset from the open side (STAIR_U0 > 0), so the floor-01 slab
   // reads as one coherent plane around the stair opening.
   //
-  // Floor-2 revision (user revision): this band's projection crosses the
-  // floor-1 return wall's face (the wall sits deeper than the u = 0 plane,
-  // so drawing the band over it is geometrically true occlusion) — but on
-  // the clean white wall its bottom edge read as a stray line between the
-  // shaft and the experience tag, and again right of the tag where the
-  // wall's face continues. Split the band around the wall: the front piece
-  // ends where the band's projection meets the wall's far edge (u = LW -
-  // WALL_T) and the rear piece starts at the wall's near edge (u = SHAFT_U
-  // + WALL_T, the W2 face's outer line) — both cut ends land exactly on
-  // existing wall-edge strokes. The omitted stretch covers the wall face's
-  // whole on-screen width; its middle hides under the c = 135 experience
-  // tag, and the visible ends are what read as stray lines.
+  // Floor-2 revision (user revision): where this band crosses the floor-1
+  // return wall's face on screen, only the stretch between the wall's near
+  // edge (the W2 face's outer line) and the passage's near jamb is dropped —
+  // there its bottom edge read as a stray scratch on the clean white wall
+  // between the elevator doors and the section's door. The rest stays one
+  // continuous band: dropping the whole wall-face crossing read as the base
+  // line breaking off at the shaft (user revision). Both cut ends land on
+  // existing strokes — the front end at the passage jamb's screen x, the
+  // rear end on the wall face's left edge.
   if (hTop === 2 * FH) {
-    const vCut0 = SHAFT_V0 - LW
-    const vCut1 = SHAFT_V0 - SHAFT_U - 2 * WALL_T
+    const vJamb = SHAFT_V0 - WALL_T - RET_DOOR_U0
+    const vShaft = SHAFT_V0 - WALL_T - (SHAFT_U + WALL_T)
     out.push(
       el(
         'dw-slab-edge',
-        path([p(0, 0, hTop), p(0, vCut0, hTop), p(0, vCut0, hBot), p(0, 0, hBot)]),
+        path([p(0, 0, hTop), p(0, vJamb, hTop), p(0, vJamb, hBot), p(0, 0, hBot)]),
       ),
     )
     out.push(
       el(
         'dw-slab-edge',
-        path([p(0, vCut1, hTop), p(0, LD, hTop), p(0, LD, hBot), p(0, vCut1, hBot)]),
+        path([p(0, vShaft, hTop), p(0, LD, hTop), p(0, LD, hBot), p(0, vShaft, hBot)]),
       ),
     )
   } else {
@@ -681,20 +678,18 @@ function elevator() {
   // enclosure would hide each floor's left cut face, breaking the base line
   // that floor-01 shows. Re-layer the cut face over the enclosure (and the
   // W2 / W3 cut ends) so every level's base line reads as one continuous
-  // band descending past the shaft's corner, exactly like floor-01. No level
-  // bands cross the shaft walls — floor-01 has none at its base either.
-  // Span revision (user revision): the old full-depth band also repainted
-  // the floor-1 return wall's face — its bottom edge read as a stray line
-  // between the shaft and the tag — and redundantly duplicated the front and
-  // rear stretches each floor already draws. Keep only the shaft's depth:
-  // from the W2 wall's outer edge (where the return wall's face begins on
-  // screen) to the W3 wall's plane; both ends land on existing wall /
-  // enclosure edge strokes.
+  // band descending past the shaft's corner, exactly like floor-01.
+  // Span revision (user revision): the span starts at the return wall's face
+  // plane (the W2 face's outer line on screen) — the old full-depth band
+  // repainted the floor-1 return wall's face, where the stretch between the
+  // passage jamb and the shaft edge is dropped on the wall itself (see slab)
+  // — and runs to the rear corner so the W3 cut end cannot notch the band's
+  // rear end; the front stretch each floor already draws.
   for (let n = 2; n <= 5; n++) {
     out.push(
       el(
         'dw-slab-edge',
-        uFace(0, SHAFT_V0 - SHAFT_U - 2 * WALL_T, SHAFT_V1, n * FH - SLAB_T, n * FH),
+        uFace(0, SHAFT_V0 - WALL_T - (SHAFT_U + WALL_T), LD, n * FH - SLAB_T, n * FH),
       ),
     )
   }

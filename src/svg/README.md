@@ -294,17 +294,16 @@ passage reveals use the ground-floor construction (Revision 21, user
 revision): far jamb dropped by the screen-slope compensation, one
 `dw-opening` head line, no soffit — the old hFace soffit projected past the
 jamb and read as a stray line floating between the shaft and the head
-Revision 22 (Stage 5, user revision): the floor-2 slab's left cut-face band
-is split around the return wall's face — the front piece ends at the wall's
-far edge (u = LW − WALL_T), the rear piece starts at the wall's near edge
-(u = SHAFT_U + WALL_T, the W2 face's outer line) — because the full band's
-bottom edge read as a stray line across the wall's clean white face between
-the shaft and the c = 135 experience tag, and again right of the tag (the
-omitted stretch projects exactly onto the wall face; only its middle hides
-under the tag); the elevator's re-layered bands correspondingly span only
-the shaft's depth (v from the W2 face's outer line to the W3 wall's plane)
-instead of the full 0–LD, whose front and rear stretches repainted the same
-stray line and duplicated band pieces each floor already draws
+Revision 22 (Stage 5, user revision): of the floor-2 slab's left cut-face
+band, only the stretch between the return wall's near edge (the W2 face's
+outer line) and the passage's near jamb is dropped — there its bottom edge
+read as a stray scratch on the clean white wall between the elevator doors
+and the section's door; the rest of the band stays one continuous line
+(an earlier full-wall-face removal read as the base line breaking off at
+the shaft, per user revision). The elevator's re-layered bands correspond-
+ingly start at the return wall's face plane and run to the rear corner, so
+they never repaint the wall face and the W3 cut end cannot notch the band's
+rear end
 floor-3: section separation = continuation of the shaft's left wall W1
 (u [SHAFT_U, SHAFT_U+WALL_T]) rearward from v 0.60d+WALL_T to the C–D wall;
 Indelve = the rear-left strip left of it (u < SHAFT_U, v > 0.60d), Interactica
