@@ -38,6 +38,12 @@ const STAIR_U1 = STAIR_U0 + STAIR_RUN // top of flight, arrives at floor-1 slab 
 const STAIR_V1 = STAIR_V0 + STAIR_WIDTH
 const STAIR_STEPS = 12
 
+// Wall-mounted stair banister (Stage 5 user revision): rail height above the
+// treads/floor it serves, and the u where the diagonal crosses the floor-1
+// level (h = FH) — the split point between the banister's two elements.
+const RAIL_H = 28
+const RAIL_MID_U = STAIR_U0 + FH - RAIL_H
+
 const TAG_CHAR_W = 5.2 // plaque text width: approx glyph advance per char
 // The floor-01 stair opening covers the flight's full footprint and reaches
 // the C-D wall, so the whole final flight stays visible through it and the
@@ -368,13 +374,16 @@ function shaftStory(hBase, hTop, { openDoors = false } = {}) {
   }
   // Floor indicator (user revision): the story number painted on the wall
   // above each door head — one small digit per floor, in the plaques' text
-  // style, skewed onto the W2 face plane like the year signs.
+  // style, skewed onto the W2 face plane. The W2 face is a constant-v face:
+  // its text baseline runs along +u, rising on screen — the SAME up-skew
+  // matrix as the entrance year sign (the u-plane down-skew made the digits
+  // lean the wrong way; only the straight "1" hid it).
   const [fx, fy] = p((DOOR_U0 + DOOR_U1) / 2, SHAFT_V0 - WALL_T, hBase + DOOR_H + 8)
     .split(',')
     .map(Number)
   const storyNum = Math.round(hBase / FH)
   out.push(
-    `<text class="dw-floor-num" transform="matrix(0.7071 0.2475 0 1 ${round(fx)} ${round(fy)})" text-anchor="middle" dominant-baseline="central">${storyNum}</text>`,
+    `<text class="dw-floor-num" transform="matrix(0.7071 -0.2475 0 1 ${round(fx)} ${round(fy)})" text-anchor="middle" dominant-baseline="central">${storyNum}</text>`,
   )
   return out
 }
@@ -437,6 +446,14 @@ const floorGround = group('floor-ground', [
 const floor01 = group('floor-01', [
   ...slab(FH, { stairOpening: true }),
   ...backWalls(FH),
+  // Stair banister, upper element (user revision): the diagonal's floor-1
+  // stretch plus its landing return, drawn after the story walls (the stair
+  // opening shows it) but BEFORE the columns — column C, nearer to the
+  // viewer, must occlude the rail's top return.
+  el(
+    'dw-rail',
+    `M ${p(RAIL_MID_U, LD - WALL_T, FH)} L ${p(STAIR_U1, LD - WALL_T, FH + RAIL_H)} L ${p(STAIR_U1 + 12, LD - WALL_T, FH + RAIL_H)}`,
+  ),
   ...shaftReturnWalls(FH),
   ...columns(FH, FH + STORY_H),
 ])
@@ -702,19 +719,16 @@ function groundShadow() {
 function architecturalDetails() {
   const out = []
   // Stair banister (user revision): a wall-mounted rail on the C-D wall —
-  // one clean diagonal following the flight, with short horizontal returns
-  // at both ends (the lower one at the ground floor's base level, the upper
-  // one landing at floor 1). Drawn here, AFTER the story walls, so the part
-  // crossing the stair opening is not buried under the floor-01 wall; the
-  // rail stays ~28 units above the tread noses, so the flight never covers
-  // it either.
-  const RAIL_H = 28
+  // one clean diagonal following the flight. Split into two elements so the
+  // layering stays honest (user revision): this GROUND-floor element (lead-in
+  // at the floor's base level, diagonal up to the floor-1 level) is drawn
+  // after the story walls; the floor-1 element (diagonal on + top return)
+  // lives in floor-01 before its columns, so column C — nearer to the
+  // viewer — correctly occludes the rail's top return. The rail stays
+  // ~RAIL_H above the tread noses, so the flight never covers it.
   const rv = LD - WALL_T
   out.push(
-    el(
-      'dw-rail',
-      `M ${p(10, rv, RAIL_H)} L ${p(STAIR_U0, rv, RAIL_H)} L ${p(STAIR_U1, rv, FH + RAIL_H)} L ${p(139, rv, FH + RAIL_H)}`,
-    ),
+    el('dw-rail', `M ${p(10, rv, RAIL_H)} L ${p(STAIR_U0, rv, RAIL_H)} L ${p(RAIL_MID_U, rv, FH)}`),
   )
   // Nextcode story (floor 1): electrical panel on the C-D wall with two
   // conduit drops to the floor — the accent piece of the palette. Mounted on
@@ -732,15 +746,10 @@ function architecturalDetails() {
   for (const h of [h2 + 35.5, h2 + 40, h2 + 44.5]) {
     out.push(lineEl('dw-detail', 33, LD - WALL_T, h, 55, LD - WALL_T, h))
   }
-  // Pacer story (floor 4): one rising pipe with two brackets on the B-D wall,
-  // inside the wall's visible stretch (right of the shaft's W2 envelope).
-  const h4 = 4 * FH
-  out.push(lineEl('dw-pipe', LW - WALL_T, 430, h4 + 2, LW - WALL_T, 430, h4 + 90))
-  out.push(lineEl('dw-detail', LW - WALL_T, 424, h4 + 38, LW - WALL_T, 436, h4 + 38))
-  out.push(lineEl('dw-detail', LW - WALL_T, 424, h4 + 73, LW - WALL_T, 436, h4 + 73))
-  // Freelancer story (floor 0): subtle repaired-paint patch on the B-D wall
-  // (Stage 5 §12) — imperfect surface, hand-drawn character, no outline.
-  out.push(el('dw-patch', uFace(LW - WALL_T, 150, 190, 22, 56)))
+  // (Removed on user review: the Pacer pipe read as a stray vertical line in
+  // the bare story, and the Freelancer wall patch read as a floating square
+  // — both were less legible than the surfaces they decorated. §8: sparse
+  // means the pieces that survive must read at a glance.)
   return group('architectural-details', out)
 }
 

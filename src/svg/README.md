@@ -92,22 +92,26 @@ Material system (STAGE_05 §4–§7, `scripts/style.mjs` + per-floor patterns in
   rear-edge stroke, so an explicit `dw-far-line` junction line is drawn on
   top (same weight as the slab edges).
 - **Stair/elevator details (§9–§10)** — wall-mounted stair banister: one
-  clean diagonal on the C-D wall following the flight (short horizontal
-  returns at the ground-floor base and at the floor-1 landing), drawn in
-  `architectural-details` above the story walls so the part crossing the
-  stair opening stays visible; the story number (`dw-floor-num`) painted on
-  the wall above each elevator door head. Proportions and geometry
-  untouched.
+  clean diagonal on the C-D wall following the flight, split into two
+  elements for honest layering (user revision): the ground-floor element
+  (lead-in at the floor's base level, diagonal to the floor-1 level) lives
+  in `architectural-details`, above the story walls so the stair opening
+  shows it; the floor-1 element (diagonal on + landing return) is drawn in
+  `floor-01` between its walls and columns, so column C — nearer to the
+  viewer — occludes the rail's top return. The story number
+  (`dw-floor-num`) painted on the wall above each elevator door head,
+  skewed with the v-plane face (up along +u, like the entrance sign).
+  Proportions and geometry untouched.
 - **Sparse infrastructure (§8)** — fragment `architectural-details` (drawn
   after the floors, before the elevator; positions chosen against the
   shaft's occlusion envelope — the W2 faces hide the B-D wall beyond
   x ≈ 598, so wall details live on the visible stretches): electrical panel
-  + two conduit drops on the C-D wall (Nextcode story), ventilation grille
-  (Interactica story, kept below the Indelve tag band), rising pipe with two
-  brackets on the B-D wall's visible stretch (Pacer story), and one subtle
-  wall patch (`.dw-patch`, Freelancer story — §12 imperfect-surface
-  character). No raster assets were needed (§13): the displacement filter,
-  jitter and pattern irregularity carry the illustrated feel.
+  + two conduit drops on the C-D wall (Nextcode story) and a ventilation
+  grille (Interactica story, kept below the Indelve tag band). Removed on
+  user review: the Pacer rising pipe (read as a stray vertical line in the
+  bare story) and the Freelancer wall patch (read as a floating square —
+  §12's imperfect-surface note is carried by the jitter/displacement system
+  instead). No raster assets were needed (§13).
 
 ## Layout: fragments + assembled master (Stage 2)
 

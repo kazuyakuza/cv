@@ -94,11 +94,7 @@ export const svgStyle = `
     .dw-panel { fill: #dbd7ca; stroke: #6f6c65; stroke-width: 0.9; }
     .dw-panel-accent { fill: #b9776b; stroke: #6f6c65; stroke-width: 0.9; }
     .dw-vent { fill: #ece6d6; stroke: #8a867d; stroke-width: 0.75; }
-    .dw-pipe { fill: none; stroke: #8a867d; stroke-width: 2; stroke-linecap: round; }
     .dw-detail { fill: none; stroke: #8a867d; stroke-width: 0.9; stroke-linecap: round; }
-    /* Wall patch (Stage 5 §12): one subtle repaired rectangle, a whisper of
-       imperfect surface so the drawing does not read as sterile CAD */
-    .dw-patch { fill: #f6f1e3; stroke: none; }
 
     /* Tier 3 — tertiary / subtle lines. Terrain is a cool grey — clearly
        apart from the warm interior floors it must not be mistaken for
