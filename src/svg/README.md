@@ -66,8 +66,8 @@ Material system (STAGE_05 §4–§7, `scripts/style.mjs` + per-floor patterns in
   concrete (`.dw-wall`), interior far faces warm off-white (`.dw-wall-far`),
   partitions lighter warm (`.dw-partition`), floors warm pale, shaft its own
   darker structure (`.dw-shaft`), stairs a three-tone warm concrete family.
-  One accent only: the muted terracotta electrical panel
-  (`.dw-panel-accent`).
+  (The palette's single terracotta accent — the electrical panel — was
+  removed on user review; the palette is now fully muted.)
 - **Per-floor materials** (`dw-f0`…`dw-f5t` patterns, userSpaceOnUse so
   re-layered pieces stay in phase): small warm tiles (ground), large quiet
   concrete panels (floor 1), wood strip flooring with random butt joints
@@ -104,16 +104,14 @@ Material system (STAGE_05 §4–§7, `scripts/style.mjs` + per-floor patterns in
   occludes the rail's top return. The story number (`dw-floor-num`) painted
   on the wall above each elevator door head, skewed with the v-plane face
   (up along +u, like the entrance sign). Proportions and geometry untouched.
-- **Sparse infrastructure (§8)** — fragment `architectural-details` (drawn
-  after the floors, before the elevator; positions chosen against the
-  shaft's occlusion envelope — the W2 faces hide the B-D wall beyond
-  x ≈ 598, so wall details live on the visible stretches): electrical panel
-  + two conduit drops on the C-D wall (Nextcode story) and a ventilation
-  grille (Interactica story, kept below the Indelve tag band). Removed on
-  user review: the Pacer rising pipe (read as a stray vertical line in the
-  bare story) and the Freelancer wall patch (read as a floating square —
-  §12's imperfect-surface note is carried by the jitter/displacement system
-  instead). No raster assets were needed (§13).
+- **Sparse infrastructure (§8)** — fragment `architectural-details` is an
+  empty placeholder: every candidate was removed on user review — the Pacer
+  rising pipe (stray vertical line in the bare story), the Freelancer wall
+  patch (floating square), the Nextcode electrical panel + two conduit drops
+  and the Interactica ventilation grille (both read as clutter on the bare
+  stories; §12's imperfect-surface note is carried by the jitter/displacement
+  system instead). The fragment stays in the assembly chain in case a later
+  stage adds details that survive a glance. No raster assets were needed (§13).
 
 ## Layout: fragments + assembled master (Stage 2)
 
@@ -296,6 +294,17 @@ passage reveals use the ground-floor construction (Revision 21, user
 revision): far jamb dropped by the screen-slope compensation, one
 `dw-opening` head line, no soffit — the old hFace soffit projected past the
 jamb and read as a stray line floating between the shaft and the head
+Revision 22 (Stage 5, user revision): the floor-2 slab's left cut-face band
+is split around the return wall's face — the front piece ends at the wall's
+far edge (u = LW − WALL_T), the rear piece starts at the wall's near edge
+(u = SHAFT_U + WALL_T, the W2 face's outer line) — because the full band's
+bottom edge read as a stray line across the wall's clean white face between
+the shaft and the c = 135 experience tag, and again right of the tag (the
+omitted stretch projects exactly onto the wall face; only its middle hides
+under the tag); the elevator's re-layered bands correspondingly span only
+the shaft's depth (v from the W2 face's outer line to the W3 wall's plane)
+instead of the full 0–LD, whose front and rear stretches repainted the same
+stray line and duplicated band pieces each floor already draws
 floor-3: section separation = continuation of the shaft's left wall W1
 (u [SHAFT_U, SHAFT_U+WALL_T]) rearward from v 0.60d+WALL_T to the C–D wall;
 Indelve = the rear-left strip left of it (u < SHAFT_U, v > 0.60d), Interactica

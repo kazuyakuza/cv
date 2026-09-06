@@ -1,9 +1,3 @@
 <g id="architectural-details">
-  <path class="dw-panel-accent" d="M349.83,701.74 L368.22,695.61 L368.87,665.17 L349.93,671.44 Z" />
-  <line class="dw-detail" x1="354.47" y1="730.86" x2="354.23" y2="700.29" />
-  <line class="dw-detail" x1="361.41" y1="728.86" x2="361.33" y2="697.14" />
-  <path class="dw-vent" d="M360.33,593.46 L380.81,587.3 L380.97,567.14 L360.79,573.64 Z" />
-  <line class="dw-detail" x1="363.06" y1="587.47" x2="378.93" y2="582.25" />
-  <line class="dw-detail" x1="362.55" y1="583.56" x2="378.29" y2="577.77" />
-  <line class="dw-detail" x1="363.21" y1="578.11" x2="378.08" y2="573.59" />
+
 </g>

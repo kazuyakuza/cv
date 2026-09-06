@@ -125,14 +125,6 @@ const column = (u, v, h0, h1) => {
 
 const el = (cls, d, attrs = '') => `<path class="${cls}"${attrs} d="${d}" />`
 
-// Straight detail line between two 3D points, routed through p() so its ends
-// share the jittered corners of the geometry it attaches to.
-const lineEl = (cls, u1, v1, h1, u2, v2, h2) => {
-  const [x1, y1] = p(u1, v1, h1).split(',')
-  const [x2, y2] = p(u2, v2, h2).split(',')
-  return `<line class="${cls}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" />`
-}
-
 // ---------------------------------------------------------------------------
 // Floor fragments (slab + story walls + partitions + shaft story segment)
 // ---------------------------------------------------------------------------
@@ -165,7 +157,39 @@ function slab(hTop, { stairOpening = false } = {}) {
   // Left edge band (A-C side, cut face at u = 0). Continuous: the stair
   // flight is inset from the open side (STAIR_U0 > 0), so the floor-01 slab
   // reads as one coherent plane around the stair opening.
-  out.push(el('dw-slab-edge', path([p(0, 0, hTop), p(0, LD, hTop), p(0, LD, hBot), p(0, 0, hBot)])))
+  //
+  // Floor-2 revision (user revision): this band's projection crosses the
+  // floor-1 return wall's face (the wall sits deeper than the u = 0 plane,
+  // so drawing the band over it is geometrically true occlusion) — but on
+  // the clean white wall its bottom edge read as a stray line between the
+  // shaft and the experience tag, and again right of the tag where the
+  // wall's face continues. Split the band around the wall: the front piece
+  // ends where the band's projection meets the wall's far edge (u = LW -
+  // WALL_T) and the rear piece starts at the wall's near edge (u = SHAFT_U
+  // + WALL_T, the W2 face's outer line) — both cut ends land exactly on
+  // existing wall-edge strokes. The omitted stretch covers the wall face's
+  // whole on-screen width; its middle hides under the c = 135 experience
+  // tag, and the visible ends are what read as stray lines.
+  if (hTop === 2 * FH) {
+    const vCut0 = SHAFT_V0 - LW
+    const vCut1 = SHAFT_V0 - SHAFT_U - 2 * WALL_T
+    out.push(
+      el(
+        'dw-slab-edge',
+        path([p(0, 0, hTop), p(0, vCut0, hTop), p(0, vCut0, hBot), p(0, 0, hBot)]),
+      ),
+    )
+    out.push(
+      el(
+        'dw-slab-edge',
+        path([p(0, vCut1, hTop), p(0, LD, hTop), p(0, LD, hBot), p(0, vCut1, hBot)]),
+      ),
+    )
+  } else {
+    out.push(
+      el('dw-slab-edge', path([p(0, 0, hTop), p(0, LD, hTop), p(0, LD, hBot), p(0, 0, hBot)])),
+    )
+  }
   if (stairOpening) {
     // No cut faces around the stair opening (user revision): the opening
     // reaches the C-D wall, so the rear wall shows through it as one
@@ -655,12 +679,24 @@ function elevator() {
   out.push(el('dw-shaft', uFace(0, SHAFT_V0, SHAFT_V1, FH, TOP_H)))
   // Floor base lines across the shaft (user revision): from floor 2 up the
   // enclosure would hide each floor's left cut face, breaking the base line
-  // that floor-01 shows. Re-layer the FULL cut face over the enclosure (and
-  // the W2 / W3 cut ends) so every level's base line reads as one continuous
+  // that floor-01 shows. Re-layer the cut face over the enclosure (and the
+  // W2 / W3 cut ends) so every level's base line reads as one continuous
   // band descending past the shaft's corner, exactly like floor-01. No level
   // bands cross the shaft walls — floor-01 has none at its base either.
+  // Span revision (user revision): the old full-depth band also repainted
+  // the floor-1 return wall's face — its bottom edge read as a stray line
+  // between the shaft and the tag — and redundantly duplicated the front and
+  // rear stretches each floor already draws. Keep only the shaft's depth:
+  // from the W2 wall's outer edge (where the return wall's face begins on
+  // screen) to the W3 wall's plane; both ends land on existing wall /
+  // enclosure edge strokes.
   for (let n = 2; n <= 5; n++) {
-    out.push(el('dw-slab-edge', uFace(0, 0, LD, n * FH - SLAB_T, n * FH)))
+    out.push(
+      el(
+        'dw-slab-edge',
+        uFace(0, SHAFT_V0 - SHAFT_U - 2 * WALL_T, SHAFT_V1, n * FH - SLAB_T, n * FH),
+      ),
+    )
   }
   // Year signs on the enclosure wall, one per story.
   STORY_YEARS.forEach((year, i) => out.push(...yearPlaque(year, (i + 1) * FH)))
@@ -746,33 +782,15 @@ function groundShadow() {
   ])
 }
 
-// --- architectural-details: sparse infrastructure ---------------------------
-// Stage 5 §8: supporting details only — a panel and a vent, each placed with
-// intent (served rooms), never distributed uniformly. Positions were chosen
-// against the elevator's occlusion envelope so nothing is later painted over.
+// --- architectural-details: (empty placeholder) -----------------------------
+// Stage 5 §8 aimed at sparse supporting infrastructure. On user review every
+// candidate was removed: the Pacer pipe (stray vertical line), the Freelancer
+// wall patch (floating square), the Nextcode electrical panel + conduits and
+// the Interactica ventilation grille (both read as clutter on the bare
+// stories). The fragment stays as a placeholder in case a later stage adds
+// details that survive a glance.
 function architecturalDetails() {
-  const out = []
-  // Nextcode story (floor 1): electrical panel on the C-D wall with two
-  // conduit drops to the floor — the accent piece of the palette. Mounted on
-  // the rear wall's far-left stretch: the shaft's W2 faces occlude the B-D
-  // wall beyond x ≈ 598, and the left-side tag column (c = 470) owns
-  // x ≈ 382–451, so the visible free spot is beside the building's left edge.
-  const h1 = FH
-  out.push(el('dw-panel-accent', vFace(LD - WALL_T, 15, 41, h1 + 31, h1 + 61)))
-  out.push(lineEl('dw-detail', 21, LD - WALL_T, h1, 21, LD - WALL_T, h1 + 31))
-  out.push(lineEl('dw-detail', 31, LD - WALL_T, h1, 31, LD - WALL_T, h1 + 31))
-  // Interactica story (floor 2): ventilation grille on the C-D wall, at
-  // mid-story height so it stays clear of the Indelve tag's band above.
-  const h2 = 2 * FH
-  out.push(el('dw-vent', vFace(LD - WALL_T, 30, 58, h2 + 30, h2 + 50)))
-  for (const h of [h2 + 35.5, h2 + 40, h2 + 44.5]) {
-    out.push(lineEl('dw-detail', 33, LD - WALL_T, h, 55, LD - WALL_T, h))
-  }
-  // (Removed on user review: the Pacer pipe read as a stray vertical line in
-  // the bare story, and the Freelancer wall patch read as a floating square
-  // — both were less legible than the surfaces they decorated. §8: sparse
-  // means the pieces that survive must read at a glance.)
-  return group('architectural-details', out)
+  return group('architectural-details', [])
 }
 
 // --- career-sign: posts and placeholder panel -------------------------------

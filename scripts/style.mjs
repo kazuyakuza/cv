@@ -86,15 +86,10 @@ export const svgStyle = `
     .dw-shade-b { fill: #46443f; fill-opacity: 0.06; stroke: none; }
     .dw-shade-c { fill: #46443f; fill-opacity: 0.03; stroke: none; }
 
-    /* Stage 5 §8–9 — sparse infrastructure and stair/elevator details.
-       Supporting cast only: one or two small elements per area, never
-       distributed uniformly (§8). The muted terracotta panel is the single
-       accent the palette allows itself (§4). */
+    /* Stage 5 §9 — stair/elevator details. (§8 sparse-infrastructure pieces
+       were all removed on user review — pipe, wall patch, panel, vent — so
+       only the banister line survives.) */
     .dw-rail { fill: none; stroke: #6f6c65; stroke-width: 1; stroke-linecap: round; }
-    .dw-panel { fill: #dbd7ca; stroke: #6f6c65; stroke-width: 0.9; }
-    .dw-panel-accent { fill: #b9776b; stroke: #6f6c65; stroke-width: 0.9; }
-    .dw-vent { fill: #ece6d6; stroke: #8a867d; stroke-width: 0.75; }
-    .dw-detail { fill: none; stroke: #8a867d; stroke-width: 0.9; stroke-linecap: round; }
 
     /* Tier 3 — tertiary / subtle lines. Terrain is a cool grey — clearly
        apart from the warm interior floors it must not be mistaken for
