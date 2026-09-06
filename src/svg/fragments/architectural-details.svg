@@ -1,5 +1,4 @@
 <g id="architectural-details">
-  <path class="dw-rail" d="M 346.37,810.77 L 354.67,807.75 L 409.14,712.29" />
   <path class="dw-panel-accent" d="M349.83,701.74 L368.22,695.61 L368.87,665.17 L349.93,671.44 Z" />
   <line class="dw-detail" x1="354.47" y1="730.86" x2="354.23" y2="700.29" />
   <line class="dw-detail" x1="361.41" y1="728.86" x2="361.33" y2="697.14" />

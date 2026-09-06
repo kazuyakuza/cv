@@ -312,16 +312,38 @@ function shaftReturnWalls(hBase) {
       p(RET_DOOR_U0, v, doorTop),
       p(RET_DOOR_U0, v, hBase),
     ])
+  // Passage reveal (user revision): the same construction as the ground
+  // partitions — far jamb over the face, its back-top corner dropped by the
+  // screen-slope compensation so the reveal is cut by the head line, and one
+  // `dw-opening` head line re-drawn over the jamb's fill. No soffit face:
+  // the old hFace over the opening projected past the jamb (its back edge
+  // lands left of the reveal) and read as a stray line floating between the
+  // shaft and the passage head.
+  const jambDrop = 2 * -AXIS_D[1] * WALL_T
+  const passage = (v) => {
+    const [hx1, hy1] = p(RET_DOOR_U0, v, doorTop).split(',')
+    const [hx2, hy2] = p(RET_DOOR_U1, v, doorTop).split(',')
+    return [
+      el(
+        'dw-partition',
+        path([
+          p(RET_DOOR_U1, v, hBase),
+          p(RET_DOOR_U1, v + WALL_T, hBase),
+          p(RET_DOOR_U1, v + WALL_T, doorTop - jambDrop),
+          p(RET_DOOR_U1, v, doorTop),
+        ]),
+      ),
+      `<line class="dw-opening" x1="${hx1}" y1="${hy1}" x2="${hx2}" y2="${hy2}" />`,
+    ]
+  }
   return [
     // Health Platforms side (continues W2), with passage lining for depth.
     el('dw-partition', faceWithDoor(SHAFT_V0 - WALL_T)),
-    el('dw-partition', hFace(RET_DOOR_U0, RET_DOOR_U1, SHAFT_V0 - WALL_T, SHAFT_V0, doorTop)),
-    el('dw-partition', uFace(RET_DOOR_U1, SHAFT_V0 - WALL_T, SHAFT_V0, hBase, doorTop)),
+    ...passage(SHAFT_V0 - WALL_T),
     el('dw-slab-edge', uFace(u0, SHAFT_V0 - WALL_T, SHAFT_V0, hBase, hTop)),
     // Nextcode side (continues W3), with passage lining for depth.
     el('dw-partition', faceWithDoor(SHAFT_V1)),
-    el('dw-partition', hFace(RET_DOOR_U0, RET_DOOR_U1, SHAFT_V1, SHAFT_V1 + WALL_T, doorTop)),
-    el('dw-partition', uFace(RET_DOOR_U1, SHAFT_V1, SHAFT_V1 + WALL_T, hBase, doorTop)),
+    ...passage(SHAFT_V1),
     el('dw-slab-edge', uFace(u0, SHAFT_V1, SHAFT_V1 + WALL_T, hBase, hTop)),
   ]
 }
@@ -603,6 +625,19 @@ function staircase() {
   // Solid side face slightly darker than the treads: reads as the stair's
   // solid mass, a restrained depth cue (Stage 4 §22).
   out.push(el('dw-stair-side', path(profile)))
+  // Wall-mounted banister, ground element (user revision): lead-in at the
+  // floor's base level + diagonal following the flight up to the floor-1
+  // level, attached to the C-D rear wall. Drawn in this fragment — BEFORE
+  // floor-01 — so the floor-1 slab's cut faces (its base band and the stair
+  // opening's edge faces, all nearer to the viewer on screen) occlude the
+  // diagonal where they cross it; the floor-01 wall itself never covers the
+  // rail (it starts at h = 105, exactly where the rail tops out). The upper
+  // element (diagonal on + landing return) lives in floor-01 before its
+  // columns, so column C occludes the return.
+  const rv = STAIR_V1
+  out.push(
+    el('dw-rail', `M ${p(10, rv, RAIL_H)} L ${p(STAIR_U0, rv, RAIL_H)} L ${p(RAIL_MID_U, rv, FH)}`),
+  )
   return group('staircase', out)
 }
 
@@ -711,25 +746,12 @@ function groundShadow() {
   ])
 }
 
-// --- architectural-details: sparse infrastructure + one wall patch ----------
-// Stage 5 §8/§12: supporting details only — a panel, conduits, a vent, a
-// pipe, each placed with intent (served rooms), never distributed uniformly.
-// Positions were chosen against the elevator's occlusion envelope so nothing
-// is later painted over.
+// --- architectural-details: sparse infrastructure ---------------------------
+// Stage 5 §8: supporting details only — a panel and a vent, each placed with
+// intent (served rooms), never distributed uniformly. Positions were chosen
+// against the elevator's occlusion envelope so nothing is later painted over.
 function architecturalDetails() {
   const out = []
-  // Stair banister (user revision): a wall-mounted rail on the C-D wall —
-  // one clean diagonal following the flight. Split into two elements so the
-  // layering stays honest (user revision): this GROUND-floor element (lead-in
-  // at the floor's base level, diagonal up to the floor-1 level) is drawn
-  // after the story walls; the floor-1 element (diagonal on + top return)
-  // lives in floor-01 before its columns, so column C — nearer to the
-  // viewer — correctly occludes the rail's top return. The rail stays
-  // ~RAIL_H above the tread noses, so the flight never covers it.
-  const rv = LD - WALL_T
-  out.push(
-    el('dw-rail', `M ${p(10, rv, RAIL_H)} L ${p(STAIR_U0, rv, RAIL_H)} L ${p(RAIL_MID_U, rv, FH)}`),
-  )
   // Nextcode story (floor 1): electrical panel on the C-D wall with two
   // conduit drops to the floor — the accent piece of the palette. Mounted on
   // the rear wall's far-left stretch: the shaft's W2 faces occlude the B-D

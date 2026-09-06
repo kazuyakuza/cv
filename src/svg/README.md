@@ -95,13 +95,15 @@ Material system (STAGE_05 §4–§7, `scripts/style.mjs` + per-floor patterns in
   clean diagonal on the C-D wall following the flight, split into two
   elements for honest layering (user revision): the ground-floor element
   (lead-in at the floor's base level, diagonal to the floor-1 level) lives
-  in `architectural-details`, above the story walls so the stair opening
-  shows it; the floor-1 element (diagonal on + landing return) is drawn in
-  `floor-01` between its walls and columns, so column C — nearer to the
-  viewer — occludes the rail's top return. The story number
-  (`dw-floor-num`) painted on the wall above each elevator door head,
-  skewed with the v-plane face (up along +u, like the entrance sign).
-  Proportions and geometry untouched.
+  in `staircase`, BEFORE floor-01 — the floor-1 slab's cut faces (its base
+  band and the stair opening's edge faces, all nearer to the viewer) occlude
+  the diagonal where they cross it on screen, while the floor-01 wall never
+  covers it (the wall starts at h = 105, where the rail tops out); the
+  floor-1 element (diagonal on + landing return) is drawn in `floor-01`
+  between its walls and columns, so column C — nearer to the viewer —
+  occludes the rail's top return. The story number (`dw-floor-num`) painted
+  on the wall above each elevator door head, skewed with the v-plane face
+  (up along +u, like the entrance sign). Proportions and geometry untouched.
 - **Sparse infrastructure (§8)** — fragment `architectural-details` (drawn
   after the floors, before the elevator; positions chosen against the
   shaft's occlusion envelope — the W2 faces hide the B-D wall beyond
@@ -289,7 +291,11 @@ floor-1: Health Platforms (0–0.46d), Nextcode (0.585–1.0d) — staircase arr
 here; return walls continue the shaft's W2 / W3 walls (v-bands
 [SHAFT_V0−WALL_T, SHAFT_V0] and [SHAFT_V1, SHAFT_V1+WALL_T], u from SHAFT_U to
 the B–D wall) so the floor reads as Nextcode | Elevator | Health Platforms;
-each return wall has a door-height passage (u 75–130) near the open side
+each return wall has a door-height passage (u 75–130) near the open side;
+passage reveals use the ground-floor construction (Revision 21, user
+revision): far jamb dropped by the screen-slope compensation, one
+`dw-opening` head line, no soffit — the old hFace soffit projected past the
+jamb and read as a stray line floating between the shaft and the head
 floor-3: section separation = continuation of the shaft's left wall W1
 (u [SHAFT_U, SHAFT_U+WALL_T]) rearward from v 0.60d+WALL_T to the C–D wall;
 Indelve = the rear-left strip left of it (u < SHAFT_U, v > 0.60d), Interactica
