@@ -57,6 +57,58 @@ Corrective pass before Stage 5 (see `STAGE_04.5_ARCHITECTURAL_ILLUSTRATION_FIXES
   text + dots + clearance always fit (tag half = text half + 7.5, year
   plaques half-length 17.5).
 
+## Stage 5 — materials, colors, shading and details
+
+Material system (STAGE_05 §4–§7, `scripts/style.mjs` + per-floor patterns in
+`svgDefs`):
+
+- **Restrained warm/concrete palette** — near/exterior faces grey-blue
+  concrete (`.dw-wall`), interior far faces warm off-white (`.dw-wall-far`),
+  partitions lighter warm (`.dw-partition`), floors warm pale, shaft its own
+  darker structure (`.dw-shaft`), stairs a three-tone warm concrete family.
+  One accent only: the muted terracotta electrical panel
+  (`.dw-panel-accent`).
+- **Per-floor materials** (`dw-f0`…`dw-f5t` patterns, userSpaceOnUse so
+  re-layered pieces stay in phase): small warm tiles (ground), large quiet
+  concrete panels (floor 1), wood strip flooring with random butt joints
+  (floors 2–3 share one material: one company), large diamond tiles pointing
+  toward viewer/rear (Pacer, floor 4), bare construction screed with random
+  marks (floor 5) plus two small laid-tile patches (`.dw-f5t`) at the D and B
+  corners. Patterns follow the isometric axes (slope ±0.35, cell height =
+  0.35·cell width) so lattices tile seamlessly.
+- **Structural shading (§7)** —
+  - ceiling washes: three stepped translucent bands (`dw-shade-a/b/c`) under
+    each slab along the rear walls' tops; steps instead of a linear gradient
+    because a screen-space gradient cannot follow the isometric slope while
+    constant-h parallelograms hug it. Floor-3 re-draws the C-D wash clipped
+    to the section the separation fill covers (`#dw-clip-sep3b`) so the
+    Indelve story is shaded like every other. Fifth-floor stubs get none
+    (open air, no roof). (An entrance header gradient shadow was tried and
+    removed on user review — it read as a stain.)
+  - ground-contact shadow: one blurred polygon (`#dw-soft`, stdDeviation 5)
+    under the base footprint, offset (13, 6) toward the plaques' shadow
+    direction; fragment `ground-shadow` between terrain and building.
+- **Floor-3 junction line** — the clipped separation fill covers the slab's
+  rear-edge stroke, so an explicit `dw-far-line` junction line is drawn on
+  top (same weight as the slab edges).
+- **Stair/elevator details (§9–§10)** — wall-mounted stair banister: one
+  clean diagonal on the C-D wall following the flight (short horizontal
+  returns at the ground-floor base and at the floor-1 landing), drawn in
+  `architectural-details` above the story walls so the part crossing the
+  stair opening stays visible; the story number (`dw-floor-num`) painted on
+  the wall above each elevator door head. Proportions and geometry
+  untouched.
+- **Sparse infrastructure (§8)** — fragment `architectural-details` (drawn
+  after the floors, before the elevator; positions chosen against the
+  shaft's occlusion envelope — the W2 faces hide the B-D wall beyond
+  x ≈ 598, so wall details live on the visible stretches): electrical panel
+  + two conduit drops on the C-D wall (Nextcode story), ventilation grille
+  (Interactica story, kept below the Indelve tag band), rising pipe with two
+  brackets on the B-D wall's visible stretch (Pacer story), and one subtle
+  wall patch (`.dw-patch`, Freelancer story — §12 imperfect-surface
+  character). No raster assets were needed (§13): the displacement filter,
+  jitter and pattern irregularity carry the illustrated feel.
+
 ## Layout: fragments + assembled master (Stage 2)
 
 The diorama is authored as **modular fragments** — one `<g>` per architectural
@@ -69,6 +121,7 @@ src/svg/
 │   │                                                            entrance/career-sign generated)
 │   ├── floor-ground.svg, floor-01.svg … floor-05.svg          (generated)
 │   ├── staircase.svg, elevator.svg, tags.svg                  (generated)
+│   ├── ground-shadow.svg, architectural-details.svg           (generated, Stage 5)
 │   └── (labels.svg removed in Stage 3.5 — replaced by tags.svg)
 └── diorama.svg                 ← assembled single-SVG deliverable (committed)
 ```
@@ -286,9 +339,10 @@ WIP markers at both positions
 ### Layer order (Stage 3.5 revision)
 
 Assembled in this order so occlusion obeys physical structure:
-`terrain` → `building` (floor-ground, staircase, floor-01, floor-02…05 rear
-groups — sections behind the shaft, elevator, floor-02…05-front planes,
-tags) → `entrance` → `path` → `career-sign`.
+`terrain` → `ground-shadow` → `building` (floor-ground, staircase, floor-01,
+floor-02…05 rear groups — sections behind the shaft, architectural-details,
+elevator, floor-02…05-front planes, tags) → `entrance` → `path` →
+`career-sign`.
 
 ## Group-ID naming
 
@@ -297,6 +351,7 @@ IDs describe architectural meaning, never generated names (`group42`, `rect891`)
 | ID                          | Meaning                                    |
 | --------------------------- | ------------------------------------------ |
 | `terrain`                   | ground/base plane                          |
+| `ground-shadow`             | soft building contact shadow (Stage 5)     |
 | `career-sign`               | personal identification sign (placeholder) |
 | `path`                      | path from sign/foreground to entrance      |
 | `entrance`                  | entrance threshold + portal frame          |
@@ -304,6 +359,7 @@ IDs describe architectural meaning, never generated names (`group42`, `rect891`)
 | `floor-02-front`…           | story column layers of shaft-crossing floors |
 | `staircase`                 | stairs between stages (ground → floor 1)   |
 | `elevator`                  | persistent vertical shaft, floor 1 up      |
+| `architectural-details`     | sparse infrastructure + wall patch (Stage 5) |
 | `tags`                      | career-stage signs on the left wall        |
 
 ## Architecture vs information layer

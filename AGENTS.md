@@ -6,7 +6,12 @@ Visual representation of a professional software-development career as an **isom
 architectural diorama**: a multi-floor building where each floor represents a career
 stage, growing upward over time. Published as a web project (Vue.js) hosted on GitHub Pages.
 
-The primary visual source is **editable, modular SVG geometry** — never a raster image.
+The primary architectural geometry should preferably be represented as editable, modular SVG.
+The project may use a hybrid SVG/raster approach when appropriate. Raster
+images, textures, generated visual assets and other non-vector elements are
+allowed when they materially improve the final visual result.
+
+Do not force every visual element to be vectorized.
 
 ## Key Documents
 
@@ -47,6 +52,42 @@ The primary visual source is **editable, modular SVG geometry** — never a rast
 - HTML/CSS for information overlays where useful
 - Overview mode via query parameter (screenshot-friendly); Detailed mode is the default
 - Hosted on GitHub Pages; avoid unnecessary implementation complexity
+- **Image generation (nano-banana MCP)** is available for generating utility
+  raster assets that may be included in the diorama. Use it sparingly — only
+  when a generated asset materially improves the result (the AGENTS.md
+  hybrid SVG/raster rule); never as a substitute for the editable SVG
+  geometry, and never for the core architectural drawing.
+- **SVG tooling MCPs**: `svg-optimizer` (SVGO optimization, no key) and
+  `svgmaker` (AI SVG generate/edit, needs `SVGMAKER_API_KEY` — leave unset
+  until the user provides it).
+- **Iconify MCP (`iconify`)** provides search over 200k+ free, open-source
+  vector icons (MIT/other OSI licenses) for UI details, furniture, plants,
+  tech logos, etc.
+
+## Free Asset Sources (always free only)
+
+Prefer these sources for reusable visual assets. **Never use paid/premium
+assets.** Download via webfetch and save into `generated/` or `src/assets/`;
+prefer SVG (editable, stylable) over raster when both exist.
+
+- **unDraw — https://undraw.co/illustrations** — free, open-source SVG
+  illustrations (MIT). Browse/search on the site; each illustration has a
+  direct SVG download URL.
+- **SVGL — https://svgl.app/** — free SVG brand/technology logos (open
+  source; the logo collection lives in the `svgl/svgl` GitHub repo, raw SVGs
+  fetchable from `raw.githubusercontent.com/svgl/svgl/main/src/icons/...`).
+  Useful for the technology keywords in the diorama.
+- **Kenney — https://kenney.nl/** — CC0 game assets (models, icons, UI
+  packs). Available as downloadable zips; some packs include SVGs. No
+  attribution required.
+- **IconScout — https://iconscout.com/** — free icons (filter by "Free"
+  price); free assets only, never the premium ones.
+- **Isocons (isometric icons) — https://community-en.eagle.cool/resource/isocons-isometric-icons**
+  — free isometric icon set, useful for small 3D-style objects in the
+  diorama. Download the pack and use its SVGs.
+
+Rule: an asset is usable only if its source license permits free use.
+When in doubt about a license, ask the user before including the asset.
 
 ## Non-Goals (initially)
 

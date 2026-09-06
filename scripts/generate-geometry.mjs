@@ -89,6 +89,14 @@ const p = (u, v, h) => {
 
 const path = (pts) => `M${pts.join(' L')} Z`
 
+// Per-floor floor material (Stage 5 §5): every floor-top piece carries a
+// material class (dw-f0 … dw-f5) resolving to a pattern fill in style.mjs.
+// userSpaceOnUse patterns keep all pieces of one floor (slab top, the
+// shaft-crossing triangle re-layers, the entrance threshold) seamlessly in
+// phase. Materials are intentionally shared where the career story shares a
+// surface: Interactica keeps the same wood on floors 2 and 3.
+const floorCls = (hTop) => `dw-f${Math.round(hTop / FH)}`
+
 // Horizontal face (slab tops, treads, wall tops): normal +h (up).
 const hFace = (u0, u1, v0, v1, h) => path([p(u0, v0, h), p(u1, v0, h), p(u1, v1, h), p(u0, v1, h)])
 
@@ -109,7 +117,15 @@ const column = (u, v, h0, h1) => {
   return `<line class="dw-column" x1="${round(x1)}" y1="${round(y1)}" x2="${round(x2)}" y2="${round(y2)}" />`
 }
 
-const el = (cls, d) => `<path class="${cls}" d="${d}" />`
+const el = (cls, d, attrs = '') => `<path class="${cls}"${attrs} d="${d}" />`
+
+// Straight detail line between two 3D points, routed through p() so its ends
+// share the jittered corners of the geometry it attaches to.
+const lineEl = (cls, u1, v1, h1, u2, v2, h2) => {
+  const [x1, y1] = p(u1, v1, h1).split(',')
+  const [x2, y2] = p(u2, v2, h2).split(',')
+  return `<line class="${cls}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" />`
+}
 
 // ---------------------------------------------------------------------------
 // Floor fragments (slab + story walls + partitions + shaft story segment)
@@ -135,8 +151,8 @@ function slab(hTop, { stairOpening = false } = {}) {
   // tone so floors read as physical surfaces, not white polygons.
   const out = [
     holes.length
-      ? `<path class="dw-floor" fill-rule="evenodd" d="${topD}" />`
-      : el('dw-floor', topD),
+      ? `<path class="dw-floor ${floorCls(hTop)}" fill-rule="evenodd" d="${topD}" />`
+      : el(`dw-floor ${floorCls(hTop)}`, topD),
   ]
   // Front edge band (A-B side, cut face at v = 0).
   out.push(el('dw-slab-edge', path([p(0, 0, hTop), p(LW, 0, hTop), p(LW, 0, hBot), p(0, 0, hBot)])))
@@ -164,7 +180,7 @@ function slab(hTop, { stairOpening = false } = {}) {
 function slabTriangle(hTop) {
   return [
     el(
-      'dw-floor-fill',
+      `dw-floor-fill ${floorCls(hTop)}`,
       path([
         p(0, 0, hTop),
         p(SHAFT_U + WALL_T, 0, hTop),
@@ -174,6 +190,17 @@ function slabTriangle(hTop) {
     ),
   ]
 }
+
+// Ceiling shadow strips (Stage 5 §7): the slab above shades the top of each
+// story's rear walls. Three stepped translucent bands of constant height —
+// they follow the slanted wall tops exactly and read as a soft wash.
+const CEIL_BANDS = [
+  [0, 8, 'dw-shade-a'],
+  [8, 18, 'dw-shade-b'],
+  [18, 30, 'dw-shade-c'],
+]
+const ceilBands = (face, hTop, attrs = '') =>
+  CEIL_BANDS.map(([d0, d1, cls]) => el(cls, face(hTop - d1, hTop - d0), attrs))
 
 // Back wall story between slab tops hBase and hBase + FH. The wall extends
 // up to the slab-above's TOP line so no gap shows through the stair opening
@@ -192,6 +219,9 @@ function backWalls(hBase) {
   // C-D wall (short back, plane v = LD): inner face + cut end at u = 0.
   out.push(el('dw-wall-far', vFace(LD - WALL_T, 0, LW, hBase, hTop)))
   out.push(el('dw-slab-edge', uFace(0, LD - WALL_T, LD, hBase, hTop)))
+  // Ceiling washes over both inner faces (Stage 5 §7).
+  out.push(...ceilBands((h0, h1) => uFace(LW - WALL_T, 0, LD - WALL_T, h0, h1), hTop))
+  out.push(...ceilBands((h0, h1) => vFace(LD - WALL_T, 0, LW, h0, h1), hTop))
   return out
 }
 
@@ -336,6 +366,16 @@ function shaftStory(hBase, hTop, { openDoors = false } = {}) {
       ),
     )
   }
+  // Floor indicator (user revision): the story number painted on the wall
+  // above each door head — one small digit per floor, in the plaques' text
+  // style, skewed onto the W2 face plane like the year signs.
+  const [fx, fy] = p((DOOR_U0 + DOOR_U1) / 2, SHAFT_V0 - WALL_T, hBase + DOOR_H + 8)
+    .split(',')
+    .map(Number)
+  const storyNum = Math.round(hBase / FH)
+  out.push(
+    `<text class="dw-floor-num" transform="matrix(0.7071 0.2475 0 1 ${round(fx)} ${round(fy)})" text-anchor="middle" dominant-baseline="central">${storyNum}</text>`,
+  )
   return out
 }
 
@@ -411,32 +451,51 @@ const floor02Front = group('floor-02-front', [
   ...columns(2 * FH, 2 * FH + STORY_H),
 ])
 
+// The separation face is clipped to the rear wall's inner face (see
+// floor-03).
+const SEP_CLIP = ' clip-path="url(#dw-clip-sep3)"'
+
 const floor03 = group('floor-03', [
   ...slab(3 * FH),
+  ...backWalls(3 * FH),
   // Section separation continuing the shaft's left wall (W1) rearward to the
   // C-D wall: the rear-left strip beyond it becomes the distinct section.
-  // Stage 4.5 §3.3: rendered with the standard far-wall logic — fill-only in
-  // the rear-wall tone (it overlaps the C-D wall face, so both blend; no
-  // color spill) with explicit end/top edges in the far-line stroke. The
-  // base stays unstroked so no stray line reads on the Indelve floor.
-  el('dw-wall-far-fill', uFace(SHAFT_U, SHAFT_V1 + WALL_T, LD - WALL_T, 3 * FH, 3 * FH + STORY_H)),
+  // Stage 4.5 §3.3: fill-only face, base unstroked, drawn after the rear
+  // walls. Stage 5 review (user revision): the face renders ONLY within the
+  // C-D wall's inner-face polygon (clip-path below). The face is a
+  // full-story wall standing at u = SHAFT_U; unclipped, its projection
+  // spilled across the floor behind it — strictly correct occlusion for a
+  // solid wall, but the diorama reads interior partitions as room dividers,
+  // not view blocks: the Indelve story must replicate the open Interactica
+  // story below (wood floor reaching the rear wall under one wall band,
+  // section marked by its sign). Clipped to the wall rectangle, the face
+  // survives only as cream on the cream wall — seamless. Its outline
+  // far-lines are dropped (user revision): clipped onto the wall band they
+  // split it into apparent "two wall parts"; the wall must read as one
+  // surface.
+  `<defs><clipPath id="dw-clip-sep3"><path d="${vFace(LD - WALL_T, 0, LW, 3 * FH, 3 * FH + FH)}" /></clipPath></defs>`,
   el(
-    'dw-far-line',
-    path([p(SHAFT_U, SHAFT_V1 + WALL_T, 3 * FH), p(SHAFT_U, SHAFT_V1 + WALL_T, 3 * FH + STORY_H)]),
+    'dw-wall-far-fill',
+    uFace(SHAFT_U, SHAFT_V1 + WALL_T, LD - WALL_T, 3 * FH, 3 * FH + STORY_H),
+    SEP_CLIP,
   ),
-  el(
-    'dw-far-line',
-    path([p(SHAFT_U, LD - WALL_T, 3 * FH), p(SHAFT_U, LD - WALL_T, 3 * FH + STORY_H)]),
+  // Wall/floor junction line (user revision): the clipped face's fill hides
+  // the slab's rear-edge stroke, so the wood-to-wall boundary lost its
+  // consistent line mid-span (it faded to a bare color abutment while the
+  // Interactica story below kept a crisp edge). Restored on top of the face.
+  el('dw-far-line', `M ${p(0, LD - WALL_T, 3 * FH)} L ${p(LW, LD - WALL_T, 3 * FH)}`),
+  // The separation fill also covered the C-D wall's ceiling washes over the
+  // section it marks (u from the shaft line to the corner): re-draw them
+  // clipped to exactly that part, so the Indelve story is shaded like every
+  // other one while the region left of the shaft keeps its original washes.
+  ...ceilBands(
+    (h0, h1) => vFace(LD - WALL_T, 0, LW, h0, h1),
+    3 * FH + FH,
+    ' clip-path="url(#dw-clip-sep3b)"',
   ),
-  el(
-    'dw-far-line',
-    path([
-      p(SHAFT_U, SHAFT_V1 + WALL_T, 3 * FH + STORY_H),
-      p(SHAFT_U, LD - WALL_T, 3 * FH + STORY_H),
-    ]),
-  ),
-  ...backWalls(3 * FH),
+  `<defs><clipPath id="dw-clip-sep3b"><path d="${vFace(LD - WALL_T, SHAFT_U, LW, 3 * FH, 3 * FH + FH)}" /></clipPath></defs>`,
 ])
+
 const floor03Front = group('floor-03-front', [
   ...slabTriangle(3 * FH),
   ...columns(3 * FH, 3 * FH + STORY_H),
@@ -452,6 +511,18 @@ const floor04Front = group('floor-04-front', [
 // shaft; stub walls, exposed A/B/C columns and dashed perimeter over it ----
 const floor05 = group('floor-05', [
   ...slab(5 * FH),
+  // First tiles set at the two right-hand corners (user revision):
+  // small-format tiles (smaller than the ground floor's) already laid where
+  // the rear and right walls meet (D corner, inside the two D-corner wall
+  // arms) and where the front and right walls meet (B corner, against the
+  // B-D stub wall's inner face) — on the otherwise bare screed,
+  // construction in progress. Fill-only: the tile patches are material, not
+  // structure.
+  el(
+    'dw-floor dw-f5t',
+    hFace(LW - D_CORNER_ARM, LW - WALL_T, LD - D_CORNER_ARM, LD - WALL_T, 5 * FH),
+  ),
+  el('dw-floor dw-f5t', hFace(150.5, LW - WALL_T, 7.5, 88, 5 * FH)),
   ...columns(5 * FH, TOP_H, ['D']),
   // D-corner wall section (user revision): part of the building's rear and
   // right walls meeting at the D corner, over the full fifth-story height.
@@ -578,8 +649,8 @@ function entrance() {
     el('dw-wall', uFace(u1, -jambD, 0, -SLAB_T, portalH)),
     el('dw-slab', hFace(u1, u1 + jamb, -jambD, 0, portalH)),
     // Threshold platform abutting the A-B face at ground level; its top is a
-    // walking surface, so it shares the floor tone (Stage 4.5 §4).
-    el('dw-floor', hFace(u0, u1, -depth, 0, 0)),
+    // walking surface, so it shares the ground floor's material (Stage 4.5 §4).
+    el(`dw-floor ${floorCls(0)}`, hFace(u0, u1, -depth, 0, 0)),
     el('dw-slab-edge', vFace(-depth, u0, u1, -SLAB_T, 0)),
     el('dw-slab-edge', uFace(u0, -depth, 0, -SLAB_T, 0)),
     // Left jamb, extending down to the base level of the entrance block.
@@ -604,6 +675,73 @@ function entrance() {
     ]),
   ]
   return group('entrance', out)
+}
+
+// --- ground-shadow: soft contact shadow under the building base -------------
+// One blurred polygon: the base footprint (at the ground slab's bottom line)
+// offset a little toward the light-away direction, the same down-right
+// direction the plaques' drop shadows use. Drawn between terrain and the
+// building so it reads as the building resting on the ground (Stage 5 §7).
+function groundShadow() {
+  const off = [13, 6]
+  const corner = (u, v) => {
+    const [x, y] = p(u, v, -SLAB_T).split(',').map(Number)
+    return `${round(x + off[0])},${round(y + off[1])}`
+  }
+  const d = path([corner(0, 0), corner(LW, 0), corner(LW, LD), corner(0, LD)])
+  return group('ground-shadow', [
+    `<path d="${d}" fill="#46443f" fill-opacity="0.12" filter="url(#dw-soft)" />`,
+  ])
+}
+
+// --- architectural-details: sparse infrastructure + one wall patch ----------
+// Stage 5 §8/§12: supporting details only — a panel, conduits, a vent, a
+// pipe, each placed with intent (served rooms), never distributed uniformly.
+// Positions were chosen against the elevator's occlusion envelope so nothing
+// is later painted over.
+function architecturalDetails() {
+  const out = []
+  // Stair banister (user revision): a wall-mounted rail on the C-D wall —
+  // one clean diagonal following the flight, with short horizontal returns
+  // at both ends (the lower one at the ground floor's base level, the upper
+  // one landing at floor 1). Drawn here, AFTER the story walls, so the part
+  // crossing the stair opening is not buried under the floor-01 wall; the
+  // rail stays ~28 units above the tread noses, so the flight never covers
+  // it either.
+  const RAIL_H = 28
+  const rv = LD - WALL_T
+  out.push(
+    el(
+      'dw-rail',
+      `M ${p(10, rv, RAIL_H)} L ${p(STAIR_U0, rv, RAIL_H)} L ${p(STAIR_U1, rv, FH + RAIL_H)} L ${p(139, rv, FH + RAIL_H)}`,
+    ),
+  )
+  // Nextcode story (floor 1): electrical panel on the C-D wall with two
+  // conduit drops to the floor — the accent piece of the palette. Mounted on
+  // the rear wall's far-left stretch: the shaft's W2 faces occlude the B-D
+  // wall beyond x ≈ 598, and the left-side tag column (c = 470) owns
+  // x ≈ 382–451, so the visible free spot is beside the building's left edge.
+  const h1 = FH
+  out.push(el('dw-panel-accent', vFace(LD - WALL_T, 15, 41, h1 + 31, h1 + 61)))
+  out.push(lineEl('dw-detail', 21, LD - WALL_T, h1, 21, LD - WALL_T, h1 + 31))
+  out.push(lineEl('dw-detail', 31, LD - WALL_T, h1, 31, LD - WALL_T, h1 + 31))
+  // Interactica story (floor 2): ventilation grille on the C-D wall, at
+  // mid-story height so it stays clear of the Indelve tag's band above.
+  const h2 = 2 * FH
+  out.push(el('dw-vent', vFace(LD - WALL_T, 30, 58, h2 + 30, h2 + 50)))
+  for (const h of [h2 + 35.5, h2 + 40, h2 + 44.5]) {
+    out.push(lineEl('dw-detail', 33, LD - WALL_T, h, 55, LD - WALL_T, h))
+  }
+  // Pacer story (floor 4): one rising pipe with two brackets on the B-D wall,
+  // inside the wall's visible stretch (right of the shaft's W2 envelope).
+  const h4 = 4 * FH
+  out.push(lineEl('dw-pipe', LW - WALL_T, 430, h4 + 2, LW - WALL_T, 430, h4 + 90))
+  out.push(lineEl('dw-detail', LW - WALL_T, 424, h4 + 38, LW - WALL_T, 436, h4 + 38))
+  out.push(lineEl('dw-detail', LW - WALL_T, 424, h4 + 73, LW - WALL_T, 436, h4 + 73))
+  // Freelancer story (floor 0): subtle repaired-paint patch on the B-D wall
+  // (Stage 5 §12) — imperfect surface, hand-drawn character, no outline.
+  out.push(el('dw-patch', uFace(LW - WALL_T, 150, 190, 22, 56)))
+  return group('architectural-details', out)
 }
 
 // --- career-sign: posts and placeholder panel -------------------------------
@@ -689,6 +827,7 @@ function experienceTags() {
 // Emit fragments
 // ---------------------------------------------------------------------------
 const fragments = {
+  'ground-shadow': groundShadow(),
   'floor-ground': floorGround,
   'floor-01': floor01,
   'floor-02': floor02,
@@ -701,6 +840,7 @@ const fragments = {
   'floor-05-front': floor05Front,
   staircase: staircase(),
   elevator: elevator(),
+  'architectural-details': architecturalDetails(),
   entrance: entrance(),
   'career-sign': careerSign(),
   tags: experienceTags(),

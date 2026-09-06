@@ -16,8 +16,9 @@ const indent = (text, spaces) => text.replace(/^/gm, ' '.repeat(spaces))
 
 // Root order inside the SVG (Stage 3 spec §7): background/base first, then
 // the building (rear elements → interior → slabs → foreground faces), then
-// entrance, then the exterior path and sign in the foreground.
-const rootOrder = ['terrain', 'building', 'entrance', 'path', 'career-sign']
+// entrance, then the exterior path and sign in the foreground. The ground
+// shadow sits between terrain and building (Stage 5 §7 shading).
+const rootOrder = ['terrain', 'ground-shadow', 'building', 'entrance', 'path', 'career-sign']
 
 // Vertical stacking order inside <g id="building"> (Stage 3.5 revision): the
 // staircase sits under floor-01 (the slab occludes it); every shaft-crossing
@@ -32,6 +33,7 @@ const buildingParts = [
   'floor-03',
   'floor-04',
   'floor-05',
+  'architectural-details',
   'elevator',
   'floor-02-front',
   'floor-03-front',

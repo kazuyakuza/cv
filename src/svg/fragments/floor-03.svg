@@ -1,13 +1,22 @@
 <g id="floor-03">
-  <path class="dw-floor" d="M749.74,670.47 L918.78,611.17 L502.55,465.06 L334.09,524.21 Z" />
+  <path class="dw-floor dw-f3" d="M749.74,670.47 L918.78,611.17 L502.55,465.06 L334.09,524.21 Z" />
   <path class="dw-slab-edge" d="M749.74,670.47 L918.78,611.17 L917.86,624.04 L750.06,682.91 Z" />
   <path class="dw-slab-edge" d="M749.74,670.47 L334.09,524.21 L334.1,537.19 L750.06,682.91 Z" />
-  <path class="dw-wall-far-fill" d="M530.37,572.76 L368.8,516.45 L368.34,423.76 L530.29,480.33 Z" />
-  <path class="dw-far-line" d="M530.37,572.76 L530.29,480.33 Z" />
-  <path class="dw-far-line" d="M368.8,516.45 L368.34,423.76 Z" />
-  <path class="dw-far-line" d="M530.29,480.33 L368.34,423.76 Z" />
   <path class="dw-wall-far" d="M913.11,613.18 L502.81,469.31 L502.49,363.9 L912.73,508.25 Z" />
   <path class="dw-slab-edge" d="M913.11,613.18 L918.78,611.17 L918.17,506.41 L912.73,508.25 Z" />
   <path class="dw-wall-far" d="M339.47,526.03 L507.59,467.94 L507.42,362.15 L340.02,421.27 Z" />
   <path class="dw-slab-edge" d="M339.47,526.03 L334.09,524.21 L334.63,419.64 L340.02,421.27 Z" />
+  <path class="dw-shade-a" d="M912.69,515.5 L502.08,371.89 L502.49,363.9 L912.73,508.25 Z" />
+  <path class="dw-shade-b" d="M912.99,525.49 L501.98,381.82 L502.08,371.89 L912.69,515.5 Z" />
+  <path class="dw-shade-c" d="M913.5,538.12 L502.64,393.91 L501.98,381.82 L912.99,525.49 Z" />
+  <path class="dw-shade-a" d="M339.2,429.17 L507.33,369.96 L507.42,362.15 L340.02,421.27 Z" />
+  <path class="dw-shade-b" d="M340.07,439.35 L507.96,380.13 L507.33,369.96 L339.2,429.17 Z" />
+  <path class="dw-shade-c" d="M339.38,450.93 L508.25,392.85 L507.96,380.13 L340.07,439.35 Z" />
+  <defs><clipPath id="dw-clip-sep3"><path d="M339.47,526.03 L507.59,467.94 L507.42,362.15 L340.02,421.27 Z" /></clipPath></defs>
+  <path class="dw-wall-far-fill" clip-path="url(#dw-clip-sep3)" d="M530.37,572.76 L368.8,516.45 L368.34,423.76 L530.29,480.33 Z" />
+  <path class="dw-far-line" d="M 339.47,526.03 L 507.59,467.94" />
+  <path class="dw-shade-a" clip-path="url(#dw-clip-sep3b)" d="M339.2,429.17 L507.33,369.96 L507.42,362.15 L340.02,421.27 Z" />
+  <path class="dw-shade-b" clip-path="url(#dw-clip-sep3b)" d="M340.07,439.35 L507.96,380.13 L507.33,369.96 L339.2,429.17 Z" />
+  <path class="dw-shade-c" clip-path="url(#dw-clip-sep3b)" d="M339.38,450.93 L508.25,392.85 L507.96,380.13 L340.07,439.35 Z" />
+  <defs><clipPath id="dw-clip-sep3b"><path d="M368.8,516.45 L507.59,467.94 L507.42,362.15 L368.62,411.09 Z" /></clipPath></defs>
 </g>

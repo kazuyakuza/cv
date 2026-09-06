@@ -965,6 +965,31 @@ The project should preserve conceptual separation between:
 
 The SVG should not become an opaque generated artifact that is impossible to maintain.
 
+## Visual Asset Strategy
+
+SVG is the preferred format for the building's primary architectural
+geometry because it provides scalable, structured and editable geometry.
+
+However, the project does NOT require every visual element to be 100%
+vectorizable or editable.
+
+Raster images, generated images, textures, image-based surface details or
+other visual assets may be used/generated when they produce a significantly better
+visual result.
+
+The visual quality and coherence of the final diorama take priority over
+forcing every element into SVG.
+
+Whenever practical:
+
+- architectural structure should remain SVG;
+- important geometric elements should remain modular;
+- raster assets should be used selectively;
+- image assets should be isolated from the structural SVG where practical;
+- assets should remain replaceable without restructuring the building.
+
+The project should use a hybrid SVG/raster approach when appropriate.
+
 ---
 
 # 23. Iterative Development Principle
@@ -994,6 +1019,21 @@ The user will provide the rendered result for review.
 
 Subsequent stages should respond to what the actual SVG looks like rather than attempting to predict every final detail in advance.
 
+## Visual Priority
+
+When implementing visual stages, prioritize the final visual appearance over implementation purity.
+The target is a convincing illustrated architectural diorama.
+Do not simplify or omit visual detail merely because reproducing it as editable SVG geometry would be inconvenient.
+Conversely, do not add visual complexity merely because it is technically possible.
+Every visual element should contribute to:
+
+- architectural believability;
+- depth;
+- material differentiation;
+- scale;
+- career-stage storytelling;
+- or the overall illustrated aesthetic.
+
 ---
 
 # 24. Visual Development Principle
@@ -1014,6 +1054,35 @@ Potential progression:
 10. web integration/polish.
 
 The reference architectural illustration should guide the later style-development stages, not constrain the initial geometry stage.
+
+## Primary Visual Style Reference
+
+The project uses the Stockcake image `./sectional-modular-habitat-stockcake.jpg` as the primary visual style reference.
+The reference is used to guide the visual language, not to reproduce its composition or content.
+Important characteristics to take from the reference include:
+
+- sectional / cutaway architectural illustration;
+- isometric architectural perspective;
+- hand-drawn / ink-illustration character;
+- fine but clearly visible outlines;
+- slightly imperfect illustrated contours;
+- muted, desaturated architectural colors;
+- warm off-white / concrete-like surfaces;
+- restrained accent colors;
+- subtle hatching and surface linework;
+- believable architectural infrastructure;
+- pipes, conduits, panels, brackets, joints and structural connections;
+- visible material variation;
+- small-scale construction details;
+- soft directional shading;
+- a sophisticated technical-illustration / architectural-model aesthetic.
+
+The reference is NOT a literal design template.
+The career diorama must retain its own building geometry, floor structure, circulation, career layout, perspective and visual storytelling defined by this brief.
+
+The visual reference defines STYLE, not CONTENT.
+Do not reproduce its building, floor arrangement, objects, colors, infrastructure layout or composition.
+Use it as inspiration for how the career building should be illustrated.
 
 ---
 
