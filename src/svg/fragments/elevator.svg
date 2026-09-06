@@ -46,10 +46,10 @@
   <path class="dw-door" d="M587.62,387.1 L593.48,384.12 L593.73,331.88 L587.7,334.27 Z" />
   <text class="dw-floor-num" transform="matrix(0.7071 -0.2475 0 1 581.45 328.54)" text-anchor="middle" dominant-baseline="central">5</text>
   <path class="dw-shaft" d="M559.18,813.2 L506.52,795.12 L507.31,269.37 L558.33,288.25 Z" />
-  <path class="dw-slab-edge" d="M598.55,734.44 L333.85,642.45 L334.64,629.17 L598.56,722.26 Z" />
-  <path class="dw-slab-edge" d="M597.89,629.08 L334.1,537.19 L334.09,524.21 L598.33,616.47 Z" />
-  <path class="dw-slab-edge" d="M598.24,524.22 L333.71,432.3 L334.63,419.64 L597.95,511.33 Z" />
-  <path class="dw-slab-edge" d="M598.35,419.36 L334.29,327.19 L333.78,314.25 L598.56,406.88 Z" />
+  <path class="dw-slab-edge" d="M750.37,787.05 L333.85,642.45 L334.64,629.17 L750.18,774.66 Z" />
+  <path class="dw-slab-edge" d="M750.06,682.91 L334.1,537.19 L334.09,524.21 L749.74,670.47 Z" />
+  <path class="dw-slab-edge" d="M749.74,577.26 L333.71,432.3 L334.63,419.64 L750.21,565.18 Z" />
+  <path class="dw-slab-edge" d="M750.09,472.2 L334.29,327.19 L333.78,314.25 L749.49,459.96 Z" />
   <g class="dw-tag-group">
   <path class="dw-tag" d="M544.58,775.12 L519.05,765.52 L519.1,752.21 L543.83,760.21 Z" />
   <path class="dw-tag" d="M543.83,760.21 L544.6,760.4 L519.9,751.53 L519.1,752.21 Z" />

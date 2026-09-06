@@ -157,36 +157,7 @@ function slab(hTop, { stairOpening = false } = {}) {
   // Left edge band (A-C side, cut face at u = 0). Continuous: the stair
   // flight is inset from the open side (STAIR_U0 > 0), so the floor-01 slab
   // reads as one coherent plane around the stair opening.
-  //
-  // Floor-2 revision (user revision): where this band crosses the floor-1
-  // return wall's face on screen, only the stretch between the wall's near
-  // edge (the W2 face's outer line) and the passage's near jamb is dropped —
-  // there its bottom edge read as a stray scratch on the clean white wall
-  // between the elevator doors and the section's door. The rest stays one
-  // continuous band: dropping the whole wall-face crossing read as the base
-  // line breaking off at the shaft (user revision). Both cut ends land on
-  // existing strokes — the front end at the passage jamb's screen x, the
-  // rear end on the wall face's left edge.
-  if (hTop === 2 * FH) {
-    const vJamb = SHAFT_V0 - WALL_T - RET_DOOR_U0
-    const vShaft = SHAFT_V0 - WALL_T - (SHAFT_U + WALL_T)
-    out.push(
-      el(
-        'dw-slab-edge',
-        path([p(0, 0, hTop), p(0, vJamb, hTop), p(0, vJamb, hBot), p(0, 0, hBot)]),
-      ),
-    )
-    out.push(
-      el(
-        'dw-slab-edge',
-        path([p(0, vShaft, hTop), p(0, LD, hTop), p(0, LD, hBot), p(0, vShaft, hBot)]),
-      ),
-    )
-  } else {
-    out.push(
-      el('dw-slab-edge', path([p(0, 0, hTop), p(0, LD, hTop), p(0, LD, hBot), p(0, 0, hBot)])),
-    )
-  }
+  out.push(el('dw-slab-edge', path([p(0, 0, hTop), p(0, LD, hTop), p(0, LD, hBot), p(0, 0, hBot)])))
   if (stairOpening) {
     // No cut faces around the stair opening (user revision): the opening
     // reaches the C-D wall, so the rear wall shows through it as one
@@ -358,14 +329,19 @@ function shaftReturnWalls(hBase) {
     ]
   }
   return [
+    // Nextcode side (continues W3) FIRST: it is the farther wall, so the
+    // nearer Health-side wall drawn after it must occlude it. Both faces
+    // share the partition fill, but the rear wall's own edge strokes (its
+    // base line especially) would otherwise paint a stray line across the
+    // front wall's clean face between the elevator doors and the passage
+    // (user revision).
+    el('dw-partition', faceWithDoor(SHAFT_V1)),
+    ...passage(SHAFT_V1),
+    el('dw-slab-edge', uFace(u0, SHAFT_V1, SHAFT_V1 + WALL_T, hBase, hTop)),
     // Health Platforms side (continues W2), with passage lining for depth.
     el('dw-partition', faceWithDoor(SHAFT_V0 - WALL_T)),
     ...passage(SHAFT_V0 - WALL_T),
     el('dw-slab-edge', uFace(u0, SHAFT_V0 - WALL_T, SHAFT_V0, hBase, hTop)),
-    // Nextcode side (continues W3), with passage lining for depth.
-    el('dw-partition', faceWithDoor(SHAFT_V1)),
-    ...passage(SHAFT_V1),
-    el('dw-slab-edge', uFace(u0, SHAFT_V1, SHAFT_V1 + WALL_T, hBase, hTop)),
   ]
 }
 
@@ -676,22 +652,11 @@ function elevator() {
   out.push(el('dw-shaft', uFace(0, SHAFT_V0, SHAFT_V1, FH, TOP_H)))
   // Floor base lines across the shaft (user revision): from floor 2 up the
   // enclosure would hide each floor's left cut face, breaking the base line
-  // that floor-01 shows. Re-layer the cut face over the enclosure (and the
-  // W2 / W3 cut ends) so every level's base line reads as one continuous
+  // that floor-01 shows. Re-layer the FULL cut face over the enclosure (and
+  // the W2 / W3 cut ends) so every level's base line reads as one continuous
   // band descending past the shaft's corner, exactly like floor-01.
-  // Span revision (user revision): the span starts at the return wall's face
-  // plane (the W2 face's outer line on screen) — the old full-depth band
-  // repainted the floor-1 return wall's face, where the stretch between the
-  // passage jamb and the shaft edge is dropped on the wall itself (see slab)
-  // — and runs to the rear corner so the W3 cut end cannot notch the band's
-  // rear end; the front stretch each floor already draws.
   for (let n = 2; n <= 5; n++) {
-    out.push(
-      el(
-        'dw-slab-edge',
-        uFace(0, SHAFT_V0 - WALL_T - (SHAFT_U + WALL_T), LD, n * FH - SLAB_T, n * FH),
-      ),
-    )
+    out.push(el('dw-slab-edge', uFace(0, 0, LD, n * FH - SLAB_T, n * FH)))
   }
   // Year signs on the enclosure wall, one per story.
   STORY_YEARS.forEach((year, i) => out.push(...yearPlaque(year, (i + 1) * FH)))
