@@ -24,7 +24,7 @@
 
 export const svgStyle = `
     /* Tier 1 — primary structural lines */
-    .dw-column { fill: none; stroke: #3a3833; stroke-width: 1.6; stroke-linecap: round; }
+    .dw-column { fill: none; stroke: #3a3833; stroke-width: 1.8; stroke-linecap: round; }
     /* Floor top surfaces: warm pale base tone, clearly apart from the walls.
        Per-floor material classes (dw-f0 … dw-f5) override this in Phase 2. */
     .dw-floor { fill: #cdc6b0; stroke: #4c4a44; stroke-width: 1.2; }
@@ -51,6 +51,10 @@ export const svgStyle = `
        floor behind the separation stays one continuous floor material. */
     .dw-wall-far-fill { fill: #ddd5c2; stroke: none; }
     .dw-far-line { fill: none; stroke: #4c4a44; stroke-width: 1.2; }
+    /* Panel joints on the interior far walls (Stage 5.5 §8): sparse vertical
+       seams, hashed per story — painted-wall articulation, hand-placed feel.
+       Low contrast on purpose: readable up close, quiet at overview size. */
+    .dw-wall-seam { fill: none; stroke: #c3b99e; stroke-width: 0.7; }
 
     /* Tier 2 — secondary architectural lines */
     /* Interior partitions: warm greige, slightly lighter than the far walls
@@ -68,6 +72,9 @@ export const svgStyle = `
        depth, not decoration */
     .dw-door { fill: #b2b0a2; stroke: #5d5a52; stroke-width: 1; }
     .dw-door-open { fill: #5b584e; stroke: #5d5a52; stroke-width: 1; }
+    /* Door panel articulation (Stage 5.5 §8): one quiet horizontal groove
+       per leaf — the doors read as metal panels, not blank quads */
+    .dw-door-line { fill: none; stroke: #5d5a52; stroke-width: 0.7; }
     /* Stairs: warm concrete family, treads lightest, the solid side mass
        darkest of the three (restrained depth cue, Stage 4 §22) */
     .dw-stair { fill: #d9cfb5; stroke: #7a766b; stroke-width: 0.9; }
@@ -85,9 +92,14 @@ export const svgStyle = `
        isometric slope of the wall tops, while constant-h parallelograms hug
        it exactly — and the stepped wash keeps the flat, illustrated
        material language. No outlines: shade only, subordinate to lines. */
-    .dw-shade-a { fill: #3a3833; fill-opacity: 0.13; stroke: none; }
-    .dw-shade-b { fill: #3a3833; fill-opacity: 0.07; stroke: none; }
-    .dw-shade-c { fill: #3a3833; fill-opacity: 0.035; stroke: none; }
+    .dw-shade-a { fill: #3a3833; fill-opacity: 0.15; stroke: none; }
+    .dw-shade-b { fill: #3a3833; fill-opacity: 0.08; stroke: none; }
+    .dw-shade-c { fill: #3a3833; fill-opacity: 0.04; stroke: none; }
+
+    /* Floor/wall contact shadow (Stage 5.5 §9): a thin translucent band on
+       the floor hugging each rear wall's base — quiet ambient occlusion so
+       wall and floor visibly meet instead of floating apart */
+    .dw-contact { fill: #3a3833; fill-opacity: 0.10; stroke: none; }
 
     /* Stage 5 §9 — stair/elevator details. (§8 sparse-infrastructure pieces
        were all removed on user review — pipe, wall patch, panel, vent — so
@@ -165,20 +177,20 @@ export const svgDefs = `
         <feGaussianBlur stdDeviation="5" />
       </filter>
       <pattern id="dw-cut" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-        <rect width="6" height="6" fill="#b6ad9b" />
-        <line x1="0" y1="0" x2="0" y2="6" stroke="#958c78" stroke-width="0.8" />
+        <rect width="6" height="6" fill="#a99f8b" />
+        <line x1="0" y1="0" x2="0" y2="6" stroke="#8a8069" stroke-width="0.8" />
       </pattern>
       <!-- Ground floor (2013–2018): small warm ceramic tiles -->
       <pattern id="dw-f0" width="40" height="14" patternUnits="userSpaceOnUse">
-        <rect width="40" height="14" fill="#d0c7ae" />
-        <line x1="0" y1="14" x2="40" y2="0" stroke="#bdb297" stroke-width="0.8" />
-        <line x1="0" y1="0" x2="40" y2="14" stroke="#bdb297" stroke-width="0.8" />
+        <rect width="40" height="14" fill="#cbc2a8" />
+        <line x1="0" y1="14" x2="40" y2="0" stroke="#b7ab8e" stroke-width="0.8" />
+        <line x1="0" y1="0" x2="40" y2="14" stroke="#b7ab8e" stroke-width="0.8" />
       </pattern>
       <!-- Floor 1 (2017–2019): large quiet concrete panels -->
       <pattern id="dw-f1" width="110" height="38.5" patternUnits="userSpaceOnUse">
-        <rect width="110" height="38.5" fill="#cfc8b4" />
-        <line x1="0" y1="38.5" x2="110" y2="0" stroke="#bcb39f" stroke-width="0.8" />
-        <line x1="0" y1="0" x2="110" y2="38.5" stroke="#bcb39f" stroke-width="0.8" />
+        <rect width="110" height="38.5" fill="#cac2ad" />
+        <line x1="0" y1="38.5" x2="110" y2="0" stroke="#b8ae99" stroke-width="0.8" />
+        <line x1="0" y1="0" x2="110" y2="38.5" stroke="#b8ae99" stroke-width="0.8" />
       </pattern>
       <!-- Floors 2–3 (Interactica 2019–2025): wood strip flooring, planks
            running along the depth axis, with randomly placed butt joints
@@ -207,22 +219,22 @@ export const svgDefs = `
            viewer and the rear wall (steep lattice, opposite emphasis to the
            ground floor's), cooler tone -->
       <pattern id="dw-f4" width="20" height="40.6" patternUnits="userSpaceOnUse">
-        <rect width="20" height="40.6" fill="#c6c2b3" />
-        <line x1="0" y1="0" x2="20" y2="40.6" stroke="#aaa494" stroke-width="0.9" />
-        <line x1="20" y1="0" x2="0" y2="40.6" stroke="#aaa494" stroke-width="0.9" />
+        <rect width="20" height="40.6" fill="#c3bfb0" />
+        <line x1="0" y1="0" x2="20" y2="40.6" stroke="#a49e8e" stroke-width="0.9" />
+        <line x1="20" y1="0" x2="0" y2="40.6" stroke="#a49e8e" stroke-width="0.9" />
       </pattern>
       <!-- Floor 5 (current, unfinished): bare construction screed — random
            base-concrete marks, no finished surface -->
       <pattern id="dw-f5" width="120" height="120" patternUnits="userSpaceOnUse">
-        <rect width="120" height="120" fill="#cdc6b0" />
-        <line x1="14" y1="30" x2="43" y2="19.85" stroke="#b9b198" stroke-width="0.8" />
-        <line x1="70" y1="22" x2="88" y2="15.7" stroke="#b9b198" stroke-width="0.8" />
-        <line x1="96" y1="55" x2="112" y2="60.6" stroke="#b9b198" stroke-width="0.8" />
-        <line x1="20" y1="72" x2="34" y2="76.9" stroke="#b9b198" stroke-width="0.8" />
-        <line x1="52" y1="96" x2="66" y2="91.1" stroke="#aba38b" stroke-width="0.9" />
-        <line x1="90" y1="100" x2="104" y2="95.1" stroke="#b9b198" stroke-width="0.8" />
-        <line x1="40" y1="52" x2="58" y2="45.7" stroke="#b9b198" stroke-width="0.8" />
-        <line x1="8" y1="105" x2="22" y2="110.1" stroke="#aba38b" stroke-width="0.9" />
+        <rect width="120" height="120" fill="#cac3ae" />
+        <line x1="14" y1="30" x2="43" y2="19.85" stroke="#b6ae95" stroke-width="0.8" />
+        <line x1="70" y1="22" x2="88" y2="15.7" stroke="#b6ae95" stroke-width="0.8" />
+        <line x1="96" y1="55" x2="112" y2="60.6" stroke="#b6ae95" stroke-width="0.8" />
+        <line x1="20" y1="72" x2="34" y2="76.9" stroke="#b6ae95" stroke-width="0.8" />
+        <line x1="52" y1="96" x2="66" y2="91.1" stroke="#a8a088" stroke-width="0.9" />
+        <line x1="90" y1="100" x2="104" y2="95.1" stroke="#b6ae95" stroke-width="0.8" />
+        <line x1="40" y1="52" x2="58" y2="45.7" stroke="#b6ae95" stroke-width="0.8" />
+        <line x1="8" y1="105" x2="22" y2="110.1" stroke="#a8a088" stroke-width="0.9" />
       </pattern>
       <!-- Floor 5, laid tiles: small-format tiles (smaller than the ground
            floor's) at the two upper corners of the bare screed -->

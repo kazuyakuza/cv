@@ -7,6 +7,8 @@
   <path class="dw-shaft" d="M564.08,815.11 L559.18,813.2 L558.58,720.84 L564.33,722.16 Z" />
   <path class="dw-door" d="M568.56,813.58 L581.27,808.9 L581.59,756.12 L568.99,760.85 Z" />
   <path class="dw-door" d="M581.27,808.9 L593.42,804.94 L593.69,751.58 L581.59,756.12 Z" />
+  <line class="dw-door-line" x1="570.57" y1="798.56" x2="578.82" y2="795.27" />
+  <line class="dw-door-line" x1="582.9" y1="794.3" x2="591.35" y2="790.96" />
   <text class="dw-floor-num" transform="matrix(0.7071 -0.2475 0 1 581.09 748.22)" text-anchor="middle" dominant-baseline="central">1</text>
   <path class="dw-shaft" d="M587.41,698.16 L535.42,679.38 L535.95,586.87 L587.37,605.81 Z" />
   <path class="dw-shaft" d="M587.41,698.16 L593.18,696.52 L593.33,603.17 L587.37,605.81 Z" />
@@ -16,6 +18,8 @@
   <path class="dw-shaft" d="M563.74,709.74 L558.92,708.08 L558.88,615.01 L563.5,616.88 Z" />
   <path class="dw-door" d="M568.91,707.78 L581.59,704 L580.99,651.08 L568.35,655.41 Z" />
   <path class="dw-door" d="M581.59,704 L593.27,699.08 L593.56,646.68 L580.99,651.08 Z" />
+  <line class="dw-door-line" x1="570.81" y1="693.44" x2="579.42" y2="691.05" />
+  <line class="dw-door-line" x1="583.7" y1="689.34" x2="591.67" y2="686.13" />
   <text class="dw-floor-num" transform="matrix(0.7071 -0.2475 0 1 581.3 643.37)" text-anchor="middle" dominant-baseline="central">2</text>
   <path class="dw-shaft" d="M587.65,592.72 L535.12,574.41 L535.14,481.85 L587.13,500.2 Z" />
   <path class="dw-shaft" d="M587.65,592.72 L592.69,591.35 L593.09,498.45 L587.13,500.2 Z" />
@@ -25,6 +29,8 @@
   <path class="dw-shaft" d="M563.9,604.65 L558.68,603.02 L558.28,510.68 L564.41,512.71 Z" />
   <path class="dw-door" d="M568.48,603.38 L581.19,598.77 L580.74,546.64 L568.93,551.26 Z" />
   <path class="dw-door" d="M581.19,598.77 L593.49,594.96 L593.73,541.97 L580.74,546.64 Z" />
+  <line class="dw-door-line" x1="570.83" y1="588.35" x2="578.64" y2="585.99" />
+  <line class="dw-door-line" x1="582.95" y1="584.36" x2="591.65" y2="581.78" />
   <text class="dw-floor-num" transform="matrix(0.7071 -0.2475 0 1 581.36 538.58)" text-anchor="middle" dominant-baseline="central">3</text>
   <path class="dw-shaft" d="M587.33,487.85 L535.98,469.53 L535.4,377.83 L587.04,395.51 Z" />
   <path class="dw-shaft" d="M587.33,487.85 L592.53,485.87 L592.32,393.25 L587.04,395.51 Z" />
@@ -34,6 +40,8 @@
   <path class="dw-shaft" d="M564.59,500.22 L558.66,497.86 L559.05,405.35 L564.44,406.99 Z" />
   <path class="dw-door" d="M568.33,498.02 L580.99,493.98 L581.32,441.85 L568.55,445.57 Z" />
   <path class="dw-door" d="M580.99,493.98 L593.69,489.93 L593.38,436.89 L581.32,441.85 Z" />
+  <line class="dw-door-line" x1="570.87" y1="483.98" x2="578.64" y2="480.18" />
+  <line class="dw-door-line" x1="582.69" y1="479.68" x2="591.02" y2="476.47" />
   <text class="dw-floor-num" transform="matrix(0.7071 -0.2475 0 1 581.42 433.8)" text-anchor="middle" dominant-baseline="central">4</text>
   <path class="dw-shaft" d="M587.73,383.08 L535.77,365.11 L535.61,260.3 L586.99,277.65 Z" />
   <path class="dw-shaft" d="M587.73,383.08 L593.19,381.65 L592.67,276.21 L586.99,277.65 Z" />

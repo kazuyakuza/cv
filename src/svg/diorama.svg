@@ -14,7 +14,7 @@
   <title id="diorama-title">Professional Career Diorama — sectional architectural illustration</title>
   <style>
     /* Tier 1 — primary structural lines */
-    .dw-column { fill: none; stroke: #3a3833; stroke-width: 1.6; stroke-linecap: round; }
+    .dw-column { fill: none; stroke: #3a3833; stroke-width: 1.8; stroke-linecap: round; }
     /* Floor top surfaces: warm pale base tone, clearly apart from the walls.
        Per-floor material classes (dw-f0 … dw-f5) override this in Phase 2. */
     .dw-floor { fill: #cdc6b0; stroke: #4c4a44; stroke-width: 1.2; }
@@ -41,6 +41,10 @@
        floor behind the separation stays one continuous floor material. */
     .dw-wall-far-fill { fill: #ddd5c2; stroke: none; }
     .dw-far-line { fill: none; stroke: #4c4a44; stroke-width: 1.2; }
+    /* Panel joints on the interior far walls (Stage 5.5 §8): sparse vertical
+       seams, hashed per story — painted-wall articulation, hand-placed feel.
+       Low contrast on purpose: readable up close, quiet at overview size. */
+    .dw-wall-seam { fill: none; stroke: #c3b99e; stroke-width: 0.7; }
 
     /* Tier 2 — secondary architectural lines */
     /* Interior partitions: warm greige, slightly lighter than the far walls
@@ -58,6 +62,9 @@
        depth, not decoration */
     .dw-door { fill: #b2b0a2; stroke: #5d5a52; stroke-width: 1; }
     .dw-door-open { fill: #5b584e; stroke: #5d5a52; stroke-width: 1; }
+    /* Door panel articulation (Stage 5.5 §8): one quiet horizontal groove
+       per leaf — the doors read as metal panels, not blank quads */
+    .dw-door-line { fill: none; stroke: #5d5a52; stroke-width: 0.7; }
     /* Stairs: warm concrete family, treads lightest, the solid side mass
        darkest of the three (restrained depth cue, Stage 4 §22) */
     .dw-stair { fill: #d9cfb5; stroke: #7a766b; stroke-width: 0.9; }
@@ -75,9 +82,14 @@
        isometric slope of the wall tops, while constant-h parallelograms hug
        it exactly — and the stepped wash keeps the flat, illustrated
        material language. No outlines: shade only, subordinate to lines. */
-    .dw-shade-a { fill: #3a3833; fill-opacity: 0.13; stroke: none; }
-    .dw-shade-b { fill: #3a3833; fill-opacity: 0.07; stroke: none; }
-    .dw-shade-c { fill: #3a3833; fill-opacity: 0.035; stroke: none; }
+    .dw-shade-a { fill: #3a3833; fill-opacity: 0.15; stroke: none; }
+    .dw-shade-b { fill: #3a3833; fill-opacity: 0.08; stroke: none; }
+    .dw-shade-c { fill: #3a3833; fill-opacity: 0.04; stroke: none; }
+
+    /* Floor/wall contact shadow (Stage 5.5 §9): a thin translucent band on
+       the floor hugging each rear wall's base — quiet ambient occlusion so
+       wall and floor visibly meet instead of floating apart */
+    .dw-contact { fill: #3a3833; fill-opacity: 0.10; stroke: none; }
 
     /* Stage 5 §9 — stair/elevator details. (§8 sparse-infrastructure pieces
        were all removed on user review — pipe, wall patch, panel, vent — so
@@ -147,20 +159,20 @@
         <feGaussianBlur stdDeviation="5" />
       </filter>
       <pattern id="dw-cut" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-        <rect width="6" height="6" fill="#b6ad9b" />
-        <line x1="0" y1="0" x2="0" y2="6" stroke="#958c78" stroke-width="0.8" />
+        <rect width="6" height="6" fill="#a99f8b" />
+        <line x1="0" y1="0" x2="0" y2="6" stroke="#8a8069" stroke-width="0.8" />
       </pattern>
       <!-- Ground floor (2013–2018): small warm ceramic tiles -->
       <pattern id="dw-f0" width="40" height="14" patternUnits="userSpaceOnUse">
-        <rect width="40" height="14" fill="#d0c7ae" />
-        <line x1="0" y1="14" x2="40" y2="0" stroke="#bdb297" stroke-width="0.8" />
-        <line x1="0" y1="0" x2="40" y2="14" stroke="#bdb297" stroke-width="0.8" />
+        <rect width="40" height="14" fill="#cbc2a8" />
+        <line x1="0" y1="14" x2="40" y2="0" stroke="#b7ab8e" stroke-width="0.8" />
+        <line x1="0" y1="0" x2="40" y2="14" stroke="#b7ab8e" stroke-width="0.8" />
       </pattern>
       <!-- Floor 1 (2017–2019): large quiet concrete panels -->
       <pattern id="dw-f1" width="110" height="38.5" patternUnits="userSpaceOnUse">
-        <rect width="110" height="38.5" fill="#cfc8b4" />
-        <line x1="0" y1="38.5" x2="110" y2="0" stroke="#bcb39f" stroke-width="0.8" />
-        <line x1="0" y1="0" x2="110" y2="38.5" stroke="#bcb39f" stroke-width="0.8" />
+        <rect width="110" height="38.5" fill="#cac2ad" />
+        <line x1="0" y1="38.5" x2="110" y2="0" stroke="#b8ae99" stroke-width="0.8" />
+        <line x1="0" y1="0" x2="110" y2="38.5" stroke="#b8ae99" stroke-width="0.8" />
       </pattern>
       <!-- Floors 2–3 (Interactica 2019–2025): wood strip flooring, planks
            running along the depth axis, with randomly placed butt joints
@@ -189,22 +201,22 @@
            viewer and the rear wall (steep lattice, opposite emphasis to the
            ground floor's), cooler tone -->
       <pattern id="dw-f4" width="20" height="40.6" patternUnits="userSpaceOnUse">
-        <rect width="20" height="40.6" fill="#c6c2b3" />
-        <line x1="0" y1="0" x2="20" y2="40.6" stroke="#aaa494" stroke-width="0.9" />
-        <line x1="20" y1="0" x2="0" y2="40.6" stroke="#aaa494" stroke-width="0.9" />
+        <rect width="20" height="40.6" fill="#c3bfb0" />
+        <line x1="0" y1="0" x2="20" y2="40.6" stroke="#a49e8e" stroke-width="0.9" />
+        <line x1="20" y1="0" x2="0" y2="40.6" stroke="#a49e8e" stroke-width="0.9" />
       </pattern>
       <!-- Floor 5 (current, unfinished): bare construction screed — random
            base-concrete marks, no finished surface -->
       <pattern id="dw-f5" width="120" height="120" patternUnits="userSpaceOnUse">
-        <rect width="120" height="120" fill="#cdc6b0" />
-        <line x1="14" y1="30" x2="43" y2="19.85" stroke="#b9b198" stroke-width="0.8" />
-        <line x1="70" y1="22" x2="88" y2="15.7" stroke="#b9b198" stroke-width="0.8" />
-        <line x1="96" y1="55" x2="112" y2="60.6" stroke="#b9b198" stroke-width="0.8" />
-        <line x1="20" y1="72" x2="34" y2="76.9" stroke="#b9b198" stroke-width="0.8" />
-        <line x1="52" y1="96" x2="66" y2="91.1" stroke="#aba38b" stroke-width="0.9" />
-        <line x1="90" y1="100" x2="104" y2="95.1" stroke="#b9b198" stroke-width="0.8" />
-        <line x1="40" y1="52" x2="58" y2="45.7" stroke="#b9b198" stroke-width="0.8" />
-        <line x1="8" y1="105" x2="22" y2="110.1" stroke="#aba38b" stroke-width="0.9" />
+        <rect width="120" height="120" fill="#cac3ae" />
+        <line x1="14" y1="30" x2="43" y2="19.85" stroke="#b6ae95" stroke-width="0.8" />
+        <line x1="70" y1="22" x2="88" y2="15.7" stroke="#b6ae95" stroke-width="0.8" />
+        <line x1="96" y1="55" x2="112" y2="60.6" stroke="#b6ae95" stroke-width="0.8" />
+        <line x1="20" y1="72" x2="34" y2="76.9" stroke="#b6ae95" stroke-width="0.8" />
+        <line x1="52" y1="96" x2="66" y2="91.1" stroke="#a8a088" stroke-width="0.9" />
+        <line x1="90" y1="100" x2="104" y2="95.1" stroke="#b6ae95" stroke-width="0.8" />
+        <line x1="40" y1="52" x2="58" y2="45.7" stroke="#b6ae95" stroke-width="0.8" />
+        <line x1="8" y1="105" x2="22" y2="110.1" stroke="#a8a088" stroke-width="0.9" />
       </pattern>
       <!-- Floor 5, laid tiles: small-format tiles (smaller than the ground
            floor's) at the two upper corners of the bare screed -->
@@ -233,12 +245,19 @@
        <path class="dw-slab-edge" d="M912.76,927.41 L918.11,925.82 L918.57,821.58 L913.14,823.33 Z" />
        <path class="dw-wall-far" d="M340.01,841.22 L507.3,782.05 L507.39,677.56 L339.84,735.92 Z" />
        <path class="dw-slab-edge" d="M340.01,841.22 L334.67,839.09 L334.63,734.76 L339.84,735.92 Z" />
+       <line class="dw-wall-seam" x1="847.6" y1="904.57" x2="847.12" y2="800.23" />
+       <line class="dw-wall-seam" x1="711.19" y1="857.12" x2="710.69" y2="752.41" />
+       <line class="dw-wall-seam" x1="591.87" y1="815.19" x2="591.72" y2="711.13" />
+       <line class="dw-wall-seam" x1="397.27" y1="821.44" x2="398.06" y2="716.02" />
+       <line class="dw-wall-seam" x1="457.14" y1="800.11" x2="458.02" y2="694.76" />
        <path class="dw-shade-a" d="M913.46,830.43 L503.02,687.04 L502.96,678.88 L913.14,823.33 Z" />
        <path class="dw-shade-b" d="M912.9,840.45 L502.65,697.07 L503.02,687.04 L913.46,830.43 Z" />
        <path class="dw-shade-c" d="M912.48,852.54 L502.15,709.02 L502.65,697.07 L912.9,840.45 Z" />
        <path class="dw-shade-a" d="M339.01,744.15 L507.83,685.82 L507.39,677.56 L339.84,735.92 Z" />
        <path class="dw-shade-b" d="M339.39,754.44 L507.65,694.89 L507.83,685.82 L339.01,744.15 Z" />
        <path class="dw-shade-c" d="M339.38,766.86 L507.9,707.03 L507.65,694.89 L339.39,754.44 Z" />
+       <path class="dw-contact" d="M904.48,930.56 L912.76,927.41 L502.41,784.73 L494.27,787.1 Z" />
+       <path class="dw-contact" d="M348.23,844.34 L516.5,785.22 L507.3,782.05 L340.01,841.22 Z" />
        <path class="dw-partition" d="M635.96,945.39 L635.99,852.65 L799.41,796.08 L799.56,887.86 L685.87,928.33 L685.8,874.84 L647.21,889.34 L646.59,941.08 Z" />
        <path class="dw-partition" d="M685.87,928.33 L679.97,926.2 L680.34,877.07 L685.8,874.84 Z" />
        <line class="dw-opening" x1="647.21" y1="889.34" x2="685.8" y2="874.84" />
@@ -287,12 +306,20 @@
        <path class="dw-slab-edge" d="M913.14,823.33 L918.57,821.58 L918.07,716.29 L913.29,718.24 Z" />
        <path class="dw-wall-far" d="M339.84,735.92 L507.39,677.56 L507.54,572.42 L339.88,631.66 Z" />
        <path class="dw-slab-edge" d="M339.84,735.92 L334.63,734.76 L334.64,629.17 L339.88,631.66 Z" />
+       <line class="dw-wall-seam" x1="848.13" y1="799.89" x2="849.18" y2="695.67" />
+       <line class="dw-wall-seam" x1="707.58" y1="751.33" x2="707.71" y2="646.08" />
+       <line class="dw-wall-seam" x1="600.2" y1="713.76" x2="600.09" y2="608.95" />
+       <line class="dw-wall-seam" x1="393.88" y1="717.72" x2="394.38" y2="612.3" />
+       <line class="dw-wall-seam" x1="448.36" y1="698.22" x2="448.01" y2="593.34" />
        <path class="dw-shade-a" d="M912.67,726.14 L502.64,582.75 L502.34,574.1 L913.29,718.24 Z" />
        <path class="dw-shade-b" d="M912.84,736.13 L502.04,592.41 L502.64,582.75 L912.67,726.14 Z" />
        <path class="dw-shade-c" d="M912.46,748.34 L502.79,604.55 L502.04,592.41 L912.84,736.13 Z" />
        <path class="dw-shade-a" d="M339.75,639.06 L507.97,580.55 L507.54,572.42 L339.88,631.66 Z" />
        <path class="dw-shade-b" d="M340.03,648.92 L507.46,590.56 L507.97,580.55 L339.75,639.06 Z" />
        <path class="dw-shade-c" d="M339.12,661.38 L507.48,602.89 L507.46,590.56 L340.03,648.92 Z" />
+       <path class="dw-contact" d="M904.86,826.37 L913.14,823.33 L502.96,678.88 L494.43,682.7 Z" />
+       <path class="dw-contact" d="M347.78,739.11 L363.09,733.87 L355.01,731.4 L339.84,735.92 Z" />
+       <path class="dw-contact" d="M438,707.7 L515.81,679.97 L507.39,677.56 L429.06,704.38 Z" />
        <path class="dw-rail" d="M 409.14,712.29 L 428.79,677.17 L 438.3,674.3" />
        <path class="dw-partition" d="M540.5,783.35 L540.67,690.45 L669.75,645.46 L669.46,737.72 L598.53,763.22 L599.14,710 L559.29,723.77 L559.35,775.84 Z" />
        <path class="dw-partition" d="M598.53,763.22 L593.63,760.38 L593.86,712.08 L599.14,710 Z" />
@@ -314,12 +341,19 @@
        <path class="dw-slab-edge" d="M913.29,718.24 L918.07,716.29 L918.78,611.17 L913.11,613.18 Z" />
        <path class="dw-wall-far" d="M339.88,631.66 L507.54,572.42 L507.59,467.94 L339.47,526.03 Z" />
        <path class="dw-slab-edge" d="M339.88,631.66 L334.64,629.17 L334.09,524.21 L339.47,526.03 Z" />
+       <line class="dw-wall-seam" x1="856.84" y1="698.76" x2="857.35" y2="593.41" />
+       <line class="dw-wall-seam" x1="707.71" y1="646.08" x2="706.87" y2="540.94" />
+       <line class="dw-wall-seam" x1="586.95" y1="603.36" x2="586.86" y2="498.36" />
+       <line class="dw-wall-seam" x1="396.75" y1="611.04" x2="396.81" y2="506.79" />
+       <line class="dw-wall-seam" x1="456.16" y1="590.11" x2="456.48" y2="485.84" />
        <path class="dw-shade-a" d="M913.53,620.62 L502.78,477.2 L502.81,469.31 L913.11,613.18 Z" />
        <path class="dw-shade-b" d="M913.17,630.96 L502.94,487.48 L502.78,477.2 L913.53,620.62 Z" />
        <path class="dw-shade-c" d="M912.83,642.83 L502.56,499.19 L502.94,487.48 L913.17,630.96 Z" />
        <path class="dw-shade-a" d="M339.04,534.68 L508.22,475.29 L507.59,467.94 L339.47,526.03 Z" />
        <path class="dw-shade-b" d="M339.84,544.03 L507.54,485.14 L508.22,475.29 L339.04,534.68 Z" />
        <path class="dw-shade-c" d="M339.99,556.17 L507.4,497.64 L507.54,485.14 L339.84,544.03 Z" />
+       <path class="dw-contact" d="M903.95,720.82 L913.29,718.24 L502.34,574.1 L493.68,577.79 Z" />
+       <path class="dw-contact" d="M347.88,634.24 L515.89,575.08 L507.54,572.42 L339.88,631.66 Z" />
      </g>
      <g id="floor-03">
        <path class="dw-floor dw-f3" d="M749.74,670.47 L918.78,611.17 L502.55,465.06 L334.09,524.21 Z" />
@@ -329,12 +363,19 @@
        <path class="dw-slab-edge" d="M913.11,613.18 L918.78,611.17 L918.17,506.41 L912.73,508.25 Z" />
        <path class="dw-wall-far" d="M339.47,526.03 L507.59,467.94 L507.42,362.15 L340.02,421.27 Z" />
        <path class="dw-slab-edge" d="M339.47,526.03 L334.09,524.21 L334.63,419.64 L340.02,421.27 Z" />
+       <line class="dw-wall-seam" x1="829.6" y1="583.55" x2="829.71" y2="479.03" />
+       <line class="dw-wall-seam" x1="717.23" y1="544.31" x2="717.48" y2="439.21" />
+       <line class="dw-wall-seam" x1="586.68" y1="498.67" x2="586.61" y2="393.36" />
+       <line class="dw-wall-seam" x1="385.33" y1="510.14" x2="384.56" y2="405.8" />
+       <line class="dw-wall-seam" x1="449.66" y1="488.47" x2="449.26" y2="383.04" />
        <path class="dw-shade-a" d="M912.69,515.5 L502.08,371.89 L502.49,363.9 L912.73,508.25 Z" />
        <path class="dw-shade-b" d="M912.99,525.49 L501.98,381.82 L502.08,371.89 L912.69,515.5 Z" />
        <path class="dw-shade-c" d="M913.5,538.12 L502.64,393.91 L501.98,381.82 L912.99,525.49 Z" />
        <path class="dw-shade-a" d="M339.2,429.17 L507.33,369.96 L507.42,362.15 L340.02,421.27 Z" />
        <path class="dw-shade-b" d="M340.07,439.35 L507.96,380.13 L507.33,369.96 L339.2,429.17 Z" />
        <path class="dw-shade-c" d="M339.38,450.93 L508.25,392.85 L507.96,380.13 L340.07,439.35 Z" />
+       <path class="dw-contact" d="M904.03,616.35 L913.11,613.18 L502.81,469.31 L494.04,472.16 Z" />
+       <path class="dw-contact" d="M347.52,529.69 L516.7,470.82 L507.59,467.94 L339.47,526.03 Z" />
        <defs><clipPath id="dw-clip-sep3"><path d="M339.47,526.03 L507.59,467.94 L507.42,362.15 L340.02,421.27 Z" /></clipPath></defs>
        <path class="dw-wall-far-fill" clip-path="url(#dw-clip-sep3)" d="M530.37,572.76 L368.8,516.45 L368.34,423.76 L530.29,480.33 Z" />
        <path class="dw-far-line" d="M 339.47,526.03 L 507.59,467.94" />
@@ -351,12 +392,19 @@
        <path class="dw-slab-edge" d="M912.73,508.25 L918.17,506.41 L918.73,401.06 L913.46,403.23 Z" />
        <path class="dw-wall-far" d="M340.02,421.27 L507.42,362.15 L507.49,256.92 L339,316.22 Z" />
        <path class="dw-slab-edge" d="M340.02,421.27 L334.63,419.64 L333.78,314.25 L339,316.22 Z" />
+       <line class="dw-wall-seam" x1="833.72" y1="480.67" x2="834.21" y2="374.69" />
+       <line class="dw-wall-seam" x1="731.58" y1="444.62" x2="730.92" y2="339.2" />
+       <line class="dw-wall-seam" x1="591.12" y1="394.97" x2="591.56" y2="290.02" />
+       <line class="dw-wall-seam" x1="391.38" y1="403.34" x2="390.9" y2="297.88" />
+       <line class="dw-wall-seam" x1="460.64" y1="378.87" x2="460.96" y2="273.49" />
        <path class="dw-shade-a" d="M912.97,410.6 L502.42,267.67 L502.48,259.12 L913.46,403.23 Z" />
        <path class="dw-shade-b" d="M913.18,421.29 L502.05,277.71 L502.42,267.67 L912.97,410.6 Z" />
        <path class="dw-shade-c" d="M912.77,432.54 L503.06,289.3 L502.05,277.71 L913.18,421.29 Z" />
        <path class="dw-shade-a" d="M339.38,323.89 L508.12,265.18 L507.49,256.92 L339,316.22 Z" />
        <path class="dw-shade-b" d="M340,334.56 L507.97,275.72 L508.12,265.18 L339.38,323.89 Z" />
        <path class="dw-shade-c" d="M339.36,346.65 L508.22,287.97 L507.97,275.72 L340,334.56 Z" />
+       <path class="dw-contact" d="M904.36,510.66 L912.73,508.25 L502.49,363.9 L494.53,367.3 Z" />
+       <path class="dw-contact" d="M347.97,424.62 L516.1,364.85 L507.42,362.15 L340.02,421.27 Z" />
      </g>
      <g id="floor-05">
        <path class="dw-floor dw-f5" d="M749.49,459.96 L918.73,401.06 L502.88,256.09 L333.78,314.25 Z" />
@@ -384,6 +432,8 @@
        <path class="dw-shaft" d="M564.08,815.11 L559.18,813.2 L558.58,720.84 L564.33,722.16 Z" />
        <path class="dw-door" d="M568.56,813.58 L581.27,808.9 L581.59,756.12 L568.99,760.85 Z" />
        <path class="dw-door" d="M581.27,808.9 L593.42,804.94 L593.69,751.58 L581.59,756.12 Z" />
+       <line class="dw-door-line" x1="570.57" y1="798.56" x2="578.82" y2="795.27" />
+       <line class="dw-door-line" x1="582.9" y1="794.3" x2="591.35" y2="790.96" />
        <text class="dw-floor-num" transform="matrix(0.7071 -0.2475 0 1 581.09 748.22)" text-anchor="middle" dominant-baseline="central">1</text>
        <path class="dw-shaft" d="M587.41,698.16 L535.42,679.38 L535.95,586.87 L587.37,605.81 Z" />
        <path class="dw-shaft" d="M587.41,698.16 L593.18,696.52 L593.33,603.17 L587.37,605.81 Z" />
@@ -393,6 +443,8 @@
        <path class="dw-shaft" d="M563.74,709.74 L558.92,708.08 L558.88,615.01 L563.5,616.88 Z" />
        <path class="dw-door" d="M568.91,707.78 L581.59,704 L580.99,651.08 L568.35,655.41 Z" />
        <path class="dw-door" d="M581.59,704 L593.27,699.08 L593.56,646.68 L580.99,651.08 Z" />
+       <line class="dw-door-line" x1="570.81" y1="693.44" x2="579.42" y2="691.05" />
+       <line class="dw-door-line" x1="583.7" y1="689.34" x2="591.67" y2="686.13" />
        <text class="dw-floor-num" transform="matrix(0.7071 -0.2475 0 1 581.3 643.37)" text-anchor="middle" dominant-baseline="central">2</text>
        <path class="dw-shaft" d="M587.65,592.72 L535.12,574.41 L535.14,481.85 L587.13,500.2 Z" />
        <path class="dw-shaft" d="M587.65,592.72 L592.69,591.35 L593.09,498.45 L587.13,500.2 Z" />
@@ -402,6 +454,8 @@
        <path class="dw-shaft" d="M563.9,604.65 L558.68,603.02 L558.28,510.68 L564.41,512.71 Z" />
        <path class="dw-door" d="M568.48,603.38 L581.19,598.77 L580.74,546.64 L568.93,551.26 Z" />
        <path class="dw-door" d="M581.19,598.77 L593.49,594.96 L593.73,541.97 L580.74,546.64 Z" />
+       <line class="dw-door-line" x1="570.83" y1="588.35" x2="578.64" y2="585.99" />
+       <line class="dw-door-line" x1="582.95" y1="584.36" x2="591.65" y2="581.78" />
        <text class="dw-floor-num" transform="matrix(0.7071 -0.2475 0 1 581.36 538.58)" text-anchor="middle" dominant-baseline="central">3</text>
        <path class="dw-shaft" d="M587.33,487.85 L535.98,469.53 L535.4,377.83 L587.04,395.51 Z" />
        <path class="dw-shaft" d="M587.33,487.85 L592.53,485.87 L592.32,393.25 L587.04,395.51 Z" />
@@ -411,6 +465,8 @@
        <path class="dw-shaft" d="M564.59,500.22 L558.66,497.86 L559.05,405.35 L564.44,406.99 Z" />
        <path class="dw-door" d="M568.33,498.02 L580.99,493.98 L581.32,441.85 L568.55,445.57 Z" />
        <path class="dw-door" d="M580.99,493.98 L593.69,489.93 L593.38,436.89 L581.32,441.85 Z" />
+       <line class="dw-door-line" x1="570.87" y1="483.98" x2="578.64" y2="480.18" />
+       <line class="dw-door-line" x1="582.69" y1="479.68" x2="591.02" y2="476.47" />
        <text class="dw-floor-num" transform="matrix(0.7071 -0.2475 0 1 581.42 433.8)" text-anchor="middle" dominant-baseline="central">4</text>
        <path class="dw-shaft" d="M587.73,383.08 L535.77,365.11 L535.61,260.3 L586.99,277.65 Z" />
        <path class="dw-shaft" d="M587.73,383.08 L593.19,381.65 L592.67,276.21 L586.99,277.65 Z" />

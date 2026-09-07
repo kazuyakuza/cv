@@ -113,6 +113,28 @@ Material system (STAGE_05 §4–§7, `scripts/style.mjs` + per-floor patterns in
   system instead). The fragment stays in the assembly chain in case a later
   stage adds details that survive a glance. No raster assets were needed (§13).
 
+## Stage 5.5 — visual enrichment (in progress, iterative)
+
+- **Iteration 1 — atmosphere & palette** — page backdrop is now a dark muted
+  graphite with a soft radial spotlight falloff (`src/styles/base.css`; the SVG
+  stays transparent so a future stars layer can sit between backdrop and
+  diorama). Palette reworked in `style.mjs`: cool darker concrete exteriors
+  (`.dw-wall`), warm greige interiors (`.dw-wall-far`/`.dw-partition`, no
+  longer near-white), darker shaft/doors/openings, deepened poché cut faces,
+  light paint for the elevator story numbers. Terrain is now a dark
+  presentation base (`.dw-terrain` fill + rim-lit stroke) with a darker inner
+  surface (`.dw-terrain-in`); the warm compacted path and the ground contact
+  shadow (`#141618` @ 0.32, generator) were re-tuned for the dark base. The
+  mustard infrastructure accent is still unused (arrives in iteration 3).
+- **Iteration 2 — materials & depth** — sparse hashed vertical panel seams on
+  the interior far walls (`.dw-wall-seam`, 3/story on B-D, 2/story on C-D,
+  drawn under the ceiling washes); thin floor/wall contact-shadow bands
+  (`.dw-contact`, 12 units deep along both rear-wall bases, split around the
+  floor-01 stair opening); one horizontal groove per elevator door leaf
+  (`.dw-door-line`); stronger section poché (`#dw-cut` base `#a99f8b`); the
+  ceiling washes strengthened a step (0.15/0.08/0.04); columns read slightly
+  heavier (1.8). The unfinished fifth floor keeps no seams/washes (open air).
+
 ## Layout: fragments + assembled master (Stage 2)
 
 The diorama is authored as **modular fragments** — one `<g>` per architectural

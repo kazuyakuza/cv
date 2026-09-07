@@ -200,6 +200,51 @@ const CEIL_BANDS = [
 const ceilBands = (face, hTop, attrs = '') =>
   CEIL_BANDS.map(([d0, d1, cls]) => el(cls, face(hTop - d1, hTop - d0), attrs))
 
+// Material seams (Stage 5.5 §8): sparse vertical panel joints on the interior
+// far walls — deterministic, hashed per story so no two stories repeat.
+// Painted-wall articulation that keeps the hand-placed feel; drawn before the
+// ceiling washes so the wash overlays them like light over geometry.
+const seamLine = (u, v, h0, h1) => {
+  const [x1, y1] = p(u, v, h0).split(',').map(Number)
+  const [x2, y2] = p(u, v, h1).split(',').map(Number)
+  return `<line class="dw-wall-seam" x1="${round(x1)}" y1="${round(y1)}" x2="${round(x2)}" y2="${round(y2)}" />`
+}
+
+function wallSeams(hBase) {
+  const hTop = hBase + FH
+  const out = []
+  // B-D wall (v 0..LD-WALL_T): three joints per story.
+  for (let i = 0; i < 3; i++) {
+    const s = hash2(Math.round(hBase * 7), 1000 + i * 11)
+    const v = Math.round((LD - WALL_T) * (0.17 + 0.31 * i) + (s - 0.5) * 44)
+    out.push(seamLine(LW - WALL_T, v, hBase, hTop))
+  }
+  // C-D wall (u 0..LW): two joints per story.
+  for (let i = 0; i < 2; i++) {
+    const s = hash2(Math.round(hBase * 7), 2000 + i * 11)
+    const u = Math.round(LW * (0.32 + 0.36 * i) + (s - 0.5) * 26)
+    out.push(seamLine(u, LD - WALL_T, hBase, hTop))
+  }
+  return out
+}
+
+// Floor/wall contact shadow (Stage 5.5 §9): a thin darker band on the floor
+// hugging each rear wall's base — quiet ambient occlusion so the surfaces
+// visibly meet. On floor-01 the C-D band splits around the stair opening
+// (the hole reaches the C-D wall, so that stretch has no floor).
+function contactBands(hBase) {
+  const out = [
+    el('dw-contact', hFace(LW - WALL_T - 12, LW - WALL_T, 0, LD - WALL_T, hBase)),
+  ]
+  if (hBase === FH) {
+    out.push(el('dw-contact', hFace(0, STAIR_U0, LD - WALL_T - 12, LD - WALL_T, hBase)))
+    out.push(el('dw-contact', hFace(STAIR_HOLE_U1, LW, LD - WALL_T - 12, LD - WALL_T, hBase)))
+  } else {
+    out.push(el('dw-contact', hFace(0, LW, LD - WALL_T - 12, LD - WALL_T, hBase)))
+  }
+  return out
+}
+
 // Back wall story between slab tops hBase and hBase + FH. The wall extends
 // up to the slab-above's TOP line so no gap shows through the stair opening
 // at the slab band (user revision: extend the wall, no patch geometry). The
@@ -217,9 +262,12 @@ function backWalls(hBase) {
   // C-D wall (short back, plane v = LD): inner face + cut end at u = 0.
   out.push(el('dw-wall-far', vFace(LD - WALL_T, 0, LW, hBase, hTop)))
   out.push(el('dw-slab-edge', uFace(0, LD - WALL_T, LD, hBase, hTop)))
-  // Ceiling washes over both inner faces (Stage 5 §7).
+  // Panel joints (Stage 5.5 §8), then ceiling washes over both inner faces
+  // (Stage 5 §7), then the floor/wall contact shadow (Stage 5.5 §9).
+  out.push(...wallSeams(hBase))
   out.push(...ceilBands((h0, h1) => uFace(LW - WALL_T, 0, LD - WALL_T, h0, h1), hTop))
   out.push(...ceilBands((h0, h1) => vFace(LD - WALL_T, 0, LW, h0, h1), hTop))
+  out.push(...contactBands(hBase))
   return out
 }
 
@@ -378,18 +426,19 @@ function shaftStory(hBase, hTop, { openDoors = false } = {}) {
     out.push(el('dw-door', vFace(SHAFT_V0 - WALL_T, DOOR_U1 - 8, DOOR_U1, hBase, hBase + DOOR_H)))
   } else {
     // Closed double door: two panels meeting at the center split.
-    out.push(
-      el(
-        'dw-door',
-        vFace(SHAFT_V0 - WALL_T, DOOR_U0, (DOOR_U0 + DOOR_U1) / 2, hBase, hBase + DOOR_H),
-      ),
-    )
-    out.push(
-      el(
-        'dw-door',
-        vFace(SHAFT_V0 - WALL_T, (DOOR_U0 + DOOR_U1) / 2, DOOR_U1, hBase, hBase + DOOR_H),
-      ),
-    )
+    const doorLeaf = (u0, u1) =>
+      el('dw-door', vFace(SHAFT_V0 - WALL_T, u0, u1, hBase, hBase + DOOR_H))
+    out.push(doorLeaf(DOOR_U0, (DOOR_U0 + DOOR_U1) / 2))
+    out.push(doorLeaf((DOOR_U0 + DOOR_U1) / 2, DOOR_U1))
+    // One quiet horizontal groove per leaf, low on the panel (Stage 5.5
+    // §8): the doors read as metal leaves, not blank quads.
+    const grooveLine = (u0, u1, h) => {
+      const [x1, y1] = p(u0, SHAFT_V0 - WALL_T, h).split(',')
+      const [x2, y2] = p(u1, SHAFT_V0 - WALL_T, h).split(',')
+      return `<line class="dw-door-line" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" />`
+    }
+    out.push(grooveLine(DOOR_U0 + 3, (DOOR_U0 + DOOR_U1) / 2 - 3, hBase + 14))
+    out.push(grooveLine((DOOR_U0 + DOOR_U1) / 2 + 3, DOOR_U1 - 3, hBase + 14))
   }
   // Floor indicator (user revision): the story number painted on the wall
   // above each door head — one small digit per floor, in the plaques' text
