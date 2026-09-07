@@ -32,9 +32,6 @@ const SHAFT_U = 0.171 * LW // shaft inner edge, width fraction (narrowed four ti
 const SHAFT_V0 = 0.46 * LD // shaft depth start  (Health Platforms side)
 const SHAFT_V1 = 0.585 * LD // shaft depth end    (Nextcode side)
 const DOOR_H = 52.5 // door opening height (passages); elevator door leaf height
-// Mustard service pipes (Stage 5.5 §7): solid quads, PIPE_W thick in plan.
-// 6 plan units ≈ 4.2 screen px — a believable pipe at overview size.
-const PIPE_W = 6
 // Closed double door on the W2 (right) wall face, like a normal elevator:
 // two panels meeting at the center, drawn on the face toward Health Platforms.
 const DOOR_U0 = 6.5
@@ -155,6 +152,21 @@ function assetPipe(u, v, hBase, hLen) {
   const x = cx - PIPE_SPRITE.w * PIPE_SPRITE.axis
   const y = by - hLen
   return `<image href="${inlineAsset(PIPE_SPRITE.file)}" x="${round(x)}" y="${round(y)}" width="${PIPE_SPRITE.w}" height="${round(hLen)}" preserveAspectRatio="none" />`
+}
+
+// Horizontal wall run from the pre-tilted sprite: the approved flat pipe
+// sprite rotated -19.29 deg once at full resolution with PIL (left end up,
+// matching the B-D wall's recede along +v) — the browser only translates and
+// scales it, no runtime rotation, so the tube edges stay crisp at zoom.
+// Anchor = the run's NEAR end (sprite's lower-right tip, plain cut end that
+// butts behind the riser); uniform scale k chosen so the run reaches v=161,
+// past the sight-line cut (v~150) where the story above occludes it — the
+// far end and its collar vanish under the slab instead of stopping mid-wall.
+const PIPE_H_SPRITE = { file: 'pipe-h-iso-03.png', w: 2858, h: 1236, nearX: 2820, nearY: 1030, k: 0.026 }
+function assetPipeH(u, v, h) {
+  const [cx, cy] = p(u, v, h).split(',').map(Number)
+  const s = PIPE_H_SPRITE.k
+  return `<image href="${inlineAsset(PIPE_H_SPRITE.file)}" x="${round(cx - PIPE_H_SPRITE.nearX * s)}" y="${round(cy - PIPE_H_SPRITE.nearY * s)}" width="${round(PIPE_H_SPRITE.w * s)}" height="${round(PIPE_H_SPRITE.h * s)}" preserveAspectRatio="none" />`
 }
 
 // ---------------------------------------------------------------------------
@@ -572,6 +584,11 @@ const floor01 = group('floor-01', [
 const floor02 = group('floor-02', [
   ...slab(2 * FH),
   ...backWalls(2 * FH),
+  // A/B test 2: horizontal wall run from the pre-tilted sprite, starting at
+  // the vertical pipe's base (skirting level — low runs stay visible from
+  // this camera) and receding behind the story above. Drawn BEFORE the
+  // vertical run so the riser reads as passing in front at the T.
+  assetPipeH(227.5, 60, 2 * FH + 16),
   // Prototype service pipe on the B-D wall's near stretch, from the
   // user-approved generated sprite. Lives INSIDE this floor fragment so the
   // floors above occlude its upper part where the sight line crosses their
