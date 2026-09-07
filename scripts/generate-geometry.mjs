@@ -738,7 +738,7 @@ function groundShadow() {
   }
   const d = path([corner(0, 0), corner(LW, 0), corner(LW, LD), corner(0, LD)])
   return group('ground-shadow', [
-    `<path d="${d}" fill="#46443f" fill-opacity="0.12" filter="url(#dw-soft)" />`,
+    `<path d="${d}" fill="#141618" fill-opacity="0.32" filter="url(#dw-soft)" />`,
   ])
 }
 
@@ -767,8 +767,8 @@ function careerSign() {
         // Placeholder panel with photo circle and text bars.
         '<rect class="dw-sign" x="1030" y="870" width="160" height="110" />',
         '<circle class="dw-shaft" cx="1065" cy="905" r="22" />',
-        '<rect x="1100" y="890" width="60" height="10" fill="#b5b3ae" />',
-        '<rect x="1100" y="910" width="44" height="10" fill="#b5b3ae" />',
+        '<rect x="1100" y="890" width="60" height="10" fill="#a8a49c" />',
+        '<rect x="1100" y="910" width="44" height="10" fill="#a8a49c" />',
       ],
       'dw-sign-group',
     ),

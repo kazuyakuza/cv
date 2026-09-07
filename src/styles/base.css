@@ -1,8 +1,9 @@
 /* Minimal CSS foundation (Stage 0): reset defaults, predictable sizing,
    neutral background, and a container for the future SVG. No final palette,
    typography, responsive behavior, or effects — desktop composition first.
-   Stage 4 §21: the warm paper background lives here (page-level CSS), not
-   inside the SVG — the SVG stays transparent and self-contained. */
+   Stage 5.5 §4: the atmospheric backdrop lives here (page-level CSS), not
+   inside the SVG — the SVG stays transparent and self-contained, and a
+   future stars layer can be inserted between this backdrop and the diorama. */
 
 *,
 *::before,
@@ -18,8 +19,12 @@ body {
 
 body {
   min-height: 100vh;
-  background: #f7f3ea;
-  color: #2b2b2b;
+  /* Stage 5.5 §4: dark muted, desaturated environment with a soft radial
+     falloff — the diorama reads as a standalone illustrated object under a
+     quiet spotlight. Never pure black; stays subordinate to the building. */
+  background:
+    radial-gradient(ellipse 120% 90% at 50% 38%, #343a3e 0%, #26292c 55%, #191b1d 100%);
+  color: #d8d4ca;
   font-family:
     system-ui,
     -apple-system,
@@ -43,5 +48,5 @@ body {
 }
 
 .status {
-  color: #767269;
+  color: #8d897d;
 }
