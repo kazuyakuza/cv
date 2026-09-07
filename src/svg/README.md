@@ -151,6 +151,26 @@ Material system (STAGE_05 §4–§7, `scripts/style.mjs` + per-floor patterns in
   along their silhouette nothing occludes them, so the continuous read is
   correct occlusion.
 
+- **Iteration 3 — vertical infrastructure (user-reviewed twice)** — first
+  attempt (a flat-quad mustard "pipe spine") was removed on user review:
+  flat bars floating in front of the building read nothing like pipes.
+  Second attempt (hand-drawn SVG cylinder) was also superseded: **the pipe
+  building block is now a nano-banana generated sprite**
+  (`src/assets/pipe-01.png`, inlined as a base64 data URI by
+  `inlineAsset()`/`assetPipe()` in the generator — the assembled master stays
+  self-contained, so dev server, build and standalone file all render it).
+  Vertical runs are placed per floor INSIDE the owning floor fragment so the
+  floors above occlude the run where the sight line crosses their slabs — a
+  deep wall pipe is mostly hidden by the story above's floor surface (the
+  visible room volume is a wedge near the front edges), so pipes belong on
+  the walls' near stretches, like the reference. One pipe is placed on the
+  Interactica story (B-D wall near stretch, v=60). The dark-steel elements
+  from the first pass: the elevator-enclosure conduit + junction boxes stay
+  (user: acceptable); the Indelve drop was removed on user review (it
+  floated unattached); the floor-1 electrical panel is still in place,
+  pending review; the `architectural-details` group is an empty placeholder
+  again.
+
 ## Layout: fragments + assembled master (Stage 2)
 
 The diorama is authored as **modular fragments** — one `<g>` per architectural

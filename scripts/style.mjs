@@ -101,14 +101,11 @@ export const svgStyle = `
        wall and floor visibly meet instead of floating apart */
     .dw-contact { fill: #3a3833; fill-opacity: 0.10; stroke: none; }
 
-    /* Mustard service infrastructure (Stage 5.5 §7, user decision: one
-       mustard accent). Reserved for the key pipe runs only — the building's
-       visible service spine. Darker outline + shade strip keep it reading
-       as a solid pipe, not a stray line. */
-    .dw-pipe { fill: #c9a23f; stroke: #8a6d24; stroke-width: 0.8; }
-    .dw-pipe-shade { fill: #a8832e; stroke: none; }
-    /* Dark steel utility elements: junction boxes, conduits, brackets —
-       supporting cast, never competing with the mustard runs */
+    /* Service pipes (Stage 5.5 §7): vertical runs come from the
+       user-approved generated sprite (src/assets/pipe-01.png, inlined by the
+       generator as a data URI); the sprite carries its own shading, straps
+       and flanges. Dark steel utility elements (junction boxes, conduits,
+       brackets) are the supporting cast */
     .dw-jbox { fill: #4a4842; stroke: #2e2c28; stroke-width: 0.8; }
     .dw-conduit { fill: #55534c; stroke: #3a3833; stroke-width: 0.7; }
 

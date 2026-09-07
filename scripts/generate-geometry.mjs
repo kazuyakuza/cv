@@ -1,4 +1,4 @@
-import { writeFileSync } from 'node:fs'
+import { readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -7,6 +7,13 @@ import { fileURLToPath } from 'node:url'
 // parameter block documented in src/svg/README.md. terrain.svg, path.svg and
 // labels.svg stay hand-authored. Edit parameters here, re-run
 // `npm run svg:generate`, then `npm run svg:assemble`.
+
+// Utility raster assets (Stage 5.5 §6): small generated elements embedded
+// into the SVG as base64 data URIs so the assembled master stays
+// self-contained (dev server, static build and standalone file all work).
+const ASSETS_DIR = join(dirname(fileURLToPath(import.meta.url)), '..', 'src', 'assets')
+const inlineAsset = (name, mime = 'image/png') =>
+  `data:${mime};base64,${readFileSync(join(ASSETS_DIR, name)).toString('base64')}`
 
 // ---------------------------------------------------------------------------
 // Shared parameters (mirror of src/svg/README.md)
@@ -135,6 +142,20 @@ const boxOnUWall = (uFront, uWall, v0, v1, h0, h1, cls = 'dw-jbox') => [
   el(cls, hFace(uFront, uWall, v0, v1, h1)),
   el(cls, vFace(v1, uFront, uWall, h0, h1)),
 ]
+
+// A vertical service pipe from the generated sprite (user decision: the
+// nano-banana asset is the pipe building block). The sprite's full height
+// maps to the requested run length; its pipe axis sits at 32.2% from the
+// sprite's left edge (the straps' mounting tabs extend to the right). The
+// <image> is emitted inside the owning floor fragment so the floors above
+// occlude the run where the sight line crosses their slabs.
+const PIPE_SPRITE = { file: 'pipe-01.png', w: 7.36, axis: 0.322 }
+function assetPipe(u, v, hBase, hLen) {
+  const [cx, by] = p(u, v, hBase).split(',').map(Number)
+  const x = cx - PIPE_SPRITE.w * PIPE_SPRITE.axis
+  const y = by - hLen
+  return `<image href="${inlineAsset(PIPE_SPRITE.file)}" x="${round(x)}" y="${round(y)}" width="${PIPE_SPRITE.w}" height="${round(hLen)}" preserveAspectRatio="none" />`
+}
 
 // ---------------------------------------------------------------------------
 // Floor fragments (slab + story walls + partitions + shaft story segment)
@@ -548,7 +569,16 @@ const floor01 = group('floor-01', [
 // columns over it (user revision: each shaft-crossing floor renders as one
 // complete plane below the shaft, like floor-01 — no slab part may paint
 // over the elevator) ----------------------------------------------
-const floor02 = group('floor-02', [...slab(2 * FH), ...backWalls(2 * FH)])
+const floor02 = group('floor-02', [
+  ...slab(2 * FH),
+  ...backWalls(2 * FH),
+  // Prototype service pipe on the B-D wall's near stretch, from the
+  // user-approved generated sprite. Lives INSIDE this floor fragment so the
+  // floors above occlude its upper part where the sight line crosses their
+  // slabs — the run rises from its floor and disappears behind the story
+  // above, like the reference's pipes.
+  assetPipe(227.5, 60, 2 * FH, STORY_H),
+])
 const floor02Front = group('floor-02-front', [
   ...slabTriangle(2 * FH),
   ...columns(2 * FH, 2 * FH + STORY_H),
@@ -587,11 +617,7 @@ const floor03 = group('floor-03', [
   // consistent line mid-span (it faded to a bare color abutment while the
   // Interactica story below kept a crisp edge). Restored on top of the face.
   el('dw-far-line', `M ${p(0, LD - WALL_T, 3 * FH)} L ${p(LW, LD - WALL_T, 3 * FH)}`),
-  // Indelve service drop (Stage 5.5 §7): a dark conduit dropping to a small
-  // distribution box low on the separation wall — generic technical prop,
-  // no invented career specifics (§10 rule).
-  el('dw-conduit', uFace(37.5, 416, 419, 3 * FH + 18, 3 * FH + 70)),
-  ...boxOnUWall(35.5, 40.5, 410, 424, 3 * FH + 6, 3 * FH + 18),
+  // (Indelve service drop removed on user review — it floated unattached.)
   // The separation fill also covered the C-D wall's ceiling washes over the
   // section it marks (u from the shaft line to the corner): re-draw them
   // clipped to exactly that part, so the Indelve story is shaded like every
@@ -652,11 +678,6 @@ const floor05Front = group('floor-05-front', [
   el('dw-wall-far', uFace(LW - WALL_T, 0, STUB_LEN * LD - WALL_T, 5 * FH, 5 * FH + STUB_H)),
   el('dw-slab-edge', vFace(0, LW - WALL_T, LW, 5 * FH, 5 * FH + STUB_H)),
   el('dw-slab', hFace(LW - WALL_T, LW, 0, STUB_LEN * LD - WALL_T, 5 * FH + STUB_H)),
-  // Riser stub (Stage 5.5 §7): the service spine re-emerging through the
-  // unfinished fifth story, capped — construction still in progress.
-  el('dw-pipe', uFace(227.5, 117, 123, 5 * FH, 5 * FH + 42)),
-  el('dw-pipe-shade', uFace(227.5, 117, 118.8, 5 * FH, 5 * FH + 42)),
-  el('dw-pipe', hFace(227.5, 230.5, 117, 123, 5 * FH + 42)),
   el('dw-wall-far', vFace(LD - WALL_T, 0, STUB_LEN * LW, 5 * FH, 5 * FH + STUB_H)),
   el('dw-slab-edge', uFace(0, LD - WALL_T, LD, 5 * FH, 5 * FH + STUB_H)),
   el('dw-slab', hFace(0, STUB_LEN * LW, LD - WALL_T, LD, 5 * FH + STUB_H)),
@@ -826,42 +847,12 @@ function groundShadow() {
   ])
 }
 
-// --- architectural-details: vertical service infrastructure -----------------
-// Stage 5.5 §7 (user decision: ONE mustard accent). The building's visible
-// service spine lives on the B-D wall (long back-right): ONE continuous
-// mustard riser crossing every completed story, with horizontal branches on
-// stories 0/2/4 (T-junctions with a dark collar at the crossing), support
-// brackets, and a wall junction box per story. Everything is a narrow solid
-// quad, never a hairline, so it reads as a pipe at every zoom level — the
-// failure mode that got Stage 5's sparse details removed. The riser enters
-// the fifth-floor slab; a short stub re-emerges on the open-air fifth floor
-// (services continuing upward through the unfinished story). Drawn here,
-// after the floor groups: along its silhouette nothing occludes it (the
-// riser fits each story's clear height and is nearer than the slabs it
-// passes behind), so one continuous read is correct.
+// --- architectural-details: (empty placeholder) -----------------------------
+// Vertical service pipes come from the user-approved generated sprite
+// (src/assets/pipe-01.png, Stage 5.5 §6/§7), placed per floor via assetPipe()
+// in the owning floor fragment so occlusion stays correct.
 function architecturalDetails() {
-  const out = []
-  const RISER_U = 227.5 // pipe front plane, hugging the B-D wall's inner face
-  const RISER_V = 120 // clear of all tags (u=0 wall), branches and stairs
-  const RISER_TOP = 5 * FH - SLAB_T // enters the fifth-floor slab
-  out.push(el('dw-pipe', uFace(RISER_U, RISER_V - 3, RISER_V + 3, 0, RISER_TOP)))
-  out.push(el('dw-pipe-shade', uFace(RISER_U, RISER_V - 3, RISER_V - 1.8, 0, RISER_TOP)))
-  for (const hBase of [0, 2 * FH, 4 * FH]) {
-    const h = hBase + 55
-    out.push(el('dw-pipe', uFace(RISER_U - 3, 62, 150, h - 3, h + 3)))
-    // narrow top sliver: a horizontal cylinder shows a thin bright strip
-    // along its crown, not a wide flat bar
-    out.push(el('dw-pipe', hFace(RISER_U - 3, RISER_U - 0.5, 62, 150, h + 3)))
-    // junction collar where the branch meets the riser
-    out.push(el('dw-pipe-shade', uFace(RISER_U - 3, RISER_V - 3, RISER_V + 3, h - 3, h + 3)))
-    for (const v of [80, 146]) {
-      out.push(el('dw-conduit', uFace(RISER_U - 3, v, v + 2.5, hBase + 42, h - 3)))
-    }
-  }
-  for (let story = 0; story <= 4; story++) {
-    out.push(...boxOnUWall(224, 230.5, 128, 140, story * FH + 58, story * FH + 72))
-  }
-  return group('architectural-details', out)
+  return group('architectural-details', [])
 }
 
 // --- career-sign: posts and placeholder panel -------------------------------
