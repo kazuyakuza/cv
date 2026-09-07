@@ -91,6 +91,17 @@
        wall and floor visibly meet instead of floating apart */
     .dw-contact { fill: #3a3833; fill-opacity: 0.10; stroke: none; }
 
+    /* Mustard service infrastructure (Stage 5.5 §7, user decision: one
+       mustard accent). Reserved for the key pipe runs only — the building's
+       visible service spine. Darker outline + shade strip keep it reading
+       as a solid pipe, not a stray line. */
+    .dw-pipe { fill: #c9a23f; stroke: #8a6d24; stroke-width: 0.8; }
+    .dw-pipe-shade { fill: #a8832e; stroke: none; }
+    /* Dark steel utility elements: junction boxes, conduits, brackets —
+       supporting cast, never competing with the mustard runs */
+    .dw-jbox { fill: #4a4842; stroke: #2e2c28; stroke-width: 0.8; }
+    .dw-conduit { fill: #55534c; stroke: #3a3833; stroke-width: 0.7; }
+
     /* Stage 5 §9 — stair/elevator details. (§8 sparse-infrastructure pieces
        were all removed on user review — pipe, wall patch, panel, vent — so
        only the banister line survives.) */
@@ -320,6 +331,12 @@
        <path class="dw-contact" d="M904.86,826.37 L913.14,823.33 L502.96,678.88 L494.43,682.7 Z" />
        <path class="dw-contact" d="M347.78,739.11 L363.09,733.87 L355.01,731.4 L339.84,735.92 Z" />
        <path class="dw-contact" d="M438,707.7 L515.81,679.97 L507.39,677.56 L429.06,704.38 Z" />
+       <path class="dw-jbox" d="M788.47,749.77 L770.83,743.45 L771.21,717.5 L788.32,723.52 Z" />
+       <path class="dw-jbox" d="M788.32,723.52 L793.67,720.89 L777.61,715.6 L771.21,717.5 Z" />
+       <path class="dw-jbox" d="M770.83,743.45 L777.22,741.09 L777.61,715.6 L771.21,717.5 Z" />
+       <path class="dw-conduit" d="M784.49,779.98 L782.48,779.04 L782,745.29 L784.31,745.35 Z" />
+       <circle class="dw-dot" cx="784.7" cy="735.11" r="1.4" />
+       <circle class="dw-dot" cx="774.78" cy="731.74" r="1.4" />
        <path class="dw-rail" d="M 409.14,712.29 L 428.79,677.17 L 438.3,674.3" />
        <path class="dw-partition" d="M540.5,783.35 L540.67,690.45 L669.75,645.46 L669.46,737.72 L598.53,763.22 L599.14,710 L559.29,723.77 L559.35,775.84 Z" />
        <path class="dw-partition" d="M598.53,763.22 L593.63,760.38 L593.86,712.08 L599.14,710 Z" />
@@ -379,6 +396,10 @@
        <defs><clipPath id="dw-clip-sep3"><path d="M339.47,526.03 L507.59,467.94 L507.42,362.15 L340.02,421.27 Z" /></clipPath></defs>
        <path class="dw-wall-far-fill" clip-path="url(#dw-clip-sep3)" d="M530.37,572.76 L368.8,516.45 L368.34,423.76 L530.29,480.33 Z" />
        <path class="dw-far-line" d="M 339.47,526.03 L 507.59,467.94" />
+       <path class="dw-conduit" d="M482.28,540.25 L480.7,539.19 L480.27,487.52 L482.38,487.6 Z" />
+       <path class="dw-jbox" d="M485.13,553.56 L474.92,550.67 L475.55,538.42 L485.56,541.22 Z" />
+       <path class="dw-jbox" d="M485.56,541.22 L488.78,540.39 L479.22,536.68 L475.55,538.42 Z" />
+       <path class="dw-jbox" d="M474.92,550.67 L478.99,549.54 L479.22,536.68 L475.55,538.42 Z" />
        <path class="dw-shade-a" clip-path="url(#dw-clip-sep3b)" d="M339.2,429.17 L507.33,369.96 L507.42,362.15 L340.02,421.27 Z" />
        <path class="dw-shade-b" clip-path="url(#dw-clip-sep3b)" d="M340.07,439.35 L507.96,380.13 L507.33,369.96 L339.2,429.17 Z" />
        <path class="dw-shade-c" clip-path="url(#dw-clip-sep3b)" d="M339.38,450.93 L508.25,392.85 L507.96,380.13 L340.07,439.35 Z" />
@@ -421,7 +442,38 @@
        <path class="dw-slab" d="M564.74,175.67 L569.31,173.9 L507.69,152.94 L502.17,153.98 Z" />
      </g>
      <g id="architectural-details">
-     
+       <path class="dw-pipe" d="M827.84,899.24 L823.7,898.31 L823.66,386.27 L828.44,387.76 Z" />
+       <path class="dw-pipe-shade" d="M827.84,899.24 L827.44,899.77 L827.71,386.4 L828.44,387.76 Z" />
+       <path class="dw-pipe" d="M864.86,861.88 L802.38,840.13 L802.73,833.92 L865.34,856.29 Z" />
+       <path class="dw-pipe" d="M865.34,856.29 L866.89,855.42 L804.22,834.06 L802.73,833.92 Z" />
+       <path class="dw-pipe-shade" d="M826.4,848.36 L821.41,847.3 L822.32,840.45 L826.37,841.96 Z" />
+       <path class="dw-conduit" d="M852.62,867.96 L850.57,866.93 L850.74,856.93 L852.5,857.96 Z" />
+       <path class="dw-conduit" d="M805.58,851.8 L803.4,851.02 L803.64,840.22 L805.16,841.13 Z" />
+       <path class="dw-pipe" d="M864.55,651.81 L802.52,630.11 L802.29,624.68 L864.8,645.91 Z" />
+       <path class="dw-pipe" d="M864.8,645.91 L866.5,645 L804.89,624.07 L802.29,624.68 Z" />
+       <path class="dw-pipe-shade" d="M826.21,638.99 L821.99,637.36 L821.56,630.53 L826.17,632.97 Z" />
+       <path class="dw-conduit" d="M852.26,657.89 L850.11,657.4 L850.22,646.67 L852.66,647.42 Z" />
+       <path class="dw-conduit" d="M805.34,641.25 L803.88,641.18 L803.8,630.46 L805.16,631.02 Z" />
+       <path class="dw-pipe" d="M864.57,441.79 L802.88,420.56 L802.27,414.16 L864.37,435.89 Z" />
+       <path class="dw-pipe" d="M864.37,435.89 L866.14,435.16 L804.83,413.43 L802.27,414.16 Z" />
+       <path class="dw-pipe-shade" d="M825.81,428.9 L821.55,427.27 L822.15,420.98 L826.04,422.03 Z" />
+       <path class="dw-conduit" d="M851.81,447.69 L850.48,447.43 L850.84,437.2 L852.16,437.57 Z" />
+       <path class="dw-conduit" d="M805.96,430.83 L803.57,431.18 L803.8,420.93 L805.81,421.61 Z" />
+       <path class="dw-jbox" d="M817.54,840.31 L809.87,836.59 L809.51,822.92 L817.44,826.29 Z" />
+       <path class="dw-jbox" d="M817.44,826.29 L822.82,824.41 L814.22,821.15 L809.51,822.92 Z" />
+       <path class="dw-jbox" d="M809.87,836.59 L814.14,835.05 L814.22,821.15 L809.51,822.92 Z" />
+       <path class="dw-jbox" d="M817.51,735.25 L809.24,732.36 L809.2,717.57 L817.5,721.12 Z" />
+       <path class="dw-jbox" d="M817.5,721.12 L822.33,719.79 L814.54,715.9 L809.2,717.57 Z" />
+       <path class="dw-jbox" d="M809.24,732.36 L814.41,730.74 L814.54,715.9 L809.2,717.57 Z" />
+       <path class="dw-jbox" d="M818.12,629.39 L809.28,627.21 L809.84,613.32 L818.01,615.59 Z" />
+       <path class="dw-jbox" d="M818.01,615.59 L822.09,614.22 L814.24,610.89 L809.84,613.32 Z" />
+       <path class="dw-jbox" d="M809.28,627.21 L813.96,625.62 L814.24,610.89 L809.84,613.32 Z" />
+       <path class="dw-jbox" d="M817.69,524.52 L809.24,521.88 L809.31,507.9 L817.7,510.73 Z" />
+       <path class="dw-jbox" d="M817.7,510.73 L823.01,509.32 L813.52,505.83 L809.31,507.9 Z" />
+       <path class="dw-jbox" d="M809.24,521.88 L813.99,520.33 L813.52,505.83 L809.31,507.9 Z" />
+       <path class="dw-jbox" d="M817.86,420.18 L809.48,416.91 L808.9,402.4 L817.78,406.15 Z" />
+       <path class="dw-jbox" d="M817.78,406.15 L822.32,404.1 L813.45,401.8 L808.9,402.4 Z" />
+       <path class="dw-jbox" d="M809.48,416.91 L813.94,415.24 L813.45,401.8 L808.9,402.4 Z" />
      </g>
      <g id="elevator">
        <path class="dw-shaft" d="M587.79,802.83 L535.98,784.25 L535.92,691.76 L587.77,710.14 Z" />
@@ -523,6 +575,22 @@
        <circle class="dw-dot" cx="520.65" cy="339.9" r="1.4" />
        <text class="dw-year" transform="matrix(0.7071 0.2475 0 1 532.03 343.67)" text-anchor="middle" dominant-baseline="central">2026</text>
      </g>
+       <path class="dw-conduit" d="M514.1,798.59 L511.99,797.72 L512.33,272.23 L514.44,272.97 Z" />
+       <path class="dw-jbox" d="M515.88,776.98 L507.83,774.28 L507.76,761.44 L516.72,764.85 Z" />
+       <path class="dw-jbox" d="M516.72,764.85 L517.57,764.1 L508.46,761.12 L507.76,761.44 Z" />
+       <path class="dw-jbox" d="M507.83,774.28 L508.98,773.96 L508.46,761.12 L507.76,761.44 Z" />
+       <path class="dw-jbox" d="M516.54,671.43 L507.83,669.48 L507.87,656.43 L516.47,659.6 Z" />
+       <path class="dw-jbox" d="M516.47,659.6 L516.91,660.01 L508.98,656.44 L507.87,656.43 Z" />
+       <path class="dw-jbox" d="M507.83,669.48 L508.79,668.59 L508.98,656.44 L507.87,656.43 Z" />
+       <path class="dw-jbox" d="M516.31,567.23 L507.67,564.08 L507.98,552.31 L516.15,554.74 Z" />
+       <path class="dw-jbox" d="M516.15,554.74 L517.19,554.59 L508.36,552.12 L507.98,552.31 Z" />
+       <path class="dw-jbox" d="M507.67,564.08 L509.24,564.05 L508.36,552.12 L507.98,552.31 Z" />
+       <path class="dw-jbox" d="M516.07,461.67 L508.25,458.9 L508.1,447.09 L516.56,449.8 Z" />
+       <path class="dw-jbox" d="M516.56,449.8 L517.2,449.33 L509.09,446.8 L508.1,447.09 Z" />
+       <path class="dw-jbox" d="M508.25,458.9 L509.01,458.95 L509.09,446.8 L508.1,447.09 Z" />
+       <path class="dw-jbox" d="M515.91,357.13 L507.59,354.09 L507.62,341.52 L516.85,344.89 Z" />
+       <path class="dw-jbox" d="M516.85,344.89 L517.13,344.9 L508.6,341.89 L507.62,341.52 Z" />
+       <path class="dw-jbox" d="M507.59,354.09 L508.77,353.16 L508.6,341.89 L507.62,341.52 Z" />
        <path class="dw-slab" d="M563.66,285.8 L592.67,276.21 L541.31,257.73 L511.55,268.21 Z" />
        <path class="dw-slab" d="M558.33,288.25 L563.66,285.8 L511.55,268.21 L507.31,269.37 Z" />
        <path class="dw-slab" d="M564.35,289.79 L597.72,277.47 L592.67,276.21 L558.33,288.25 Z" />
@@ -554,6 +622,9 @@
        <path class="dw-wall-far" d="M913.46,403.23 L751.53,346.83 L752.43,296.98 L912.85,352.7 Z" />
        <path class="dw-slab-edge" d="M913.46,403.23 L918.73,401.06 L918.83,350.73 L912.85,352.7 Z" />
        <path class="dw-slab" d="M912.85,352.7 L918.83,350.73 L757.04,294.62 L752.43,296.98 Z" />
+       <path class="dw-pipe" d="M827.92,374.28 L824.12,373.04 L824.4,330.86 L828.12,332.5 Z" />
+       <path class="dw-pipe-shade" d="M827.92,374.28 L826.38,374.04 L826.63,332.49 L828.12,332.5 Z" />
+       <path class="dw-pipe" d="M828.12,332.5 L830.18,332.16 L825.8,330.05 L824.4,330.86 Z" />
        <path class="dw-wall-far" d="M339,316.22 L406.5,292.74 L406.47,242.71 L339.66,266.83 Z" />
        <path class="dw-slab-edge" d="M339,316.22 L333.78,314.25 L333.94,264.13 L339.66,266.83 Z" />
        <path class="dw-slab" d="M339.66,266.83 L406.47,242.71 L401.35,241.45 L333.94,264.13 Z" />

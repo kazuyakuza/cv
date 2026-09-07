@@ -135,6 +135,22 @@ Material system (STAGE_05 §4–§7, `scripts/style.mjs` + per-floor patterns in
   ceiling washes strengthened a step (0.15/0.08/0.04); columns read slightly
   heavier (1.8). The unfinished fifth floor keeps no seams/washes (open air).
 
+- **Iteration 3 — vertical infrastructure (mustard accent)** — the empty
+  `architectural-details` fragment now carries the building's service spine:
+  ONE continuous mustard riser (`.dw-pipe`, 6 plan units ≈ 4.2 px) on the B-D
+  wall at v = 120 crossing every completed story, horizontal branches on
+  stories 0/2/4 (`.dw-pipe` quads hugging the wall, narrow crown sliver, dark
+  junction collar at the T), support brackets, and a dark junction box
+  (`.dw-jbox`) per story. The shaft's enclosure gains a dark steel conduit
+  riser (`.dw-conduit`, proud of u = 0 so it visibly crosses the re-layered
+  floor bands) with a junction box per story; floor-01 gains an electrical
+  panel + conduit drop on the Health Platforms (data-ops) stretch; floor-03
+  gains an Indelve service drop on the separation wall (generic technical
+  prop, no invented career specifics); the riser re-emerges as a capped stub
+  through the open-air fifth floor. Pipes are drawn after the floor groups —
+  along their silhouette nothing occludes them, so the continuous read is
+  correct occlusion.
+
 ## Layout: fragments + assembled master (Stage 2)
 
 The diorama is authored as **modular fragments** — one `<g>` per architectural

@@ -25,6 +25,9 @@ const SHAFT_U = 0.171 * LW // shaft inner edge, width fraction (narrowed four ti
 const SHAFT_V0 = 0.46 * LD // shaft depth start  (Health Platforms side)
 const SHAFT_V1 = 0.585 * LD // shaft depth end    (Nextcode side)
 const DOOR_H = 52.5 // door opening height (passages); elevator door leaf height
+// Mustard service pipes (Stage 5.5 §7): solid quads, PIPE_W thick in plan.
+// 6 plan units ≈ 4.2 screen px — a believable pipe at overview size.
+const PIPE_W = 6
 // Closed double door on the W2 (right) wall face, like a normal elevator:
 // two panels meeting at the center, drawn on the face toward Health Platforms.
 const DOOR_U0 = 6.5
@@ -124,6 +127,14 @@ const column = (u, v, h0, h1) => {
 }
 
 const el = (cls, d, attrs = '') => `<path class="${cls}"${attrs} d="${d}" />`
+
+// Small utility box mounted against a constant-u wall plane (protruding
+// toward -u, i.e. toward the open side): front face, top cap, larger-v side.
+const boxOnUWall = (uFront, uWall, v0, v1, h0, h1, cls = 'dw-jbox') => [
+  el(cls, uFace(uFront, v0, v1, h0, h1)),
+  el(cls, hFace(uFront, uWall, v0, v1, h1)),
+  el(cls, vFace(v1, uFront, uWall, h0, h1)),
+]
 
 // ---------------------------------------------------------------------------
 // Floor fragments (slab + story walls + partitions + shaft story segment)
@@ -514,6 +525,13 @@ const floorGround = group('floor-ground', [
 const floor01 = group('floor-01', [
   ...slab(FH, { stairOpening: true }),
   ...backWalls(FH),
+  // Electrical panel on the Health Platforms stretch (data-operations
+  // floor — a service panel is the believable piece here), with a conduit
+  // drop feeding it from the fifth-floor slab line (Stage 5.5 §7/§8).
+  ...boxOnUWall(222, 230.5, 168, 192, FH + 34, FH + 60),
+  el('dw-conduit', uFace(227.5, 178.5, 181.5, FH, FH + 34)),
+  dot(222, 173, FH + 47),
+  dot(222, 187, FH + 47),
   // Stair banister, upper element (user revision): the diagonal's floor-1
   // stretch plus its landing return, drawn after the story walls (the stair
   // opening shows it) but BEFORE the columns — column C, nearer to the
@@ -569,6 +587,11 @@ const floor03 = group('floor-03', [
   // consistent line mid-span (it faded to a bare color abutment while the
   // Interactica story below kept a crisp edge). Restored on top of the face.
   el('dw-far-line', `M ${p(0, LD - WALL_T, 3 * FH)} L ${p(LW, LD - WALL_T, 3 * FH)}`),
+  // Indelve service drop (Stage 5.5 §7): a dark conduit dropping to a small
+  // distribution box low on the separation wall — generic technical prop,
+  // no invented career specifics (§10 rule).
+  el('dw-conduit', uFace(37.5, 416, 419, 3 * FH + 18, 3 * FH + 70)),
+  ...boxOnUWall(35.5, 40.5, 410, 424, 3 * FH + 6, 3 * FH + 18),
   // The separation fill also covered the C-D wall's ceiling washes over the
   // section it marks (u from the shaft line to the corner): re-draw them
   // clipped to exactly that part, so the Indelve story is shaded like every
@@ -629,6 +652,11 @@ const floor05Front = group('floor-05-front', [
   el('dw-wall-far', uFace(LW - WALL_T, 0, STUB_LEN * LD - WALL_T, 5 * FH, 5 * FH + STUB_H)),
   el('dw-slab-edge', vFace(0, LW - WALL_T, LW, 5 * FH, 5 * FH + STUB_H)),
   el('dw-slab', hFace(LW - WALL_T, LW, 0, STUB_LEN * LD - WALL_T, 5 * FH + STUB_H)),
+  // Riser stub (Stage 5.5 §7): the service spine re-emerging through the
+  // unfinished fifth story, capped — construction still in progress.
+  el('dw-pipe', uFace(227.5, 117, 123, 5 * FH, 5 * FH + 42)),
+  el('dw-pipe-shade', uFace(227.5, 117, 118.8, 5 * FH, 5 * FH + 42)),
+  el('dw-pipe', hFace(227.5, 230.5, 117, 123, 5 * FH + 42)),
   el('dw-wall-far', vFace(LD - WALL_T, 0, STUB_LEN * LW, 5 * FH, 5 * FH + STUB_H)),
   el('dw-slab-edge', uFace(0, LD - WALL_T, LD, 5 * FH, 5 * FH + STUB_H)),
   el('dw-slab', hFace(0, STUB_LEN * LW, LD - WALL_T, LD, 5 * FH + STUB_H)),
@@ -709,6 +737,13 @@ function elevator() {
   }
   // Year signs on the enclosure wall, one per story.
   STORY_YEARS.forEach((year, i) => out.push(...yearPlaque(year, (i + 1) * FH)))
+  // Service conduit on the enclosure face (Stage 5.5 §7): the shaft's dark
+  // steel service riser, proud of the u = 0 plane so it visibly crosses the
+  // re-layered floor bands with the shaft; a junction box per story.
+  out.push(el('dw-conduit', uFace(-1.5, 332, 335, FH, TOP_H)))
+  for (let story = 1; story <= 5; story++) {
+    out.push(...boxOnUWall(-1.5, 0, 329, 341, story * FH + 22, story * FH + 34))
+  }
   // Visible top bands close the shaft at the fifth-floor story top.
   out.push(el('dw-slab', hFace(WALL_T, SHAFT_U + WALL_T, SHAFT_V0, SHAFT_V1, TOP_H)))
   out.push(el('dw-slab', hFace(0, WALL_T, SHAFT_V0, SHAFT_V1, TOP_H)))
@@ -791,15 +826,42 @@ function groundShadow() {
   ])
 }
 
-// --- architectural-details: (empty placeholder) -----------------------------
-// Stage 5 §8 aimed at sparse supporting infrastructure. On user review every
-// candidate was removed: the Pacer pipe (stray vertical line), the Freelancer
-// wall patch (floating square), the Nextcode electrical panel + conduits and
-// the Interactica ventilation grille (both read as clutter on the bare
-// stories). The fragment stays as a placeholder in case a later stage adds
-// details that survive a glance.
+// --- architectural-details: vertical service infrastructure -----------------
+// Stage 5.5 §7 (user decision: ONE mustard accent). The building's visible
+// service spine lives on the B-D wall (long back-right): ONE continuous
+// mustard riser crossing every completed story, with horizontal branches on
+// stories 0/2/4 (T-junctions with a dark collar at the crossing), support
+// brackets, and a wall junction box per story. Everything is a narrow solid
+// quad, never a hairline, so it reads as a pipe at every zoom level — the
+// failure mode that got Stage 5's sparse details removed. The riser enters
+// the fifth-floor slab; a short stub re-emerges on the open-air fifth floor
+// (services continuing upward through the unfinished story). Drawn here,
+// after the floor groups: along its silhouette nothing occludes it (the
+// riser fits each story's clear height and is nearer than the slabs it
+// passes behind), so one continuous read is correct.
 function architecturalDetails() {
-  return group('architectural-details', [])
+  const out = []
+  const RISER_U = 227.5 // pipe front plane, hugging the B-D wall's inner face
+  const RISER_V = 120 // clear of all tags (u=0 wall), branches and stairs
+  const RISER_TOP = 5 * FH - SLAB_T // enters the fifth-floor slab
+  out.push(el('dw-pipe', uFace(RISER_U, RISER_V - 3, RISER_V + 3, 0, RISER_TOP)))
+  out.push(el('dw-pipe-shade', uFace(RISER_U, RISER_V - 3, RISER_V - 1.8, 0, RISER_TOP)))
+  for (const hBase of [0, 2 * FH, 4 * FH]) {
+    const h = hBase + 55
+    out.push(el('dw-pipe', uFace(RISER_U - 3, 62, 150, h - 3, h + 3)))
+    // narrow top sliver: a horizontal cylinder shows a thin bright strip
+    // along its crown, not a wide flat bar
+    out.push(el('dw-pipe', hFace(RISER_U - 3, RISER_U - 0.5, 62, 150, h + 3)))
+    // junction collar where the branch meets the riser
+    out.push(el('dw-pipe-shade', uFace(RISER_U - 3, RISER_V - 3, RISER_V + 3, h - 3, h + 3)))
+    for (const v of [80, 146]) {
+      out.push(el('dw-conduit', uFace(RISER_U - 3, v, v + 2.5, hBase + 42, h - 3)))
+    }
+  }
+  for (let story = 0; story <= 4; story++) {
+    out.push(...boxOnUWall(224, 230.5, 128, 140, story * FH + 58, story * FH + 72))
+  }
+  return group('architectural-details', out)
 }
 
 // --- career-sign: posts and placeholder panel -------------------------------
