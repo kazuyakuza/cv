@@ -85,6 +85,10 @@ export const svgStyle = `
        environment they intentionally stay the brightest flat surfaces */
     .dw-tag { fill: #fffefb; stroke: #5d5a52; stroke-width: 0.9; }
     .dw-sign { fill: #fffefb; stroke: #6b675e; stroke-width: 1.1; }
+    /* Career sign (Stage 5.5 §12 user revision): the board frame reads as
+       warm wood matching the crate family, so the sign reads as a built
+       object planted in the terrain, not a floating UI card */
+    .dw-sign-frame { fill: #9c8760; stroke: #4c4a44; stroke-width: 1; }
 
     /* Restrained structural shading (Stage 5 §7): stepped translucent bands
        under the slabs along the rear walls' tops. Steps instead of a linear
@@ -143,14 +147,20 @@ export const svgStyle = `
        information layer keeps the highest readability */
     .dw-paper { fill: #f4f1e6; stroke: #b9b3a3; stroke-width: 0.5; }
 
-    /* BA Technology blackboard (Stage 5.5 §10): wood frame + dark slate +
-       chalk spreadsheet. The chalk stays warm-white at low contrast —
-       readable as "full board" texture, illegible by design */
-    .dw-board-frame { fill: #9c8760; stroke: #4c4a44; stroke-width: 0.8; }
-    .dw-board-cap { fill: #b09a72; stroke: #4c4a44; stroke-width: 0.8; }
-    .dw-board-slate { fill: #3e463f; stroke: #2e352f; stroke-width: 0.7; }
-    .dw-chalk { fill: none; stroke: #e6e2d2; stroke-width: 0.45; stroke-opacity: 0.5; stroke-linecap: round; }
-    .dw-chalk-strong { fill: none; stroke: #e6e2d2; stroke-width: 0.7; stroke-opacity: 0.65; stroke-linecap: round; }
+    /* BA Technology whiteboard (Stage 5.5 §10, user revision of the
+       blackboard): light aluminum frame + white writing surface + marker
+       spreadsheet. Ink stays dark/desaturated — visible content, never
+       competing with the architecture */
+    .dw-board-frame { fill: #b6b0a4; stroke: #6b675e; stroke-width: 0.8; }
+    .dw-board-cap { fill: #c4beb2; stroke: #6b675e; stroke-width: 0.8; }
+    .dw-board-face { fill: #f6f3ea; stroke: #b3ad9f; stroke-width: 0.6; }
+    .dw-board-tray { fill: #a8a296; stroke: #6b675e; stroke-width: 0.7; }
+    .dw-board-tray-top { fill: #bdb7ab; stroke: #6b675e; stroke-width: 0.6; }
+    .dw-marker { fill: none; stroke: #4d5c7c; stroke-width: 0.5; stroke-opacity: 0.6; stroke-linecap: round; }
+    .dw-marker-head { fill: #4d5c7c; fill-opacity: 0.08; stroke: none; }
+    .dw-pen-blue { fill: none; stroke: #4d5c7c; stroke-width: 0.9; stroke-linecap: round; }
+    .dw-pen-black { fill: none; stroke: #3a3f47; stroke-width: 0.9; stroke-linecap: round; }
+    .dw-marker-text { fill: #383d46; fill-opacity: 0.85; font: 3.6px system-ui, sans-serif; letter-spacing: 0.02em; }
 
     /* Stage 5 §9 — stair/elevator details. (§8 sparse-infrastructure pieces
        were all removed on user review — pipe, wall patch, panel, vent — so

@@ -4,3 +4,8 @@ generated/
 *.log
 .DS_Store
 opencode.json
+.playwright-mcp/
+
+# Windows shell cruft
+Thumbs.db
+Desktop.ini

@@ -7,6 +7,77 @@ career diorama) at the end of the session of 2026-09-08. The previous
 handoff (from the prior session) is in the AGENTS.md work state; this file
 covers ONLY what happened in this session.
 
+## UPDATE #5 — 2026-09-11, fifth session (BA whiteboard + table, PC mid-run, physical sign)
+
+User revision list, all verified in render (`generated/dev/r3.png`, crops
+`zoom-ba2.png` / `zoom-ba.png` / `zoom-fl.png` / `zoom-sign.png` / `overview.png`):
+
+1. **BA meeting table nudged deeper into the section.** Anchor (near chair
+   leg) moved `assetProp(PUEL_TABLE, 36, 254, 0)` → `(54, 254, 0)` (+18u
+   toward the B-D/right wall). Contact shadow follows
+   (`hFace(44,108,246,326,0)`). Wedge margin still ~12u inside the
+   `u < v - 164.6` left-wedge rule (limit 89.4 at v=254); render confirms
+   the sprite fully visible.
+
+2. **Blackboard → whiteboard** (`blackboard()` rewritten as
+   `whiteboard()`, group id `whiteboard`). Same wall (partition-2 front
+   face, proud 2u). Left-bottom corner FIXED at (u 78, h 8) per user
+   request; top edge raised to the passage head height `h1 = DOOR_H =
+   52.5` (was 36) and width doubled to `u1 = 142` (32u → 64u). White
+   writing surface + light aluminum frame + marker tray with two pens
+   (blue/black). Content: 4 cols × 3 rows spreadsheet grid with header
+   row (A–D) and LEGIBLE engineering-calc entries (q=12.4, L=6.2,
+   P=48.6, M=PL/4, V=41.2, =75.3, Σ=118.4, k=1.35) as SVG `<text>` on
+   the wall-face plane `matrix(0.7071 -0.2475 0 1 …)` — the Petroplastic
+   spreadsheet metaphor now readable. Hand strokes: circled result +
+   wavy underline (deterministic). Classes: `dw-board-slate` →
+   `dw-board-face` (white), `dw-chalk*` → `dw-marker*`; new
+   `dw-pen-blue` / `dw-pen-black` / `dw-board-tray[-top]` /
+   `dw-marker-head` / `dw-marker-text`.
+
+3. **Known render fact (user to judge at review):** the whiteboard's
+   top-right region tucks under the floor-1 slab cut (the slab's left
+   cut band at u=0 occludes board points where `h + 0.495u > ~105`).
+   The cut is a clean diagonal consistent with the cutaway language;
+   if it reads wrong, fallbacks: cap the width (~u 131 keeps the full
+   door height visible) or lower the top.
+
+4. **Freelancer PC moved to mid-run** (user: "too near the beginning").
+   `assetProp(FREELANCER_PC, 26, 514.5, 0)` → `(53, 514.5, 0)`; the flight
+   runs u 22..127 (STAIR_U0=22, STAIR_RUN=105, rise 1:1) so the anchor now
+   sits at the run's middle; tower back stays flush on the stair's solid
+   side face (v = STAIR_V0 = 540.5), keyboard/monitor facing -u. Contact
+   shadow follows (`hFace(51,73,512,543,0)`).
+
+5. **Paper-mess audit vs the new PC position.** Collision rule derived:
+   a front-of-stair stack at (u,v) overlaps the PC sprite's screen bbox
+   iff `-493 < u-v < -437.9` AND `551.8 < u+v < 692.4` (sheet plan size
+   6.5u × 9u far-tip included). Fixes: `(70,525,3)` → `(20,513,3)`
+   (left cluster, clear of the PC), `(55,510,1)` → `(55,490,1)`,
+   `(45,535,2)` dropped (2px tip into the PC's left edge), and the
+   earlier `(90,535)` nudge corrected to `(100,535)` (the first nudge
+   still overlapped — the u-v band check catches it). All remaining
+   stacks + the two tread sheets verified outside the PC bbox.
+   **Partition-2 wall face verified clear**: every freelancer sheet's
+   screen bbox ends at x ≤ 464.6, the partition-2 face starts at x 470.
+
+6. **Career sign is now a physical object** (user decision). `careerSign()`
+   rewritten in screen space: wood-framed board (172×122, `dw-sign-frame`
+   in the crate-wood family) on TWO posts planted in the terrain (right
+   post nearer, ground line lower), soft blurred contact shadow ellipse on
+   the terrain. Placeholder content unchanged (photo circle + two text
+   bars; final content remains Stage 7).
+
+7. Housekeeping: `scripts/tmp-build-html.mjs` deleted (it wrote into the
+   unreadable temp dir). `.gitignore` += `.playwright-mcp/`, `Thumbs.db`,
+   `Desktop.ini` (rest reviewed: node_modules/dist/generated/logs/
+   opencode.json already covered; `src/svg/diorama.svg` stays committed as
+   the shipped artifact). NOTE: AGENTS.md "Development Status" still says
+   "Stage 0 is next" — stale boilerplate, should be refreshed at some point.
+
+8. Lint clean. User review pending (items 3 and the sign's frame weight
+   are the visual calls).
+
 ## UPDATE #4 — 2026-09-11, fourth session (BA blackboard + freelancer PC/papers)
 
 User revisions, all verified in render (`generated/dev/chk.png`, crops

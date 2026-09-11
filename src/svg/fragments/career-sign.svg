@@ -1,9 +1,12 @@
 <g id="career-sign">
   <g class="dw-sign-group">
-  <line class="dw-column" x1="1110" y1="980" x2="1110" y2="1035" />
-  <rect class="dw-sign" x="1030" y="870" width="160" height="110" />
-  <circle class="dw-shaft" cx="1065" cy="905" r="22" />
-  <rect x="1100" y="890" width="60" height="10" fill="#a8a49c" />
-  <rect x="1100" y="910" width="44" height="10" fill="#a8a49c" />
+  <ellipse cx="1110" cy="1044" rx="88" ry="11" fill="#141618" fill-opacity="0.28" filter="url(#dw-soft)" />
+  <line class="dw-column" x1="1052" y1="986" x2="1052" y2="1042" />
+  <line class="dw-column" x1="1168" y1="984" x2="1168" y2="1048" />
+  <rect class="dw-sign-frame" x="1024" y="864" width="172" height="122" rx="3" />
+  <rect class="dw-sign" x="1032" y="872" width="156" height="106" />
+  <circle class="dw-shaft" cx="1066" cy="906" r="21" />
+  <rect x="1098" y="890" width="58" height="10" fill="#a8a49c" />
+  <rect x="1098" y="910" width="42" height="10" fill="#a8a49c" />
 </g>
 </g>

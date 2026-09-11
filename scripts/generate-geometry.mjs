@@ -778,63 +778,88 @@ const pueloProps = [
 ]
 
 // --- BA Technology props (Stage 5.5 §10, second batch) ----------------------
-// Big chalk blackboard on partition-2's front face (user request): the wall
-// visible behind the meeting table in the BA section. Wood frame box proud of
-// the wall by 2u, dark slate inset, chalk spreadsheet grid + number/equation
-// scribbles — deliberately illegible at overview scale. Kept right of the
-// partition doorway and inside the visible envelope (h < 92.5 - 0.495u).
-function blackboard() {
+// BA Technology whiteboard (user revision of the old blackboard): white
+// marker board on partition-2's front face (the wall visible behind the
+// meeting table). The left-bottom corner stays fixed at the blackboard's
+// (u 78, h 8); the board now rises to the passage head height (DOOR_H) and
+// spans double width (u 78..142). Content: a spreadsheet grid with a header
+// row and engineering-calc entries in marker ink (the Petroplastic
+// spreadsheet-to-software story), legible as numbers.
+function whiteboard() {
   const vW = PARTITION_G[1] - WALL_T / 2 // 396.09: partition-2 front face
   const vF = vW - 2 // board face, 2u proud of the wall
-  const u0 = 78
-  const u1 = 110
-  const h0 = 8
-  const h1 = 36
+  const u0 = 78 // left-bottom corner fixed (user request)
+  const u1 = 142 // double width (was 110)
+  const h0 = 8 // left-bottom corner fixed (user request)
+  const h1 = DOOR_H // top edge level with the passage head line
   const out = [
     el('dw-board-cap', uFace(u0, vF, vW, h0, h1)),
     el('dw-board-cap', hFace(u0, u1, vF, vW, h1)),
     el('dw-board-frame', vFace(vF, u0, u1, h0, h1)),
-    // slate inset within the frame
-    el('dw-board-slate', vFace(vF + 0.4, u0 + 2.5, u1 - 2.5, h0 + 2.5, h1 - 2.5)),
+    // white writing surface inset within the frame
+    el('dw-board-face', vFace(vF + 0.4, u0 + 2.5, u1 - 2.5, h0 + 2.5, h1 - 2.5)),
+    // marker tray along the bottom frame + two pens lying on it
+    el('dw-board-tray', vFace(vF - 1.1, u0 + 4, u1 - 4, h0 - 0.4, h0 + 1.2)),
+    el('dw-board-tray-top', hFace(u0 + 4, u1 - 4, vF - 1.1, vF + 1.2, h0 + 1.2)),
   ]
-  // chalk: spreadsheet grid (columns along u, rows along h) + scribbles
-  const cols = 6
-  const rows = 4
-  const cu0 = u0 + 5
-  const du = (u1 - u0 - 10) / cols
-  const ch0 = h0 + 6
-  const dh = (h1 - h0 - 10) / rows
+  // pens on the tray: one blue, one black, lying along u
+  out.push(el('dw-pen-blue', `M ${p(u0 + 8, vF - 0.5, h0 + 0.4)} L ${p(u0 + 13, vF - 0.5, h0 + 0.4)}`))
+  out.push(el('dw-pen-black', `M ${p(u1 - 13, vF - 0.5, h0 + 0.4)} L ${p(u1 - 8, vF - 0.5, h0 + 0.4)}`))
+  // spreadsheet grid (columns along u, rows along h)
+  const cols = 4
+  const rows = 3
+  const cu0 = u0 + 6
+  const du = (u1 - u0 - 12) / cols
+  const ch0 = h0 + 7
+  const dh = (h1 - h0 - 14) / rows
   const vC = vF + 0.3
+  // light header band across the top row, then the grid over it
+  out.push(el('dw-marker-head', vFace(vC, cu0, cu0 + cols * du, ch0 + (rows - 1) * dh, ch0 + rows * dh)))
   for (let j = 0; j <= cols; j++) {
-    out.push(el('dw-chalk', `M ${p(cu0 + j * du, vC, ch0)} L ${p(cu0 + j * du, vC, ch0 + rows * dh)}`))
+    out.push(el('dw-marker', `M ${p(cu0 + j * du, vC, ch0)} L ${p(cu0 + j * du, vC, ch0 + rows * dh)}`))
   }
   for (let k = 0; k <= rows; k++) {
-    out.push(el('dw-chalk', `M ${p(cu0, vC, ch0 + k * dh)} L ${p(cu0 + cols * du, vC, ch0 + k * dh)}`))
+    out.push(el('dw-marker', `M ${p(cu0, vC, ch0 + k * dh)} L ${p(cu0 + cols * du, vC, ch0 + k * dh)}`))
   }
-  // number/equation scribbles inside the cells (deterministic)
-  for (let j = 0; j < cols; j++) {
-    for (let k = 0; k < rows; k++) {
-      const n = 1 + Math.floor(hash2(j * 31 + k, 7) * 3)
-      for (let i = 0; i < n; i++) {
-        const us = cu0 + j * du + 1 + hash2(j * 17 + k * 7 + i, 11) * (du - 4)
-        const hs = ch0 + k * dh + 0.8 + hash2(j * 13 + k * 5 + i, 13) * (dh - 2.6)
-        const len = 2 + hash2(j * 19 + k * 3 + i, 17) * 2.6
-        const wob = (hash2(j * 23 + k + i, 19) - 0.5) * 1.2
-        out.push(el('dw-chalk', `M ${p(us, vC, hs)} L ${p(us + len, vC, hs + wob)}`))
-      }
+  // header row + visible equation/number entries, hand-jittered (deterministic)
+  const entries = [
+    ['A', 'B', 'C', 'D'],
+    ['q=12.4', 'L=6.2', 'P=48.6', 'M=PL/4'],
+    ['V=41.2', '=75.3', 'Σ=118.4', 'k=1.35'],
+  ]
+  for (let k = 0; k < rows; k++) {
+    for (let j = 0; j < cols; j++) {
+      const uc = cu0 + (j + 0.5) * du + (hash2(j * 31 + k * 7, 211) - 0.5) * 1.4
+      const hc = ch0 + (rows - 1 - k + 0.5) * dh + (hash2(j * 13 + k * 5, 211) - 0.5) * 1.0
+      const [tx, ty] = p(uc, vC, hc).split(',')
+      out.push(
+        `<text class="dw-marker-text" transform="matrix(0.7071 -0.2475 0 1 ${tx} ${ty})" text-anchor="middle">${entries[k][j]}</text>`,
+      )
     }
   }
-  return group('blackboard', out)
+  // hand strokes: a circled result and a wavy underline (deterministic)
+  const [cx, cy] = p(cu0 + 1.5 * du, vC, ch0 + 0.5 * dh).split(',')
+  out.push(
+    `<ellipse class="dw-marker" transform="matrix(0.7071 -0.2475 0 1 ${cx} ${cy}) rotate(-5)" cx="0" cy="0" rx="6.2" ry="4.2" />`,
+  )
+  const [wx1, wy1] = p(cu0 + 2 * du, vC, ch0 + 1.1).split(',').map(Number)
+  const [wcx, wcy] = p(cu0 + 2.5 * du, vC, ch0 + 0.2).split(',').map(Number)
+  const [wx2, wy2] = p(cu0 + 3 * du, vC, ch0 + 1.2).split(',').map(Number)
+  out.push(el('dw-marker', `M ${wx1} ${wy1} Q ${wcx} ${wcy} ${wx2} ${wy2}`))
+  return group('whiteboard', out)
 }
 
 // Meeting corner (user request): round table, three chairs, two people seated
 // seen from behind, papers on the tabletop. User revision: displayed at true
 // scale (k 0.1185, was 0.15713 — 1.33x too large) and moved to the visible
 // centre of the BA section (anchor = the near chair leg, object (14, 4)).
+// Latest revision: nudged deeper into the section toward the B-D (right)
+// wall (anchor u 36 → 54; every sprite point keeps a >10u margin inside the
+// u < v − 164.6 left wedge).
 const baProps = [
-  blackboard(),
-  assetProp(PUEL_TABLE, 36, 254, 0),
-  el('dw-contact', hFace(26, 90, 246, 326, 0)),
+  whiteboard(),
+  assetProp(PUEL_TABLE, 54, 254, 0),
+  el('dw-contact', hFace(44, 108, 246, 326, 0)),
 ]
 const floorGround = group('floor-ground', [
   ...slab(0),
@@ -865,15 +890,17 @@ const floorGround = group('floor-ground', [
 ])
 
 // --- freelancer-props: floor PC + paper mess (Stage 5.5 §10, user request) --
-// The PC stands on the floor beside the staircase base, its tower back
-// against the stair's solid side face (v = STAIR_V0), keyboard and monitor
-// facing -u. Emitted as its own fragment AFTER the staircase so the PC
-// correctly paints over the stair's lower steps it stands in front of. The
-// paper sheets in front of the stair (v < STAIR_V0) join it here; sheets
-// behind the stair are emitted in floor-ground so the stair occludes them.
+// The PC stands on the floor beside the staircase, its tower back against
+// the stair's solid side face (v = STAIR_V0), keyboard and monitor facing
+// -u. User revision: the PC sits at the middle of the flight's run (anchor
+// u 53; the flight runs u 22..127) instead of at its first steps. Emitted as
+// its own fragment AFTER the staircase so the PC correctly paints over the
+// stair's lower steps it stands in front of. The paper sheets in front of
+// the stair (v < STAIR_V0) join it here; sheets behind the stair are emitted
+// in floor-ground so the stair occludes them.
 const freelancerProps = group('freelancer-props', [
-  el('dw-contact', hFace(24, 46, 512, 543, 0)),
-  assetProp(FREELANCER_PC, 26, 514.5, 0),
+  el('dw-contact', hFace(51, 73, 512, 543, 0)),
+  assetProp(FREELANCER_PC, 53, 514.5, 0),
   ...paperStack(12, 430, 3),
   ...paperStack(30, 445, 1),
   ...paperStack(50, 460, 4),
@@ -881,13 +908,15 @@ const freelancerProps = group('freelancer-props', [
   ...paperStack(65, 480, 2),
   ...paperStack(35, 495, 1),
   ...paperStack(80, 495, 3),
-  ...paperStack(55, 510, 1),
+  // (55,510 / 70,525 / 45,535 / 93,535 re-audited for the PC's mid-run
+  // position: sheets whose far tip entered the PC sprite's screen bbox were
+  // moved clear or dropped; all remaining stacks verified outside it)
+  ...paperStack(55, 490, 1),
   ...paperStack(95, 510, 2),
   ...paperStack(10, 528, 1),
-  ...paperStack(70, 525, 3),
+  ...paperStack(20, 513, 3),
   ...paperStack(110, 525, 1),
-  ...paperStack(45, 535, 2),
-  ...paperStack(90, 535, 1),
+  ...paperStack(100, 535, 1),
   ...paperStack(125, 535, 1),
   // a couple of sheets dropped on the lower stair treads
   paperSheet(35, 562, 17.5 + 0.4, 6, 8.5, 0.3),
@@ -1230,19 +1259,25 @@ function architecturalDetails() {
 // --- career-sign: posts and placeholder panel -------------------------------
 // The sign stands on the open terrain in front-right of the building, outside
 // the building's u/v coordinate system, so it is expressed in screen space.
+// User revision: the floating placeholder card becomes a physical sign object
+// — a framed board carried by two posts planted in the terrain, with a soft
+// contact shadow on the ground. Placeholder content stays (final content is
+// Stage 7).
 function careerSign() {
-  // Placeholder content stays (final content is Stage 7); the group wrapper
-  // gives the physical sign its drop-shadow attachment like the plaques.
   return group('career-sign', [
     tagGroup(
       [
-        // Single central post anchored in the terrain beside the path.
-        '<line class="dw-column" x1="1110" y1="980" x2="1110" y2="1035" />',
-        // Placeholder panel with photo circle and text bars.
-        '<rect class="dw-sign" x="1030" y="870" width="160" height="110" />',
-        '<circle class="dw-shaft" cx="1065" cy="905" r="22" />',
-        '<rect x="1100" y="890" width="60" height="10" fill="#a8a49c" />',
-        '<rect x="1100" y="910" width="44" height="10" fill="#a8a49c" />',
+        // soft contact shadow where the posts meet the terrain
+        '<ellipse cx="1110" cy="1044" rx="88" ry="11" fill="#141618" fill-opacity="0.28" filter="url(#dw-soft)" />',
+        // two posts planted in the ground (right post nearer, ground lower)
+        '<line class="dw-column" x1="1052" y1="986" x2="1052" y2="1042" />',
+        '<line class="dw-column" x1="1168" y1="984" x2="1168" y2="1048" />',
+        // board frame + placeholder panel with photo circle and text bars
+        '<rect class="dw-sign-frame" x="1024" y="864" width="172" height="122" rx="3" />',
+        '<rect class="dw-sign" x="1032" y="872" width="156" height="106" />',
+        '<circle class="dw-shaft" cx="1066" cy="906" r="21" />',
+        '<rect x="1098" y="890" width="58" height="10" fill="#a8a49c" />',
+        '<rect x="1098" y="910" width="42" height="10" fill="#a8a49c" />',
       ],
       'dw-sign-group',
     ),
