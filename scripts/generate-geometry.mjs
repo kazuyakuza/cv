@@ -977,6 +977,13 @@ const floor01 = group('floor-01', [
   el('dw-conduit', uFace(227.5, 178.5, 181.5, FH, FH + 34)),
   dot(222, 173, FH + 47),
   dot(222, 187, FH + 47),
+  // Nextcode section props (Stage 5.5 §10, continuing into floor 1): the
+  // mini-startup's one desk (the WS_D notebook-desk sprite, same furniture
+  // language as the floor-2 dev desks) mid-room where the floor-2 slab cut
+  // keeps it fully visible, plus two unpacked shipping crates beside it.
+  assetWorkstation(WS_D, 110, 470, FH),
+  ...crate(26, 36, 468, 478, FH, FH + 12),
+  ...crate(28, 44, 452, 466, FH, FH + 15),
   // Stair banister, upper element (user revision): the diagonal's floor-1
   // stretch plus its landing return, drawn after the story walls (the stair
   // opening shows it) but BEFORE the columns — column C, nearer to the
