@@ -239,8 +239,12 @@ const PUEL_STOOLS = { file: 'stools-01-cut.png', w: 904, h: 744, k: 0.03767, ax:
 const PUEL_TABLE = { file: 'meeting-01-cut.png', w: 581, h: 437, k: 0.11846, ax: 52.36, ay: 50.94 }
 // Freelancer floor PC (user spec): beige tower + bulky CRT monitor + keyboard
 // + mouse, cables connected to the tower; stands on the floor beside the
-// staircase base. Anchor = the keyboard's near-bottom corner (object u-6, v0).
-const FREELANCER_PC = { file: 'freelancer-pc-01-cut.png', w: 475, h: 544, k: 0.05717, ax: 16.98, ay: 30.93 }
+// staircase. Anchor = the sprite's bottommost pixel (the keyboard's near
+// corner). User revision: hand-edited the art so the CRT faces the
+// entrance side — the anchor pixel moved to sprite-px ~(169.5, 541) →
+// ax 9.69 (ay unchanged). Latest revision: stands toward the END of the
+// flight's run (anchor u 82; the flight runs u 22..127).
+const FREELANCER_PC = { file: 'freelancer-pc-01-cut.png', w: 475, h: 544, k: 0.05717, ax: 9.69, ay: 30.93 }
 function spritePlace(sp, uAnchor, vAnchor, hBase) {
   const [bx, by] = p(uAnchor, vAnchor, hBase).split(',').map(Number)
   return { x: round(bx - sp.ax), y: round(by - sp.ay) }
@@ -338,7 +342,13 @@ function paperStack(u, v, n) {
   return out
 }
 function wallSheet(u, h, rot) {
-  const v = LD - WALL_T - 0.4
+  return vWallSheet(LD - WALL_T - 0.4, u, h, rot)
+}
+// Sheet pasted on any constant-v wall face, proud toward -v by 0.4u: the rear
+// C-D wall (v = LD-WALL_T-0.4), the partition front faces (BA/freelancer
+// dividers) and the staircase's solid side face (v = STAIR_V0-0.4). Centered
+// at in-plane width u and height h; rot rotates within the wall plane.
+function vWallSheet(v, u, h, rot) {
   const c = Math.cos(rot)
   const s = Math.sin(rot)
   const pts = [
@@ -850,16 +860,20 @@ function whiteboard() {
 }
 
 // Meeting corner (user request): round table, three chairs, two people seated
-// seen from behind, papers on the tabletop. User revision: displayed at true
-// scale (k 0.1185, was 0.15713 — 1.33x too large) and moved to the visible
-// centre of the BA section (anchor = the near chair leg, object (14, 4)).
-// Latest revision: nudged deeper into the section toward the B-D (right)
-// wall (anchor u 36 → 54; every sprite point keeps a >10u margin inside the
-// u < v − 164.6 left wedge).
+// seen from behind, papers on the tabletop. User revisions: displayed at true
+// scale (k 0.1185, was 0.15713 — 1.33x too large); moved to the visible
+// centre of the BA section (anchor = the near chair leg, object (14, 4));
+// then nudged deeper toward the B-D (right) wall (anchor u 36 → 54 → 62,
+// keeping the sprite inside the u < v − 164.6 left wedge with ~3u margin).
 const baProps = [
   whiteboard(),
-  assetProp(PUEL_TABLE, 54, 254, 0),
-  el('dw-contact', hFace(44, 108, 246, 326, 0)),
+  assetProp(PUEL_TABLE, 62, 254, 0),
+  el('dw-contact', hFace(52, 116, 246, 326, 0)),
+  // papers pasted on partition-2's front face: one left of the passage, two
+  // low on the wall right of the whiteboard (user request: more wall sheets)
+  vWallSheet(PARTITION_G[1] - WALL_T / 2 - 0.4, 8, 30, 0.1),
+  vWallSheet(PARTITION_G[1] - WALL_T / 2 - 0.4, 150, 16, -0.12),
+  vWallSheet(PARTITION_G[1] - WALL_T / 2 - 0.4, 172, 8, 0.1),
 ]
 const floorGround = group('floor-ground', [
   ...slab(0),
@@ -883,24 +897,32 @@ const floorGround = group('floor-ground', [
   wallSheet(18, 45, 0.08),
   wallSheet(9, 60, -0.15),
   wallSheet(15, 72, 0.12),
+  // more rear-wall sheets (user red pins, upper-left stretch)
+  wallSheet(5, 40, 0.15),
+  wallSheet(21, 55, -0.08),
+  wallSheet(19, 86, 0.08),
   ...baProps,
   ...partition(PARTITION_G[0], 0, { opening: true }),
+  // papers pasted on partition-1's front face right of its passage (user
+  // red pins, the wall stretch visible at the freelancer view's right);
+  // kept inside the slab-cut envelope (h + 0.495u < ~103)
+  vWallSheet(PARTITION_G[0] - WALL_T / 2 - 0.4, 100, 35, 0.12),
+  vWallSheet(PARTITION_G[0] - WALL_T / 2 - 0.4, 148, 22, -0.1),
   ...pueloProps,
   ...columns(0, STORY_H),
 ])
 
 // --- freelancer-props: floor PC + paper mess (Stage 5.5 §10, user request) --
-// The PC stands on the floor beside the staircase, its tower back against
-// the stair's solid side face (v = STAIR_V0), keyboard and monitor facing
-// -u. User revision: the PC sits at the middle of the flight's run (anchor
-// u 53; the flight runs u 22..127) instead of at its first steps. Emitted as
-// its own fragment AFTER the staircase so the PC correctly paints over the
-// stair's lower steps it stands in front of. The paper sheets in front of
-// the stair (v < STAIR_V0) join it here; sheets behind the stair are emitted
-// in floor-ground so the stair occludes them.
+// The PC stands on the floor beside the staircase, keyboard and monitor
+// facing the entrance side (user hand-edited art). User revision: the PC
+// sits toward the END of the flight's run (anchor u 82; the flight runs
+// u 22..127). Emitted as its own fragment AFTER the staircase so the PC
+// correctly paints over the stair's lower steps it stands in front of. The
+// paper sheets in front of the stair (v < STAIR_V0) join it here; sheets
+// behind the stair are emitted in floor-ground so the stair occludes them.
 const freelancerProps = group('freelancer-props', [
-  el('dw-contact', hFace(51, 73, 512, 543, 0)),
-  assetProp(FREELANCER_PC, 53, 514.5, 0),
+  el('dw-contact', hFace(80, 102, 512, 543, 0)),
+  assetProp(FREELANCER_PC, 82, 514.5, 0),
   ...paperStack(12, 430, 3),
   ...paperStack(30, 445, 1),
   ...paperStack(50, 460, 4),
@@ -908,19 +930,31 @@ const freelancerProps = group('freelancer-props', [
   ...paperStack(65, 480, 2),
   ...paperStack(35, 495, 1),
   ...paperStack(80, 495, 3),
-  // (55,510 / 70,525 / 45,535 / 93,535 re-audited for the PC's mid-run
-  // position: sheets whose far tip entered the PC sprite's screen bbox were
-  // moved clear or dropped; all remaining stacks verified outside it)
+  // (95,510 / 110,525 / 100,535 / 125,535 dropped: at the PC's end-of-run
+  // position their sheets entered the PC sprite's screen bbox; the stacks
+  // below were re-audited and verified clear of it)
   ...paperStack(55, 490, 1),
-  ...paperStack(95, 510, 2),
   ...paperStack(10, 528, 1),
   ...paperStack(20, 513, 3),
-  ...paperStack(110, 525, 1),
-  ...paperStack(100, 535, 1),
-  ...paperStack(125, 535, 1),
-  // a couple of sheets dropped on the lower stair treads
+  // more floor sheets (user red pins): front-left strip and the wedge
+  // between the flight's base and the PC
+  ...paperStack(4, 410, 2),
+  ...paperStack(6, 420, 1),
+  ...paperStack(6, 500, 2),
+  ...paperStack(16, 540, 2),
+  ...paperStack(46, 522, 2),
+  ...paperStack(60, 530, 2),
+  // sheets dropped on the stair treads, rising with the flight (user pins)
   paperSheet(35, 562, 17.5 + 0.4, 6, 8.5, 0.3),
   paperSheet(48, 570, 26.25 + 0.4, 6, 8.5, -0.2),
+  paperSheet(61, 566, 43.75 + 0.4, 6, 8.5, 0.25),
+  paperSheet(78, 568, 61.25 + 0.4, 6, 8.5, -0.2),
+  paperSheet(96, 570, 78.75 + 0.4, 6, 8.5, 0.3),
+  paperSheet(113, 570, 96.25 + 0.4, 6, 8.5, -0.25),
+  // sheets pasted on the flight's solid side face (v = STAIR_V0), kept below
+  // the 1:1 profile top (h + 4.5 <= u - STAIR_U0 - 2)
+  vWallSheet(STAIR_V0 - 0.4, 65, 24, 0.1),
+  vWallSheet(STAIR_V0 - 0.4, 95, 42, -0.12),
 ])
 
 // --- floor-01: slab-1 with stair opening, story-1 walls, shaft return walls -
