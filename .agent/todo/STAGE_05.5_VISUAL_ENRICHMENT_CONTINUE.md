@@ -7,6 +7,56 @@ career diorama) at the end of the session of 2026-09-08. The previous
 handoff (from the prior session) is in the AGENTS.md work state; this file
 covers ONLY what happened in this session.
 
+## UPDATE #6 — 2026-09-11, sixth session (PC recalibrated + end-of-run; paper storm; floor-1 Nextcode)
+
+1. **User hand-edited `src/assets/freelancer-pc-01-cut.png`** (CRT now faces
+   the entrance side). Sprite dims unchanged (475×544) but the anchor pixel
+   moved in-canvas: bottommost opaque pixel now at sprite-px ≈(169.5, 541)
+   → constants `ax 16.98 → 9.69`, ay unchanged (30.93). k stays 0.05717.
+2. **PC nudged to the END of the flight's run** (user request):
+   `assetProp(FREELANCER_PC, 82, 514.5, 0)` (was 53; flight u 22..127).
+   Contact shadow follows (`hFace(80,102,512,543,0)`).
+3. **BA round table nudged "just a little more to the right"**: anchor
+   `(54, 254, 0)` → `(62, 254, 0)`; shadow `hFace(52,116,246,326,0)`.
+   Wedge margin ~3-4u (limit 89.4); render confirms no clipping.
+4. **Occlusion envelope rule DISCOVERED (important for all future props):**
+   the left cut band of a slab (at u=0, h ∈ [hBot,hTop]) hides points with
+   `hBot ≤ h + 0.495·u ≤ hTop` (when v ≥ u; nearer along the view dir
+   d = (1,1,-0.495)·norm). This explains the handoff note's
+   `h < 92.5 - 0.495u` (the floor-01 band, hBot=92.5) and gives floor-1's
+   envelope `197.5 ≤ h + 0.495u ≤ 210` — floor-1 props fully visible at
+   u ≲ 114 (desk tops ~127) unless v < u (the B-D-wall side is exempt,
+   which is why the floor-1 rack is fully visible).
+5. **Paper audit at the new PC position** (PC sprite screen bbox
+   x 434.5..461.7, y 806.2..837.3): a front-of-stair stack at (u,v)
+   overlaps iff `-445.4 < u-v < -398.6` AND `581.3 < u+v < 722.8`
+   (sheet 6.5u×9u far tip included; partition-2 face also caps u-v ≤ -402.5).
+   Deleted the four stacks inside the band: (95,510), (110,525),
+   (100,535), (125,535) — these were the user-circled artifacts (piles
+   painting over the stair side face / PC).
+6. **Paper storm extended (user red pins)**: 4 more tread sheets rising
+   with the flight (steps 5/7/9/11: u 61/78/96/113, h step+0.4); 2 sheets
+   pasted on the flight's solid side face (v = STAIR_V0-0.4, u 65 h 24 /
+   u 95 h 42, kept below the 1:1 profile top); 3 sheets on partition-2's
+   front face (u_p 8 h 30 left of the passage; u_p 150 h 16 and u_p 172 h 8
+   right of the whiteboard, inside the slab-cut envelope); 2 sheets on
+   partition-1's front face right of its passage (u_p 100 h 35, u_p 148
+   h 22); 3 more rear-wall sheets (u 5 h 40, u 21 h 55, u 19 h 86); 6 more
+   floor stacks (front-left strip 4,410/6,420 and the flight-base wedge
+   6,500/16,540/46,522/60,530). Helper generalized: `vWallSheet(v, u, h,
+   rot)` — one function for the rear C-D wall, the partition front faces
+   and the stair side face; `wallSheet()` delegates to it.
+7. **Floor-1 pass (user: "after that we can continue with 1st floor")**:
+   Nextcode section populated — `assetWorkstation(WS_D, 110, 470, FH)`
+   (the notebook-desk sprite, same furniture language as floor-2) + two
+   shipping crates (`crate(26,36,468,478,FH,FH+12)`,
+   `crate(28,44,452,466,FH,FH+15)`). Fully visible per the new envelope
+   (h_top+0.495·110 = 181 < 197.5). Health Platforms stretch left as-is
+   (rack + panel already carry it).
+8. Verified in render (`generated/dev/r6.png`, crops `zoom-f1.png`,
+   `zoom-fl4.png`, `zoom-fl5.png`, `overview.png`); lint clean. User
+   review pending.
+
 ## UPDATE #5 — 2026-09-11, fifth session (BA whiteboard + table, PC mid-run, physical sign)
 
 User revision list, all verified in render (`generated/dev/r3.png`, crops
