@@ -28,6 +28,7 @@ const rootOrder = ['terrain', 'ground-shadow', 'building', 'entrance', 'path', '
 const buildingParts = [
   'floor-ground',
   'staircase',
+  'freelancer-props',
   'floor-01',
   'floor-02',
   'floor-03',

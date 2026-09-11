@@ -1,5 +1,8 @@
 # AGENTS.md
 
+> IMPORTANT restriction: while reasoning, never consider over 30 images at the
+> same time.
+
 ## Project Overview
 
 Visual representation of a professional software-development career as an **isometric
@@ -58,8 +61,8 @@ Do not force every visual element to be vectorized.
   hybrid SVG/raster rule); never as a substitute for the editable SVG
   geometry, and never for the core architectural drawing.
 - **SVG tooling MCPs**: `svg-optimizer` (SVGO optimization, no key) and
-  `svgmaker` (AI SVG generate/edit, needs `SVGMAKER_API_KEY` — leave unset
-  until the user provides it).
+  `svgmaker` (AI SVG generate/edit; `SVGMAKER_API_KEY` is configured in
+  `opencode.json`).
 - **Iconify MCP (`iconify`)** provides search over 200k+ free, open-source
   vector icons (MIT/other OSI licenses) for UI details, furniture, plants,
   tech logos, etc.

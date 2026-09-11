@@ -140,6 +140,216 @@ const boxOnUWall = (uFront, uWall, v0, v1, h0, h1, cls = 'dw-jbox') => [
   el(cls, vFace(v1, uFront, uWall, h0, h1)),
 ]
 
+// Server rack (Stage 5.5 §10, user revision): a GROUP of three cabinets on
+// the Health Platforms stretch (DBA story — database/server equipment is
+// the believable piece) — two tall, one short — each drawn with the same
+// three-face box idiom as the wall junction boxes (editable SVG, on-model
+// with the building's projection): graphite body on a recessed plinth,
+// inset door-frame outline, blanking panels with drive-slot bands between
+// them, a vent-dot grid, a muted LED row (one amber), a cable notch at the
+// top edge and vertical seams on the side face. Generic technical
+// equipment; subordinate to the walls.
+const rackSlot = (u, v0, v1, h) => el('dw-rack-slot', `M ${p(u, v0, h)} L ${p(u, v1, h)}`)
+const rackDot = (cls, u, v, h, r) => {
+  const [x, y] = p(u, v, h).split(',').map(Number)
+  return `<circle class="${cls}" cx="${round(x)}" cy="${round(y)}" r="${r}" />`
+}
+const rackLed = (u, v, h, amber = false) =>
+  rackDot(`dw-rack-led${amber ? ' dw-rack-led-amber' : ''}`, u, v, h, 0.75)
+const rackVent = (u, v, h) => rackDot('dw-rack-vent', u, v, h, 0.6)
+function serverRack(uBack, v0, v1, hBase, hTop) {
+  const uFront = uBack - 9
+  const hB = hBase + 4 // plinth top = body base
+  const out = [
+    // floor contact shadow under the cabinet
+    el('dw-contact', hFace(uFront - 1.5, uBack, v0 - 1.5, v1 + 1.5, hBase)),
+    // recessed plinth
+    el('dw-rack-plinth', uFace(uFront + 1, v0 + 1, v1 - 1, hBase, hB)),
+    el('dw-rack-plinth', vFace(v0, uFront + 1, uBack, hBase, hB)),
+    // body: front face, side face, light-catching top cap
+    el('dw-rack', uFace(uFront, v0, v1, hB, hTop)),
+    el('dw-rack-side', vFace(v0, uFront, uBack, hB, hTop)),
+    el('dw-rack-top', hFace(uFront, uBack, v0, v1, hTop)),
+    // inset door-frame outline on the front face
+    el('dw-rack-frame', uFace(uFront, v0 + 2.2, v1 - 2.2, hB + 3, hTop - 2.5)),
+  ]
+  // cable notch at the top edge center
+  out.push(rackDot('dw-rack-vent', uFront, (v0 + v1) / 2, hTop - 0.9, 1.1))
+  // muted LED row near the top (one amber status dot)
+  for (let i = 0; i < 5; i++) out.push(rackLed(uFront, v0 + 3.8 + i * 2.6, hTop - 5, i === 2))
+  // blanking panels with drive-slot bands between, adapting to the cabinet
+  let h = hTop - 9.5
+  while (h - 3.2 > hB + 6.5) {
+    out.push(el('dw-rack-panel', uFace(uFront, v0 + 3.4, v1 - 3.4, h - 3.2, h)))
+    out.push(rackSlot(uFront, v0 + 3.4, v1 - 3.4, h - 4.6))
+    out.push(rackSlot(uFront, v0 + 3.4, v1 - 3.4, h - 5.1))
+    h -= 5.6
+  }
+  // vent-dot grid near the base
+  for (let row = 0; row < 2; row++) {
+    for (let i = 0; i < 4; i++) out.push(rackVent(uFront, v0 + 4.2 + i * 3.6, hB + 4.6 + row * 2.4))
+  }
+  // vertical seams on the side face
+  for (const su of [uFront + 2.2, uFront + 5.4]) {
+    const [x1, y1] = p(su, v0, hB + 2).split(',').map(Number)
+    const [x2, y2] = p(su, v0, hTop - 1).split(',').map(Number)
+    out.push(`<line class="dw-rack-slot" x1="${round(x1)}" y1="${round(y1)}" x2="${round(x2)}" y2="${round(y2)}" />`)
+  }
+  return out
+}
+
+// Workstation sprite (Stage 5.5 §10, user decision: ONE desk on the
+// Interactica story): nano-banana generation from a precise red wireframe
+// built in the building's own projection (19.29 deg recedes, vertical = 2x
+// plan-diagonal), white-keyed and cut. Measured on the art: receding edges
+// 19.32/19.34 deg, footprint 44.00 x 17.01, desktop 21.97u above the floor —
+// matches the 44/17/22 targets, so the sprite is placed raw (uniform scale,
+// no angle correction). Anchored at its desk top's near vertex; uBack keeps
+// the gap to the wall face where the pipe run lives. Replaces the earlier
+// WS_A/WS_B comparison sprites (wrong ~27 deg projection).
+//   WS_C — wireframe-matched sprite (table desk, monitor, keyboard, chair);
+//   WS_D — sibling variant (table desk, open notebook laptop, chair). Both are
+//   style-enriched re-renders of the user's hand-polished edit (Pro-tier edit
+//   pass kept the projection: 19.3x/44.00/17/22 gates pass), re-keyed from
+//   white. Constants re-measured per file after the enrichment.
+const WS_C = { file: 'workstation-03-cut.png', w: 1062, h: 992, k: 0.04067, ax: 31.15, ay: 18.36, depth: 16.98, deskH: 21.79 }
+const WS_D = { file: 'workstation-04-cut.png', w: 1102, h: 976, k: 0.03930, ax: 31.16, ay: 16.40, depth: 17.13, deskH: 21.84 }
+function assetWorkstation(sp, uBack, v0, hBase) {
+  const uFront = uBack - sp.depth
+  const [cx, cy] = p(uFront, v0, hBase + sp.deskH).split(',').map(Number)
+  return `<image href="${inlineAsset(sp.file)}" x="${round(cx - sp.ax)}" y="${round(cy - sp.ay)}" width="${round(sp.w * sp.k)}" height="${round(sp.h * sp.k)}" preserveAspectRatio="none" />`
+}
+
+// --- Ground-floor prop sprites (Stage 5.5 §10, wireframe-only pipeline) -----
+// Generated sprites (generated/dev/make_wire_props.py / make_wire_table.py;
+// candidates kiosk-cand2, stools-cand, table-cand). Each anchor (ax/ay display
+// px) is the sprite's measured reference corner, placed directly at
+// p(uAnchor, vAnchor, hBase) — grounding/flush semantics documented per call.
+// Kiosk: media cabinet 30u long (v), ~10.4u deep, ~14u tall, receding edges
+// 19.3-19.6deg; the model rendered the screen as a WIDE TV (face 36u x ~20u,
+// top at h~45) instead of the portrait wireframe panel — accepted as-is.
+// Stools: pair of tall padded stools (~16u seats), drawn ~28u high.
+// Meeting: round table (top h22) + 3 chairs + 2 seated people + papers.
+// Anchor = the sprite's bottommost pixel (the near chair's floor leg,
+// object ~(14, 4) at the group origin). User revision: corrected to true
+// scale (the old k 0.15713 made the group 1.33x too large) and moved toward
+// the visible centre of the BA section.
+const PUEL_KIOSK = { file: 'kiosk-01-cut.png', w: 578, h: 895, k: 0.0513, ax: 21.09, ay: 45.23 }
+const PUEL_STOOLS = { file: 'stools-01-cut.png', w: 904, h: 744, k: 0.03767, ax: 34.02, ay: 27.99 }
+const PUEL_TABLE = { file: 'meeting-01-cut.png', w: 581, h: 437, k: 0.11846, ax: 52.36, ay: 50.94 }
+// Freelancer floor PC (user spec): beige tower + bulky CRT monitor + keyboard
+// + mouse, cables connected to the tower; stands on the floor beside the
+// staircase base. Anchor = the keyboard's near-bottom corner (object u-6, v0).
+const FREELANCER_PC = { file: 'freelancer-pc-01-cut.png', w: 475, h: 544, k: 0.05717, ax: 16.98, ay: 30.93 }
+function spritePlace(sp, uAnchor, vAnchor, hBase) {
+  const [bx, by] = p(uAnchor, vAnchor, hBase).split(',').map(Number)
+  return { x: round(bx - sp.ax), y: round(by - sp.ay) }
+}
+function assetProp(sp, uAnchor, vAnchor, hBase) {
+  const { x, y } = spritePlace(sp, uAnchor, vAnchor, hBase)
+  return `<image href="${inlineAsset(sp.file)}" x="${x}" y="${y}" width="${round(sp.w * sp.k)}" height="${round(sp.h * sp.k)}" preserveAspectRatio="none" />`
+}
+
+// Space Invaders on the kiosk's dark screen (user request): the game is drawn
+// as SVG over the sprite, clipped to the measured screen-face quad (sprite px)
+// and placed inside a translate+scale group matching the <image> transform, so
+// the overlay stays locked to the art. Deliberately low detail — a hint of the
+// game, subordinate to the architecture.
+const KIOSK_SCREEN = { tl: [43.3, 32.3], tr: [561.7, 201.7], br: [561.7, 531.7], bl: [43.3, 362.3] }
+const kioskPt = (fx, fy) => {
+  const { tl, tr, bl } = KIOSK_SCREEN
+  const x = tl[0] + fx * (tr[0] - tl[0]) + fy * (bl[0] - tl[0])
+  const y = tl[1] + fx * (tr[1] - tl[1]) + fy * (bl[1] - tl[1])
+  return [round(x), round(y)]
+}
+const kioskRect = (fx, fy, w, h, fill, o = 0.9) => {
+  const [x, y] = kioskPt(fx, fy)
+  return `<rect x="${x}" y="${y}" width="${round(w)}" height="${round(h)}" fill="${fill}" fill-opacity="${o}" />`
+}
+// Classic 8-bit invader crab (top-half silhouette) built from unit cells.
+const INVADER_CELLS = [[1, 0], [3, 0], [0, 1], [2, 1], [4, 1], [0, 2], [1, 2], [2, 2], [3, 2], [4, 2], [1, 3], [3, 3]]
+const kioskInvader = (fx, fy, fill) => {
+  const [x, y] = kioskPt(fx, fy)
+  const cells = INVADER_CELLS.map(([c, r]) => `M${x + c * 8},${y + r * 8} h8 v8 h-8 Z`).join(' ')
+  return `<path d="${cells}" fill="${fill}" fill-opacity="0.9" />`
+}
+function kioskScreenOverlay(place) {
+  const { tl, tr, br, bl } = KIOSK_SCREEN
+  const clip = `M${tl.join(',')} L${tr.join(',')} L${br.join(',')} L${bl.join(',')} Z`
+  const game = [
+    // two invader rows + the amber saucer
+    kioskInvader(0.18, 0.16, '#86a97e'),
+    kioskInvader(0.38, 0.16, '#86a97e'),
+    kioskInvader(0.58, 0.16, '#86a97e'),
+    kioskInvader(0.78, 0.16, '#6f9372'),
+    kioskInvader(0.28, 0.42, '#6f9372'),
+    kioskInvader(0.48, 0.42, '#6f9372'),
+    kioskInvader(0.68, 0.42, '#6f9372'),
+    kioskRect(0.84, 0.04, 30, 14, '#c29a4a', 0.85),
+    // bunkers + player cannon
+    kioskRect(0.20, 0.74, 54, 24, '#4f6a58', 0.8),
+    kioskRect(0.46, 0.74, 54, 24, '#4f6a58', 0.8),
+    kioskRect(0.72, 0.74, 54, 24, '#4f6a58', 0.8),
+    kioskRect(0.46, 0.9, 48, 14, '#9db8a2', 0.95),
+  ].join('\n')
+  return [
+    `<defs><clipPath id="dw-kiosk-screen"><path d="${clip}" /></clipPath></defs>`,
+    `<g transform="translate(${place.x} ${place.y}) scale(${PUEL_KIOSK.k})" clip-path="url(#dw-kiosk-screen)">`,
+    game,
+    `</g>`,
+  ].join('\n')
+}
+
+// Wooden crates (hand-drawn SVG, user request): storage in the Puelo Games
+// corner. Same face pattern as the server rack — top, -u front, -v side —
+// with quiet slat lines and the shared warm-wood family.
+function crate(u0, u1, v0, v1, h0, h1) {
+  const hMid = h0 + (h1 - h0) * 0.4
+  return [
+    el('dw-crate-side', vFace(v0, u0, u1, h0, h1)),
+    el('dw-crate', uFace(u0, v0, v1, h0, h1)),
+    el('dw-crate-top', hFace(u0, u1, v0, v1, h1)),
+    el('dw-crate-line', `M ${p(u0, v0, hMid)} L ${p(u0, v1, hMid)}`),
+  ]
+}
+
+// Loose paper sheets (hand-drawn SVG, user request): small light quads with a
+// thin outline, scattered flat on the floor or pasted on a wall. Deterministic
+// jitter keeps the hand-placed feel without randomness across rebuilds.
+function paperSheet(u, v, h, w = 6.5, d = 9, rot = 0) {
+  const c = Math.cos(rot)
+  const s = Math.sin(rot)
+  const pts = [
+    [-w / 2, -d / 2],
+    [w / 2, -d / 2],
+    [w / 2, d / 2],
+    [-w / 2, d / 2],
+  ].map(([a, b]) => p(u + a * c - b * s, v + a * s + b * c, h))
+  return el('dw-paper', path(pts))
+}
+function paperStack(u, v, n) {
+  const out = []
+  for (let i = 0; i < n; i++) {
+    const jx = (hash2(u * 10 + i, 1) - 0.5) * 1.8
+    const jy = (hash2(v * 10 + i, 2) - 0.5) * 1.8
+    const rot = (hash2(u * 10 + v + i, 3) - 0.5) * 0.6
+    out.push(paperSheet(u + jx, v + jy, 0.3 + i * 0.4, 6.5, 9, rot))
+  }
+  return out
+}
+function wallSheet(u, h, rot) {
+  const v = LD - WALL_T - 0.4
+  const c = Math.cos(rot)
+  const s = Math.sin(rot)
+  const pts = [
+    [-3.25, -4.5],
+    [3.25, -4.5],
+    [3.25, 4.5],
+    [-3.25, 4.5],
+  ].map(([a, b]) => p(u + a * c - b * s, v, h + a * s + b * c))
+  return el('dw-paper', path(pts))
+}
+
 // A vertical service pipe from the generated sprite (user decision: the
 // nano-banana asset is the pipe building block). The sprite's full height
 // maps to the requested run length; its pipe axis sits at 32.2% from the
@@ -545,19 +755,158 @@ const group = (id, lines) => `<g id="${id}">\n${lines.map((l) => `  ${l}`).join(
 const tagGroup = (lines, cls = 'dw-tag-group') =>
   `<g class="${cls}">\n${lines.map((l) => `  ${l}`).join('\n')}\n</g>`
 
-// --- floor-ground: slab-0, story-0 walls, two partitions, columns -----------
+// --- floor-ground: slab-0, story-0 walls, two partitions, props, columns ----
+// Puelo Games props (Stage 5.5 §10, user batch decisions): the demo kiosk
+// against the B-D wall with the SVG Space Invaders screen, the stool pair
+// facing it (soft SVG contact shadow — the stools sprite carries none), and
+// hand-drawn storage crates deeper along the same wall. Batches 2-3 (BA
+// Technology, Freelancer) will slot between the partitions.
+const pueloProps = [
+  // kiosk: anchor = the cabinet's near-bottom corner; its back edge stays
+  // flush with the B-D wall inner face (230.5 = 220.14 + 10.36 depth);
+  // user revision: the whole group sits deeper along the wall
+  assetProp(PUEL_KIOSK, 220.14, 36, 0),
+  kioskScreenOverlay(spritePlace(PUEL_KIOSK, 220.14, 36, 0)),
+  // stools in front of the screen (anchor = the pair's near leg tip)
+  el('dw-contact', hFace(198, 216, 32, 68, 0)),
+  assetProp(PUEL_STOOLS, 200.1, 33, 0),
+  // crates pushed into the section's rear corner (partition at v=164.6),
+  // beside the kiosk/stools deeper along the wall
+  ...crate(212.5, 230.5, 146, 162, 0, 15),
+  ...crate(216, 230, 148, 162, 15, 28),
+  ...crate(213.5, 230.5, 131, 144, 0, 12),
+]
+
+// --- BA Technology props (Stage 5.5 §10, second batch) ----------------------
+// Big chalk blackboard on partition-2's front face (user request): the wall
+// visible behind the meeting table in the BA section. Wood frame box proud of
+// the wall by 2u, dark slate inset, chalk spreadsheet grid + number/equation
+// scribbles — deliberately illegible at overview scale. Kept right of the
+// partition doorway and inside the visible envelope (h < 92.5 - 0.495u).
+function blackboard() {
+  const vW = PARTITION_G[1] - WALL_T / 2 // 396.09: partition-2 front face
+  const vF = vW - 2 // board face, 2u proud of the wall
+  const u0 = 78
+  const u1 = 110
+  const h0 = 8
+  const h1 = 36
+  const out = [
+    el('dw-board-cap', uFace(u0, vF, vW, h0, h1)),
+    el('dw-board-cap', hFace(u0, u1, vF, vW, h1)),
+    el('dw-board-frame', vFace(vF, u0, u1, h0, h1)),
+    // slate inset within the frame
+    el('dw-board-slate', vFace(vF + 0.4, u0 + 2.5, u1 - 2.5, h0 + 2.5, h1 - 2.5)),
+  ]
+  // chalk: spreadsheet grid (columns along u, rows along h) + scribbles
+  const cols = 6
+  const rows = 4
+  const cu0 = u0 + 5
+  const du = (u1 - u0 - 10) / cols
+  const ch0 = h0 + 6
+  const dh = (h1 - h0 - 10) / rows
+  const vC = vF + 0.3
+  for (let j = 0; j <= cols; j++) {
+    out.push(el('dw-chalk', `M ${p(cu0 + j * du, vC, ch0)} L ${p(cu0 + j * du, vC, ch0 + rows * dh)}`))
+  }
+  for (let k = 0; k <= rows; k++) {
+    out.push(el('dw-chalk', `M ${p(cu0, vC, ch0 + k * dh)} L ${p(cu0 + cols * du, vC, ch0 + k * dh)}`))
+  }
+  // number/equation scribbles inside the cells (deterministic)
+  for (let j = 0; j < cols; j++) {
+    for (let k = 0; k < rows; k++) {
+      const n = 1 + Math.floor(hash2(j * 31 + k, 7) * 3)
+      for (let i = 0; i < n; i++) {
+        const us = cu0 + j * du + 1 + hash2(j * 17 + k * 7 + i, 11) * (du - 4)
+        const hs = ch0 + k * dh + 0.8 + hash2(j * 13 + k * 5 + i, 13) * (dh - 2.6)
+        const len = 2 + hash2(j * 19 + k * 3 + i, 17) * 2.6
+        const wob = (hash2(j * 23 + k + i, 19) - 0.5) * 1.2
+        out.push(el('dw-chalk', `M ${p(us, vC, hs)} L ${p(us + len, vC, hs + wob)}`))
+      }
+    }
+  }
+  return group('blackboard', out)
+}
+
+// Meeting corner (user request): round table, three chairs, two people seated
+// seen from behind, papers on the tabletop. User revision: displayed at true
+// scale (k 0.1185, was 0.15713 — 1.33x too large) and moved to the visible
+// centre of the BA section (anchor = the near chair leg, object (14, 4)).
+const baProps = [
+  blackboard(),
+  assetProp(PUEL_TABLE, 36, 254, 0),
+  el('dw-contact', hFace(26, 90, 246, 326, 0)),
+]
 const floorGround = group('floor-ground', [
   ...slab(0),
   ...backWalls(0),
-  ...partition(PARTITION_G[0], 0, { opening: true }),
+  // Painter order, far to near: partition-2 (deepest divider), freelancer
+  // props that sit behind/around the stair (emitted here so the staircase
+  // fragment occludes them correctly), BA props between the partitions,
+  // partition-1, Puelo props, columns.
   ...partition(PARTITION_G[1], 0, { opening: true }),
+  // Freelancer paper mess, part 1 (user request, SVG): sheets on the floor
+  // beside the staircase and pasted on the C-D wall. The front-of-stair
+  // sheets live in the freelancer-props fragment (after the staircase).
+  ...paperStack(8, 552, 2),
+  ...paperStack(14, 566, 1),
+  ...paperStack(6, 578, 3),
+  ...paperStack(135, 552, 1),
+  ...paperStack(142, 566, 2),
+  ...paperStack(148, 578, 1),
+  wallSheet(6, 15, 0.1),
+  wallSheet(12, 30, -0.12),
+  wallSheet(18, 45, 0.08),
+  wallSheet(9, 60, -0.15),
+  wallSheet(15, 72, 0.12),
+  ...baProps,
+  ...partition(PARTITION_G[0], 0, { opening: true }),
+  ...pueloProps,
   ...columns(0, STORY_H),
+])
+
+// --- freelancer-props: floor PC + paper mess (Stage 5.5 §10, user request) --
+// The PC stands on the floor beside the staircase base, its tower back
+// against the stair's solid side face (v = STAIR_V0), keyboard and monitor
+// facing -u. Emitted as its own fragment AFTER the staircase so the PC
+// correctly paints over the stair's lower steps it stands in front of. The
+// paper sheets in front of the stair (v < STAIR_V0) join it here; sheets
+// behind the stair are emitted in floor-ground so the stair occludes them.
+const freelancerProps = group('freelancer-props', [
+  el('dw-contact', hFace(24, 46, 512, 543, 0)),
+  assetProp(FREELANCER_PC, 26, 514.5, 0),
+  ...paperStack(12, 430, 3),
+  ...paperStack(30, 445, 1),
+  ...paperStack(50, 460, 4),
+  ...paperStack(18, 470, 1),
+  ...paperStack(65, 480, 2),
+  ...paperStack(35, 495, 1),
+  ...paperStack(80, 495, 3),
+  ...paperStack(55, 510, 1),
+  ...paperStack(95, 510, 2),
+  ...paperStack(10, 528, 1),
+  ...paperStack(70, 525, 3),
+  ...paperStack(110, 525, 1),
+  ...paperStack(45, 535, 2),
+  ...paperStack(90, 535, 1),
+  ...paperStack(125, 535, 1),
+  // a couple of sheets dropped on the lower stair treads
+  paperSheet(35, 562, 17.5 + 0.4, 6, 8.5, 0.3),
+  paperSheet(48, 570, 26.25 + 0.4, 6, 8.5, -0.2),
 ])
 
 // --- floor-01: slab-1 with stair opening, story-1 walls, shaft return walls -
 const floor01 = group('floor-01', [
   ...slab(FH, { stairOpening: true }),
   ...backWalls(FH),
+  // Server rack group (Stage 5.5 §10, user revision): two tall cabinets and
+  // one short one on the Health Platforms stretch, standing on the B-D
+  // wall's near stretch where the sight line keeps them fully visible.
+  // Emitted in inverse order (far first, near last) so nearer cabinets
+  // correctly paint over the ones behind them; the short cabinet stands at
+  // the near end so the row rises toward the back.
+  ...serverRack(230.5, 72, 94, FH, FH + 66),
+  ...serverRack(230.5, 46, 68, FH, FH + 62),
+  ...serverRack(230.5, 20, 42, FH, FH + 38),
   // Electrical panel on the Health Platforms stretch (data-operations
   // floor — a service panel is the believable piece here), with a conduit
   // drop feeding it from the fifth-floor slab line (Stage 5.5 §7/§8).
@@ -595,6 +944,12 @@ const floor02 = group('floor-02', [
   // slabs — the run rises from its floor and disappears behind the story
   // above, like the reference's pipes.
   assetPipe(227.5, 60, 2 * FH, STORY_H),
+  // The dev workstations on the Interactica story (Stage 5.5 §10): the
+  // wireframe-matched generated sprites (WS_C monitor desk, WS_D notebook
+  // desk side by side), pulled off the wall face so the pipe run passes
+  // behind them; drawn after the pipes.
+  assetWorkstation(WS_C, 221.5, 26, 2 * FH),
+  assetWorkstation(WS_D, 221.5, 82, 2 * FH),
 ])
 const floor02Front = group('floor-02-front', [
   ...slabTriangle(2 * FH),
@@ -957,6 +1312,7 @@ function experienceTags() {
 const fragments = {
   'ground-shadow': groundShadow(),
   'floor-ground': floorGround,
+  'freelancer-props': freelancerProps,
   'floor-01': floor01,
   'floor-02': floor02,
   'floor-02-front': floor02Front,

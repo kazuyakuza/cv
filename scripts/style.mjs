@@ -109,6 +109,49 @@ export const svgStyle = `
     .dw-jbox { fill: #4a4842; stroke: #2e2c28; stroke-width: 0.8; }
     .dw-conduit { fill: #55534c; stroke: #3a3833; stroke-width: 0.7; }
 
+    /* Server rack (Stage 5.5 §10): Health Platforms' DBA story. Same dark
+       steel family as the junction boxes but as a full-height cabinet:
+       graphite front, darker side, light-catching top cap, thin drive-slot
+       lines and muted status LEDs (mostly green, one amber) — generic
+       technical equipment, subordinate to the architecture */
+    .dw-rack { fill: #46443e; stroke: #2e2c28; stroke-width: 0.8; }
+    .dw-rack-side { fill: #3a3833; stroke: #2e2c28; stroke-width: 0.8; }
+    .dw-rack-top { fill: #5d5b52; stroke: #2e2c28; stroke-width: 0.8; }
+    .dw-rack-slot { fill: none; stroke: #78746a; stroke-width: 0.55; }
+    .dw-rack-led { fill: #8aa878; stroke: none; }
+    .dw-rack-led-amber { fill: #c29a4a; stroke: none; }
+    /* Rack group detailing (Stage 5.5 §10 user revision): recessed plinth,
+       inset door-frame outline, blanking panels, vent dots + cable notch */
+    .dw-rack-plinth { fill: #33312c; stroke: #2e2c28; stroke-width: 0.8; }
+    .dw-rack-frame { fill: none; stroke: #6b675e; stroke-width: 0.7; }
+    .dw-rack-panel { fill: #514f48; stroke: #2e2c28; stroke-width: 0.55; }
+    .dw-rack-vent { fill: #2e2c28; stroke: none; }
+
+    /* Workstations (Stage 5.5 §10): dev desks come from generated
+       sprites (src/assets/workstation-0X-cut.png, placed by
+       assetWorkstation()); the old SVG desk classes were removed with them. */
+
+    /* Puelo Games crates (Stage 5.5 §10): hand-drawn storage boxes in the
+       warm-wood family, quieter than the floors so props stay subordinate */
+    .dw-crate { fill: #b39d75; stroke: #4c4a44; stroke-width: 0.8; }
+    .dw-crate-side { fill: #9c8760; stroke: #4c4a44; stroke-width: 0.8; }
+    .dw-crate-top { fill: #c3ad83; stroke: #4c4a44; stroke-width: 0.8; }
+    .dw-crate-line { fill: none; stroke: #8d7a58; stroke-width: 0.7; }
+
+    /* Freelancer paper mess (Stage 5.5 §10): loose sheets and small stacks,
+       hand-drawn SVG. Near-white but a step below the plaques so the
+       information layer keeps the highest readability */
+    .dw-paper { fill: #f4f1e6; stroke: #b9b3a3; stroke-width: 0.5; }
+
+    /* BA Technology blackboard (Stage 5.5 §10): wood frame + dark slate +
+       chalk spreadsheet. The chalk stays warm-white at low contrast —
+       readable as "full board" texture, illegible by design */
+    .dw-board-frame { fill: #9c8760; stroke: #4c4a44; stroke-width: 0.8; }
+    .dw-board-cap { fill: #b09a72; stroke: #4c4a44; stroke-width: 0.8; }
+    .dw-board-slate { fill: #3e463f; stroke: #2e352f; stroke-width: 0.7; }
+    .dw-chalk { fill: none; stroke: #e6e2d2; stroke-width: 0.45; stroke-opacity: 0.5; stroke-linecap: round; }
+    .dw-chalk-strong { fill: none; stroke: #e6e2d2; stroke-width: 0.7; stroke-opacity: 0.65; stroke-linecap: round; }
+
     /* Stage 5 §9 — stair/elevator details. (§8 sparse-infrastructure pieces
        were all removed on user review — pipe, wall patch, panel, vent — so
        only the banister line survives.) */

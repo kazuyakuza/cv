@@ -20,6 +20,129 @@
   <path class="dw-contact" d="M904.86,826.37 L913.14,823.33 L502.96,678.88 L494.43,682.7 Z" />
   <path class="dw-contact" d="M347.78,739.11 L363.09,733.87 L355.01,731.4 L339.84,735.92 Z" />
   <path class="dw-contact" d="M438,707.7 L515.81,679.97 L507.39,677.56 L429.06,704.38 Z" />
+  <path class="dw-contact" d="M856.19,808.43 L862.66,805.35 L845.37,798.9 L837.77,801.81 Z" />
+  <path class="dw-rack-plinth" d="M856.24,807.12 L841.37,801.52 L841.88,797.69 L855.94,803.31 Z" />
+  <path class="dw-rack-plinth" d="M856.86,807.36 L862.43,805.5 L862.21,800.78 L856.08,802.83 Z" />
+  <path class="dw-rack" d="M855.38,802.87 L840.13,797.95 L840.32,736.18 L855.89,741.6 Z" />
+  <path class="dw-rack-side" d="M855.38,802.87 L862.21,800.78 L862.4,738.73 L855.89,741.6 Z" />
+  <path class="dw-rack-top" d="M855.89,741.6 L862.4,738.73 L846.2,733.16 L840.32,736.18 Z" />
+  <path class="dw-rack-frame" d="M853.62,799.29 L841.17,794.99 L841.33,739.46 L854.12,743.78 Z" />
+  <circle class="dw-rack-vent" cx="848.05" cy="739.45" r="1.1" />
+  <circle class="dw-rack-led" cx="853.44" cy="745.56" r="0.75" />
+  <circle class="dw-rack-led" cx="851.19" cy="744.69" r="0.75" />
+  <circle class="dw-rack-led dw-rack-led-amber" cx="849.79" cy="743.73" r="0.75" />
+  <circle class="dw-rack-led" cx="847.49" cy="742.98" r="0.75" />
+  <circle class="dw-rack-led" cx="846.2" cy="743.09" r="0.75" />
+  <path class="dw-rack-panel" d="M852.9,753.7 L842.97,749.36 L842.72,746.58 L853.63,750.03 Z" />
+  <path class="dw-rack-slot" d="M 853.62,755.15 L 842.47,751.38" />
+  <path class="dw-rack-slot" d="M 853.24,755.44 L 842.13,751.11" />
+  <path class="dw-rack-panel" d="M853.28,758.4 L842.4,755.02 L842.9,751.35 L852.95,755.12 Z" />
+  <path class="dw-rack-slot" d="M 853.84,759.82 L 842.24,756.69" />
+  <path class="dw-rack-slot" d="M 853.31,760.22 L 842.97,757.38" />
+  <path class="dw-rack-panel" d="M853.19,764.8 L842.19,760.44 L842.5,757.4 L853.69,761.7 Z" />
+  <path class="dw-rack-slot" d="M 852.97,765.82 L 842.11,761.99" />
+  <path class="dw-rack-slot" d="M 853.83,766.85 L 842.87,762.36" />
+  <path class="dw-rack-panel" d="M853.26,770.37 L842.61,766.4 L842.09,763.04 L853.24,767.19 Z" />
+  <path class="dw-rack-slot" d="M 853.72,771 L 842.52,767.92" />
+  <path class="dw-rack-slot" d="M 853.34,772.04 L 843.08,767.76" />
+  <path class="dw-rack-panel" d="M853.68,775.75 L842.2,771.5 L842.81,768.4 L853.85,772.87 Z" />
+  <path class="dw-rack-slot" d="M 853.32,776.85 L 842.26,773.62" />
+  <path class="dw-rack-slot" d="M 853.76,777.55 L 842.24,773.68" />
+  <path class="dw-rack-panel" d="M853.22,780.83 L842.71,777.14 L842.68,774.36 L853.44,778.31 Z" />
+  <path class="dw-rack-slot" d="M 853.33,782.24 L 842.5,779.25" />
+  <path class="dw-rack-slot" d="M 853.27,782.71 L 842.12,779.87" />
+  <path class="dw-rack-panel" d="M853.41,787.34 L842.52,783.05 L842.81,780.12 L853.35,783.56 Z" />
+  <path class="dw-rack-slot" d="M 853.19,788.44 L 842.51,784.05" />
+  <path class="dw-rack-slot" d="M 852.84,788.56 L 842.69,784.97" />
+  <path class="dw-rack-panel" d="M853.71,792.06 L842.08,788.4 L842.67,785.42 L852.79,789.04 Z" />
+  <path class="dw-rack-slot" d="M 853.75,794.23 L 842.35,790.4" />
+  <path class="dw-rack-slot" d="M 853.47,794.03 L 843.07,790.02" />
+  <circle class="dw-rack-vent" cx="853.21" cy="797.87" r="0.6" />
+  <circle class="dw-rack-vent" cx="849.81" cy="796.37" r="0.6" />
+  <circle class="dw-rack-vent" cx="847.46" cy="796.32" r="0.6" />
+  <circle class="dw-rack-vent" cx="844.56" cy="795.58" r="0.6" />
+  <circle class="dw-rack-vent" cx="852.33" cy="794.97" r="0.6" />
+  <circle class="dw-rack-vent" cx="850.68" cy="794.02" r="0.6" />
+  <circle class="dw-rack-vent" cx="847.72" cy="793.83" r="0.6" />
+  <circle class="dw-rack-vent" cx="844.87" cy="792.67" r="0.6" />
+  <line class="dw-rack-slot" x1="857.7" y1="801.16" x2="856.84" y2="741.49" />
+  <line class="dw-rack-slot" x1="859.06" y1="799.55" x2="859.02" y2="741.53" />
+  <path class="dw-contact" d="M874.12,814.03 L881.29,812.17 L864.32,805.8 L856.89,807.94 Z" />
+  <path class="dw-rack-plinth" d="M874.53,813.3 L859.9,808.4 L859.68,804.12 L873.76,809.54 Z" />
+  <path class="dw-rack-plinth" d="M874.73,813.2 L880.13,811.17 L880.99,807.9 L874.69,809.83 Z" />
+  <path class="dw-rack" d="M873.58,809.75 L858.13,804.77 L859,746.31 L873.79,751.29 Z" />
+  <path class="dw-rack-side" d="M873.58,809.75 L880.99,807.9 L880.3,749.18 L873.79,751.29 Z" />
+  <path class="dw-rack-top" d="M873.79,751.29 L880.3,749.18 L864.45,744.5 L859,746.31 Z" />
+  <path class="dw-rack-frame" d="M872.62,805.86 L860.47,801.43 L859.58,749.03 L872.47,753.86 Z" />
+  <circle class="dw-rack-vent" cx="866.66" cy="750.23" r="1.1" />
+  <circle class="dw-rack-led" cx="871.04" cy="756.12" r="0.75" />
+  <circle class="dw-rack-led" cx="870.03" cy="755.67" r="0.75" />
+  <circle class="dw-rack-led dw-rack-led-amber" cx="867.27" cy="754.23" r="0.75" />
+  <circle class="dw-rack-led" cx="865.98" cy="753.71" r="0.75" />
+  <circle class="dw-rack-led" cx="864.22" cy="753.59" r="0.75" />
+  <path class="dw-rack-panel" d="M871.63,763.67 L860.86,759.58 L861.07,756.69 L871.15,760.01 Z" />
+  <path class="dw-rack-slot" d="M 871.41,765.17 L 860.48,761.73" />
+  <path class="dw-rack-slot" d="M 871.43,765.61 L 861.04,761.53" />
+  <path class="dw-rack-panel" d="M872.16,769.58 L860.91,765.89 L861.23,762.68 L871.76,766.33 Z" />
+  <path class="dw-rack-slot" d="M 872.15,771.09 L 861.34,766.84" />
+  <path class="dw-rack-slot" d="M 871.54,770.93 L 860.8,767.42" />
+  <path class="dw-rack-panel" d="M871.75,775.16 L861.08,771.39 L861.36,767.45 L871.64,771.93 Z" />
+  <path class="dw-rack-slot" d="M 871.47,776.12 L 860.74,772.27" />
+  <path class="dw-rack-slot" d="M 872.07,776.98 L 861.35,772.88" />
+  <path class="dw-rack-panel" d="M871.32,780.78 L860.91,776.94 L860.81,773.78 L872.07,777.4 Z" />
+  <path class="dw-rack-slot" d="M 872.05,781.49 L 860.8,777.73" />
+  <path class="dw-rack-slot" d="M 871.46,782.84 L 860.67,778.53" />
+  <path class="dw-rack-panel" d="M871.32,785.92 L861.41,782.46 L861.28,778.97 L871.16,782.91 Z" />
+  <path class="dw-rack-slot" d="M 871.22,787.01 L 860.7,783.21" />
+  <path class="dw-rack-slot" d="M 871.21,787.94 L 861.32,783.72" />
+  <path class="dw-rack-panel" d="M871.57,791.25 L860.4,788.06 L861.37,784.34 L871.67,788.96 Z" />
+  <path class="dw-rack-slot" d="M 871.52,793.36 L 861.26,789.18" />
+  <path class="dw-rack-slot" d="M 871.72,794.03 L 860.95,789.28" />
+  <path class="dw-rack-panel" d="M871.34,796.96 L861.24,793.47 L860.45,790.73 L871.87,794.42 Z" />
+  <path class="dw-rack-slot" d="M 872.19,798.75 L 861.23,795.21" />
+  <path class="dw-rack-slot" d="M 871.75,799.21 L 860.66,795.43" />
+  <circle class="dw-rack-vent" cx="871.02" cy="804.36" r="0.6" />
+  <circle class="dw-rack-vent" cx="869.12" cy="802.75" r="0.6" />
+  <circle class="dw-rack-vent" cx="865.81" cy="802.77" r="0.6" />
+  <circle class="dw-rack-vent" cx="863.43" cy="801.89" r="0.6" />
+  <circle class="dw-rack-vent" cx="870.95" cy="801.22" r="0.6" />
+  <circle class="dw-rack-vent" cx="868.04" cy="801.07" r="0.6" />
+  <circle class="dw-rack-vent" cx="866.04" cy="799.62" r="0.6" />
+  <circle class="dw-rack-vent" cx="863.31" cy="799.19" r="0.6" />
+  <line class="dw-rack-slot" x1="875.64" y1="807" x2="875.34" y2="752.24" />
+  <line class="dw-rack-slot" x1="877.61" y1="805.93" x2="877.94" y2="751.13" />
+  <path class="dw-contact" d="M892.27,820.66 L899.74,818.3 L881.74,811.78 L875.16,814.24 Z" />
+  <path class="dw-rack-plinth" d="M891.96,819.79 L878.24,814.6 L878.49,811.22 L891.95,815.93 Z" />
+  <path class="dw-rack-plinth" d="M893.21,819.97 L899.37,818.5 L899.38,813.75 L893.04,816.44 Z" />
+  <path class="dw-rack" d="M892.49,816.38 L876.41,811.16 L877.32,777.12 L892.95,782.54 Z" />
+  <path class="dw-rack-side" d="M892.49,816.38 L899.38,813.75 L899.14,779.77 L892.95,782.54 Z" />
+  <path class="dw-rack-top" d="M892.95,782.54 L899.14,779.77 L883.67,774.62 L877.32,777.12 Z" />
+  <path class="dw-rack-frame" d="M890.65,812.61 L877.96,808.52 L878.53,779.47 L891.39,784.43 Z" />
+  <circle class="dw-rack-vent" cx="885.11" cy="779.99" r="1.1" />
+  <circle class="dw-rack-led" cx="890.31" cy="786.41" r="0.75" />
+  <circle class="dw-rack-led" cx="887.72" cy="786.18" r="0.75" />
+  <circle class="dw-rack-led dw-rack-led-amber" cx="885.92" cy="785.26" r="0.75" />
+  <circle class="dw-rack-led" cx="884.26" cy="784.33" r="0.75" />
+  <circle class="dw-rack-led" cx="882.28" cy="783.92" r="0.75" />
+  <path class="dw-rack-panel" d="M889.54,793.58 L879.61,790.32 L878.93,787.06 L889.97,790.52 Z" />
+  <path class="dw-rack-slot" d="M 890.34,795.52 L 879.84,791.88" />
+  <path class="dw-rack-slot" d="M 889.62,796.54 L 879.18,792.33" />
+  <path class="dw-rack-panel" d="M889.94,799.25 L879.51,796.06 L879.37,792.46 L889.99,796.5 Z" />
+  <path class="dw-rack-slot" d="M 889.93,800.57 L 879.1,797.5" />
+  <path class="dw-rack-slot" d="M 890.39,801.27 L 879.48,798.29" />
+  <path class="dw-rack-panel" d="M890.41,805.82 L879.12,801.87 L879.58,798.81 L890.5,802.2 Z" />
+  <path class="dw-rack-slot" d="M 889.85,806.25 L 879.4,802.9" />
+  <path class="dw-rack-slot" d="M 889.55,806.86 L 879.47,803.45" />
+  <circle class="dw-rack-vent" cx="889.92" cy="810.23" r="0.6" />
+  <circle class="dw-rack-vent" cx="887.08" cy="809.72" r="0.6" />
+  <circle class="dw-rack-vent" cx="884.53" cy="808.44" r="0.6" />
+  <circle class="dw-rack-vent" cx="882.01" cy="807.55" r="0.6" />
+  <circle class="dw-rack-vent" cx="889.39" cy="808.06" r="0.6" />
+  <circle class="dw-rack-vent" cx="887.28" cy="806.8" r="0.6" />
+  <circle class="dw-rack-vent" cx="884.09" cy="805.97" r="0.6" />
+  <circle class="dw-rack-vent" cx="881.52" cy="805.25" r="0.6" />
+  <line class="dw-rack-slot" x1="894.31" y1="813.42" x2="894.32" y2="782.3" />
+  <line class="dw-rack-slot" x1="896.38" y1="813.36" x2="895.85" y2="781.41" />
   <path class="dw-jbox" d="M788.47,749.77 L770.83,743.45 L771.21,717.5 L788.32,723.52 Z" />
   <path class="dw-jbox" d="M788.32,723.52 L793.67,720.89 L777.61,715.6 L771.21,717.5 Z" />
   <path class="dw-jbox" d="M770.83,743.45 L777.22,741.09 L777.61,715.6 L771.21,717.5 Z" />
