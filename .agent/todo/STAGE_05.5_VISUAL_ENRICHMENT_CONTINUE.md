@@ -7,6 +7,54 @@ career diorama) at the end of the session of 2026-09-08. The previous
 handoff (from the prior session) is in the AGENTS.md work state; this file
 covers ONLY what happened in this session.
 
+## UPDATE #8 — 2026-09-12, PENDING user issues (NOT worked yet — do these next)
+
+User listed these for a future session; no code was changed for them yet.
+
+1. **Nextcode devs must become nano-banana sprites, not SVG geometry.**
+   The four `devFigure()` staffage cutouts look "too rare" (off-style).
+   Replace with generated sprite(s): ONE image with the whole group, or at
+   most TWO — never more. **Positions are correct and must stay**:
+   visible pair `(438,56)` green / `(424,44)` blue; peeking pair
+   `(386,34)` grey (rear) / `(372,20)` brown (front). Use the established
+   wireframe-only pipeline (`generated/dev/make_wire_*.py` →
+   nano-banana → `key_cut_*.py` → measure k/ax/ay) and keep the current
+   layering: emit in `floor-01` AFTER `backWalls(FH)` and BEFORE
+   `shaftReturnWalls` — the shaft's faces (elevator fragment, later) must
+   paint over the peeking pair automatically. Remember the peek window is
+   only `x < ~501` (left of the shaft's W3 u=0 cut face): if the sprite is
+   placed as-is, the shaft covers the right part — verify the visible
+   sliver reads like the current version (`zoom-f1h.png` at 14×).
+
+2. **Nextcode pamphlet must be bigger: width ×2, height ×3.**
+   Currently `nextcodePamphlet()` at u 26..58 × h 107..127. Target
+   ≈ u 26..90 × h 107..167. Style/position are approved. Watch the
+   slab-cut envelope `h + 0.495·u < 197.5` (floor-02 slab band): at the new
+   size the top-right corner (u>61 at h=167) tucks under the cut — decide
+   whether to accept the cutaway look or anchor the growth leftward/down.
+   Also add more squiggle lines for the larger area (currently 7).
+
+3. **Move the 3 BA-side piles into the freelancer section, just under the
+   door's head.** The three piles currently at `(28,372,2)`, `(58,386,2)`,
+   `(80,392,1)` (BA floor, in front of partition-2 — the circled ones in
+   the user's Image 1) must move to the freelancer side so they show
+   THROUGH the partition-2 passage opening, just below the head line
+   (h = 52.5). Target zone: freelancer floor behind the doorway,
+   ≈ u 20..65 × v 405..425 (screen x 480..519, y 824..877 — clear of the
+   PC's bbox x [434.5,461.7] y [806.2,837.3]). Emit them in `floor-ground`
+   BEFORE `partition(PARTITION_G[1], …)` so the wall face's notch shows
+   them through the opening (the passage hole is u 15..70, h 0..52.5).
+
+4. **Two piles still in the wrong layer (user's Image 2 circles).**
+   The circled spots at partition-2's base below the PC are the stacks
+   `(80,495,3)` and `(74,482,2)` (both emitted in `freelancer-props` AFTER
+   the divider; measured xmax 466–467, i.e. just 3px short of the wall's
+   edge at 469.9 — with the rough-filter jitter their tips can wobble over
+   the wall's base/edge line). Fix: move them into the before-partition-2
+   group in `floor-ground` (same treatment as `(4,408,2)`/`(16,416,2)`), or
+   shift them left so their far tips clear x ≤ 466 with margin. Verify at
+   high zoom (`zoom-wallbase.png` region, SVG 445..485 × 845..895).
+
 ## UPDATE #7 — 2026-09-12, seventh session (paper layers + floor-1 pamphlet & devs)
 
 User revision list, verified in render (`generated/dev/r11.png`, crops
