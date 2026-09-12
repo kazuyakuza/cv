@@ -7,6 +7,51 @@ career diorama) at the end of the session of 2026-09-08. The previous
 handoff (from the prior session) is in the AGENTS.md work state; this file
 covers ONLY what happened in this session.
 
+## UPDATE #7 — 2026-09-12, seventh session (paper layers + floor-1 pamphlet & devs)
+
+User revision list, verified in render (`generated/dev/r11.png`, crops
+`zoom-f1d.png` / `zoom-f1h.png` / `zoom-ba2.png` / `zoom-fl.png` / `overview.png`):
+
+1. **Puelo-section sheets removed.** The two `vWallSheet`s on partition-1's
+   front face (u_p 100 h 35 / u_p 148 h 22) are gone — the user reads that
+   stretch as the Puelo Games section.
+2. **Screenshot-1 circles fixed (correct layer).** The three sheets pasted
+   on partition-2's front face (u_p 8/150/172) were the "papers above the
+   wall" — all removed. The near-wall floor piles are now emitted BEFORE
+   partition-2 in `floor-ground`, so the divider paints over their far
+   halves and they read as tucked under it: `(4,410,2)` moved from
+   freelancer-props and re-laid as `(4,408,2)`, plus new `(16,416,2)`.
+3. **More piles per screenshot-2 pins**: rear wall `wallSheet(7,78,0.1)`
+   and `(13,90,-0.08)`; tread sheets on steps 4 and 10
+   (`paperSheet(53,566,35.4)`, `(108,568,87.9)`); freelancer floor
+   `paperStack(68,508,2)`, `(74,482,2)`; BA-side piles in front of the
+   passage (correct layer: divider behind them) `(28,372,2)`, `(58,386,2)`,
+   `(80,392,1)`.
+4. **Nextcode pamphlet** (floor-1 rear wall's left corner, just above the
+   flight's rise): big white sheet u 26..58 × h 107..127 + 7 deterministic
+   hand-writing squiggle lines (`dw-scribble`) + pin dot. **Painter-order
+   trap**: it must live in floor-01 AFTER `backWalls(FH)` — the floor-ground
+   copy was completely hidden under the floor-1 story's rear wall (which is
+   drawn in floor-01). At the corrected height the banister diagonal no
+   longer crosses it (the earlier concern was for the ground-story height).
+5. **Floor-1 dev staffage** (user request: group of 4 right of the crates,
+   2 mostly behind the elevator): new `devFigure(v, u, shirt)` helper — flat
+   cutout (legs, torso, arms, head, hair) in the constant-v plane, muted
+   tones + thin outline. Two stand fully visible (`(438,56,'green')`,
+   `(424,44,'blue')`); the hidden pair revealed a hard geometric fact:
+   **from this camera the shaft's own mass covers the return wall's passage
+   entirely** (the W3 wall's u=0 cut face spans screen x 501.0..506.5 and the
+   W2 face x 564.1..598.1 — nothing of the notch's 559.8..598.6 window shows).
+   The only peek window is `x < ~501` (left of the shaft's cut face): the
+   pair stands in a row there — `(386,34,'grey')` rear and `(372,20,'brown')`
+   front — so the rear one's head shows above the front one's shoulder
+   (~35% of each figure visible). Verified at 14× zoom (`zoom-f1h.png`).
+6. Style additions: `.dw-scribble`, `.dw-dev-legs/-blue/-green/-brown/
+   -grey/-skin/-hair`.
+7. Lint clean; commit `dc7dc90`. User review pending — especially the
+   hidden-devs read at overview scale (they are ~2px slivers there) and the
+   BA-side pile placements.
+
 ## UPDATE #6 — 2026-09-11, sixth session (PC recalibrated + end-of-run; paper storm; floor-1 Nextcode)
 
 1. **User hand-edited `src/assets/freelancer-pc-01-cut.png`** (CRT now faces
