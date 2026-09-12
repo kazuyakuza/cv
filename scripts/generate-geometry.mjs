@@ -869,15 +869,47 @@ const baProps = [
   whiteboard(),
   assetProp(PUEL_TABLE, 62, 254, 0),
   el('dw-contact', hFace(52, 116, 246, 326, 0)),
-  // papers pasted on partition-2's front face: one left of the passage, two
-  // low on the wall right of the whiteboard (user request: more wall sheets)
-  vWallSheet(PARTITION_G[1] - WALL_T / 2 - 0.4, 8, 30, 0.1),
-  vWallSheet(PARTITION_G[1] - WALL_T / 2 - 0.4, 150, 16, -0.12),
-  vWallSheet(PARTITION_G[1] - WALL_T / 2 - 0.4, 172, 8, 0.1),
 ]
+// Nextcode pamphlet (user request): a big white sheet pinned on the rear
+// wall's left corner just above where the staircase rises into floor 1
+// (u 26..58, floor-1 heights 107..127), covered in unreadable hand-written
+// lines. Emitted in floor-ground BEFORE the staircase so the banister's
+// diagonal (nearer, at v = STAIR_V0) paints over it where their screen
+// regions cross; fully visible under the floor-02 slab cut
+// (h + 0.495·58 = 156 < 197.5).
+function nextcodePamphlet() {
+  const v = LD - WALL_T - 0.4
+  const u0 = 26
+  const u1 = 58
+  const h0 = 107
+  const h1 = 127
+  const out = [
+    el('dw-paper', vFace(v, u0, u1, h0, h1)),
+    // inner writing area slightly inset
+    el('dw-paper', vFace(v - 0.3, u0 + 1.4, u1 - 1.4, h0 + 1.4, h1 - 1.4)),
+  ]
+  // hand-written squiggle lines, deterministic
+  for (let k = 0; k < 7; k++) {
+    const hL = h0 + 3.6 + k * 2.1
+    const uR = u0 + 4 + hash2(k * 3, 41) * (u1 - u0 - 8)
+    const [x1, y1] = p(u0 + 2.4, v - 0.3, hL).split(',').map(Number)
+    const [xm, ym] = p((u0 + uR) / 2, v - 0.3, hL + (hash2(k, 43) - 0.5) * 0.7).split(',').map(Number)
+    const [x2, y2] = p(uR, v - 0.3, hL + (hash2(k, 47) - 0.5) * 0.5).split(',').map(Number)
+    out.push(el('dw-scribble', `M ${round(x1)} ${round(y1)} Q ${round(xm)} ${round(ym)} ${round(x2)} ${round(y2)}`))
+  }
+  const [px, py] = p((u0 + u1) / 2, v - 0.3, h1 - 1.3).split(',').map(Number)
+  out.push(`<circle class="dw-dot" cx="${round(px)}" cy="${round(py)}" r="0.9" />`)
+  return out
+}
 const floorGround = group('floor-ground', [
   ...slab(0),
   ...backWalls(0),
+  // Paper piles hugging partition-2's base on the freelancer side (user
+  // screenshot 1 + 2, "correct layer"): emitted BEFORE the wall so the
+  // wall's face paints over their far halves — they read as tucked under
+  // the divider instead of pasted on it.
+  ...paperStack(4, 408, 2),
+  ...paperStack(16, 416, 2),
   // Painter order, far to near: partition-2 (deepest divider), freelancer
   // props that sit behind/around the stair (emitted here so the staircase
   // fragment occludes them correctly), BA props between the partitions,
@@ -901,13 +933,17 @@ const floorGround = group('floor-ground', [
   wallSheet(5, 40, 0.15),
   wallSheet(21, 55, -0.08),
   wallSheet(19, 86, 0.08),
+  wallSheet(7, 78, 0.1),
+  wallSheet(13, 90, -0.08),
+  // BA-side paper piles near the passage (user red dots, screenshot 2):
+  // they sit on the BA floor in front of partition-2, so they are emitted
+  // after it (correct layer: the divider is behind them) and before
+  // partition-1 (nearer) so the front wall wins any overlap.
+  ...paperStack(28, 372, 2),
+  ...paperStack(58, 386, 2),
+  ...paperStack(80, 392, 1),
   ...baProps,
   ...partition(PARTITION_G[0], 0, { opening: true }),
-  // papers pasted on partition-1's front face right of its passage (user
-  // red pins, the wall stretch visible at the freelancer view's right);
-  // kept inside the slab-cut envelope (h + 0.495u < ~103)
-  vWallSheet(PARTITION_G[0] - WALL_T / 2 - 0.4, 100, 35, 0.12),
-  vWallSheet(PARTITION_G[0] - WALL_T / 2 - 0.4, 148, 22, -0.1),
   ...pueloProps,
   ...columns(0, STORY_H),
 ])
@@ -936,20 +972,24 @@ const freelancerProps = group('freelancer-props', [
   ...paperStack(55, 490, 1),
   ...paperStack(10, 528, 1),
   ...paperStack(20, 513, 3),
-  // more floor sheets (user red pins): front-left strip and the wedge
-  // between the flight's base and the PC
-  ...paperStack(4, 410, 2),
+  // more floor sheets (user red pins): the wedge between the flight's base
+  // and the PC; (4,410) moved into floor-ground as (4,408) so partition-2
+  // paints over its far half (correct layer, user screenshot 1)
   ...paperStack(6, 420, 1),
   ...paperStack(6, 500, 2),
   ...paperStack(16, 540, 2),
   ...paperStack(46, 522, 2),
   ...paperStack(60, 530, 2),
+  ...paperStack(68, 508, 2),
+  ...paperStack(74, 482, 2),
   // sheets dropped on the stair treads, rising with the flight (user pins)
   paperSheet(35, 562, 17.5 + 0.4, 6, 8.5, 0.3),
   paperSheet(48, 570, 26.25 + 0.4, 6, 8.5, -0.2),
+  paperSheet(53, 566, 35 + 0.4, 6, 8.5, 0.15),
   paperSheet(61, 566, 43.75 + 0.4, 6, 8.5, 0.25),
   paperSheet(78, 568, 61.25 + 0.4, 6, 8.5, -0.2),
   paperSheet(96, 570, 78.75 + 0.4, 6, 8.5, 0.3),
+  paperSheet(108, 568, 87.5 + 0.4, 6, 8.5, -0.2),
   paperSheet(113, 570, 96.25 + 0.4, 6, 8.5, -0.25),
   // sheets pasted on the flight's solid side face (v = STAIR_V0), kept below
   // the 1:1 profile top (h + 4.5 <= u - STAIR_U0 - 2)
@@ -957,10 +997,43 @@ const freelancerProps = group('freelancer-props', [
   vWallSheet(STAIR_V0 - 0.4, 95, 42, -0.12),
 ])
 
+// Standing dev figure (user request, Stage 5.5 §10): a flat staffage cutout
+// in the constant-v plane (facing the open front side) — legs, torso, arms,
+// head + hair — the architectural-drawing staffage idiom. Muted clothing
+// tones, thin outline. `v` the figure's depth, `u` its width position.
+const DEV_SHIRTS = { blue: 'dw-dev-blue', green: 'dw-dev-green', brown: 'dw-dev-brown', grey: 'dw-dev-grey' }
+function devFigure(v, u, shirt) {
+  const hb = 105
+  const q = (u0, u1, h0, h1, cls) => el(cls, path([p(u0, v, h0), p(u1, v, h0), p(u1, v, h1), p(u0, v, h1)]))
+  const out = [
+    // legs (dark trousers)
+    q(u - 2.4, u - 0.5, hb, hb + 13.5, 'dw-dev-legs'),
+    q(u + 0.5, u + 2.4, hb, hb + 13.5, 'dw-dev-legs'),
+    // torso (shirt)
+    q(u - 3.1, u + 3.1, hb + 12.5, hb + 26, DEV_SHIRTS[shirt]),
+    // arms (shirt sleeves)
+    q(u - 4.3, u - 3.1, hb + 13.5, hb + 25, DEV_SHIRTS[shirt]),
+    q(u + 3.1, u + 4.3, hb + 13.5, hb + 25, DEV_SHIRTS[shirt]),
+  ]
+  const [cx, cy] = p(u, v, hb + 29.6).split(',').map(Number)
+  out.push(`<circle class="dw-dev-skin" cx="${round(cx)}" cy="${round(cy)}" r="3.1" />`)
+  out.push(
+    `<path class="dw-dev-hair" d="M ${round(cx - 3.1)} ${round(cy)} A 3.1 3.1 0 0 1 ${round(cx + 3.1)} ${round(cy)} Z" />`,
+  )
+  return out
+}
+
 // --- floor-01: slab-1 with stair opening, story-1 walls, shaft return walls -
 const floor01 = group('floor-01', [
   ...slab(FH, { stairOpening: true }),
   ...backWalls(FH),
+  // Nextcode pamphlet (user request): a big white sheet pinned on the rear
+  // wall's left corner just above where the staircase rises into floor 1
+  // (u 26..58, h 107..127), covered in unreadable hand-written lines. Drawn
+  // right after this story's rear wall so the wall covers it (the
+  // floor-ground copy was hidden under backWalls(FH)); the story's own
+  // banister diagonal (nearer) still paints over its lower stretch.
+  ...nextcodePamphlet(),
   // Server rack group (Stage 5.5 §10, user revision): two tall cabinets and
   // one short one on the Health Platforms stretch, standing on the B-D
   // wall's near stretch where the sight line keeps them fully visible.
@@ -984,6 +1057,18 @@ const floor01 = group('floor-01', [
   assetWorkstation(WS_D, 110, 470, FH),
   ...crate(26, 36, 468, 478, FH, FH + 12),
   ...crate(28, 44, 452, 466, FH, FH + 15),
+  // Dev staffage (user request): a group of four right of the crates. Two
+  // stand fully visible; the other two stand mostly behind the elevator —
+  // from this camera the shaft's own mass (the W3 wall's u=0 cut face plus
+  // the W2 face) covers everything at x >= ~501 on that stretch, so the
+  // peek window is the sliver left of it: the pair stands in a row there,
+  // the rear one's head showing above the front one's shoulder. Emitted
+  // far-to-near; the shaft's faces (elevator fragment, later) paint over
+  // their right parts.
+  ...devFigure(438, 56, 'green'),
+  ...devFigure(424, 44, 'blue'),
+  ...devFigure(386, 34, 'grey'),
+  ...devFigure(372, 20, 'brown'),
   // Stair banister, upper element (user revision): the diagonal's floor-1
   // stretch plus its landing return, drawn after the story walls (the stair
   // opening shows it) but BEFORE the columns — column C, nearer to the
