@@ -149,16 +149,6 @@ export const svgStyle = `
     /* Hand-written squiggle lines (Nextcode pamphlet): unreadable writing */
     .dw-scribble { fill: none; stroke: #4a463f; stroke-width: 0.35; stroke-opacity: 0.65; stroke-linecap: round; }
 
-    /* Dev staffage figures (Stage 5.5 §10): flat cutout people in the
-       architectural-staffage idiom — muted clothing, thin outline */
-    .dw-dev-legs { fill: #45423c; stroke: #3a3833; stroke-width: 0.45; }
-    .dw-dev-blue { fill: #5d6b7e; stroke: #3a3833; stroke-width: 0.45; }
-    .dw-dev-green { fill: #5d6b52; stroke: #3a3833; stroke-width: 0.45; }
-    .dw-dev-brown { fill: #77685a; stroke: #3a3833; stroke-width: 0.45; }
-    .dw-dev-grey { fill: #6b675e; stroke: #3a3833; stroke-width: 0.45; }
-    .dw-dev-skin { fill: #c9a583; stroke: #3a3833; stroke-width: 0.4; }
-    .dw-dev-hair { fill: #38332c; stroke: none; }
-
     /* BA Technology whiteboard (Stage 5.5 §10, user revision of the
        blackboard): light aluminum frame + white writing surface + marker
        spreadsheet. Ink stays dark/desaturated — visible content, never

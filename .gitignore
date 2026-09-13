@@ -9,3 +9,5 @@ opencode.json
 # Windows shell cruft
 Thumbs.db
 Desktop.ini
+
+.git-credentials

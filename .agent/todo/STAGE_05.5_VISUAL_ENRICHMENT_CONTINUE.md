@@ -7,6 +7,68 @@ career diorama) at the end of the session of 2026-09-08. The previous
 handoff (from the prior session) is in the AGENTS.md work state; this file
 covers ONLY what happened in this session.
 
+## UPDATE #9 — 2026-09-13, eighth session (UPDATE #8 items DONE: dev sprite, pamphlet ×2/×3, doorway piles, wall-base layer)
+
+All four UPDATE #8 items implemented and verified in the render
+(`generated/dev/r12.png`; crops `chk-pamphlet.png`, `chk-doorway.png`,
+`chk-wallbase.png`, `chk-devs.png`, `chk-f1wide.png`, `chk-ba.png`,
+`overview.png`; crop boxes in `generated/dev/crop_r12.py`). Lint clean.
+
+1. **Nextcode devs are now a nano-banana sprite** (one composite image for
+   the whole group, per user decision). Pipeline:
+   - `generated/dev/make_wire_devs.py` → `devs-wire.png`: red outlines of the
+     four figures (current proportions, 32.7u tall) at the exact projected
+     positions; the front figure of each pair is drawn as a solid white
+     silhouette so the rear figure's outline survives only where visible.
+   - nano-banana (NB2, wireframe-only input, n=1) → `devs-cand.png` (chosen;
+     `devs-cand2.png` / `devs-cand3.png` discarded — stronger prompts made the
+     model spread the pairs further apart, and cand3 flattened the depth
+     offsets entirely).
+   - `generated/dev/key_cut_devs.py` → `src/assets/devs-01-cut.png` (675×962);
+     anchor = the front peeker's foot (bottom-row centre), k = 0.06056
+     (group screen height 57.96u).
+   - Integration: `DEV_GROUP` constant + `assetProp(DEV_GROUP, 20, 372, FH)`
+     replacing the four `devFigure()` calls, in the same layer slot (floor-01
+     AFTER `backWalls(FH)`, BEFORE `shaftReturnWalls`); `devFigure`,
+     `DEV_SHIRTS` and the `dw-dev-*` styles removed.
+   - **Deviation to review:** the generated art's internal arrangement is not
+     pixel-exact. Grey sits ~3.5 screen-px left of brown, so the peek sliver
+     is ~2.5× wider than the old SVG's (both heads plus body edges show
+     through the W3 cut-face window, x < 501.5) — still "two devs peeking
+     from behind the elevator", but more visible. The visible pair lands
+     ~3-5px left / 2-3px lower than the old geometry. Brown's foot sits
+     exactly at its old position. Fallback if the user wants the tighter
+     peek: split into two sprites (visible pair / peeking pair) or nudge the
+     sprite's anchor right (trades peek width against the visible pair's x).
+
+2. **Pamphlet ×2/×3** (user-approved size, cutaway accepted): u 26..90 ×
+   h 107..167 (was 26..58 × 107..127); squiggles 7 → 25 (same 2.1u pitch);
+   inner sheet + pin dot follow. The top-right corner tucks under the
+   floor-02 slab cut (hidden where h + 0.495·u ≥ 197.5, i.e. u > 61.6 at
+   h = 167) — clean diagonal, same language as the whiteboard's tuck.
+
+3. **BA-side piles moved through the doorway** (user: "move them in direction
+   to the freelancer section, under the door's head"): the three stacks now
+   live deep in the freelancer section at `(112,484,2)`, `(134,489,2)`,
+   `(148,492,1)`, emitted in `floor-ground` BEFORE
+   `partition(PARTITION_G[1], …)`. The passage notch (u 15..70, h 0..52.5 at
+   v0 = 396.09) reveals them near the head line. Placement rule (now in the
+   code comment): a floor point (u, v) behind the wall shows through the
+   notch iff its sight ray crosses the wall plane within
+   u' = u − v + 396.09 ∈ [15, 70] and h' = 0.495 (v − 396.09) ∈ [0, 52.5].
+
+4. **Wall-base layer fixed**: `(80,495,3)` and `(74,482,2)` moved from
+   `freelancer-props` into the before-partition-2 group, so the wall's
+   cut-end quad (screen x 464.6..469.9) clips their far tips coherently
+   under `dw-rough`. Pixel scan of the render confirms the paper now ends at
+   x ≤ 463.6 (no white over the cut end). Also caught and moved `(50,460,4)`,
+   which had the same overhang (tip x 466.8) but was not in the user's
+   circles.
+
+5. Housekeeping: `.gitignore` += `.git-credentials`; new `.ignore` with the
+   same entry. `crop_r12.py` is this session's crop script. AGENTS.md
+   "Development Status" is still stale boilerplate ("Stage 0 is next").
+
 ## UPDATE #8 — 2026-09-12, PENDING user issues (NOT worked yet — do these next)
 
 User listed these for a future session; no code was changed for them yet.
