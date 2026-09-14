@@ -2,10 +2,11 @@
 
 ## Session Context
 
-This file documents the state of Stage 05.5 (visual enrichment of the SVG
-career diorama) at the end of the session of 2026-09-08. The previous
-handoff (from the prior session) is in the AGENTS.md work state; this file
-covers ONLY what happened in this session.
+Rolling handoff log for Stage 05.5 (visual enrichment of the SVG career
+diorama): the newest update is at the top, older sessions below. Read only
+the top update plus any section it references; the older updates are
+historical but keep the derived placement rules and traps (each is still
+valid unless a later update says otherwise).
 
 ## UPDATE #9 — 2026-09-13, eighth session (UPDATE #8 items DONE: dev sprite, pamphlet ×2/×3, doorway piles, wall-base layer)
 
@@ -31,15 +32,16 @@ All four UPDATE #8 items implemented and verified in the render
      replacing the four `devFigure()` calls, in the same layer slot (floor-01
      AFTER `backWalls(FH)`, BEFORE `shaftReturnWalls`); `devFigure`,
      `DEV_SHIRTS` and the `dw-dev-*` styles removed.
-   - **Deviation to review:** the generated art's internal arrangement is not
-     pixel-exact. Grey sits ~3.5 screen-px left of brown, so the peek sliver
-     is ~2.5× wider than the old SVG's (both heads plus body edges show
-     through the W3 cut-face window, x < 501.5) — still "two devs peeking
-     from behind the elevator", but more visible. The visible pair lands
-     ~3-5px left / 2-3px lower than the old geometry. Brown's foot sits
-     exactly at its old position. Fallback if the user wants the tighter
-     peek: split into two sprites (visible pair / peeking pair) or nudge the
-     sprite's anchor right (trades peek width against the visible pair's x).
+   - **Known deviation, reviewed and ACCEPTED by the user (2026-09-13):** the
+     generated art's internal arrangement is not pixel-exact. Grey sits
+     ~3.5 screen-px left of brown, so the peek sliver is ~2.5× wider than
+     the old SVG's (both heads plus body edges show through the W3 cut-face
+     window, x < 501.5) — read as "two devs peeking from behind the
+     elevator" and kept as-is. The visible pair lands ~3-5px left / 2-3px
+     lower than the old geometry; brown's foot sits exactly at its old
+     position. No follow-up needed; if ever revisited, the fallbacks are
+     splitting into two sprites (visible pair / peeking pair) or nudging
+     the anchor right (trades peek width against the visible pair's x).
 
 2. **Pamphlet ×2/×3** (user-approved size, cutaway accepted): u 26..90 ×
    h 107..167 (was 26..58 × 107..127); squiggles 7 → 25 (same 2.1u pitch);
@@ -69,7 +71,16 @@ All four UPDATE #8 items implemented and verified in the render
    same entry. `crop_r12.py` is this session's crop script. AGENTS.md
    "Development Status" is still stale boilerplate ("Stage 0 is next").
 
-## UPDATE #8 — 2026-09-12, PENDING user issues (NOT worked yet — do these next)
+6. **Session closed: user reviewed the render and approved all four items
+   (2026-09-13).** No open issues carried over. Next session: continue
+   Stage 5.5 from the user's next revision list (the stage spec's §17
+   acceptance criteria remain the guide); UPDATE #8 below is historical —
+   every item it listed is closed here. Rebuild/render workflow unchanged:
+   `npm run svg:generate` → `svg:assemble` → `generated/dev/make_chk.py` →
+   headless Edge screenshot (S=2.5, 3000×2625) → crop script. Known cleanup
+   whenever convenient: refresh AGENTS.md's stale "Development Status".
+
+## UPDATE #8 — 2026-09-12 (HISTORICAL — all items closed by UPDATE #9; kept for context)
 
 User listed these for a future session; no code was changed for them yet.
 
