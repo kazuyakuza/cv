@@ -8,6 +8,37 @@ the top update plus any section it references; the older updates are
 historical but keep the derived placement rules and traps (each is still
 valid unless a later update says otherwise).
 
+## UPDATE #12 — 2026-09-14, eleventh session (user revision: box further left-down + 50% wider/deeper; sitter −15% and nearer the wall; contact shadow fixed)
+
+User revision on UPDATE #11's render: "move the open box some more to the same
+direction, and increase 50% its width and depth. it seems that double the size
+of the seated DBA was too much, reduce it 15%, and move it a little more near
+to the B-D wall, and also fix the shadow under him."
+
+1. **Sitter −15%** (`k` 0.0691 → 0.058735): seated height 41.46u → 35.24u
+   (`ax`/`ay` 22.85/35.36). Moved +6u toward the B-D wall:
+   `assetProp(SITTER, 160, 82, FH)` (screen x +4.2px).
+2. **Contact shadow fixed**: the old u/v footprint quad read as a stray
+   streak (a billboard has no honest plan footprint). New
+   `spriteShadow(sp, u, v, h)` helper: a soft screen-space ellipse sized to
+   the sprite's base (rx = 44% of the sprite width, ry 3.6, `#141618` @ 0.22,
+   `dw-soft`), locked to the sprite via `spritePlace()` — same blurred
+   language as the career sign. Replaces the sitter's `dw-contact` quad.
+3. **Box moved further left-down and grown 50% in width/depth**:
+   `paperBox(128, 158, 124, 154, FH, FH + 16)` — 30×30×16 (was 20×20×16),
+   centre screen x 760 → 753 (the section centre), y 809 → 802. Fill/overflow
+   sheet counts and jitter now scale with the box plan (9 fill / 10 overflow,
+   jitter ±35% / ±70% of the size).
+4. **Reams moved 6u forward** (v 115 → 109, screen +4.2px) so the sitter's
+   +6u move keeps the same clearance to the first stack (his hand overlaps
+   its left ~3px as before). Contact shadow band follows (v 104..114).
+5. Known interaction (user to judge): the foreground corner column A
+   (screen x ≈ 750.2, v = 0 — in front of everything) now crosses the box's
+   middle-left. Correct occlusion, but it reads as a line through the box;
+   fallback if it bothers: nudge the box so the column lands on its edge.
+6. Verified in `generated/dev/r20.png` (crops `chk-hp.png`, `chk-hpwide.png`,
+   `overview.png`; crop boxes widened in `crop_r14.py`). Lint clean.
+
 ## UPDATE #11 — 2026-09-14, tenth session (user revision: DBA vignette box + sitter doubled)
 
 User revision on UPDATE #10's render: "double the size of the open box ... and

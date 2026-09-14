@@ -260,13 +260,14 @@ const DEV_GROUP = { file: 'devs-01-cut.png', w: 675, h: 962, k: 0.06056, ax: 29.
 // Wireframe-only pipeline: generated/dev/make_wire_sitter.py →
 // sitter-wire.png → key_cut_sitter.py. Anchor = the sprite's bottom-row
 // centre (the foot contact; wireframe foot at u 205.5) placed at
-// p(154, 82, FH); k keeps the seated height at 41.46u (user revision:
-// doubled from 20.73u). He faces the B-D wall (profile billboard, like the
-// devs). The doubled figure's head sits at effective h ~151; the floor-2
-// slab cut caps the height at that spot at h + 0.495·v ≤ 197.5, so v had to
-// come forward from 130 to 82 — moving along the (-u,-v) view diagonal kept
-// his screen x exactly where the user approved it.
-const SITTER = { file: 'sitter-01-cut.png', w: 481, h: 605, k: 0.0691, ax: 26.88, ay: 41.6 }
+// p(160, 82, FH); k keeps the seated height at 35.24u (user revisions:
+// doubled from 20.73u, then reduced 15% — "double was too much"). He faces
+// the B-D wall (profile billboard, like the devs). The head sits ~15.7u
+// forward of the anchor (which lifts it on screen); the floor-2 slab cut
+// caps the height at that spot at h + 0.495·v ≤ 197.5, which is why v came
+// forward from 130 to 82 — the (-u,-v) view diagonal kept his screen x
+// where the user approved it.
+const SITTER = { file: 'sitter-01-cut.png', w: 481, h: 605, k: 0.058735, ax: 22.85, ay: 35.36 }
 function spritePlace(sp, uAnchor, vAnchor, hBase) {
   const [bx, by] = p(uAnchor, vAnchor, hBase).split(',').map(Number)
   return { x: round(bx - sp.ax), y: round(by - sp.ay) }
@@ -274,6 +275,16 @@ function spritePlace(sp, uAnchor, vAnchor, hBase) {
 function assetProp(sp, uAnchor, vAnchor, hBase) {
   const { x, y } = spritePlace(sp, uAnchor, vAnchor, hBase)
   return `<image href="${inlineAsset(sp.file)}" x="${x}" y="${y}" width="${round(sp.w * sp.k)}" height="${round(sp.h * sp.k)}" preserveAspectRatio="none" />`
+}
+// Soft contact shadow under a billboard sprite (user revision for the seated
+// sitter: a u/v footprint quad reads as a stray streak — a billboard has no
+// honest plan footprint). Screen-space ellipse sized to the sprite's base,
+// locked to the sprite via spritePlace; same blurred language as the
+// career-sign shadow (#141618, dw-soft).
+function spriteShadow(sp, uAnchor, vAnchor, hBase) {
+  const { x, y } = spritePlace(sp, uAnchor, vAnchor, hBase)
+  const w = sp.w * sp.k
+  return `<ellipse cx="${round(x + w / 2)}" cy="${round(y + sp.ay - 1)}" rx="${round(w * 0.44)}" ry="3.6" fill="#141618" fill-opacity="0.22" filter="url(#dw-soft)" />`
 }
 
 // Space Invaders on the kiosk's dark screen (user request): the game is drawn
@@ -401,11 +412,13 @@ function paperBox(u0, u1, v0, v1, h0, h1) {
   ]
   // sheets filling the box below the rim (the near wall hides their fronts)
   const fill = h1 - h0 - 3
-  for (let i = 0; i < 6; i++) {
-    const jx = (hash2(i * 13 + 1, 7) - 0.5) * 5
-    const jy = (hash2(i * 17 + 2, 9) - 0.5) * 5
+  const fw = (u1 - u0) * 0.35
+  const fd = (v1 - v0) * 0.35
+  for (let i = 0; i < 9; i++) {
+    const jx = (hash2(i * 13 + 1, 7) - 0.5) * fw
+    const jy = (hash2(i * 17 + 2, 9) - 0.5) * fd
     const rot = (hash2(i * 19 + 3, 11) - 0.5) * 0.5
-    out.push(paperSheet((u0 + u1) / 2 + jx, (v0 + v1) / 2 + jy, h0 + 2 + (i * fill) / 5, 6.5, 9, rot))
+    out.push(paperSheet((u0 + u1) / 2 + jx, (v0 + v1) / 2 + jy, h0 + 2 + (i * fill) / 8, 6.5, 9, rot))
   }
   out.push(el('dw-crate', uFace(u0, v0, v1, h0, h1)))
   out.push(el('dw-crate', vFace(v0, u0, u1, h0, h1)))
@@ -414,11 +427,13 @@ function paperBox(u0, u1, v0, v1, h0, h1) {
   out.push(el('dw-crate-top', hFace(u0 + T, u1, v1 - T, v1, h1)))
   out.push(el('dw-crate-top', hFace(u1 - T, u1, v0 + T, v1 - T, h1)))
   // unordered sheets overflowing over the rim
-  for (let i = 0; i < 8; i++) {
-    const jx = (hash2(i * 23 + 5, 13) - 0.5) * 9
-    const jy = (hash2(i * 29 + 6, 17) - 0.5) * 9
+  const ow = (u1 - u0) * 0.7
+  const od = (v1 - v0) * 0.7
+  for (let i = 0; i < 10; i++) {
+    const jx = (hash2(i * 23 + 5, 13) - 0.5) * ow
+    const jy = (hash2(i * 29 + 6, 17) - 0.5) * od
     const rot = (hash2(i * 31 + 7, 19) - 0.5) * 1.2
-    out.push(paperSheet((u0 + u1) / 2 + jx, (v0 + v1) / 2 + jy, h1 - 2 + i * 1.1, 6.5, 9, rot))
+    out.push(paperSheet((u0 + u1) / 2 + jx, (v0 + v1) / 2 + jy, h1 - 2 + i * 0.95, 6.5, 9, rot))
   }
   return out
 }
@@ -1120,22 +1135,23 @@ const floor01 = group('floor-01', [
   // (screen-left), the DBA sitting on the floor parsing/comparing them
   // (centre, facing the B-D wall) and four tall ordered reams of processed
   // data (screen-right, toward the server racks that hold the database).
-  // User revision: box and sitter doubled in size; the box also moved a
-  // little left-down the view diagonal (toward the section centre), the
-  // sitter kept his approved screen x (the doubled sprite forced v forward
-  // — see the SITTER constant). Group stays inside the floor-2 slab
+  // User revisions: box and sitter doubled (then the sitter −15%), box moved
+  // further left-down the view diagonal toward the section centre and grown
+  // 50% wider/deeper (30x30x16). The group stays inside the floor-2 slab
   // envelope (h + 0.495·min(u,v) ≤ 197.5) and clear of the electrical panel
-  // and its conduit drop (v 168..192). Emitted far-to-near: box
-  // (v 134..154), reams (v 115), sitter (v 82), then the racks (v 20..94).
-  el('dw-contact', hFace(146, 170, 132, 156, FH)),
-  el('dw-contact', hFace(191, 230, 109, 121, FH)),
-  el('dw-contact', hFace(116, 164, 78, 86, FH)),
-  ...paperBox(148, 168, 134, 154, FH, FH + 16),
-  ...paperReam(195, 115, 30, FH),
-  ...paperReam(205.5, 115, 30, FH),
-  ...paperReam(216, 115, 30, FH),
-  ...paperReam(226.5, 115, 30, FH),
-  assetProp(SITTER, 154, 82, FH),
+  // and its conduit drop (v 168..192). The reams moved 6u forward with the
+  // sitter (v 115 → 109) so his body does not cover the first stack. Emitted
+  // far-to-near: box (v 124..154), reams (v 109), sitter (v 82), then the
+  // racks (v 20..94) below.
+  el('dw-contact', hFace(126, 160, 122, 156, FH)),
+  el('dw-contact', hFace(190, 231, 104, 114, FH)),
+  spriteShadow(SITTER, 160, 82, FH),
+  ...paperBox(128, 158, 124, 154, FH, FH + 16),
+  ...paperReam(195, 109, 30, FH),
+  ...paperReam(205.5, 109, 30, FH),
+  ...paperReam(216, 109, 30, FH),
+  ...paperReam(226.5, 109, 30, FH),
+  assetProp(SITTER, 160, 82, FH),
   // Server rack group (Stage 5.5 §10, user revision): two tall cabinets and
   // one short one on the Health Platforms stretch, standing on the B-D
   // wall's near stretch where the sight line keeps them fully visible.
