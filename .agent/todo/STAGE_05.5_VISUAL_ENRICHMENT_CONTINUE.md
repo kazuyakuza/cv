@@ -8,6 +8,28 @@ the top update plus any section it references; the older updates are
 historical but keep the derived placement rules and traps (each is still
 valid unless a later update says otherwise).
 
+## UPDATE #14 — 2026-09-14, thirteenth session (user correction: box file runs toward the rear wall, not diagonally)
+
+User correction on UPDATE #13: "you add them in diagonal, and must be one side
+other in direction to the building's rear wall."
+
+1. The two added boxes are re-laid in a file along the DEPTH axis instead of
+   the diagonal: same u band as the original box (128..158), v stepping 30u
+   per box so the walls touch — `paperBox(128, 158, 154, 184, FH, FH+16, 1)`
+   and `paperBox(128, 158, 184, 214, FH, FH+16, 2)`; the original
+   `(128, 158, 124, 154)` is unchanged. On screen the row recedes up-left
+   toward the building's rear (C-D) wall; each box half-hides behind the
+   nearer one (isometric depth overlap) — the expected read for boxes queued
+   on the floor.
+2. The three per-box contact quads are replaced by ONE row shadow
+   (`hFace(126, 160, 122, 216, FH)`) — touching boxes share one footprint.
+3. Known minor interaction (same slab-cut language as elsewhere): the deeper
+   boxes' top-back corners tuck a hair under the floor-2 slab cut
+   (h + 0.495·min(u,v) ≤ 197.5); the farthest box's back rim clips ~1.7u and
+   a few overflow sheet tips near it. Reads as the established cutaway.
+4. Verified in `generated/dev/r23.png` (crops `chk-hp.png`, `chk-hpwide.png`,
+   `overview.png`). Lint clean.
+
 ## UPDATE #13 — 2026-09-14, twelfth session (user request: two more open boxes in file toward the elevator door)
 
 User request: "add in file in direction to the door 2 more open boxes. you may

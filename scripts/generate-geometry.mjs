@@ -1142,21 +1142,21 @@ const floor01 = group('floor-01', [
   // User revisions: box and sitter doubled (then the sitter −15%), box moved
   // further left-down the view diagonal toward the section centre and grown
   // 50% wider/deeper (30x30x16), interior recoloured to paper. Latest: TWO
-  // more boxes in file toward the elevator door (the section's only door):
-  // the file runs along the diagonal from the box centre to the W2 door
-  // (u 6.5..41.7, v 263), one 44u step per box, so the three queue up
-  // corner-to-corner toward the shaft. The group stays inside the floor-2
-  // slab envelope (h + 0.495·min(u,v) ≤ 197.5) and clear of the electrical
-  // panel and its conduit drop (v 168..192). Emitted far-to-near: boxes
-  // (v 187..217 / 156..186 / 124..154), reams (v 109), sitter (v 82), then
-  // the racks (v 20..94) below.
-  el('dw-contact', hFace(65, 99, 185, 219, FH)),
-  el('dw-contact', hFace(96, 130, 154, 188, FH)),
-  el('dw-contact', hFace(126, 160, 122, 156, FH)),
+  // more boxes in file — user correction of the first attempt (which ran
+  // diagonally toward the elevator door): the three must sit one beside the
+  // other along the DEPTH axis, queued toward the building's rear (C-D)
+  // wall. Same u band as the original box, v stepping 30u per box so the
+  // walls touch. The group stays inside the floor-2 slab envelope
+  // (h + 0.495·min(u,v) ≤ 197.5 — the deeper boxes' top-back corners tuck a
+  // hair under the slab cut) and clear of the electrical panel and its
+  // conduit drop (v 168..192, high on the B-D wall). Emitted far-to-near:
+  // boxes (v 184..214 / 154..184 / 124..154), reams (v 109), sitter (v 82),
+  // then the racks (v 20..94) below.
+  el('dw-contact', hFace(126, 160, 122, 216, FH)),
   el('dw-contact', hFace(190, 231, 104, 114, FH)),
   spriteShadow(SITTER, 160, 82, FH),
-  ...paperBox(67, 97, 187, 217, FH, FH + 16, 2),
-  ...paperBox(98, 128, 156, 186, FH, FH + 16, 1),
+  ...paperBox(128, 158, 184, 214, FH, FH + 16, 2),
+  ...paperBox(128, 158, 154, 184, FH, FH + 16, 1),
   ...paperBox(128, 158, 124, 154, FH, FH + 16),
   ...paperReam(195, 109, 30, FH),
   ...paperReam(205.5, 109, 30, FH),
