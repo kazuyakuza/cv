@@ -406,9 +406,11 @@ function paperReam(u, v, n, hBase = 0) {
 function paperBox(u0, u1, v0, v1, h0, h1) {
   const T = 2.8 // cardboard thickness (rim strips) — scales with the box
   const out = [
-    el('dw-crate-side', hFace(u0, u1, v0, v1, h0)),
-    el('dw-crate-side', vFace(v1, u0, u1, h0, h1)),
-    el('dw-crate-side', uFace(u1, v0, v1, h0, h1)),
+    // interior reads as paper (user revision): floor and inner walls share
+    // the sheet colour so the open box looks full of paper at a glance
+    el('dw-paper', hFace(u0, u1, v0, v1, h0)),
+    el('dw-paper', vFace(v1, u0, u1, h0, h1)),
+    el('dw-paper', uFace(u1, v0, v1, h0, h1)),
   ]
   // sheets filling the box below the rim (the near wall hides their fronts)
   const fill = h1 - h0 - 3

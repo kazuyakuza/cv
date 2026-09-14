@@ -38,6 +38,11 @@ to the B-D wall, and also fix the shadow under him."
    fallback if it bothers: nudge the box so the column lands on its edge.
 6. Verified in `generated/dev/r20.png` (crops `chk-hp.png`, `chk-hpwide.png`,
    `overview.png`; crop boxes widened in `crop_r14.py`). Lint clean.
+7. **Box interior recoloured to the paper tone** (user revision: "change the
+   INTERNAL color of it to same color of the papers, to simulate that is full
+   of papers"): the interior floor and inner far/right faces switch from
+   `dw-crate-side` to `dw-paper`; outer walls and rim strips stay cardboard.
+   Verified in `generated/dev/r21.png`.
 
 ## UPDATE #11 — 2026-09-14, tenth session (user revision: DBA vignette box + sitter doubled)
 
