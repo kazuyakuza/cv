@@ -260,9 +260,13 @@ const DEV_GROUP = { file: 'devs-01-cut.png', w: 675, h: 962, k: 0.06056, ax: 29.
 // Wireframe-only pipeline: generated/dev/make_wire_sitter.py →
 // sitter-wire.png → key_cut_sitter.py. Anchor = the sprite's bottom-row
 // centre (the foot contact; wireframe foot at u 205.5) placed at
-// p(202, 130, FH); k keeps the seated height at 20.73u. He faces the B-D
-// wall (profile billboard, like the devs).
-const SITTER = { file: 'sitter-01-cut.png', w: 481, h: 605, k: 0.03455, ax: 13.44, ay: 20.8 }
+// p(154, 82, FH); k keeps the seated height at 41.46u (user revision:
+// doubled from 20.73u). He faces the B-D wall (profile billboard, like the
+// devs). The doubled figure's head sits at effective h ~151; the floor-2
+// slab cut caps the height at that spot at h + 0.495·v ≤ 197.5, so v had to
+// come forward from 130 to 82 — moving along the (-u,-v) view diagonal kept
+// his screen x exactly where the user approved it.
+const SITTER = { file: 'sitter-01-cut.png', w: 481, h: 605, k: 0.0691, ax: 26.88, ay: 41.6 }
 function spritePlace(sp, uAnchor, vAnchor, hBase) {
   const [bx, by] = p(uAnchor, vAnchor, hBase).split(',').map(Number)
   return { x: round(bx - sp.ax), y: round(by - sp.ay) }
@@ -389,18 +393,19 @@ function paperReam(u, v, n, hBase = 0) {
 // Painter order: interior (floor, inner far/right faces, fill sheets),
 // outer left/near walls, rim strips, then the overflow sheets on top.
 function paperBox(u0, u1, v0, v1, h0, h1) {
-  const T = 1.4 // cardboard thickness (rim strips)
+  const T = 2.8 // cardboard thickness (rim strips) — scales with the box
   const out = [
     el('dw-crate-side', hFace(u0, u1, v0, v1, h0)),
     el('dw-crate-side', vFace(v1, u0, u1, h0, h1)),
     el('dw-crate-side', uFace(u1, v0, v1, h0, h1)),
   ]
   // sheets filling the box below the rim (the near wall hides their fronts)
-  for (let i = 0; i < 5; i++) {
-    const jx = (hash2(i * 13 + 1, 7) - 0.5) * 2.4
-    const jy = (hash2(i * 17 + 2, 9) - 0.5) * 2.4
+  const fill = h1 - h0 - 3
+  for (let i = 0; i < 6; i++) {
+    const jx = (hash2(i * 13 + 1, 7) - 0.5) * 5
+    const jy = (hash2(i * 17 + 2, 9) - 0.5) * 5
     const rot = (hash2(i * 19 + 3, 11) - 0.5) * 0.5
-    out.push(paperSheet((u0 + u1) / 2 + jx, (v0 + v1) / 2 + jy, h0 + 2 + i * 1.1, 6.5, 9, rot))
+    out.push(paperSheet((u0 + u1) / 2 + jx, (v0 + v1) / 2 + jy, h0 + 2 + (i * fill) / 5, 6.5, 9, rot))
   }
   out.push(el('dw-crate', uFace(u0, v0, v1, h0, h1)))
   out.push(el('dw-crate', vFace(v0, u0, u1, h0, h1)))
@@ -409,11 +414,11 @@ function paperBox(u0, u1, v0, v1, h0, h1) {
   out.push(el('dw-crate-top', hFace(u0 + T, u1, v1 - T, v1, h1)))
   out.push(el('dw-crate-top', hFace(u1 - T, u1, v0 + T, v1 - T, h1)))
   // unordered sheets overflowing over the rim
-  for (let i = 0; i < 6; i++) {
-    const jx = (hash2(i * 23 + 5, 13) - 0.5) * 5
-    const jy = (hash2(i * 29 + 6, 17) - 0.5) * 5
+  for (let i = 0; i < 8; i++) {
+    const jx = (hash2(i * 23 + 5, 13) - 0.5) * 9
+    const jy = (hash2(i * 29 + 6, 17) - 0.5) * 9
     const rot = (hash2(i * 31 + 7, 19) - 0.5) * 1.2
-    out.push(paperSheet((u0 + u1) / 2 + jx, (v0 + v1) / 2 + jy, h1 - 1.2 + i * 0.9, 6.5, 9, rot))
+    out.push(paperSheet((u0 + u1) / 2 + jx, (v0 + v1) / 2 + jy, h1 - 2 + i * 1.1, 6.5, 9, rot))
   }
   return out
 }
@@ -1115,20 +1120,22 @@ const floor01 = group('floor-01', [
   // (screen-left), the DBA sitting on the floor parsing/comparing them
   // (centre, facing the B-D wall) and four tall ordered reams of processed
   // data (screen-right, toward the server racks that hold the database).
-  // Positioned in the room centre pulled toward the B-D wall, left of the
-  // racks; the whole group stays inside the floor-2 slab envelope
-  // (h + 0.495·min(u,v) ≤ 197.5) and clear of the electrical panel and its
-  // conduit drop (v 168..192). Emitted far-to-near: box (v ~147..157),
-  // sitter (v 130), reams (v 115), then the racks (v 20..94) below.
-  el('dw-contact', hFace(191, 205, 145, 159, FH)),
-  el('dw-contact', hFace(194, 208, 125, 135, FH)),
+  // User revision: box and sitter doubled in size; the box also moved a
+  // little left-down the view diagonal (toward the section centre), the
+  // sitter kept his approved screen x (the doubled sprite forced v forward
+  // — see the SITTER constant). Group stays inside the floor-2 slab
+  // envelope (h + 0.495·min(u,v) ≤ 197.5) and clear of the electrical panel
+  // and its conduit drop (v 168..192). Emitted far-to-near: box
+  // (v 134..154), reams (v 115), sitter (v 82), then the racks (v 20..94).
+  el('dw-contact', hFace(146, 170, 132, 156, FH)),
   el('dw-contact', hFace(191, 230, 109, 121, FH)),
-  ...paperBox(193, 203, 147, 157, FH, FH + 8),
-  assetProp(SITTER, 202, 130, FH),
+  el('dw-contact', hFace(116, 164, 78, 86, FH)),
+  ...paperBox(148, 168, 134, 154, FH, FH + 16),
   ...paperReam(195, 115, 30, FH),
   ...paperReam(205.5, 115, 30, FH),
   ...paperReam(216, 115, 30, FH),
   ...paperReam(226.5, 115, 30, FH),
+  assetProp(SITTER, 154, 82, FH),
   // Server rack group (Stage 5.5 §10, user revision): two tall cabinets and
   // one short one on the Health Platforms stretch, standing on the B-D
   // wall's near stretch where the sight line keeps them fully visible.

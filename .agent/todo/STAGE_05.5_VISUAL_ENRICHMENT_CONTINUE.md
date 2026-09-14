@@ -8,6 +8,33 @@ the top update plus any section it references; the older updates are
 historical but keep the derived placement rules and traps (each is still
 valid unless a later update says otherwise).
 
+## UPDATE #11 — 2026-09-14, tenth session (user revision: DBA vignette box + sitter doubled)
+
+User revision on UPDATE #10's render: "double the size of the open box ... and
+move it a little to the left down diagonal (in direction to the center of the
+section); double the size of the seated DBA, position is okay."
+
+1. **Sitter doubled** (`k` 0.03455 → 0.0691, `ax`/`ay` doubled): seated
+   height 20.73u → 41.46u (now taller than the 32.7u standing devs — flagged
+   to the user). **Position constraint**: at this size the head's effective
+   height is ~151u (the sprite's head sits ~18.5u forward of the anchor,
+   which lifts it), and the floor-2 slab cut caps anything at that spot at
+   `h + 0.495·v ≤ 197.5`; at the approved v=130 the head would be hidden
+   behind the floor-2 slab. Moved along the (-u,-v) view diagonal to
+   `assetProp(SITTER, 154, 82, FH)` — same screen x as approved, ~22px lower.
+2. **Box doubled** (10×10×8 → 20×20×16) and moved left-down the view diagonal
+   toward the section centre: `paperBox(148, 168, 134, 154, FH, FH+16)`
+   (screen centre 782.5 → 759.9 x, 793 → 809 y). Rim thickness, fill-sheet
+   pitch/count and overflow count scale with the box (T 1.4 → 2.8, 6 fill
+   sheets spread over the inner height, 8 overflow sheets).
+3. Vignette emission order is now far-to-near: box (v 134..154), reams
+   (v 115), sitter (v 82); contact shadows follow.
+4. Verified in `generated/dev/r19.png` (crops `chk-hp.png`, `chk-hpwide.png`,
+   `overview.png`; crop boxes retuned in `crop_r14.py`). Lint clean.
+5. Open question for the next review: the reams (10.8u) now read small next
+   to the doubled sitter and sit 33u behind him (unchanged per instruction);
+   if the user wants, scale/move them with the vignette.
+
 ## UPDATE #10 — 2026-09-14, ninth session (Health Platforms DBA vignette; dark review renders)
 
 User task: "first add something more to the Health Platforms section" — a
