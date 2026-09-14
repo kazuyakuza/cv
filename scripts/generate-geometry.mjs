@@ -254,6 +254,15 @@ const FREELANCER_PC = { file: 'freelancer-pc-01-cut.png', w: 475, h: 544, k: 0.0
 // foot: the sprite's bottom-row centre, mapped to p(20, 372, FH); k keeps
 // the group's screen height at 57.96u (green head top .. brown feet).
 const DEV_GROUP = { file: 'devs-01-cut.png', w: 675, h: 962, k: 0.06056, ax: 29.25, ay: 58.08 }
+// Health Platforms seated-DBA staffage (user request, Stage 5.5 §10): ONE
+// person sitting on the floor reading a handful of papers, placed left of
+// the server racks (v 20..94) in the room centre pulled toward the B-D wall.
+// Wireframe-only pipeline: generated/dev/make_wire_sitter.py →
+// sitter-wire.png → key_cut_sitter.py. Anchor = the sprite's bottom-row
+// centre (the foot contact; wireframe foot at u 205.5) placed at
+// p(202, 130, FH); k keeps the seated height at 20.73u. He faces the B-D
+// wall (profile billboard, like the devs).
+const SITTER = { file: 'sitter-01-cut.png', w: 481, h: 605, k: 0.03455, ax: 13.44, ay: 20.8 }
 function spritePlace(sp, uAnchor, vAnchor, hBase) {
   const [bx, by] = p(uAnchor, vAnchor, hBase).split(',').map(Number)
   return { x: round(bx - sp.ax), y: round(by - sp.ay) }
@@ -347,6 +356,64 @@ function paperStack(u, v, n) {
     const jy = (hash2(v * 10 + i, 2) - 0.5) * 1.8
     const rot = (hash2(u * 10 + v + i, 3) - 0.5) * 0.6
     out.push(paperSheet(u + jx, v + jy, 0.3 + i * 0.4, 6.5, 9, rot))
+  }
+  return out
+}
+// Neat ream of processed records (Health Platforms DBA vignette): an
+// A4-sized (4 x 5.6u) solid paper block with a top face and sparse sheet
+// lines on the near/left faces — the "very tall ordered stack" of the DBA
+// vignette. A block reads as one clean tower where a pile of flat quads at
+// this scale merges into a heap. n sheets at 0.36u pitch set the height.
+function paperReam(u, v, n, hBase = 0) {
+  const w = 4.0
+  const d = 5.6
+  const u0 = u - w / 2
+  const u1 = u + w / 2
+  const v0 = v - d / 2
+  const v1 = v + d / 2
+  const h1 = hBase + n * 0.36
+  const out = [
+    el('dw-ream', vFace(v0, u0, u1, hBase, h1)),
+    el('dw-ream-side', uFace(u0, v0, v1, hBase, h1)),
+    el('dw-paper', hFace(u0, u1, v0, v1, h1)),
+  ]
+  for (let h = hBase + 2.2; h < h1 - 1; h += 2.2) {
+    out.push(el('dw-ream-line', `M ${p(u0, v0, h)} L ${p(u1, v0, h)}`))
+    out.push(el('dw-ream-line', `M ${p(u0, v0, h)} L ${p(u0, v1, h)}`))
+  }
+  return out
+}
+// Open cardboard box full of unordered papers (Health Platforms DBA
+// vignette): the incoming-data pile. Four walls with the top open, sheets
+// filling the box below the rim and jittered sheets overflowing over it.
+// Painter order: interior (floor, inner far/right faces, fill sheets),
+// outer left/near walls, rim strips, then the overflow sheets on top.
+function paperBox(u0, u1, v0, v1, h0, h1) {
+  const T = 1.4 // cardboard thickness (rim strips)
+  const out = [
+    el('dw-crate-side', hFace(u0, u1, v0, v1, h0)),
+    el('dw-crate-side', vFace(v1, u0, u1, h0, h1)),
+    el('dw-crate-side', uFace(u1, v0, v1, h0, h1)),
+  ]
+  // sheets filling the box below the rim (the near wall hides their fronts)
+  for (let i = 0; i < 5; i++) {
+    const jx = (hash2(i * 13 + 1, 7) - 0.5) * 2.4
+    const jy = (hash2(i * 17 + 2, 9) - 0.5) * 2.4
+    const rot = (hash2(i * 19 + 3, 11) - 0.5) * 0.5
+    out.push(paperSheet((u0 + u1) / 2 + jx, (v0 + v1) / 2 + jy, h0 + 2 + i * 1.1, 6.5, 9, rot))
+  }
+  out.push(el('dw-crate', uFace(u0, v0, v1, h0, h1)))
+  out.push(el('dw-crate', vFace(v0, u0, u1, h0, h1)))
+  out.push(el('dw-crate-top', hFace(u0, u1, v0, v0 + T, h1)))
+  out.push(el('dw-crate-top', hFace(u0, u0 + T, v0 + T, v1, h1)))
+  out.push(el('dw-crate-top', hFace(u0 + T, u1, v1 - T, v1, h1)))
+  out.push(el('dw-crate-top', hFace(u1 - T, u1, v0 + T, v1 - T, h1)))
+  // unordered sheets overflowing over the rim
+  for (let i = 0; i < 6; i++) {
+    const jx = (hash2(i * 23 + 5, 13) - 0.5) * 5
+    const jy = (hash2(i * 29 + 6, 17) - 0.5) * 5
+    const rot = (hash2(i * 31 + 7, 19) - 0.5) * 1.2
+    out.push(paperSheet((u0 + u1) / 2 + jx, (v0 + v1) / 2 + jy, h1 - 1.2 + i * 0.9, 6.5, 9, rot))
   }
   return out
 }
@@ -1036,6 +1103,32 @@ const floor01 = group('floor-01', [
   // floor-ground copy was hidden under backWalls(FH)); the story's own
   // banister diagonal (nearer) still paints over its lower stretch.
   ...nextcodePamphlet(),
+  // Electrical panel on the Health Platforms stretch (data-operations
+  // floor — a service panel is the believable piece here), with a conduit
+  // drop feeding it from the fifth-floor slab line (Stage 5.5 §7/§8).
+  ...boxOnUWall(222, 230.5, 168, 192, FH + 34, FH + 60),
+  el('dw-conduit', uFace(227.5, 178.5, 181.5, FH, FH + 34)),
+  dot(222, 173, FH + 47),
+  dot(222, 187, FH + 47),
+  // --- Health Platforms DBA vignette (user request, Stage 5.5 §10) ---------
+  // The data-operations metaphor: an open box of unordered incoming records
+  // (screen-left), the DBA sitting on the floor parsing/comparing them
+  // (centre, facing the B-D wall) and four tall ordered reams of processed
+  // data (screen-right, toward the server racks that hold the database).
+  // Positioned in the room centre pulled toward the B-D wall, left of the
+  // racks; the whole group stays inside the floor-2 slab envelope
+  // (h + 0.495·min(u,v) ≤ 197.5) and clear of the electrical panel and its
+  // conduit drop (v 168..192). Emitted far-to-near: box (v ~147..157),
+  // sitter (v 130), reams (v 115), then the racks (v 20..94) below.
+  el('dw-contact', hFace(191, 205, 145, 159, FH)),
+  el('dw-contact', hFace(194, 208, 125, 135, FH)),
+  el('dw-contact', hFace(191, 230, 109, 121, FH)),
+  ...paperBox(193, 203, 147, 157, FH, FH + 8),
+  assetProp(SITTER, 202, 130, FH),
+  ...paperReam(195, 115, 30, FH),
+  ...paperReam(205.5, 115, 30, FH),
+  ...paperReam(216, 115, 30, FH),
+  ...paperReam(226.5, 115, 30, FH),
   // Server rack group (Stage 5.5 §10, user revision): two tall cabinets and
   // one short one on the Health Platforms stretch, standing on the B-D
   // wall's near stretch where the sight line keeps them fully visible.
@@ -1045,13 +1138,6 @@ const floor01 = group('floor-01', [
   ...serverRack(230.5, 72, 94, FH, FH + 66),
   ...serverRack(230.5, 46, 68, FH, FH + 62),
   ...serverRack(230.5, 20, 42, FH, FH + 38),
-  // Electrical panel on the Health Platforms stretch (data-operations
-  // floor — a service panel is the believable piece here), with a conduit
-  // drop feeding it from the fifth-floor slab line (Stage 5.5 §7/§8).
-  ...boxOnUWall(222, 230.5, 168, 192, FH + 34, FH + 60),
-  el('dw-conduit', uFace(227.5, 178.5, 181.5, FH, FH + 34)),
-  dot(222, 173, FH + 47),
-  dot(222, 187, FH + 47),
   // Nextcode section props (Stage 5.5 §10, continuing into floor 1): the
   // mini-startup's one desk (the WS_D notebook-desk sprite, same furniture
   // language as the floor-2 dev desks) mid-room where the floor-2 slab cut

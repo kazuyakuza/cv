@@ -24,10 +24,12 @@ Do not force every visual element to be vectorized.
 
 ## Development Status
 
-- Project is nearly empty; **Stage 0 (Project Foundation) is next**.
-- Stages 0–10 proceed sequentially: wireframe → geometry → structure → illustration
-  style → materials → career content → information layer → display modes → Vue
-  integration → polish/deployment.
+- Stages 0–5 are complete (wireframe → geometry → structure → illustration
+  style → materials/details); **Stage 5.5 (visual enrichment) is in
+  progress** — iterative, user-reviewed rounds driven by rendered reviews
+  (see `.agent/todo/STAGE_05.5_VISUAL_ENRICHMENT_CONTINUE.md`).
+- Remaining stages: 6 career content → 7 information layer → 8 display modes
+  → 9 Vue integration → 10 polish/deployment.
 
 ## Core Principles
 

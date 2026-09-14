@@ -146,6 +146,13 @@ export const svgStyle = `
        hand-drawn SVG. Near-white but a step below the plaques so the
        information layer keeps the highest readability */
     .dw-paper { fill: #f4f1e6; stroke: #b9b3a3; stroke-width: 0.5; }
+    /* Neat record reams (Health Platforms DBA vignette): a solid paper block
+       reads as one clean tower where stacked flat quads merge into a heap.
+       Top reuses .dw-paper; the near/left faces step down in tone like the
+       crate family; sparse sheet lines suggest the individual records */
+    .dw-ream { fill: #ece8db; stroke: #b9b3a3; stroke-width: 0.5; }
+    .dw-ream-side { fill: #ded9c8; stroke: #b9b3a3; stroke-width: 0.5; }
+    .dw-ream-line { fill: none; stroke: #c6c0af; stroke-width: 0.45; }
     /* Hand-written squiggle lines (Nextcode pamphlet): unreadable writing */
     .dw-scribble { fill: none; stroke: #4a463f; stroke-width: 0.35; stroke-opacity: 0.65; stroke-linecap: round; }
 

@@ -8,6 +8,59 @@ the top update plus any section it references; the older updates are
 historical but keep the derived placement rules and traps (each is still
 valid unless a later update says otherwise).
 
+## UPDATE #10 — 2026-09-14, ninth session (Health Platforms DBA vignette; dark review renders)
+
+User task: "first add something more to the Health Platforms section" — a
+DBA-work vignette left of the server racks. Implemented and verified in the
+render (`generated/dev/r18.png`; crops `chk-hp.png`, `chk-hpwide.png`,
+`overview.png`; crop script `generated/dev/crop_r14.py`). Lint clean.
+
+1. **Review renders now match production.** `generated/dev/make_chk.py`
+   paints the `base.css` dark radial backdrop behind the transparent SVG, so
+   r13+ review renders show the real Stage 5.5 atmosphere (r12 and earlier
+   were reviewed on white).
+
+2. **Health Platforms DBA vignette** (floor 1, room centre pulled toward the
+   B-D wall, left of the racks; the whole group stays inside the floor-2
+   slab envelope `h + 0.495·min(u,v) ≤ 197.5` and clear of the electrical
+   panel/conduit drop at v 168..192). Emitted in `floor-01` after
+   `backWalls(FH)`, far-to-near: electrical panel → box → sitter → reams →
+   server racks (the section was reordered; the racks previously preceded
+   the panel).
+   - **Sitter** — one person sitting on the floor, papers in both hands,
+     looking at them, facing the B-D wall. Nano-banana wireframe-only
+     pipeline: `generated/dev/make_wire_sitter.py` → `sitter-wire.png` →
+     NB2 n=1 → `sitter-cand.png` → `key_cut_sitter.py` →
+     `src/assets/sitter-01-cut.png` (481×605). Constants
+     `SITTER = { k: 0.03455, ax: 13.44, ay: 20.8 }`, anchor = the sprite's
+     bottom-row centre (foot contact; wireframe foot at u 205.5) placed at
+     `assetProp(SITTER, 202, 130, FH)`. Seated height 20.73u. The model drew
+     the figure wider than the wireframe (aspect 0.79 vs 0.35) — reviewed
+     and accepted; the anchor keeps the floor contact right.
+   - **Four tall ordered reams at his right** — new `paperReam(u, v, n,
+     hBase)` helper: a solid A4-sized paper block (top face + near/left
+     faces + sparse sheet lines), because 30 stacked flat quads merged into
+     a heap at this scale. n=30 (10.8u tall) at v 115, u 195/205.5/216/226.5.
+     New style classes `dw-ream`, `dw-ream-side`, `dw-ream-line` (the top
+     reuses `dw-paper`).
+   - **Open box of unordered papers at his left** — new `paperBox(u0, u1,
+     v0, v1, h0, h1)` helper: open-top crate (inner far/right faces, outer
+     left/near walls, cardboard rim strips) with large jittered sheets
+     overflowing the rim; an earlier leaning back-flap was removed (it
+     rendered as a stray line). Box u 193..203 × v 147..157 × h 105..113.
+   - `dw-contact` shadows under the box, the sitter and the ream row.
+
+3. **Traps re-confirmed**: the ream helper initially ignored the floor
+   height (sheets landed at h ≈ 0 — present in the fragment but invisible in
+   the render); billboard staffage keeps the `assetProp` anchor = bottommost
+   row centre; the floor-2 slab envelope governs everything on floor 1.
+
+4. Next session: the user's next revision list (floors 1–2 are still being
+   enriched; floor 2 Interactica's left half is still empty). Floors 3/4/5
+   props are deferred until floors 1–2 are finished (user decision).
+   Rebuild/render workflow unchanged, except `make_chk.py` now includes the
+   dark backdrop.
+
 ## UPDATE #9 — 2026-09-13, eighth session (UPDATE #8 items DONE: dev sprite, pamphlet ×2/×3, doorway piles, wall-base layer)
 
 All four UPDATE #8 items implemented and verified in the render
