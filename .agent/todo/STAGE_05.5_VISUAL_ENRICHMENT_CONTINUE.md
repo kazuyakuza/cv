@@ -8,6 +8,26 @@ the top update plus any section it references; the older updates are
 historical but keep the derived placement rules and traps (each is still
 valid unless a later update says otherwise).
 
+## UPDATE #13 — 2026-09-14, twelfth session (user request: two more open boxes in file toward the elevator door)
+
+User request: "add in file in direction to the door 2 more open boxes. you may
+just c&p current one, and only change its position."
+
+1. **Two more paper boxes** copied at the current size (30×30×16) and placed
+   in file toward the elevator door — the section's only door (shaft W2 face,
+   u 6.5..41.7, v 263). The file runs along the diagonal from the original
+   box centre (143,139) to the door centre (24,263): one 44u step per box so
+   the three queue corner-to-corner without intersecting —
+   `paperBox(98, 128, 156, 186, FH, FH+16, 1)` and
+   `paperBox(67, 97, 187, 217, FH, FH+16, 2)`; the original
+   `(128, 158, 124, 154, FH, FH+16)` is unchanged. Contact-shadow quads per
+   box; emission stays far-to-near (box 3 → 2 → 1 → reams → sitter → racks).
+2. **`paperBox` gained a `seed` parameter** mixed into its deterministic
+   sheet hashes (seed 0 keeps the original arrangement) so the file does not
+   read as identical clones — each box's spill differs.
+3. Verified in `generated/dev/r22.png` (crops `chk-hp.png`, `chk-hpwide.png`,
+   `overview.png`; crop boxes widened to cover the file). Lint clean.
+
 ## UPDATE #12 — 2026-09-14, eleventh session (user revision: box further left-down + 50% wider/deeper; sitter −15% and nearer the wall; contact shadow fixed)
 
 User revision on UPDATE #11's render: "move the open box some more to the same

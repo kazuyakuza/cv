@@ -403,7 +403,9 @@ function paperReam(u, v, n, hBase = 0) {
 // filling the box below the rim and jittered sheets overflowing over it.
 // Painter order: interior (floor, inner far/right faces, fill sheets),
 // outer left/near walls, rim strips, then the overflow sheets on top.
-function paperBox(u0, u1, v0, v1, h0, h1) {
+// `seed` re-rolls the deterministic sheet layout so a file of boxes does not
+// read as identical clones (seed 0 keeps the original arrangement).
+function paperBox(u0, u1, v0, v1, h0, h1, seed = 0) {
   const T = 2.8 // cardboard thickness (rim strips) — scales with the box
   const out = [
     // interior reads as paper (user revision): floor and inner walls share
@@ -417,9 +419,9 @@ function paperBox(u0, u1, v0, v1, h0, h1) {
   const fw = (u1 - u0) * 0.35
   const fd = (v1 - v0) * 0.35
   for (let i = 0; i < 9; i++) {
-    const jx = (hash2(i * 13 + 1, 7) - 0.5) * fw
-    const jy = (hash2(i * 17 + 2, 9) - 0.5) * fd
-    const rot = (hash2(i * 19 + 3, 11) - 0.5) * 0.5
+    const jx = (hash2(i * 13 + 1, 7 + seed) - 0.5) * fw
+    const jy = (hash2(i * 17 + 2, 9 + seed) - 0.5) * fd
+    const rot = (hash2(i * 19 + 3, 11 + seed) - 0.5) * 0.5
     out.push(paperSheet((u0 + u1) / 2 + jx, (v0 + v1) / 2 + jy, h0 + 2 + (i * fill) / 8, 6.5, 9, rot))
   }
   out.push(el('dw-crate', uFace(u0, v0, v1, h0, h1)))
@@ -432,9 +434,9 @@ function paperBox(u0, u1, v0, v1, h0, h1) {
   const ow = (u1 - u0) * 0.7
   const od = (v1 - v0) * 0.7
   for (let i = 0; i < 10; i++) {
-    const jx = (hash2(i * 23 + 5, 13) - 0.5) * ow
-    const jy = (hash2(i * 29 + 6, 17) - 0.5) * od
-    const rot = (hash2(i * 31 + 7, 19) - 0.5) * 1.2
+    const jx = (hash2(i * 23 + 5, 13 + seed) - 0.5) * ow
+    const jy = (hash2(i * 29 + 6, 17 + seed) - 0.5) * od
+    const rot = (hash2(i * 31 + 7, 19 + seed) - 0.5) * 1.2
     out.push(paperSheet((u0 + u1) / 2 + jx, (v0 + v1) / 2 + jy, h1 - 2 + i * 0.95, 6.5, 9, rot))
   }
   return out
@@ -1139,15 +1141,22 @@ const floor01 = group('floor-01', [
   // data (screen-right, toward the server racks that hold the database).
   // User revisions: box and sitter doubled (then the sitter −15%), box moved
   // further left-down the view diagonal toward the section centre and grown
-  // 50% wider/deeper (30x30x16). The group stays inside the floor-2 slab
-  // envelope (h + 0.495·min(u,v) ≤ 197.5) and clear of the electrical panel
-  // and its conduit drop (v 168..192). The reams moved 6u forward with the
-  // sitter (v 115 → 109) so his body does not cover the first stack. Emitted
-  // far-to-near: box (v 124..154), reams (v 109), sitter (v 82), then the
-  // racks (v 20..94) below.
+  // 50% wider/deeper (30x30x16), interior recoloured to paper. Latest: TWO
+  // more boxes in file toward the elevator door (the section's only door):
+  // the file runs along the diagonal from the box centre to the W2 door
+  // (u 6.5..41.7, v 263), one 44u step per box, so the three queue up
+  // corner-to-corner toward the shaft. The group stays inside the floor-2
+  // slab envelope (h + 0.495·min(u,v) ≤ 197.5) and clear of the electrical
+  // panel and its conduit drop (v 168..192). Emitted far-to-near: boxes
+  // (v 187..217 / 156..186 / 124..154), reams (v 109), sitter (v 82), then
+  // the racks (v 20..94) below.
+  el('dw-contact', hFace(65, 99, 185, 219, FH)),
+  el('dw-contact', hFace(96, 130, 154, 188, FH)),
   el('dw-contact', hFace(126, 160, 122, 156, FH)),
   el('dw-contact', hFace(190, 231, 104, 114, FH)),
   spriteShadow(SITTER, 160, 82, FH),
+  ...paperBox(67, 97, 187, 217, FH, FH + 16, 2),
+  ...paperBox(98, 128, 156, 186, FH, FH + 16, 1),
   ...paperBox(128, 158, 124, 154, FH, FH + 16),
   ...paperReam(195, 109, 30, FH),
   ...paperReam(205.5, 109, 30, FH),
