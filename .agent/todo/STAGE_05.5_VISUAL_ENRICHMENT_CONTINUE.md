@@ -8,6 +8,120 @@ the top update plus any section it references; the older updates are
 historical but keep the derived placement rules and traps (each is still
 valid unless a later update says otherwise).
 
+**UPDATE #15 is a PENDING SPEC (not implemented): the code still matches
+UPDATE #14. Start the next session by implementing UPDATE #15.**
+
+## UPDATE #15 — 2026-09-14, PENDING SPEC for the next session (two big layout changes — NOT implemented yet)
+
+User request from the r23 review: two big changes, written down here so a new
+session can implement them. Nothing below has been coded yet — UPDATE #14 is
+the current implemented state.
+
+### Change A — ground floor: enlarge BA Technology by shrinking Puelo Games 15%
+
+Goal: more visible floor in BA Technology. The wall separating Puelo Games and
+BA Technology is `PARTITION_G[0]` (Puelo Games sits between the entrance face
+v = 0 and this wall).
+
+- Numbers: Puelo Games is currently `0.28 * LD` = 164.64 deep. Reduce it 15% →
+  139.94, i.e. move the wall TOWARD THE ENTRANCE by Δv = −24.7:
+  `const PARTITION_G = [0.28 * LD * 0.85, 0.68 * LD]` (or 0.238·LD).
+  The partition's passage opening (u 15..70) travels with the wall
+  automatically (`partition(PARTITION_G[0], 0, { opening: true })`, ~line 1066).
+- Move the Puelo props by the same Δv = −24.7 (user: "move the boxes and the
+  other elements in this section in the same direction") — `pueloProps`
+  (~line 874):
+  - kiosk `assetProp(PUEL_KIOSK, 220.14, 36, 0)` → `(220.14, 11.3, 0)`
+    (+ `kioskScreenOverlay` follows);
+  - stools `assetProp(PUEL_STOOLS, 200.1, 33, 0)` → `(200.1, 8.3, 0)`; its
+    contact quad `hFace(198, 216, 32, 68, 0)` → `hFace(198, 216, 7, 43, 0)`;
+  - the three crates beside the wall — `crate(212.5, 230.5, 146, 162, …)`,
+    `crate(216, 230, 148, 162, …)`, `crate(213.5, 230.5, 131, 144, …)` →
+    v − 24.7 each (121.3..137.3 / 123.3..137.3 / 106.3..119.3).
+- Unaffected: entrance portal, partition-2 (`PARTITION_G[1]`, BA/freelancer)
+  and everything in the BA/freelancer sections (whiteboard, meeting table,
+  paper piles, the piles moved through partition-2's doorway, PC, staircase).
+- Checks: kiosk/stools now sit ~8–11u from the entrance face — their sprites
+  must stay inside the floor (nothing pokes below the v = 0 cut band) and they
+  must not crowd the entrance portal (portal u 83..155, props at u ≥ 198 —
+  clear). Crates must stay on the Puelo side of the new wall (v ≤ 139.9).
+- Tags: "Puelo Games" (c = 82) and "BA Technology" (c = 282) stay — both still
+  inside their (resized) sections.
+
+### Change B — move the whole elevator/shaft forward, enlarging Nextcode
+
+Goal: more visible space in Nextcode. The elevator shaft (floors 1–5) moves
+toward the building's front wall; the elevator no longer sits at the plan
+centre (user: no problem with this). Health Platforms shrinks 15%; Nextcode
+grows by the same amount.
+
+- Numbers: Health Platforms spans v 0..`SHAFT_V0` = 270.48. Reduce 15% →
+  229.91: `const SHAFT_V0 = 0.46 * LD * 0.85` (≈ 0.391·LD). The shaft keeps
+  its depth (`SHAFT_V1 − SHAFT_V0` = 0.125·LD = 73.5):
+  `const SHAFT_V1 = SHAFT_V0 + 0.125 * LD` (= 303.41). Whole-structure
+  Δv = −40.57.
+- Follows AUTOMATICALLY from those two constants (no other edits):
+  `shaftStory` (W1/W2/W3 walls, doors, open doors on story 5, floor-number
+  digits), `shaftReturnWalls` (the Health/Nextcode side walls + passages), the
+  enclosure `uFace(0, SHAFT_V0, SHAFT_V1, FH, TOP_H)`, the visible top bands,
+  the story year plaques (`yearPlaque` uses the vMid), `slabTriangle` in
+  floor-02-front … floor-05-front, and the floor-3 section separation wall
+  (~line 1258, `uFace(SHAFT_U, SHAFT_V1 + WALL_T, LD − WALL_T, …)`) — the
+  latter STARTS at the shaft, so it lengthens by 40.6u. FLAG for review: does
+  the Indelve/Interactica boundary stay visually right when the wall grows?
+- Manual edits (hardcoded v in `elevator()`):
+  - `el('dw-conduit', uFace(-1.5, 332, 335, FH, TOP_H))` → make it
+    SHAFT_V1-relative (`SHAFT_V1 − 12`, `SHAFT_V1 − 9`);
+  - `boxOnUWall(-1.5, 0, 329, 341, …)` → `SHAFT_V1 − 15`, `SHAFT_V1 − 3`.
+- Floor-1 Health Platforms re-layout (user, guided by a red-marked screenshot
+  — a rough rectangle on the floor in FRONT of the seated DBA, i.e. screen
+  below him, extending screen-left; the image is a chat attachment, not in the
+  repo):
+  1. **The 3 open boxes move "below" the seated DBA** — from their current
+     v 124..214 to the floor area in front of him, inside the red-marked area.
+     Keep the one-beside-the-other arrangement (touching along the depth
+     axis). Suggested first try: **u 100..130, v 20..50 / 50..80 / 80..110**
+     (tune against the red mark + render). Keep clear of the sitter's sprite
+     footprint (screen x ≈ 782..810): anything nearer than v = 82 that overlaps
+     that footprint must be emitted AFTER the sitter or shifted left; the
+     front-most wall stays ≳ 6u from the v = 0 cut. The single row contact
+     quad follows the row.
+  2. **Seated DBA stays** at `assetProp(SITTER, 160, 82, FH)` (user).
+  3. **The 4 paper reams in front of the servers form a line toward the front
+     wall**: keep the ream nearest the sitter (`paperReam(195, 109, 30, FH)`)
+     untouched; move the other three into a straight line toward v = 0 at the
+     same u — suggested `(195, 97)`, `(195, 85)`, `(195, 73)` (12u steps; the
+     reams are 5.6u deep, gaps stay clear). The reams' contact band
+     (`hFace(190, 231, 104, 114, FH)`) becomes a band along the new line.
+  4. Unaffected: the server racks (v 20..94), the electrical panel + conduit
+     drop (v 168..192 — still inside the shrunken Health Platforms), the
+     sitter's soft shadow.
+- Tags: "Health Platforms" (c = 135) and "Nextcode" (c = 470) still fall inside
+  their resized sections — verify visually.
+- **Trap — Nextcode devs' peek** (engineered in UPDATE #7/#9): the two peeking
+  devs (`DEV_GROUP` at p(20, 372, FH)) read through the sliver left of the
+  shaft's W3 cut face. Moving the shaft forward (W3 344 → 303.4) slides that
+  cut face on screen and changes the hidden region — re-verify the peek at 12×
+  zoom and re-tune the dev group if the sliver changed.
+- **Trap — floor-2 slab envelope** (floor 1): visible iff
+  `h + 0.495·min(u,v) ≤ 197.5`. The new box line (v ≤ 110) and ream line
+  (v ≥ 73) are comfortably inside, but re-check after placement.
+- **Trap — painter order** in `floor-01`: emit far-to-near (boxes → reams →
+  sitter → racks); the boxes are now partly NEARER than the sitter, so verify
+  each object's emission order against its actual v range.
+- Also check: 5th-floor open-air top (shaft top bands, stub walls), year
+  plaques vs the floor bands, story numbers, and the racks' sight lines.
+
+### Suggested order for the new session
+
+1. Change B constants + the two hardcoded conduit/junction values; rebuild +
+   render; check the shaft, doors, plaques, conduit alignment, devs peek,
+   floor-3 separation wall, 5th-floor top.
+2. Change B floor-1 prop re-layout (boxes, reams, contact shadows).
+3. Change A (partition + Puelo props).
+4. Render r24, retune `crop_r14.py` boxes (the vignette moves), lint, commit,
+   write UPDATE #16 with what actually changed.
+
 ## UPDATE #14 — 2026-09-14, thirteenth session (user correction: box file runs toward the rear wall, not diagonally)
 
 User correction on UPDATE #13: "you add them in diagonal, and must be one side
