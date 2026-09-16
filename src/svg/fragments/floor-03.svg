@@ -20,7 +20,7 @@
   <path class="dw-contact" d="M904.03,616.35 L913.11,613.18 L502.81,469.31 L494.04,472.16 Z" />
   <path class="dw-contact" d="M347.52,529.69 L516.7,470.82 L507.59,467.94 L339.47,526.03 Z" />
   <defs><clipPath id="dw-clip-sep3"><path d="M339.47,526.03 L507.59,467.94 L507.42,362.15 L340.02,421.27 Z" /></clipPath></defs>
-  <path class="dw-wall-far-fill" clip-path="url(#dw-clip-sep3)" d="M530.37,572.76 L368.8,516.45 L368.34,423.76 L530.29,480.33 Z" />
+  <path class="dw-wall-far-fill" clip-path="url(#dw-clip-sep3)" d="M558.47,583.37 L368.8,516.45 L368.34,423.76 L559.35,489.96 Z" />
   <path class="dw-far-line" d="M 339.47,526.03 L 507.59,467.94" />
   <path class="dw-shade-a" clip-path="url(#dw-clip-sep3b)" d="M339.2,429.17 L507.33,369.96 L507.42,362.15 L340.02,421.27 Z" />
   <path class="dw-shade-b" clip-path="url(#dw-clip-sep3b)" d="M340.07,439.35 L507.96,380.13 L507.33,369.96 L339.2,429.17 Z" />

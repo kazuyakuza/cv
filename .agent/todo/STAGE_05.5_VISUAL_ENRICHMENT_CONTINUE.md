@@ -11,11 +11,77 @@ valid unless a later update says otherwise).
 **UPDATE #15 is a PENDING SPEC (not implemented): the code still matches
 UPDATE #14. Start the next session by implementing UPDATE #15.**
 
-## UPDATE #15 — 2026-09-14, PENDING SPEC for the next session (two big layout changes — NOT implemented yet)
+## UPDATE #16 — 2026-09-16, sixteenth session (UPDATE #15 IMPLEMENTED; user review pending)
+
+UPDATE #15 implemented in full; verified in `generated/dev/r24.png` (crops
+`chk-hp`, `chk-hpwide`, `chk-puelo`, `chk-elev`, `chk-devs`, `overview`;
+crop script `generated/dev/crop_r24.py`, probes `generated/dev/probe_r24.py`
++ `check_puelo.py`). Lint clean.
+
+1. **Change B — elevator shaft forward 40.57u.**
+   `SHAFT_V0 = 0.46 * LD * 0.85` = 229.908, `SHAFT_V1 = SHAFT_V0 + 0.125 * LD`
+   = 303.408; everything follows from the constants (shaft walls/doors/
+   open story-5 doors + floor digits, return walls, enclosure, re-layered
+   cut faces, `slabTriangle`, year plaques at the new vMid 266.66, top
+   bands, floor-3 section separation wall which lengthens rearward — the
+   Indelve boundary reads correctly, clipped fill + washes). The enclosure
+   conduit + per-story junction boxes re-expressed as `SHAFT_V1 − 12/−9`
+   and `SHAFT_V1 − 15/−3` (identical offsets as before). Render probes:
+   enclosure left silhouette at x ≈ 530.5 (expected 535.5), conduit at
+   x ≈ 541.4 (expected 541.6), junction box front face present at
+   (540.8, 777) — all aligned; year plaques + text pixels present at the
+   new vMid. **Devs**: user decision (chat, before implementation) — the
+   four-dev group is left FULLY VISIBLE in the enlarged Nextcode (no
+   retune of `DEV_GROUP`); the engineered peek look is intentionally
+   retired. Render probe confirms no shaft fill anywhere in the group's
+   screen bbox; group pixels confirmed at x 472..513 (spans x 471.9..512.8),
+   fully visible and clear of the WS_D desk (x ≈ 483..495 — the group is
+   nearer in depth, so it correctly paints over the desk's left edge; read
+   as staffage in front of it, `zoom-f1h` no longer describes the look).
+2. **Change B — floor-1 Health Platforms re-layout.** The three paper boxes
+   re-laid into the red-marked area in FRONT of the seated DBA:
+   `paperBox(100, 130, 80, 110, FH, FH+16, 2)` / `(100, 130, 50, 80, …, 1)` /
+   `(100, 130, 20, 50, …)` (touching along the depth axis, front wall 20u
+   clear); row contact shadow `hFace(98, 132, 18, 112, FH)`. The reams form
+   a straight line at u 195 toward the front wall: `(195, 109)` kept,
+   `(195, 97)`, `(195, 85)`, `(195, 73)`; band shadow `hFace(190, 231, 68,
+   114, FH)`. Emission far-to-near: boxes → reams → sitter → racks.
+   Render probes: crate-top pixels at the new box tops, ream-paper pixels
+   along the u 195 line, sitter sprite pixels intact. Envelope/paint
+   pre-checks (computed, all comfortable): boxes top-back rim 160.6 ≤ 197.5;
+   ream v 73 top 151.9 ≤ 197.5; ream far rim (v 70.2) vs the short rack's
+   far corner (v 20, screen x 898.9 — reams end at x ≈ 836.4) — no
+   intersection. The sitter's left-edge sliver (box-row near face at
+   x 782–785, ~3px) does not visibly clip him (footprint rule held; verify
+   in the r24 crops).
+3. **Change A — Puelo Games −15%.** `PARTITION_G = [0.28 * LD * 0.85,
+   0.68 * LD]` (wall at v 139.94); passage opening + slabs travel with the
+   wall. Props shifted Δv = −24.7: kiosk `assetProp(PUEL_KIOSK, 220.14,
+   11.3, 0)` + matching `kioskScreenOverlay(spritePlace(…))`, stools
+   `assetProp(PUEL_STOOLS, 200.1, 8.3, 0)` + contact `hFace(198, 216, 7,
+   43, 0)`, crates v 121.3..137.3 / 123.3..137.3 / 106.3..119.3 (all ≤ the
+   wall, 2.6u clearance). Render probes: kiosk img at (876.64, 882.41)
+   (expected 876.65, 882.45), stools img at (851.74, 905.25) (expected
+   851.75, 905.28), crate-top pixels at the new corner, BA-side unchanged
+   (meeting table img (561.96, 855.76) identical). Sprites stay inside the
+   floor (kiosk bottom ≈2.9u above the v = 0 cut line at its u, stools
+   ≈1.4u); tags verified in fragments (Puelo c=82, BA c=282 inside the
+   resized sections).
+4. NOTE — the pre/post comparison probes were done against `r23.png` (the
+   r23 review render) and the two UPDATE #15 renders (`r24a.png` = after
+   Change B only, `r24.png` = after both changes). `r24a` vs `r24` differ
+   ONLY in the Puelo/entrance area, as intended.
+5. User review pending on: the vignette read vs the red mark (box row
+   position/tuning), the Puelo section's new look near the entrance (props
+   ~8–11u from the entrance face), and the devs' fully-visible arrangement.
+   Next session: continue from the user's revision list (floors 1–2
+   enrichment continues; floor-2 Interactica's left half is still empty).
+
+## UPDATE #15 — 2026-09-14, PENDING SPEC (IMPLEMENTED by UPDATE #16) (two big layout changes — NOT implemented yet)
 
 User request from the r23 review: two big changes, written down here so a new
-session can implement them. Nothing below has been coded yet — UPDATE #14 is
-the current implemented state.
+session can implement them. IMPLEMENTED by UPDATE #16 (2026-09-16) — kept
+below as the original spec.
 
 ### Change A — ground floor: enlarge BA Technology by shrinking Puelo Games 15%
 

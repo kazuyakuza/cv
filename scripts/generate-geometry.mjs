@@ -29,8 +29,8 @@ const WALL_T = 7.5 // back wall / partition thickness
 const STORY_H = FH - SLAB_T // clear story height between slabs (92.5)
 
 const SHAFT_U = 0.171 * LW // shaft inner edge, width fraction (narrowed four times)
-const SHAFT_V0 = 0.46 * LD // shaft depth start  (Health Platforms side)
-const SHAFT_V1 = 0.585 * LD // shaft depth end    (Nextcode side)
+const SHAFT_V0 = 0.46 * LD * 0.85 // shaft depth start (Health Platforms side; user r23: -15%)
+const SHAFT_V1 = SHAFT_V0 + 0.125 * LD // shaft depth end    (Nextcode side; keeps 0.125·LD depth)
 const DOOR_H = 52.5 // door opening height (passages); elevator door leaf height
 // Closed double door on the W2 (right) wall face, like a normal elevator:
 // two panels meeting at the center, drawn on the face toward Health Platforms.
@@ -58,7 +58,7 @@ const TAG_CHAR_W = 5.2 // plaque text width: approx glyph advance per char
 const STAIR_HOLE_U1 = STAIR_U1
 const STAIR_HOLE_V1 = STAIR_V1
 
-const PARTITION_G = [0.28 * LD, 0.68 * LD] // ground floor partitions (Puelo Games reduced 20%)
+const PARTITION_G = [0.28 * LD * 0.85, 0.68 * LD] // ground floor partitions (Puelo Games reduced 15%, user r23)
 const STUB_H = 50 // fifth-floor stub wall height
 const STUB_LEN = 0.4 // stub wall length fraction along back walls
 const D_CORNER_ARM = STUB_LEN * LW // fifth-floor D-corner wall arm length
@@ -874,17 +874,18 @@ const tagGroup = (lines, cls = 'dw-tag-group') =>
 const pueloProps = [
   // kiosk: anchor = the cabinet's near-bottom corner; its back edge stays
   // flush with the B-D wall inner face (230.5 = 220.14 + 10.36 depth);
-  // user revision: the whole group sits deeper along the wall
-  assetProp(PUEL_KIOSK, 220.14, 36, 0),
-  kioskScreenOverlay(spritePlace(PUEL_KIOSK, 220.14, 36, 0)),
+  // user r23 (UPDATE #15): the section shrinks 15% — the whole group shifts
+  // toward the entrance by Δv = −24.7 with the partition wall
+  assetProp(PUEL_KIOSK, 220.14, 11.3, 0),
+  kioskScreenOverlay(spritePlace(PUEL_KIOSK, 220.14, 11.3, 0)),
   // stools in front of the screen (anchor = the pair's near leg tip)
-  el('dw-contact', hFace(198, 216, 32, 68, 0)),
-  assetProp(PUEL_STOOLS, 200.1, 33, 0),
-  // crates pushed into the section's rear corner (partition at v=164.6),
+  el('dw-contact', hFace(198, 216, 7, 43, 0)),
+  assetProp(PUEL_STOOLS, 200.1, 8.3, 0),
+  // crates pushed into the section's rear corner (partition at v=139.94),
   // beside the kiosk/stools deeper along the wall
-  ...crate(212.5, 230.5, 146, 162, 0, 15),
-  ...crate(216, 230, 148, 162, 15, 28),
-  ...crate(213.5, 230.5, 131, 144, 0, 12),
+  ...crate(212.5, 230.5, 121.3, 137.3, 0, 15),
+  ...crate(216, 230, 123.3, 137.3, 15, 28),
+  ...crate(213.5, 230.5, 106.3, 119.3, 0, 12),
 ]
 
 // --- BA Technology props (Stage 5.5 §10, second batch) ----------------------
@@ -1135,33 +1136,29 @@ const floor01 = group('floor-01', [
   dot(222, 173, FH + 47),
   dot(222, 187, FH + 47),
   // --- Health Platforms DBA vignette (user request, Stage 5.5 §10) ---------
-  // The data-operations metaphor: an open box of unordered incoming records
-  // (screen-left), the DBA sitting on the floor parsing/comparing them
-  // (centre, facing the B-D wall) and four tall ordered reams of processed
-  // data (screen-right, toward the server racks that hold the database).
-  // User revisions: box and sitter doubled (then the sitter −15%), box moved
-  // further left-down the view diagonal toward the section centre and grown
-  // 50% wider/deeper (30x30x16), interior recoloured to paper. Latest: TWO
-  // more boxes in file — user correction of the first attempt (which ran
-  // diagonally toward the elevator door): the three must sit one beside the
-  // other along the DEPTH axis, queued toward the building's rear (C-D)
-  // wall. Same u band as the original box, v stepping 30u per box so the
-  // walls touch. The group stays inside the floor-2 slab envelope
-  // (h + 0.495·min(u,v) ≤ 197.5 — the deeper boxes' top-back corners tuck a
-  // hair under the slab cut) and clear of the electrical panel and its
-  // conduit drop (v 168..192, high on the B-D wall). Emitted far-to-near:
-  // boxes (v 184..214 / 154..184 / 124..154), reams (v 109), sitter (v 82),
-  // then the racks (v 20..94) below.
-  el('dw-contact', hFace(126, 160, 122, 216, FH)),
-  el('dw-contact', hFace(190, 231, 104, 114, FH)),
+  // The data-operations metaphor: an open box of unordered incoming records,
+  // the DBA sitting on the floor parsing/comparing them (centre, facing the
+  // B-D wall) and four tall ordered reams of processed data in a line toward
+  // the front wall (toward the server racks that hold the database).
+  // Latest (user r23, UPDATE #15): the whole group moves in FRONT of the
+  // sitter — the three boxes (file along the depth axis, touching) into the
+  // red-marked floor area below him (u 100..130, v 20..110, front wall ≳ 6u
+  // clear), the reams into a straight line at u 195 toward v = 0 (nearest
+  // ream v 109 kept). All well inside the floor-2 slab envelope
+  // (h + 0.495·min(u,v) ≤ 197.5) and clear of the electrical panel + conduit
+  // drop (v 168..192, high on the B-D wall). Emitted far-to-near: boxes
+  // (v 80..110 / 50..80 / 20..50), reams (v 109 → 73), sitter (v 82), then
+  // the racks (v 20..94) below.
+  el('dw-contact', hFace(98, 132, 18, 112, FH)),
+  el('dw-contact', hFace(190, 231, 68, 114, FH)),
   spriteShadow(SITTER, 160, 82, FH),
-  ...paperBox(128, 158, 184, 214, FH, FH + 16, 2),
-  ...paperBox(128, 158, 154, 184, FH, FH + 16, 1),
-  ...paperBox(128, 158, 124, 154, FH, FH + 16),
+  ...paperBox(100, 130, 80, 110, FH, FH + 16, 2),
+  ...paperBox(100, 130, 50, 80, FH, FH + 16, 1),
+  ...paperBox(100, 130, 20, 50, FH, FH + 16),
   ...paperReam(195, 109, 30, FH),
-  ...paperReam(205.5, 109, 30, FH),
-  ...paperReam(216, 109, 30, FH),
-  ...paperReam(226.5, 109, 30, FH),
+  ...paperReam(195, 97, 30, FH),
+  ...paperReam(195, 85, 30, FH),
+  ...paperReam(195, 73, 30, FH),
   assetProp(SITTER, 160, 82, FH),
   // Server rack group (Stage 5.5 §10, user revision): two tall cabinets and
   // one short one on the Health Platforms stretch, standing on the B-D
@@ -1407,9 +1404,9 @@ function elevator() {
   // Service conduit on the enclosure face (Stage 5.5 §7): the shaft's dark
   // steel service riser, proud of the u = 0 plane so it visibly crosses the
   // re-layered floor bands with the shaft; a junction box per story.
-  out.push(el('dw-conduit', uFace(-1.5, 332, 335, FH, TOP_H)))
+  out.push(el('dw-conduit', uFace(-1.5, SHAFT_V1 - 12, SHAFT_V1 - 9, FH, TOP_H)))
   for (let story = 1; story <= 5; story++) {
-    out.push(...boxOnUWall(-1.5, 0, 329, 341, story * FH + 22, story * FH + 34))
+    out.push(...boxOnUWall(-1.5, 0, SHAFT_V1 - 15, SHAFT_V1 - 3, story * FH + 22, story * FH + 34))
   }
   // Visible top bands close the shaft at the fifth-floor story top.
   out.push(el('dw-slab', hFace(WALL_T, SHAFT_U + WALL_T, SHAFT_V0, SHAFT_V1, TOP_H)))
