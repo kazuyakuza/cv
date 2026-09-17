@@ -247,13 +247,16 @@ const PUEL_TABLE = { file: 'meeting-01-cut.png', w: 581, h: 437, k: 0.11846, ax:
 const FREELANCER_PC = { file: 'freelancer-pc-01-cut.png', w: 475, h: 544, k: 0.05717, ax: 9.69, ay: 30.93 }
 // Nextcode dev staffage (user request, Stage 5.5 §10): the four-developer
 // group as a generated sprite (wireframe-only pipeline: generated/dev/
-// make_wire_devs.py → devs-wire.png → key_cut_devs.py). Same positions as
+// make_wire_devs.py → devs-wire.png → key_cut_devs.py). Originally placed as
 // the approved SVG staffage — visible pair green (v 438, u 56) / blue
 // (v 424, u 44), peeking pair grey (v 386, u 34) rear / brown (v 372,
-// u 20) front behind the shaft's W3 cut edge. Anchor = the front peeker's
-// foot: the sprite's bottom-row centre, mapped to p(20, 372, FH); k keeps
-// the group's screen height at 57.96u (green head top .. brown feet).
-const DEV_GROUP = { file: 'devs-01-cut.png', w: 675, h: 962, k: 0.06056, ax: 29.25, ay: 58.08 }
+// u 20) front behind the shaft's W3 cut edge. Since UPDATE #16 the shaft
+// moved forward and the group stands fully visible in the enlarged
+// Nextcode (no more peek), so r24 review moved it right toward the elevator
+// and enlarged it 5% (k/ax/ay all ×1.05, anchor stays the sprite's
+// bottom-row reference pixel; the anchor point moved p(20, 372) → p(20, 358),
+// i.e. 14u toward the shaft). k keeps the group's screen height at 57.96u ×1.05.
+const DEV_GROUP = { file: 'devs-01-cut.png', w: 675, h: 962, k: 0.063588, ax: 30.7125, ay: 60.984 }
 // Health Platforms seated-DBA staffage (user request, Stage 5.5 §10): ONE
 // person sitting on the floor reading a handful of papers, placed left of
 // the server racks (v 20..94) in the room centre pulled toward the B-D wall.
@@ -964,12 +967,14 @@ function whiteboard() {
 // seen from behind, papers on the tabletop. User revisions: displayed at true
 // scale (k 0.1185, was 0.15713 — 1.33x too large); moved to the visible
 // centre of the BA section (anchor = the near chair leg, object (14, 4));
-// then nudged deeper toward the B-D (right) wall (anchor u 36 → 54 → 62,
-// keeping the sprite inside the u < v − 164.6 left wedge with ~3u margin).
+// then nudged deeper toward the B-D (right) wall (anchor u 36 → 54 → 62),
+// then again toward the right wall (r24 review: 62 → 78; the partition-1
+// move to v = 139.94 widened the left wedge to u < v − 139.94, so the
+// sprite keeps ~12u of margin).
 const baProps = [
   whiteboard(),
-  assetProp(PUEL_TABLE, 62, 254, 0),
-  el('dw-contact', hFace(52, 116, 246, 326, 0)),
+  assetProp(PUEL_TABLE, 78, 254, 0),
+  el('dw-contact', hFace(68, 132, 246, 326, 0)),
 ]
 // Nextcode pamphlet (user request): a big white sheet pinned on the rear
 // wall's left corner just above where the staircase rises into floor 1,
@@ -1142,19 +1147,25 @@ const floor01 = group('floor-01', [
   // the front wall (toward the server racks that hold the database).
   // Latest (user r23, UPDATE #15): the whole group moves in FRONT of the
   // sitter — the three boxes (file along the depth axis, touching) into the
-  // red-marked floor area below him (u 100..130, v 20..110, front wall ≳ 6u
-  // clear), the reams into a straight line at u 195 toward v = 0 (nearest
-  // ream v 109 kept). All well inside the floor-2 slab envelope
+  // red-marked floor area below him, the reams into a straight line at u 195
+  // toward v = 0 (nearest ream v 109 kept). r24 review: the boxes shift
+  // toward the LEFT wall so the seated DBA is never painted over them —
+  // his sprite canvas spans screen x 782.3..810.6, and the box row's
+  // near-right corner (u = u1, v = 20) must stay left of it: u band
+  // 100..130 → 28..58 (corner x ≈ 776.9, ~5px clear; at the old band it
+  // reached ≈ 827.8 and the sitter overlapped the back box's top faces).
+  // All well inside the floor-2 slab envelope
   // (h + 0.495·min(u,v) ≤ 197.5) and clear of the electrical panel + conduit
-  // drop (v 168..192, high on the B-D wall). Emitted far-to-near: boxes
+  // drop (v 168..192, high on the B-D wall) and of the entrance portal
+  // (u 83..155 on the front face). Emitted far-to-near: boxes
   // (v 80..110 / 50..80 / 20..50), reams (v 109 → 73), sitter (v 82), then
   // the racks (v 20..94) below.
-  el('dw-contact', hFace(98, 132, 18, 112, FH)),
+  el('dw-contact', hFace(26, 60, 18, 112, FH)),
   el('dw-contact', hFace(190, 231, 68, 114, FH)),
   spriteShadow(SITTER, 160, 82, FH),
-  ...paperBox(100, 130, 80, 110, FH, FH + 16, 2),
-  ...paperBox(100, 130, 50, 80, FH, FH + 16, 1),
-  ...paperBox(100, 130, 20, 50, FH, FH + 16),
+  ...paperBox(28, 58, 80, 110, FH, FH + 16, 2),
+  ...paperBox(28, 58, 50, 80, FH, FH + 16, 1),
+  ...paperBox(28, 58, 20, 50, FH, FH + 16),
   ...paperReam(195, 109, 30, FH),
   ...paperReam(195, 97, 30, FH),
   ...paperReam(195, 85, 30, FH),
@@ -1184,7 +1195,7 @@ const floor01 = group('floor-01', [
   // the rear one's head showing above the front one's shoulder. Emitted
   // far-to-near; the shaft's faces (elevator fragment, later) paint over
   // their right parts.
-  assetProp(DEV_GROUP, 20, 372, FH),
+  assetProp(DEV_GROUP, 20, 358, FH),
   // Stair banister, upper element (user revision): the diagonal's floor-1
   // stretch plus its landing return, drawn after the story walls (the stair
   // opening shows it) but BEFORE the columns — column C, nearer to the
@@ -1218,9 +1229,12 @@ const floor02 = group('floor-02', [
   // The dev workstations on the Interactica story (Stage 5.5 §10): the
   // wireframe-matched generated sprites (WS_C monitor desk, WS_D notebook
   // desk side by side), pulled off the wall face so the pipe run passes
-  // behind them; drawn after the pipes.
-  assetWorkstation(WS_C, 221.5, 26, 2 * FH),
+  // behind them; drawn after the pipes. Paint order far-to-near (r24 review:
+  // WS_D sits deeper at v = 82, WS_C nearer at v = 26, so WS_D must be
+  // emitted first — previously they were swapped and the nearer desk was
+  // painted under the farther one).
   assetWorkstation(WS_D, 221.5, 82, 2 * FH),
+  assetWorkstation(WS_C, 221.5, 26, 2 * FH),
 ])
 const floor02Front = group('floor-02-front', [
   ...slabTriangle(2 * FH),

@@ -8,10 +8,53 @@ the top update plus any section it references; the older updates are
 historical but keep the derived placement rules and traps (each is still
 valid unless a later update says otherwise).
 
-**UPDATE #15 is a PENDING SPEC (not implemented): the code still matches
-UPDATE #14. Start the next session by implementing UPDATE #15.**
+**UPDATE #17 is the newest session (r24 review revisions) — implemented and
+committed; user review pending. UPDATE #15 was implemented by UPDATE #16.**
 
-## UPDATE #16 — 2026-09-16, sixteenth session (UPDATE #15 IMPLEMENTED; user review pending)
+## UPDATE #17 — 2026-09-17, seventeenth session (r24 review: four prop revisions; user review pending)
+
+Four small revisions from the user's r24 review, all implemented and verified
+in `generated/dev/r25.png` (crops `chk-hp`, `chk-hpwide`, `chk-ba`,
+`chk-devs`, `chk-interactica`, `overview`; crop script
+`generated/dev/crop_r25.py`, probe `generated/dev/probe_r25.py`,
+`probe_sitter.py`). Lint clean.
+
+1. **BA Technology — meeting table toward the building's right (B-D) wall.**
+   `assetProp(PUEL_TABLE, 62, 254, 0)` → `(78, 254, 0)` (+16u; contact shadow
+   `hFace(52,116,…)` → `hFace(68,132,246,326,0)`). Sprite x 561.9 → 572.8.
+   Still fully inside partition-1's left wedge (r24's wall move to v=139.94
+   widened the rule to u < v − 139.94; the sprite's max u ≈ 101 vs limit
+   114.06 → ~13u margin) and fully left of the wall's cut edge (x 641.6 <
+   651.0). Probe: only 11 cream pixels in the sprite rect (sprite's own light
+   tones), no clipping.
+2. **Nextcode — the 4 devs right toward the elevator, 5% bigger.**
+   Anchor `p(20, 372)` → `p(20, 358)` (14u toward the shaft) and the sprite
+   ×1.05 (`DEV_GROUP.k` 0.06056 → 0.063588, `ax`/`ay` ×1.05 → 30.7125 /
+   60.984, so the anchor pixel stays put). img x 471.9 → 480.7, width
+   40.9 → 42.9, height 58.3 → 61.2. Still fully visible: canvas right edge
+   523.6 < the shaft's far-left silhouette 535.5 (~12px clear).
+3. **Health Platforms — open boxes toward the building's left wall so the
+   seated DBA is never over them.** u band 100..130 → **28..58** (row contact
+   shadow `hFace(26, 60, 18, 112, FH)`); v bands and seeds unchanged. The
+   binding constraint: the box row's near-right corner is at (u1, v = 20),
+   so u1 ≤ ~66.6 keeps the whole group left of the sitter's sprite canvas
+   (x 782.3..810.6). Probe on r25: crate-top bbox x 696.0..774.8 (right edge
+   ~7.6px clear) and **0** crate-coloured pixels inside the sitter's canvas
+   (r24 had the overlap the user circled). The boxes now sit lower-left of
+   him (screen x 692..777, y 822..868) — still the red-mark read ("below him,
+   extending screen-left"). Known/accepted: the foreground corner column A
+   (screen x ≈ 750, v = 0) crosses the box group's right portion — correct
+   foreground occlusion, same language as before (UPDATE #12 note).
+4. **Interactica floor 2 — desk paint order inverted.** `assetWorkstation`
+   calls swapped: `WS_D` (v = 82, deeper, screen-LEFT) is now emitted FIRST,
+   `WS_C` (v = 26, nearer, screen-RIGHT) second, so the nearer desk paints
+   over the farther one. Fragment order confirmed: floor-02.svg images
+   x=805.19 (WS_D) then x=844.84 (WS_C).
+5. User review pending on all four. Next session: continue from the user's
+   next revision list (floors 1–2 enrichment; floor-2 Interactica's left
+   half is still empty).
+
+## UPDATE #16 — 2026-09-16, sixteenth session (UPDATE #15 IMPLEMENTED)
 
 UPDATE #15 implemented in full; verified in `generated/dev/r24.png` (crops
 `chk-hp`, `chk-hpwide`, `chk-puelo`, `chk-elev`, `chk-devs`, `overview`;
