@@ -8,10 +8,49 @@ the top update plus any section it references; the older updates are
 historical but keep the derived placement rules and traps (each is still
 valid unless a later update says otherwise).
 
-**UPDATE #17 is the newest session (r24 review revisions) — implemented and
+**UPDATE #18 is the newest session (r25 review revisions) — implemented and
 committed; user review pending. UPDATE #15 was implemented by UPDATE #16.**
 
-## UPDATE #17 — 2026-09-17, seventeenth session (r24 review: four prop revisions; user review pending)
+## UPDATE #18 — 2026-09-17, eighteenth session (r25 review: devs again, box move halved + upper layer)
+
+Two revisions from the r25 review, verified in `generated/dev/r26.png`
+(crops `chk-hp`, `chk-hpwide`, `chk-devs`, `chk-f1wide`, `overview`; crop
+script `generated/dev/crop_r26.py`, order check `generated/dev/check_order.py`).
+Lint clean.
+
+1. **Nextcode devs — another +5% and a further step right.**
+   `DEV_GROUP` rescaled ×1.05 again (`k` 0.063588 → 0.0667674, `ax`/`ay`
+   → 32.248125 / 64.0332; cumulative ×1.1025 from the original) and the
+   anchor moved `p(20, 358)` → `p(20, 346)` (12u more toward the shaft).
+   Now img x 487.27, canvas 487.3..532.3, height 64.23. **Documented fact
+   that governs the remaining head-room**: the sprite's OPAQUE content ends
+   at sprite-px ≈ 553 of 675 (columns 554..673 are empty; a 1px white
+   keying leftover sits at 674). So the *visible* right edge lands at
+   x ≈ 524.2 — ~6px clear of the shaft's far-left silhouette (a real
+   render measurement: x ≈ 530.4–530.8 across the devs' band) — while the
+   canvas edge (532.3) and the leftover column just slip under the shaft.
+   Probe: dev content (skin/cloth tones) ends at x ≈ 522–523, then floor,
+   then shaft at 530; nothing of the group is occluded. Only the devs'
+   region + the box region changed vs r25 (40×40 SVG-region diff).
+2. **Health Platforms boxes — revert 50% and move above the sitter.**
+   u band 28..58 → **64..94** (exactly half of the r24 −72u step); row
+   contact shadow `hFace(26,60,…)` → `hFace(62, 96, 18, 112, FH)`. The three
+   `paperBox` calls were then moved AFTER `assetProp(SITTER, …)` — r25
+   instruction: "if the open boxes end under the seated DBA layer, then move
+   the boxes to a upper layer". Fragment order confirmed by
+   `check_order.py`: reams (5095) < sitter img (251510) < boxes crate-top
+   (252908) < racks (259569). Geometry at the new band (computed + probed):
+   the box tops reach y ≈ 814 (back row) but only at x ≤ 760, while the
+   sitter's sprite canvas is x 782.3..810.6 / y 784.7..820.3 — the front and
+   middle boxes' tops (x up to 802) start at y ≥ 828, below his canvas, so
+   **0 crate-coloured pixels fall inside the sitter's canvas** (probe on
+   r26; the same test on r24 had found the overlap the user circled). The
+   upper layer is therefore the correct/defensive order: the rows sit at or
+   in front of his depth (v 20..110 vs his v = 82), so nearer-paints-later.
+3. User review pending. Next session: continue from the user's next revision
+   list (floors 1–2 enrichment; floor-2 Interactica's left half still empty).
+
+## UPDATE #17 — 2026-09-17, seventeenth session (r24 review: four prop revisions)
 
 Four small revisions from the user's r24 review, all implemented and verified
 in `generated/dev/r25.png` (crops `chk-hp`, `chk-hpwide`, `chk-ba`,

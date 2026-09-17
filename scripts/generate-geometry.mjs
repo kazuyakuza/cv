@@ -252,11 +252,14 @@ const FREELANCER_PC = { file: 'freelancer-pc-01-cut.png', w: 475, h: 544, k: 0.0
 // (v 424, u 44), peeking pair grey (v 386, u 34) rear / brown (v 372,
 // u 20) front behind the shaft's W3 cut edge. Since UPDATE #16 the shaft
 // moved forward and the group stands fully visible in the enlarged
-// Nextcode (no more peek), so r24 review moved it right toward the elevator
-// and enlarged it 5% (k/ax/ay all ×1.05, anchor stays the sprite's
-// bottom-row reference pixel; the anchor point moved p(20, 372) → p(20, 358),
-// i.e. 14u toward the shaft). k keeps the group's screen height at 57.96u ×1.05.
-const DEV_GROUP = { file: 'devs-01-cut.png', w: 675, h: 962, k: 0.063588, ax: 30.7125, ay: 60.984 }
+// Nextcode (no more peek). r24 review: moved right toward the elevator and
+// +5%; r25 review: another +5% (total ×1.1025) and a further step toward
+// the shaft. k/ax/ay scale together so the anchor pixel stays put.
+// Constraint: the sprite's VISIBLE content ends at sprite-px ≈ 553 (the
+// 554..673 columns are empty except a 1px white keying leftover at 674),
+// i.e. content right edge ≈ 524 at anchor v=346 — ~6px clear of the shaft's
+// far-left silhouette (x ≈ 530.5), so nothing is occluded.
+const DEV_GROUP = { file: 'devs-01-cut.png', w: 675, h: 962, k: 0.0667674, ax: 32.248125, ay: 64.0332 }
 // Health Platforms seated-DBA staffage (user request, Stage 5.5 §10): ONE
 // person sitting on the floor reading a handful of papers, placed left of
 // the server racks (v 20..94) in the room centre pulled toward the B-D wall.
@@ -1149,28 +1152,34 @@ const floor01 = group('floor-01', [
   // sitter — the three boxes (file along the depth axis, touching) into the
   // red-marked floor area below him, the reams into a straight line at u 195
   // toward v = 0 (nearest ream v 109 kept). r24 review: the boxes shift
-  // toward the LEFT wall so the seated DBA is never painted over them —
-  // his sprite canvas spans screen x 782.3..810.6, and the box row's
-  // near-right corner (u = u1, v = 20) must stay left of it: u band
-  // 100..130 → 28..58 (corner x ≈ 776.9, ~5px clear; at the old band it
-  // reached ≈ 827.8 and the sitter overlapped the back box's top faces).
-  // All well inside the floor-2 slab envelope
-  // (h + 0.495·min(u,v) ≤ 197.5) and clear of the electrical panel + conduit
-  // drop (v 168..192, high on the B-D wall) and of the entrance portal
-  // (u 83..155 on the front face). Emitted far-to-near: boxes
-  // (v 80..110 / 50..80 / 20..50), reams (v 109 → 73), sitter (v 82), then
-  // the racks (v 20..94) below.
-  el('dw-contact', hFace(26, 60, 18, 112, FH)),
+  // toward the LEFT wall so the seated DBA is never painted over them.
+  // r25 review: that move was too much — revert 50% (u 28..58 → 64..94, i.e.
+  // half of the original −72u step) and put the boxes in the layer ABOVE the
+  // sitter. At u 64..94 the group's top faces reach y ≈ 821 (the middle box's
+  // back corner) against the sitter's sprite canvas bottom 820.3, and only at
+  // screen x ≤ 760 while his canvas starts at 782.3 — so the boxes do not
+  // actually cover him, but the upper layer makes the near rows paint over
+  // him correctly if the geometry ever grazes. All well inside the floor-2
+  // slab envelope (h + 0.495·min(u,v) ≤ 197.5) and clear of the electrical
+  // panel + conduit drop (v 168..192, high on the B-D wall) and of the
+  // entrance portal (u 83..155 on the front face). Emitted: reams, sitter,
+  // then boxes (upper layer, v 80..110 / 50..80 / 20..50 far-to-near), then
+  // the racks (v 20..94).
+  el('dw-contact', hFace(62, 96, 18, 112, FH)),
   el('dw-contact', hFace(190, 231, 68, 114, FH)),
   spriteShadow(SITTER, 160, 82, FH),
-  ...paperBox(28, 58, 80, 110, FH, FH + 16, 2),
-  ...paperBox(28, 58, 50, 80, FH, FH + 16, 1),
-  ...paperBox(28, 58, 20, 50, FH, FH + 16),
   ...paperReam(195, 109, 30, FH),
   ...paperReam(195, 97, 30, FH),
   ...paperReam(195, 85, 30, FH),
   ...paperReam(195, 73, 30, FH),
   assetProp(SITTER, 160, 82, FH),
+  // Open paper boxes in the layer ABOVE the sitter (r25 review: "if the open
+  // boxes end under the seated DBA layer, move them to a upper layer") — the
+  // three rows sit in front of / at the sitter's depth (v 20..110 vs his
+  // v = 82), so nearer-paints-later is also the geometrically correct order.
+  ...paperBox(64, 94, 80, 110, FH, FH + 16, 2),
+  ...paperBox(64, 94, 50, 80, FH, FH + 16, 1),
+  ...paperBox(64, 94, 20, 50, FH, FH + 16),
   // Server rack group (Stage 5.5 §10, user revision): two tall cabinets and
   // one short one on the Health Platforms stretch, standing on the B-D
   // wall's near stretch where the sight line keeps them fully visible.
@@ -1195,7 +1204,7 @@ const floor01 = group('floor-01', [
   // the rear one's head showing above the front one's shoulder. Emitted
   // far-to-near; the shaft's faces (elevator fragment, later) paint over
   // their right parts.
-  assetProp(DEV_GROUP, 20, 358, FH),
+  assetProp(DEV_GROUP, 20, 346, FH),
   // Stair banister, upper element (user revision): the diagonal's floor-1
   // stretch plus its landing return, drawn after the story walls (the stair
   // opening shows it) but BEFORE the columns — column C, nearer to the
