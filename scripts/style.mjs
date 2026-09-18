@@ -131,6 +131,12 @@ export const svgStyle = `
     .dw-rack-panel { fill: #514f48; stroke: #2e2c28; stroke-width: 0.55; }
     .dw-rack-vent { fill: #2e2c28; stroke: none; }
 
+    /* Data cables (r25 review, Cleverlit stand kiosk): the mini PC's runs
+       navigating the Interactica floor toward the elevator — thin dark
+       strokes, a pair of them, quieter than any wall line */
+    .dw-cable { fill: none; stroke: #3c3a35; stroke-width: 1.15; stroke-linecap: round; stroke-linejoin: round; }
+    .dw-cable-2 { fill: none; stroke: #56534b; stroke-width: 0.8; stroke-linecap: round; stroke-linejoin: round; }
+
     /* Workstations (Stage 5.5 §10): dev desks come from generated
        sprites (src/assets/workstation-0X-cut.png, placed by
        assetWorkstation()); the old SVG desk classes were removed with them. */

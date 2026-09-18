@@ -198,6 +198,43 @@ function serverRack(uBack, v0, v1, hBase, hTop) {
   return out
 }
 
+// Small data server facing the building's FRONT wall (r25 review, Interactica
+// story 2): the serverRack idiom mirrored — the cabinet's door face is a
+// constant-v plane looking toward −v (the front/cutaway), the visible side
+// face is at u0, the body extends 9u deeper (+v). Same detail language as the
+// floor-1 racks (plinth, frame, blanking panels, LED row, vents, seams).
+function serverRackFront(u0, u1, vFront, hBase, hTop) {
+  const vBack = vFront + 9
+  const hB = hBase + 4
+  const out = [
+    el('dw-contact', hFace(u0 - 1.5, u1 + 1.5, vFront - 1.5, vBack + 1.5, hBase)),
+    el('dw-rack-plinth', vFace(vFront + 1, u0 + 1, u1 - 1, hBase, hB)),
+    el('dw-rack-plinth', uFace(u0, vFront + 1, vBack - 1, hBase, hB)),
+    el('dw-rack', vFace(vFront, u0, u1, hB, hTop)),
+    el('dw-rack-side', uFace(u0, vFront, vBack, hB, hTop)),
+    el('dw-rack-top', hFace(u0, u1, vFront, vBack, hTop)),
+    el('dw-rack-frame', vFace(vFront, u0 + 2.2, u1 - 2.2, hB + 3, hTop - 2.5)),
+  ]
+  out.push(rackDot('dw-rack-vent', (u0 + u1) / 2, vFront, hTop - 0.9, 1.1))
+  for (let i = 0; i < 5; i++) out.push(rackLed(u0 + 3.8 + i * 2.6, vFront, hTop - 5, i === 2))
+  let h = hTop - 9.5
+  while (h - 3.2 > hB + 6.5) {
+    out.push(el('dw-rack-panel', vFace(vFront, u0 + 3.4, u1 - 3.4, h - 3.2, h)))
+    out.push(el('dw-rack-slot', `M ${p(u0 + 3.4, vFront, h - 4.6)} L ${p(u1 - 3.4, vFront, h - 4.6)}`))
+    out.push(el('dw-rack-slot', `M ${p(u0 + 3.4, vFront, h - 5.1)} L ${p(u1 - 3.4, vFront, h - 5.1)}`))
+    h -= 5.6
+  }
+  for (let row = 0; row < 2; row++) {
+    for (let i = 0; i < 4; i++) out.push(rackVent(u0 + 4.2 + i * 3.6, vFront, hB + 4.6 + row * 2.4))
+  }
+  for (const sv of [vFront + 2.2, vFront + 5.4]) {
+    const [x1, y1] = p(u0, sv, hB + 2).split(',').map(Number)
+    const [x2, y2] = p(u0, sv, hTop - 1).split(',').map(Number)
+    out.push(`<line class="dw-rack-slot" x1="${round(x1)}" y1="${round(y1)}" x2="${round(x2)}" y2="${round(y2)}" />`)
+  }
+  return out
+}
+
 // Workstation sprite (Stage 5.5 §10, user decision: ONE desk on the
 // Interactica story): nano-banana generation from a precise red wireframe
 // built in the building's own projection (19.29 deg recedes, vertical = 2x
@@ -218,6 +255,55 @@ function assetWorkstation(sp, uBack, v0, hBase) {
   const uFront = uBack - sp.depth
   const [cx, cy] = p(uFront, v0, hBase + sp.deskH).split(',').map(Number)
   return `<image href="${inlineAsset(sp.file)}" x="${round(cx - sp.ax)}" y="${round(cy - sp.ay)}" width="${round(sp.w * sp.k)}" height="${round(sp.h * sp.k)}" preserveAspectRatio="none" />`
+}
+
+// --- Cleverlit stand kiosk (r25 review) -------------------------------------
+// A congress information point: a touch-screen panel on a slim pillar with a
+// webcam/card reader clipped at its side, a mini PC box at the pillar base and
+// a person using it, in the floor-2 right section's front-right corner.
+// Wireframe-only pipeline: generated/dev/make_wire_standkiosk.py →
+// standkiosk-wire.png → NB2 (wireframe as the ONLY input) → candidate
+// standkiosk-cand.png (picked of three by silhouette match: 0.087 vs 0.18 /
+// 0.20) → generated/dev/key_cut_standkiosk.py → src/assets/
+// standkiosk-01-cut.png (385x777). The art's composition came out ~24% wider
+// than the wireframe, so k is matched to the VERTICAL extent (the object's
+// content measures 48.6 diorama px — the wireframe draws at ~13.215 px per
+// h-unit, NOT at S=10 in diorama px). Anchor = the bottommost opaque pixel
+// (the person's foot), i.e. the object-local person's foot (7, −3.5) — with
+// the object origin at (202, 10) the anchor lands at p(209, 6.5, 2*FH).
+const STANDKIOSK = { file: 'standkiosk-01-cut.png', w: 385, h: 777, k: 0.062548, ax: 14.95, ay: 48.41 }
+
+// Data cables from the kiosk's mini PC across the Interactica floor to the
+// elevator's right wall (W1, u = SHAFT_U .. SHAFT_U + WALL_T = 40.7..48.2).
+// Smooth quadratic path through the waypoints. Route constraint: the last
+// stretch must stay OUTSIDE the floor-2 slab triangle's rect (u <= 48.2 AND
+// v <= SHAFT_V0 - WALL_T = 222.4) — that slab surface lives in the
+// 'floor-02-front' fragment, which the assembler draws AFTER the elevator, so
+// anything under it is hidden. The cables are emitted in that same
+// 'floor-02-front' fragment (after the slab surface, before the columns), so
+// they read as lying on the floor and plug into the wall's outer face.
+function smoothRun(pts, h) {
+  const P = pts.map(([u, v]) => p(u, v, h))
+  let d = `M ${P[0]}`
+  for (let i = 1; i < P.length - 1; i++) {
+    const [mx, my] = [P[i], P[i + 1]].map((s) => s.split(',').map(Number)).reduce((a, b) => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2])
+    d += ` Q ${P[i]} ${round(mx)},${round(my)}`
+  }
+  d += ` L ${P[P.length - 1]}`
+  return d
+}
+function kioskCables(h) {
+  const main = [
+    [169, 10.4], [172, 11.6], [170.7, 13.6], [166.9, 13.2], [165, 11.4],
+    [159, 12.5], [150, 14.5], [138, 17], [122, 21], [104, 28], [88, 38],
+    [74, 52], [62, 70], [54, 95], [50.5, 125], [50, 160], [50, 195], [50, 225], [49.5, 244],
+  ]
+  const second = [
+    [170, 11.8], [166.5, 13], [156, 15.7], [142, 18.7], [126, 23],
+    [108, 30], [92, 40], [78, 55], [68, 73], [59, 98], [53.5, 128],
+    [51.5, 163], [50.5, 198], [50, 228], [50.5, 252],
+  ]
+  return [el('dw-cable', smoothRun(main, h)), el('dw-cable-2', smoothRun(second, h))]
 }
 
 // --- Ground-floor prop sprites (Stage 5.5 §10, wireframe-only pipeline) -----
@@ -1154,18 +1240,19 @@ const floor01 = group('floor-01', [
   // toward v = 0 (nearest ream v 109 kept). r24 review: the boxes shift
   // toward the LEFT wall so the seated DBA is never painted over them.
   // r25 review: that move was too much — revert 50% (u 28..58 → 64..94, i.e.
-  // half of the original −72u step) and put the boxes in the layer ABOVE the
-  // sitter. At u 64..94 the group's top faces reach y ≈ 821 (the middle box's
-  // back corner) against the sitter's sprite canvas bottom 820.3, and only at
-  // screen x ≤ 760 while his canvas starts at 782.3 — so the boxes do not
-  // actually cover him, but the upper layer makes the near rows paint over
-  // him correctly if the geometry ever grazes. All well inside the floor-2
-  // slab envelope (h + 0.495·min(u,v) ≤ 197.5) and clear of the electrical
-  // panel + conduit drop (v 168..192, high on the B-D wall) and of the
-  // entrance portal (u 83..155 on the front face). Emitted: reams, sitter,
-  // then boxes (upper layer, v 80..110 / 50..80 / 20..50 far-to-near), then
-  // the racks (v 20..94).
-  el('dw-contact', hFace(62, 96, 18, 112, FH)),
+  // half of the original −72u step), then nudge a little back toward him
+  // (u 64..94 → 72..102, "a little more near the seated dev"); and put the
+  // boxes in the layer ABOVE the sitter. At u 72..102 the front/middle box
+  // tops (x up to 809) start at y ≥ 833, below the sitter's sprite canvas
+  // (x 782.3..810.6 / y 784.7..820.3), so they still do not cover him — the
+  // upper layer keeps the near rows painting over him correctly if the
+  // geometry ever grazes. All well inside the floor-2 slab envelope
+  // (h + 0.495·min(u,v) ≤ 197.5) and clear of the electrical panel + conduit
+  // drop (v 168..192, high on the B-D wall) and of the entrance portal
+  // (u 83..155 on the front face). Emitted: reams, sitter, then boxes
+  // (upper layer, v 80..110 / 50..80 / 20..50 far-to-near), then the racks
+  // (v 20..94).
+  el('dw-contact', hFace(70, 104, 18, 112, FH)),
   el('dw-contact', hFace(190, 231, 68, 114, FH)),
   spriteShadow(SITTER, 160, 82, FH),
   ...paperReam(195, 109, 30, FH),
@@ -1177,9 +1264,9 @@ const floor01 = group('floor-01', [
   // boxes end under the seated DBA layer, move them to a upper layer") — the
   // three rows sit in front of / at the sitter's depth (v 20..110 vs his
   // v = 82), so nearer-paints-later is also the geometrically correct order.
-  ...paperBox(64, 94, 80, 110, FH, FH + 16, 2),
-  ...paperBox(64, 94, 50, 80, FH, FH + 16, 1),
-  ...paperBox(64, 94, 20, 50, FH, FH + 16),
+  ...paperBox(72, 102, 80, 110, FH, FH + 16, 2),
+  ...paperBox(72, 102, 50, 80, FH, FH + 16, 1),
+  ...paperBox(72, 102, 20, 50, FH, FH + 16),
   // Server rack group (Stage 5.5 §10, user revision): two tall cabinets and
   // one short one on the Health Platforms stretch, standing on the B-D
   // wall's near stretch where the sight line keeps them fully visible.
@@ -1235,18 +1322,39 @@ const floor02 = group('floor-02', [
   // slabs — the run rises from its floor and disappears behind the story
   // above, like the reference's pipes.
   assetPipe(227.5, 60, 2 * FH, STORY_H),
+  // Small data server on the Interactica story (r25 review): the floor-1 rack
+  // idiom mirrored to look toward the building's FRONT wall, standing between
+  // the desks and the B-D wall so the kiosk partly covers it from this camera.
+  // Emitted before the desks: it is deeper (v 38..47) than WS_C (v 26..43) but
+  // nearer than WS_D (v 82..99), so far-to-near is WS_D → rack → WS_C → kiosk.
+  ...serverRackFront(214, 230, 38, 2 * FH, 2 * FH + 38),
   // The dev workstations on the Interactica story (Stage 5.5 §10): the
   // wireframe-matched generated sprites (WS_C monitor desk, WS_D notebook
   // desk side by side), pulled off the wall face so the pipe run passes
   // behind them; drawn after the pipes. Paint order far-to-near (r24 review:
   // WS_D sits deeper at v = 82, WS_C nearer at v = 26, so WS_D must be
   // emitted first — previously they were swapped and the nearer desk was
-  // painted under the farther one).
-  assetWorkstation(WS_D, 221.5, 82, 2 * FH),
-  assetWorkstation(WS_C, 221.5, 26, 2 * FH),
+  // painted under the farther one). r25 review: pulled further off the B-D
+  // wall (uBack 221.5 → 213.5) to leave the front-right corner for the
+  // Cleverlit stand kiosk.
+  assetWorkstation(WS_D, 213.5, 82, 2 * FH),
+  assetWorkstation(WS_C, 213.5, 26, 2 * FH),
+  // Cleverlit stand kiosk (r25 review): the congress info point standing in
+  // the open floor of the section, in front of / left of the desks (user
+  // screenshot: the mark sits on the empty wood floor below-left of the desk
+  // cluster, not tucked against the right wall with the desks/rack). Emitted
+  // after the desks/rack: it is nearer (v 8..24) than the desks (v 26..99),
+  // so it paints over their lower-left corner where they graze.
+  assetProp(STANDKIOSK, 157, 4.5, 2 * FH),
 ])
 const floor02Front = group('floor-02-front', [
   ...slabTriangle(2 * FH),
+  // Data cables from the Cleverlit kiosk's mini PC (r25 review): drawn ON the
+  // floor, so they must come after the slab surface (slabTriangle) but before
+  // the columns; they run to the shaft's right wall (W1) whose outer face
+  // they meet. See kioskCables() for the route constraint (the assembler
+  // draws this fragment after the elevator).
+  ...kioskCables(2 * FH + 0.4),
   ...columns(2 * FH, 2 * FH + STORY_H),
 ])
 

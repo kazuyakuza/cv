@@ -8,8 +8,75 @@ the top update plus any section it references; the older updates are
 historical but keep the derived placement rules and traps (each is still
 valid unless a later update says otherwise).
 
-**UPDATE #18 is the newest session (r25 review revisions) — implemented and
-committed; user review pending. UPDATE #15 was implemented by UPDATE #16.**
+**UPDATE #19 is the newest session (r25 review, part 2: boxes nearer the DBA,
+desks off the wall, NEW Cleverlit stand-kiosk sprite + front-facing server +
+floor cables) — implemented and committed; user review pending (the kiosk's
+spot is a first pass against the user's red-marked screenshot).**
+
+## UPDATE #19 — 2026-09-18, nineteenth session (r25 review part 2: kiosk + server + cables)
+
+Implemented, rendered (`generated/dev/r30.png`; crops `chk-f2`, `chk-kiosk`,
+`chk-hp`, `chk-devs`, `overview`; crop script `generated/dev/crop_r30.py`,
+probes `probe_r27.py`). Lint clean.
+
+1. **Health Platforms boxes nudge nearer the seated DBA** (r25 review): u band
+   64..94 → **72..102** (+8u); row contact shadow `hFace(62,96,…)` →
+   `hFace(70,104,18,112,FH)`. Still 0 crate-coloured pixels inside the sitter's
+   sprite canvas (his canvas x 782.3..810.6 / y 784.7..820.3; the box tops'
+   right corner reaches x ≈ 809 but only at y ≥ 833, below his canvas).
+2. **Interactica floor-2 desks pulled off the right wall**: `uBack 221.5 →
+   213.5` for both WS_D and WS_C (screen x −5.7px), leaving the front-right
+   corner free for the new kiosk.
+3. **NEW — Cleverlit stand kiosk sprite** (congress info point: touch screen on
+   a slim pillar + webcam/card reader clipped at the screen's side + mini PC
+   box at the pillar base + a person using it). Full wireframe-only pipeline:
+   `generated/dev/make_wire_standkiosk.py` (diorama projection, S=10: base
+   plate, pillar, 13x2.4u screen, camera box, mini PC, standing figure drawn
+   as a white silhouette over the kiosk lines so the model gets the occlusion)
+   → `standkiosk-wire.png` → NB2 generation with the wireframe as the ONLY
+   input, n=3 → `standkiosk-cand.png` picked of the three by silhouette match
+   (`pick_standkiosk.py`: 0.087 vs 0.180 / 0.203; the other two were not
+   cleanly white-keyable) → `key_cut_standkiosk.py` → `src/assets/
+   standkiosk-01-cut.png` (385x777). **Scale trap**: the wireframe's vertical
+   scale is ~13.215 px per h-unit (M = 4·sin19.29°·S), NOT 10 px/unit, so the
+   object's content is 48.6 diorama px tall (not 64) — k is height-matched
+   (k = 0.062548, ax 14.95, ay 48.41; anchor = the bottommost opaque pixel =
+   the person's foot). A colour-segmented ASCII dump of the cut sprite
+   (`ascii_cut.py`) confirms the person is ≈33u tall (matches the devs) and
+   the screen/pillar/PC/base are all present.
+   **Placement (FIRST PASS — needs user confirmation)**: the user's r25
+   screenshot (red X on the wood floor below-left of the desk cluster) says
+   the kiosk must NOT sit tucked against the right wall with the desks/rack.
+   Placed at `assetProp(STANDKIOSK, 157, 4.5, 2*FH)` → sprite rect
+   x 843..867, y 686..735 (open floor, clearly below/in front of the desks,
+   nearer than them so it paints over their lower-left graze). **If the user
+   wants it tighter to the front-right corner instead, the previous first-pass
+   was `(209, 6.5)` (sprite x 877.8..901.9).**
+4. **NEW — small data server facing the front wall**: `serverRackFront(u0, u1,
+   vFront, hBase, hTop)` — the floor-1 rack idiom mirrored so the door face is
+   a constant-v plane looking toward −v (plinth, frame, blanking panels, LED
+   row, vents, side seams on the u0 plane). Placed at
+   `serverRackFront(214, 230, 38, 2*FH, 2*FH+38)` (38u tall like the floor-1
+   short cabinet), between the desks and the B-D wall; the kiosk partly covers
+   it from this camera ("part visible" per the user).
+5. **NEW — SVG data cables** from the kiosk's mini PC across the floor to the
+   elevator's right wall (W1's outer face): `kioskCables(h)` = two smooth
+   quadratic runs (new `.dw-cable` / `.dw-cable-2` styles), laid at
+   h = 2·FH + 0.4. Verified in r30: both runs are visible along their whole
+   route (probe: 0 misses) and end at the wall's outer face line (main ends
+   x 612.5 vs the face's 611.5 at v=244).
+   **Fragment-order trap (important)**: the assembler draws the `*-front`
+   fragments AFTER `elevator` (rootOrder: …, `elevator`, `floor-02-front`, …),
+   so (a) anything that must be occluded by the shaft may NOT live in a
+   `*-front` fragment, and (b) anything that must lie ON a floor surface must
+   come after that floor's `slabTriangle` (which is in the `-front` fragment).
+   First attempt put the cables in `floor-02` → the floor-2 slab triangle
+   (drawn later) hid the run's end. Final: the cables live in
+   `floor-02-front`, after `slabTriangle`, and their route keeps every
+   waypoint OUT of the slab-triangle rect (u ≤ 48.2 ∧ v ≤ 222.4) so they end
+   exactly at W1's outer face without painting into the wall.
+6. User review pending: the kiosk's spot (see 3) and look, the front-facing
+   server's read, and the cable routing across the empty floor.
 
 ## UPDATE #18 — 2026-09-17, eighteenth session (r25 review: devs again, box move halved + upper layer)
 
