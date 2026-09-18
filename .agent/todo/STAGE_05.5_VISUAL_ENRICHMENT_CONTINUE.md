@@ -8,9 +8,25 @@ the top update plus any section it references; the older updates are
 historical but keep the derived placement rules and traps (each is still
 valid unless a later update says otherwise).
 
-**UPDATE #21 is the newest session (correction: kiosk to the FRONT-LEFT corner
-area, aligned with the data server's column; cables rerouted accordingly) —
-implemented and committed; user review pending.**
+**UPDATE #22 is the newest session (approved: kiosk nudged deeper toward the
+server to leave breathing room from the front wall) — user said the placement
+is correct, this is the final polish. UPDATE #21 was the correction.**
+
+## UPDATE #22 — 2026-09-18, twenty-second session (kiosk nudged off the front edge)
+
+User: "that is correct! just move it a little in direction to the data server,
+to make a little space between it and the building's front wall." Verified in
+`generated/dev/r33.png` (crops `chk-f2`, `chk-kiosk`, `chk-left`, `chk-hp`,
+`overview` — same crop_r32.py boxes). Lint clean.
+
+1. Kiosk: `assetProp(STANDKIOSK, 65, 1.5, 2*FH)` → **`(65, 11.5)`** (+10u
+   deeper, toward the server). Sprite rect x 779.7..803.8, y 707.3..755.9 (was
+   785.9..810.0 / 710.1..758.7); the person's feet now sit ~11.5u behind the
+   front edge, leaving clear floor in front of the kiosk.
+2. Cables: the start (under the kiosk's mini PC) moved with it — main (81,37),
+   second (80,40); ends unchanged at the server's front face. Probe: both runs
+   still visible end-to-end (0 misses).
+3. Layer order unchanged (slab → cables → server → kiosk → columns).
 
 ## UPDATE #21 — 2026-09-18, twenty-first session (kiosk placement correction)
 

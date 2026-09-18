@@ -296,10 +296,10 @@ function smoothRun(pts, h) {
 }
 function kioskCables(h) {
   const main = [
-    [81, 27], [79, 45], [76, 70], [73, 100], [70, 130], [67, 160], [64, 190], [60, 209],
+    [81, 37], [79, 50], [76, 72], [73, 100], [70, 130], [67, 160], [64, 190], [60, 209],
   ]
   const second = [
-    [80, 30], [77, 50], [74, 78], [71, 108], [68, 138], [65, 168], [62, 196], [64, 213],
+    [80, 40], [77, 55], [74, 80], [71, 108], [68, 138], [65, 168], [62, 196], [64, 213],
   ]
   return [el('dw-cable', smoothRun(main, h)), el('dw-cable-2', smoothRun(second, h))]
 }
@@ -1348,10 +1348,11 @@ const floor02Front = group('floor-02-front', [
   // FRONT-LEFT corner area — the corner formed by the building's left wall
   // (u = 0) and front wall (v = 0) — but not 100% in the corner: aligned in u
   // with the data server's column (server u 52..68, kiosk u ≈ 50..71) and set
-  // just off the front edge (object origin (50, 5), anchor = the mirrored
-  // person's foot at (65, 1.5)). Emitted last so it paints over the cable
-  // start (the cables live in the layer below it).
-  assetProp(STANDKIOSK, 65, 1.5, 2 * FH),
+  // off the front edge with a little breathing room (object origin (50, 15),
+  // anchor = the mirrored person's foot at (65, 11.5) → ~11u of clear floor
+  // between the kiosk and the front edge). Emitted last so it paints over the
+  // cable start (the cables live in the layer below it).
+  assetProp(STANDKIOSK, 65, 11.5, 2 * FH),
   ...columns(2 * FH, 2 * FH + STORY_H),
 ])
 
