@@ -296,10 +296,10 @@ function smoothRun(pts, h) {
 }
 function kioskCables(h) {
   const main = [
-    [81, 37], [79, 50], [76, 72], [73, 100], [70, 130], [67, 160], [64, 190], [60, 209],
+    [81, 37], [79, 50], [76, 72], [73, 100], [70, 130], [67, 160], [64, 192], [60, 219],
   ]
   const second = [
-    [80, 40], [77, 55], [74, 80], [71, 108], [68, 138], [65, 168], [62, 196], [64, 213],
+    [80, 40], [77, 55], [74, 80], [71, 108], [68, 138], [65, 168], [62, 198], [64, 223],
   ]
   return [el('dw-cable', smoothRun(main, h)), el('dw-cable-2', smoothRun(second, h))]
 }
@@ -1341,9 +1341,11 @@ const floor02Front = group('floor-02-front', [
   ...kioskCables(2 * FH + 0.4),
   // Small data server (r25 review part 2): the floor-1 rack idiom mirrored to
   // look toward the building's FRONT wall, standing on the floor just right
-  // of the elevator shaft's front corner ("side to the elevator"). Emitted
-  // after the cables so the run ends right in it.
-  ...serverRackFront(52, 68, 210, 2 * FH, 2 * FH + 38),
+  // of the elevator shaft's front corner ("side to the elevator"). r25 review
+  // part 3: nudged deeper toward the rear wall (vFront 210 → 220), so its back
+  // now sits just in front of W1's near edge (v 229.9). Emitted after the
+  // cables so the run ends right in it.
+  ...serverRackFront(52, 68, 220, 2 * FH, 2 * FH + 38),
   // Cleverlit stand kiosk (r25 review): the congress info point in the
   // FRONT-LEFT corner area — the corner formed by the building's left wall
   // (u = 0) and front wall (v = 0) — but not 100% in the corner: aligned in u

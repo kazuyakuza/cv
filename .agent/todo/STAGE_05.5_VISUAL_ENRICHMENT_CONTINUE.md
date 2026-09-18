@@ -8,9 +8,33 @@ the top update plus any section it references; the older updates are
 historical but keep the derived placement rules and traps (each is still
 valid unless a later update says otherwise).
 
-**UPDATE #22 is the newest session (approved: kiosk nudged deeper toward the
-server to leave breathing room from the front wall) — user said the placement
-is correct, this is the final polish. UPDATE #21 was the correction.**
+**UPDATE #23 is the newest session (server nudged toward the rear wall; user
+edited the kiosk's screen art — constants unaffected). A fresh condensed
+handoff for the NEXT session now lives in
+`STAGE_05.5_VISUAL_ENRICHMENT_CONTINUE_2.md` — read that one first; this file
+stays as the full history.**
+
+## UPDATE #23 — 2026-09-18, twenty-third session (server nudged rearward; doc handoff split)
+
+Verified in `generated/dev/r34.png` (crops `chk-f2`, `chk-kiosk`, `chk-left`,
+`chk-hp`, `overview`; crop script `generated/dev/crop_r32.py`). Lint clean.
+
+1. **User edited the kiosk sprite again** (`src/assets/standkiosk-01-cut.png`,
+   16:19): the changed pixels are confined to the SCREEN panel area
+   (x 103..228, y 39..332 of 385x777); the silhouette is identical (0 differing
+   silhouette rows) and the opaque bbox is unchanged (2..382 / 2..774), so all
+   constants (`k` 0.062548, `ax` 8.51, `ay` 48.41) stay valid. Re-measure the
+   anchor after ANY future hand edit (the bottommost row is still x 136..145).
+2. **Data server nudged toward the building's rear wall**:
+   `serverRackFront(52, 68, 210, …)` → **`(52, 68, 220, …)`** (+10u deeper);
+   its back now sits just in front of W1's near edge (v 229.9). Screen rect
+   ≈ x 625..642, y 663..708.
+3. **Cable ends followed**: main end (60, 209) → (60, 219); second (64, 213) →
+   (64, 223) — both now land on the moved server's front face. Probe: both
+   runs visible end-to-end (0 misses).
+4. **Docs**: this rolling file keeps the full history; the condensed handoff for
+   new sessions is now `STAGE_05.5_VISUAL_ENRICHMENT_CONTINUE_2.md` (state,
+   workflow, conventions, traps, pipeline recipe, prop inventory, next steps).
 
 ## UPDATE #22 — 2026-09-18, twenty-second session (kiosk nudged off the front edge)
 
