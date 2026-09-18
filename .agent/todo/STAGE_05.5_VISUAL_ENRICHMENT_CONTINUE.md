@@ -8,10 +8,58 @@ the top update plus any section it references; the older updates are
 historical but keep the derived placement rules and traps (each is still
 valid unless a later update says otherwise).
 
-**UPDATE #19 is the newest session (r25 review, part 2: boxes nearer the DBA,
-desks off the wall, NEW Cleverlit stand-kiosk sprite + front-facing server +
-floor cables) — implemented and committed; user review pending (the kiosk's
-spot is a first pass against the user's red-marked screenshot).**
+**UPDATE #20 is the newest session (r25 review part 2 follow-up: boxes nearer,
+kiosk to the bottom-right corner with the user's mirrored sprite, server beside
+the elevator, cables kiosk → server) — implemented and committed; user review
+pending.**
+
+## UPDATE #20 — 2026-09-18, twentieth session (r25 review part 2 follow-up)
+
+Implemented against `generated/dev/r31.png` (crops `chk-f2`, `chk-kiosk`,
+`chk-server`, `chk-hp`, `overview`; crop script `generated/dev/crop_r31.py`).
+Lint clean. Diff vs r30 confined to the vignette boxes, the floor-2 kiosk area,
+the server area (x 600..680) and the cable route.
+
+1. **Health Platforms boxes** (r25 review: "move some more pxs in the same
+   direction"): u band 72..102 → **80..110**; row contact shadow
+   `hFace(78,112,18,112,FH)`. Render check: still **0** crate-coloured pixels
+   inside the sitter's sprite canvas (x 782.3..810.6 / y 784.7..820.3) — the
+   tops now reach x 809.6 but only at y ≥ 824, below his canvas.
+2. **Kiosk sprite — the user's mirror edit re-measured.** Verified the new
+   `src/assets/standkiosk-01-cut.png` is EXACTLY the horizontal flip of the
+   committed original (0 differing cells vs the flipped original, 17672 vs the
+   unflipped). Canvas unchanged (385x777) so k stays 0.062548; the anchor
+   (bottommost opaque pixel) moved sprite-x 239 → 136 → **ax 14.95 → 8.51**
+   (ay 48.41 unchanged — the person's foot is now on the sprite's other side).
+3. **Kiosk placement → section's bottom-right corner** (r25 review: "must be
+   moved near the bottom right corner of the section"): `assetProp(STANDKIOSK,
+   **204.5, 3**, 2*FH)` → sprite rect x 884..908, y 675..724 (was x 843..867 at
+   u157). It now stands at the front edge, clear of WS_C's right edge (x 882.9)
+   and ~10px left of the front-right corner (x 918); the B-D wall is at u 230.5,
+   the sprite's right edge maps to u ≈ 226 → inside.
+4. **Data server moved beside the elevator** (r25 review: "the data server must
+   be side to the elevator, no idea why you draw it in the current place"):
+   `serverRackFront(**52, 68, 210**, 2*FH, 2*FH+38)` — on the floor just right
+   of the shaft's front corner (screen x 632..650, y 666..714), still facing the
+   building's FRONT wall. Placed at v 210..219, i.e. in FRONT of the shaft's W1
+   wall (v 229.9..303.4) so it does not depend on the wall's occlusion (which
+   the assembler order would give the wall, since the server now lives in the
+   later `floor-02-front` fragment).
+5. **Cables now run kiosk → server, in the layer BELOW the kiosk** (r25 review:
+   "must draw from the stand-kiosk sprite (in a layer below it), and must end
+   right in the data server"): waypoints rebuilt — start under the kiosk's mini
+   PC (~u 220, v 27), sweep across the section, end on the server's front face
+   (u 56/62, v 209/213). Fragment order verified in `floor-02-front`:
+   `dw-cable` (idx 144) < rack (1023) < kiosk image (3394) < columns. The kiosk
+   and the server were moved out of `floor-02` into `floor-02-front` to get
+   this stacking (slab surface → cables → server → kiosk); safe because neither
+   overlaps the elevator/shaft on screen (shaft faces x 535..621, server
+   632..650, kiosk 884..908).
+   Render probe: both runs visible along their whole route (the one "miss" at
+   u108,v98 is the quadratic smoothing pulling the curve ~7px off the straight
+   waypoint, not an occlusion).
+6. Review pending: the kiosk's corner spot, the mirrored person's read, the
+   server beside the elevator, and the cable run.
 
 ## UPDATE #19 — 2026-09-18, nineteenth session (r25 review part 2: kiosk + server + cables)
 
