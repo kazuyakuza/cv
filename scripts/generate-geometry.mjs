@@ -1331,29 +1331,32 @@ const floor02 = group('floor-02', [
   // wall (uBack 221.5 → 213.5).
   assetWorkstation(WS_D, 213.5, 82, 2 * FH),
   assetWorkstation(WS_C, 213.5, 26, 2 * FH),
-])
-const floor02Front = group('floor-02-front', [
-  ...slabTriangle(2 * FH),
   // Data cables from the Cleverlit kiosk's mini PC (r25 review): drawn ON the
-  // floor — after the slab surface (slabTriangle) and BELOW the kiosk sprite,
-  // so they emerge from under its mini PC box. Route: across the section to
-  // the small data server beside the elevator.
+  // floor — after the slab surface — and in a layer BELOW the kiosk sprite
+  // (the kiosk lives in the later 'floor-02-front' fragment), so the run
+  // emerges from under its mini PC box. Route: along the left side across the
+  // section to the small data server beside the elevator.
   ...kioskCables(2 * FH + 0.4),
   // Small data server (r25 review part 2): the floor-1 rack idiom mirrored to
   // look toward the building's FRONT wall, standing on the floor just right
-  // of the elevator shaft's front corner ("side to the elevator"). r25 review
-  // part 3: nudged deeper toward the rear wall (vFront 210 → 220), so its back
-  // now sits just in front of W1's near edge (v 229.9). Emitted after the
-  // cables so the run ends right in it.
+  // of the elevator shaft's front corner ("side to the elevator", its back
+  // near W1's near edge at v 229.9). Emitted after the cables so the run ends
+  // right in it. MUST stay in this fragment (below the elevator layer) so the
+  // shaft's faces can occlude it if they ever overlap.
   ...serverRackFront(52, 68, 220, 2 * FH, 2 * FH + 38),
+])
+const floor02Front = group('floor-02-front', [
+  ...slabTriangle(2 * FH),
   // Cleverlit stand kiosk (r25 review): the congress info point in the
   // FRONT-LEFT corner area — the corner formed by the building's left wall
   // (u = 0) and front wall (v = 0) — but not 100% in the corner: aligned in u
   // with the data server's column (server u 52..68, kiosk u ≈ 50..71) and set
   // off the front edge with a little breathing room (object origin (50, 15),
   // anchor = the mirrored person's foot at (65, 11.5) → ~11u of clear floor
-  // between the kiosk and the front edge). Emitted last so it paints over the
-  // cable start (the cables live in the layer below it).
+  // between the kiosk and the front edge). Emitted last (in this later
+  // fragment) so it paints over the cable start — the cables AND the data
+  // server live in the layer below it (`floor-02`, i.e. also below the
+  // elevator, as the user requires).
   assetProp(STANDKIOSK, 65, 11.5, 2 * FH),
   ...columns(2 * FH, 2 * FH + STORY_H),
 ])

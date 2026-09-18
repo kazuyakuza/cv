@@ -8,11 +8,31 @@ the top update plus any section it references; the older updates are
 historical but keep the derived placement rules and traps (each is still
 valid unless a later update says otherwise).
 
-**UPDATE #23 is the newest session (server nudged toward the rear wall; user
-edited the kiosk's screen art — constants unaffected). A fresh condensed
-handoff for the NEXT session now lives in
-`STAGE_05.5_VISUAL_ENRICHMENT_CONTINUE_2.md` — read that one first; this file
-stays as the full history.**
+**UPDATE #24 is the newest session (data server + cables moved BELOW the
+elevator layer, into `floor-02`). A fresh condensed handoff for the NEXT
+session lives in `STAGE_05.5_VISUAL_ENRICHMENT_CONTINUE_2.md` — read that one
+first; this file stays as the full history.**
+
+## UPDATE #24 — 2026-09-18, twenty-fourth session (server + cables below the elevator layer)
+
+User: "the moved data server must be in a layer below the elevator's layer."
+Verified in `generated/dev/r35.png` (crops `chk-f2`, `chk-kiosk`, `chk-left`,
+`chk-hp`, `overview`; crop script `generated/dev/crop_r32.py`). Lint clean.
+
+1. `kioskCables` and `serverRackFront(52, 68, 220, …)` moved from
+   `floor-02-front` into **`floor-02`** (assembled BEFORE `elevator`), placed
+   after the desks. `floor-02` order: …desks → cable < server (the run still
+   ends in the server).
+2. The kiosk stays in `floor-02-front` (assembled after the elevator), so it
+   remains ABOVE the cables; `floor-02-front` is now simply
+   `slabTriangle → STANDKIOSK → columns`.
+3. Safe to move: the cable route (u 60..81) is entirely outside the floor-2
+   slab triangle's rect (u ≤ 48.2 ∧ v ≤ 222.4) and right of the u = 0 cut
+   face, so nothing in the later fragments covers it; the server (screen
+   x 625..642) does not overlap the shaft's faces (x 535..621), so the new
+   lower layer costs nothing — but the shaft can now occlude it if they ever
+   overlap. Render probe: both cable runs visible end-to-end (0 misses);
+   server at x ≈ 627..660, y 663..711.
 
 ## UPDATE #23 — 2026-09-18, twenty-third session (server nudged rearward; doc handoff split)
 

@@ -90,9 +90,16 @@ entrance, path, career-sign
 - **TRAP: the `*-front` fragments are drawn AFTER `elevator`.** Anything that
   must be occluded by the shaft may NOT live there. Conversely, anything that
   must lie ON a floor surface (e.g. the SVG cables) must come after that
-  floor's `slabTriangle` (which lives in the `-front` fragment).
-- Current floor-2 stacking (r34): `floor-02-front` =
-  `slabTriangle` → `kioskCables` → `serverRackFront` → `STANDKIOSK` → `columns`.
+  floor's `slabTriangle` (which lives in the `-front` fragment) — but note the
+  cables' route now avoids the triangle's rect entirely, so they can live in
+  `floor-02` for the sake of the elevator layering.
+- Current floor-2 stacking (r35):
+  - `floor-02` = `slab` → `backWalls` → pipes → desks → `kioskCables` →
+    `serverRackFront` (so the cables AND the server sit BELOW the elevator
+    layer, and the run ends in the server).
+  - `floor-02-front` = `slabTriangle` → `STANDKIOSK` → `columns` (the kiosk is
+    therefore ABOVE the cables, which is what the user asked: the run emerges
+    from under the kiosk's mini PC).
 - Slab-cut envelope (re-derived in UPDATE #6): a slab's left cut band at u = 0
   (`h ∈ [hBot,hTop]`) hides points with `hBot ≤ h + 0.495u ≤ hTop` (when
   `v ≥ u`); **the B-D-wall side (`v < u`) is exempt** — that is why the right
