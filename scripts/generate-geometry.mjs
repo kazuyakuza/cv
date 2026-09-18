@@ -296,12 +296,10 @@ function smoothRun(pts, h) {
 }
 function kioskCables(h) {
   const main = [
-    [220, 27], [210, 30], [196, 35], [180, 42], [162, 52], [144, 65],
-    [126, 80], [108, 98], [92, 118], [78, 140], [66, 164], [58, 188], [56, 209],
+    [81, 27], [79, 45], [76, 70], [73, 100], [70, 130], [67, 160], [64, 190], [60, 209],
   ]
   const second = [
-    [219, 29], [206, 33], [190, 39], [172, 47], [154, 58], [136, 71],
-    [118, 87], [100, 105], [84, 126], [70, 149], [61, 173], [57, 196], [62, 213],
+    [80, 30], [77, 50], [74, 78], [71, 108], [68, 138], [65, 168], [62, 196], [64, 213],
   ]
   return [el('dw-cable', smoothRun(main, h)), el('dw-cable-2', smoothRun(second, h))]
 }
@@ -1346,11 +1344,14 @@ const floor02Front = group('floor-02-front', [
   // of the elevator shaft's front corner ("side to the elevator"). Emitted
   // after the cables so the run ends right in it.
   ...serverRackFront(52, 68, 210, 2 * FH, 2 * FH + 38),
-  // Cleverlit stand kiosk (r25 review): the congress info point near the
-  // section's bottom-right corner (front edge, clear of the desks). Emitted
-  // last so it paints over the cable start (the cables live in the layer
-  // below it).
-  assetProp(STANDKIOSK, 204.5, 3, 2 * FH),
+  // Cleverlit stand kiosk (r25 review): the congress info point in the
+  // FRONT-LEFT corner area — the corner formed by the building's left wall
+  // (u = 0) and front wall (v = 0) — but not 100% in the corner: aligned in u
+  // with the data server's column (server u 52..68, kiosk u ≈ 50..71) and set
+  // just off the front edge (object origin (50, 5), anchor = the mirrored
+  // person's foot at (65, 1.5)). Emitted last so it paints over the cable
+  // start (the cables live in the layer below it).
+  assetProp(STANDKIOSK, 65, 1.5, 2 * FH),
   ...columns(2 * FH, 2 * FH + STORY_H),
 ])
 

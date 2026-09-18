@@ -8,10 +8,36 @@ the top update plus any section it references; the older updates are
 historical but keep the derived placement rules and traps (each is still
 valid unless a later update says otherwise).
 
-**UPDATE #20 is the newest session (r25 review part 2 follow-up: boxes nearer,
-kiosk to the bottom-right corner with the user's mirrored sprite, server beside
-the elevator, cables kiosk → server) — implemented and committed; user review
-pending.**
+**UPDATE #21 is the newest session (correction: kiosk to the FRONT-LEFT corner
+area, aligned with the data server's column; cables rerouted accordingly) —
+implemented and committed; user review pending.**
+
+## UPDATE #21 — 2026-09-18, twenty-first session (kiosk placement correction)
+
+User correction: the kiosk must go to the corner formed by the building's LEFT
+and FRONT walls — "however, not 100% in the corner, align it with the data
+server position". Verified in `generated/dev/r32.png` (crops `chk-f2`,
+`chk-kiosk`, `chk-left`, `chk-hp`, `overview`; crop script
+`generated/dev/crop_r32.py`). Lint clean.
+
+1. **Kiosk moved to the front-left area, aligned in u with the server.**
+   `assetProp(STANDKIOSK, 204.5, 3, 2*FH)` → **`(65, 1.5)`**: the object origin
+   sits at (50, 5) so the kiosk spans u ≈ 50..71 (the server is u 52..68 — the
+   two share a column ~60) and v ≈ 1.5..13, i.e. just off the front edge, ~50u
+   right of the left wall ("not 100% in the corner"). Sprite rect
+   x 785.9..810.0, y 710.1..758.7 (was x 884..908 in the bottom-right pass).
+   Clear of the shaft (x 535..621) and of the front column A (x 750).
+2. **Cables rerouted** from the kiosk's mini PC to the server along the left
+   side: main waypoints (81,27) → (60,209), second (80,30) → (64,213) — a long
+   mostly-depth run just right of the shaft column, ending on the server's
+   front face (the server is emitted after the cables, so the run ends in it).
+   Still outside the slab-triangle rect (all u ≥ 60). Render probe: both runs
+   visible end-to-end (0 misses).
+3. Layer order unchanged and re-verified in `floor-02-front`:
+   cable < rack(server) < kiosk image < columns — the cables sit in the layer
+   below the kiosk, so the run emerges from under its mini PC box.
+4. Review pending: the kiosk's front-left spot and its read against the
+   elevator/server column.
 
 ## UPDATE #20 — 2026-09-18, twentieth session (r25 review part 2 follow-up)
 
