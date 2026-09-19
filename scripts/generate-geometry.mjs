@@ -358,6 +358,27 @@ const DEV_GROUP = { file: 'devs-01-cut.png', w: 675, h: 962, k: 0.0667674, ax: 3
 // forward from 130 to 82 — the (-u,-v) view diagonal kept his screen x
 // where the user approved it.
 const SITTER = { file: 'sitter-01-cut.png', w: 481, h: 605, k: 0.058735, ax: 22.85, ay: 35.36 }
+// Interactica city-model board (r36 review, user request): a miniature
+// isometric city board — a '#' street grid, a central block of white battery
+// containers, and grass/trees/a utility pole/cars/parking around it — lying
+// flat on the floor like a board game left behind. Wireframe-only pipeline:
+// generated/dev/make_wire_cityboard.py → cityboard-wire.png → NB2/Pro
+// (wireframe as the ONLY input) → cityboard-cand.png → key_cut_cityboard.py.
+// Anchor = the board's near corner (bottommost opaque pixel), placed at
+// p(123, 167, 2*FH); the board spans u 123..165, v 167..209 (42u square,
+// projected width 59.4 px like the user's red mark).
+const CITY_BOARD = { file: 'cityboard-01-cut.png', w: 2289, h: 1041, k: 0.02601, ax: 29.86, ay: 27.0 }
+// Interactica AR/VR staffage (r36 review, user): a person seen from BEHIND
+// wearing an AR/VR headset, with small shapeless holographic models floating
+// around him. Wireframe-only pipeline: generated/dev/make_wire_ar.py →
+// arvr-wire.png → NB2/Pro → arvr-cand_2.png → key_cut_ar.py. Anchor = the
+// bottommost opaque pixel (a foot), placed at p(70, 403, 2*FH) — behind the
+// shaft, so his projection lands screen-left of the elevator (the user's
+// marked spot); k is matched to the GROUP height (37.71u), giving the person
+// a ~31u standing height like the Nextcode devs. r36 follow-up (user):
+// +5% size (k/ax/ay all scaled ×1.05 about the foot) and nudged down-right
+// on screen (anchor (68,415) → (70,403): Δx ≈ +10, Δy ≈ +2.5 px).
+const ARVR_PERSON = { file: 'arvr-01-cut.png', w: 1036, h: 1815, k: 0.02187, ax: 10.59, ay: 39.63 }
 function spritePlace(sp, uAnchor, vAnchor, hBase) {
   const [bx, by] = p(uAnchor, vAnchor, hBase).split(',').map(Number)
   return { x: round(bx - sp.ax), y: round(by - sp.ay) }
@@ -375,6 +396,30 @@ function spriteShadow(sp, uAnchor, vAnchor, hBase) {
   const { x, y } = spritePlace(sp, uAnchor, vAnchor, hBase)
   const w = sp.w * sp.k
   return `<ellipse cx="${round(x + w / 2)}" cy="${round(y + sp.ay - 1)}" rx="${round(w * 0.44)}" ry="3.6" fill="#141618" fill-opacity="0.22" filter="url(#dw-soft)" />`
+}
+
+// Floating holographic panel for the AR/VR vignette (r36 review, user): a
+// white screen with illegible text lines, hanging in the air to the person's
+// left and in front of him (he faces the rear C-D wall, so "in front" is +v).
+// Drawn in a constant-v plane so its bottom/top edges carry the building's
+// 19.29° recede (it belongs to the diorama, not a flat UI overlay). The text
+// is just short strokes of varied length — deliberately unreadable.
+function holoScreen(u0, u1, v, h0, h1) {
+  const out = [el('dw-holo', vFace(v, u0, u1, h0, h1))]
+  // title bar
+  out.push(el('dw-holo-head', vFace(v, u0 + 0.6, u1 - 0.6, h1 - 3.6, h1 - 1.4)))
+  // text lines (a left column of wide lines + a right column of short ones)
+  const rows = 5
+  for (let i = 0; i < rows; i++) {
+    const h = h1 - 5.6 - i * 3.1
+    if (h < h0 + 1.6) break
+    const long = i % 2 === 0
+    const a = u0 + 1.2
+    const b = long ? u1 - 3.2 : u1 - 6.6
+    out.push(el('dw-holo-line', `M ${p(a, v, h)} L ${p(b, v, h)}`))
+    out.push(el('dw-holo-line', `M ${p(u1 - 3.0, v, h)} L ${p(u1 - 1.4, v, h)}`))
+  }
+  return out
 }
 
 // Space Invaders on the kiosk's dark screen (user request): the game is drawn
@@ -557,6 +602,10 @@ function vWallSheet(v, u, h, rot) {
 // <image> is emitted inside the owning floor fragment so the floors above
 // occlude the run where the sight line crosses their slabs.
 const PIPE_SPRITE = { file: 'pipe-01.png', w: 7.36, axis: 0.322 }
+// r36 review (user): drop the vertical run so its base sits fully on the
+// section floor instead of hovering a few px above it. The run length grows
+// by the same amount, keeping the top flush with the floor above.
+const PIPE_DROP = 5
 function assetPipe(u, v, hBase, hLen) {
   const [cx, by] = p(u, v, hBase).split(',').map(Number)
   const x = cx - PIPE_SPRITE.w * PIPE_SPRITE.axis
@@ -1320,7 +1369,11 @@ const floor02 = group('floor-02', [
   // floors above occlude its upper part where the sight line crosses their
   // slabs — the run rises from its floor and disappears behind the story
   // above, like the reference's pipes.
-  assetPipe(227.5, 60, 2 * FH, STORY_H),
+  // r36 review (user): the base hovered ~3 screen px above the floor line.
+  // Lower the anchor by PIPE_DROP and lengthen the run by the same amount so
+  // the top stays flush under the floor-3 slab while the base now contacts
+  // (slightly beds into) the section floor.
+  assetPipe(227.5, 60, 2 * FH - PIPE_DROP, STORY_H + PIPE_DROP),
   // The dev workstations on the Interactica story (Stage 5.5 §10): the
   // wireframe-matched generated sprites (WS_C monitor desk, WS_D notebook
   // desk side by side), pulled off the wall face so the pipe run passes
@@ -1331,6 +1384,26 @@ const floor02 = group('floor-02', [
   // wall (uBack 221.5 → 213.5).
   assetWorkstation(WS_D, 213.5, 82, 2 * FH),
   assetWorkstation(WS_C, 213.5, 26, 2 * FH),
+  // AR/VR vignette (r36 review, user): the person stands behind the shaft
+  // (v 403) so his projection is screen-left of the elevator — the spot the
+  // user circled. Drawn first (farther than the city board), then his
+  // floating holographic panel (in front of him, +v, and screen-left); the
+  // r36 follow-up moved the person down-right, and the panel follows so it
+  // stays attached to the sprite. Both live in floor-02 (below the elevator
+  // layer), which is correct: the person is physically behind the shaft, so
+  // the shaft may occlude him if the silhouette ever overlaps.
+  spriteShadow(ARVR_PERSON, 70, 403, 2 * FH),
+  assetProp(ARVR_PERSON, 70, 403, 2 * FH),
+  ...holoScreen(45, 67, 416, 2 * FH + 12, 2 * FH + 34),
+  // City-model board (r36 review, user): flat on the floor in the middle of
+  // the left Interactica half, inside the user's red mark (screen centre
+  // ≈ SVG (720, 693) -> floor point (u 144, v 188)). Its anchor is the
+  // board's near corner at (u 123, v 167); the board is 42u square. No screen
+  // overlap with the desks (u >= 196), the data server (v 220) or the cable
+  // run (u 60..81), so the floor-02 layer is enough. Emitted before the cables
+  // (farther than the near-left run) — depth order stays far-to-near.
+  spriteShadow(CITY_BOARD, 123, 167, 2 * FH),
+  assetProp(CITY_BOARD, 123, 167, 2 * FH),
   // Data cables from the Cleverlit kiosk's mini PC (r25 review): drawn ON the
   // floor — after the slab surface — and in a layer BELOW the kiosk sprite
   // (the kiosk lives in the later 'floor-02-front' fragment), so the run

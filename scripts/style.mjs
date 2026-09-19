@@ -137,6 +137,14 @@ export const svgStyle = `
     .dw-cable { fill: none; stroke: #3c3a35; stroke-width: 1.15; stroke-linecap: round; stroke-linejoin: round; }
     .dw-cable-2 { fill: none; stroke: #56534b; stroke-width: 0.8; stroke-linecap: round; stroke-linejoin: round; }
 
+    /* AR/VR holographic panel (r36 review, Interactica story): a white floating
+       screen with illegible text strokes — brighter than the architectural
+       greys but a step below the information-layer plaques, and cool-tinted so
+       it reads as a projected UI, not a physical sign */
+    .dw-holo { fill: #eef3f5; fill-opacity: 0.94; stroke: #8aa6b4; stroke-width: 0.55; }
+    .dw-holo-head { fill: #cbdde6; fill-opacity: 0.95; stroke: none; }
+    .dw-holo-line { fill: none; stroke: #607d8c; stroke-width: 0.6; stroke-opacity: 0.75; stroke-linecap: round; }
+
     /* Workstations (Stage 5.5 §10): dev desks come from generated
        sprites (src/assets/workstation-0X-cut.png, placed by
        assetWorkstation()); the old SVG desk classes were removed with them. */

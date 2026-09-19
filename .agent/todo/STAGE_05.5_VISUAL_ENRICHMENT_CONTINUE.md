@@ -8,10 +8,66 @@ the top update plus any section it references; the older updates are
 historical but keep the derived placement rules and traps (each is still
 valid unless a later update says otherwise).
 
-**UPDATE #24 is the newest session (data server + cables moved BELOW the
-elevator layer, into `floor-02`). A fresh condensed handoff for the NEXT
-session lives in `STAGE_05.5_VISUAL_ENRICHMENT_CONTINUE_2.md` — read that one
-first; this file stays as the full history.**
+**UPDATE #25 is the newest session (floor-2: pipe base grounded, city-model
+board sprite, AR/VR staffage + holographic screen). A fresh condensed handoff
+for the NEXT session lives in
+`STAGE_05.5_VISUAL_ENRICHMENT_CONTINUE_2.md` — read that one first; this file
+stays as the full history.**
+
+## UPDATE #25 — 2026-09-18, twenty-fifth session (floor-2 left half: pipe base, city board, AR/VR)
+
+User revision list (with two marked screenshots). Verified in
+`generated/dev/r36.png` (crops `chk-city`, `chk-arvr`, `chk-pipe`, `chk-f2left`,
+`overview`; crop script `generated/dev/crop_r36.py`). Lint clean.
+
+1. **Vertical service pipe base grounded.** The riser's base hovered ~3 screen
+   px above the floor line (measured in the user's screenshot). New
+   `PIPE_DROP = 5` constant (`generate-geometry.mjs`): the call is
+   `assetPipe(227.5, 60, 2*FH - PIPE_DROP, STORY_H + PIPE_DROP)` — the base
+   drops 5 diorama px onto the floor while the top stays flush under the
+   floor-3 slab (length grows by the same amount, so no ceiling gap appears).
+2. **City-model board sprite** (NEW `CITY_BOARD`,
+   `src/assets/cityboard-01-cut.png`, 2289x1041). Wireframe-only pipeline:
+   `generated/dev/make_wire_cityboard.py` → `cityboard-wire.png` → NB2/Pro
+   (wireframe as the ONLY input, `n=3`, 2k) → `cityboard-cand.png` →
+   `generated/dev/key_cut_cityboard.py`. A flat 42u-square game board with a
+   `#` street grid, a central grid of white battery-storage cabins, and
+   grass/trees/a utility pole/cars/parking around it. The art's near-left edge
+   measures 19.69° vs the diorama's 19.29° (good projection match). k is
+   matched to WIDTH (59.4 px = 0.7071·84) because the height is dominated by
+   the prop pole. Anchor = the board's near corner (bottommost pixel), placed
+   `assetProp(CITY_BOARD, 123, 167, 2*FH)` → board centre (u 144, v 188), the
+   centre of the user's first red mark (screenshot mapped via the year
+   plaques: 2019 = SVG (560.4, 668.4), 2021 = (560.4, 563.4) → scale 5.94,
+   offset (-3290, -3616)). Lives in `floor-02` after the desks; no overlap
+   with desks (u ≥ 196), the data server (v 220) or the cable run (u 60..81).
+3. **AR/VR staffage + holographic screen** (NEW `ARVR_PERSON`,
+   `src/assets/arvr-01-cut.png`, 1036x1815). Wireframe-only pipeline:
+   `generated/dev/make_wire_ar.py` → `arvr-wire.png` → NB2/Pro → `arvr-cand_2.png`
+   → `generated/dev/key_cut_ar.py`. A person seen from BEHIND wearing an AR/VR
+   headset, with 7 small shapeless holographic blobs in different colours
+   floating around him. k matched to the GROUP height (37.71u) → person ≈ 31u.
+   Anchor = the foot (bottommost pixel), placed
+   `assetProp(ARVR_PERSON, 70, 403, 2*FH)`: behind the shaft (v 403), so his
+   projection lands screen-left of the elevator — the centre of the user's
+   second red mark (screenshot mapped via the plaques: `2019` = (1403, 873.5),
+   `2021` = (1403.5, 246.5) → scale 5.971, offset (-1942.9, -3117.4)).
+   New `holoScreen(u0,u1,v,h0,h1)` helper draws the floating white panel with
+   illegible text in a constant-v plane (so it carries the 19.29° recede); new
+   classes `.dw-holo` / `.dw-holo-head` / `.dw-holo-line` in `scripts/style.mjs`.
+   Placed at `holoScreen(45, 67, 416, 2*FH+12, 2*FH+34)` — the person's left,
+   in front of him (+v, the way he faces the rear wall). Both the person and
+   the panel live in `floor-02` (below the elevator layer), correct because the
+   person is physically behind the shaft. The sprite's ground contact uses
+   `spriteShadow`.
+   **r36 follow-up (user):** hand-edited the kiosk and AR/VR sprites — both
+   edits are internal only (opaque bbox and bottommost row unchanged, so the
+   kiosk constants stay valid); re-measured them against `git show HEAD:…`.
+   AR/VR person **+5% size** (k/ax/ay ×1.05 about the foot: k 0.02083 →
+   0.02187, ax 10.08 → 10.59, ay 37.75 → 39.63) and nudged **down-right**
+   (anchor (68,415) → (70,403) ≈ Δx +10, Δy +2.5 px); the holo panel moved
+   with it to stay attached. Re-verified in `generated/dev/r37.png`
+   (crop `chk-arvr`).
 
 ## UPDATE #24 — 2026-09-18, twenty-fourth session (server + cables below the elevator layer)
 

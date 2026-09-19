@@ -14,11 +14,14 @@ The career diorama SVG is built and illustrated (Stages 0–5 complete). **Stage
 rendered PNG, sends a revision list (often with screenshots and red marks), the
 session implements it, renders a new `rNN.png`, and the user reviews again.
 
-Last round: **UPDATE #23** (2026-09-18) — data server nudged toward the rear
-wall, kiosk screen art hand-edited by the user. Latest render:
-`generated/dev/r34.png`. Last commit: `stage 5.5 UPDATE #23 …`.
+Last round: **UPDATE #25** (2026-09-18) — floor-2 left half: vertical pipe
+base grounded (`PIPE_DROP`), NEW city-model board sprite (`CITY_BOARD`) in the
+user's red mark, NEW AR/VR staffage (`ARVR_PERSON`) + SVG holographic panel at
+the user's second red mark (person +5% and nudged down-right in the follow-up).
+Latest render: `generated/dev/r37.png`.
 
-**Pending on the user:** the next revision list. Nothing is blocked.
+**Pending on the user:** review `r36.png` + the `chk-*` crops. Nothing is
+blocked.
 
 ## 2. Dev workflow (exact commands, from the repo root `C:\repo\cv`)
 
@@ -93,10 +96,14 @@ entrance, path, career-sign
   floor's `slabTriangle` (which lives in the `-front` fragment) — but note the
   cables' route now avoids the triangle's rect entirely, so they can live in
   `floor-02` for the sake of the elevator layering.
-- Current floor-2 stacking (r35):
-  - `floor-02` = `slab` → `backWalls` → pipes → desks → `kioskCables` →
-    `serverRackFront` (so the cables AND the server sit BELOW the elevator
-    layer, and the run ends in the server).
+- Current floor-2 stacking (r36):
+  - `floor-02` = `slab` → `backWalls` → pipes → desks → AR/VR staffage
+    (`spriteShadow` + `ARVR_PERSON` + `holoScreen`) → city board
+    (`spriteShadow` + `CITY_BOARD`) → `kioskCables` → `serverRackFront` (so the
+    cables, server, city and AR/VR vignette all sit BELOW the elevator layer;
+    the cable run still ends in the server). The AR/VR person and city board do
+    not overlap anything on screen, but floor-02 is the correct layer for the
+    person because he stands physically behind the shaft.
   - `floor-02-front` = `slabTriangle` → `STANDKIOSK` → `columns` (the kiosk is
     therefore ABOVE the cables, which is what the user asked: the run emerges
     from under the kiosk's mini PC).
@@ -157,13 +164,19 @@ Proven recipe for new props/staffage:
   vignette (sitter at (160, 82); 4 ream towers in a line at u 195, v 109/97/85/73;
   3 open paper boxes at u 80..110, v 20..110, painted ABOVE the sitter).
 - **Floor 2 (2019–2025, Interactica)**: yellow service pipes (horizontal +
-  vertical riser at u 227.5, v 60), the two workstations WS_D and WS_C side by
-  side against the B-D wall (`uBack = 213.5`, v 82 / 26), the Cleverlit stand
-  kiosk at the front-left corner area (`assetProp(STANDKIOSK, 65, 11.5, 2*FH)`),
-  the front-facing small data server beside the elevator
-  (`serverRackFront(52, 68, 220, 2*FH, 2*FH+38)`), and two SVG cable runs
-  (`kioskCables`) from the kiosk's mini PC to the server, drawn below the kiosk.
-  **The floor-2 left half is still empty — the obvious next content area.**
+  vertical riser at u 227.5, v 60; base grounded in UPDATE #25 via `PIPE_DROP`),
+  the two workstations WS_D and WS_C side by side against the B-D wall
+  (`uBack = 213.5`, v 82 / 26), the Cleverlit stand kiosk at the front-left
+  corner area (`assetProp(STANDKIOSK, 65, 11.5, 2*FH)`), the front-facing small
+  data server beside the elevator (`serverRackFront(52, 68, 220, 2*FH,
+  2*FH+38)`), and two SVG cable runs (`kioskCables`) from the kiosk's mini PC to
+  the server, drawn below the kiosk. UPDATE #25 added the city-model board
+  (`assetProp(CITY_BOARD, 123, 167, 2*FH)`, centre (144,188) — the user's first
+  red mark) and the AR/VR vignette in the left half behind the shaft
+  (`assetProp(ARVR_PERSON, 70, 403, 2*FH)` + `holoScreen(45, 67, 416,
+  2*FH+12, 2*FH+34)` — the user's second red mark; the person is +5% and sits
+  down-right of the original spot). The floor-2 left half now reads as
+  occupied.
 - **Floors 3–5**: architectural shell + tags only. Floor 5 is intentionally
   unfinished (WIP). Props for 3/4/5 are deferred by user decision until 1–2 are
   done.
@@ -173,14 +186,14 @@ Proven recipe for new props/staffage:
 Sprite constants currently in `scripts/generate-geometry.mjs`:
 `PUEL_KIOSK`, `PUEL_STOOLS`, `PUEL_TABLE`, `FREELANCER_PC`, `DEV_GROUP`,
 `SITTER`, `STANDKIOSK`, `WS_C` (+`assetWorkstation`), `WS_D`, `PIPE_SPRITE`,
-`PIPE_H_SPRITE`.
+`PIPE_H_SPRITE`, `CITY_BOARD`, `ARVR_PERSON`.
 
 ## 7. Next steps / open items
 
 1. Take the user's next revision list (they review `rNN.png` + the crops).
-2. Likely content direction: **fill floor-2 Interactica's left half**, then
-   floors 3/4/5 props (user said deferred until 1–2 are finished; 1–2 are
-   essentially done now — confirm with the user before starting 3+).
+2. Floor-2 left half is now filled (city board + AR/VR vignette). Likely next
+   content direction: floors 3/4/5 props — but the user said they were deferred
+   until 1–2 are finished, so **confirm before starting 3+**.
 3. Housekeeping whenever convenient: `AGENTS.md` → "Development Status" is
    still stale boilerplate ("Stage 0 is next"); refresh it to Stages 0–5 done,
    5.5 in progress.
