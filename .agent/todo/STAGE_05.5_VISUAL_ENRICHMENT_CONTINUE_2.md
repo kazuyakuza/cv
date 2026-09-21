@@ -14,14 +14,32 @@ The career diorama SVG is built and illustrated (Stages 0–5 complete). **Stage
 rendered PNG, sends a revision list (often with screenshots and red marks), the
 session implements it, renders a new `rNN.png`, and the user reviews again.
 
-Last round: **UPDATE #25** (2026-09-18) — floor-2 left half: vertical pipe
-base grounded (`PIPE_DROP`), NEW city-model board sprite (`CITY_BOARD`) in the
-user's red mark, NEW AR/VR staffage (`ARVR_PERSON`) + SVG holographic panel at
-the user's second red mark (person +5% and nudged down-right in the follow-up).
-Latest render: `generated/dev/r37.png`.
+Last round: **UPDATE #36** (2026-09-20) — the board builder was generalised to
+`wallAppBoard(cfg)` and now renders TWO app mockups taped on the right (B-D)
+wall of Interactica, side by side: sheet A `HUB_LIVE_BOARD`
+(`00-hub-menu.png`, 375x635, 47.07 x 73 units nearest the B corner) and, to its
+LEFT, sheet B `IMC_HOME_BOARD` (`02-imc-home.png`, 428x926, 31.6 x 55 units —
+it must be shorter because the floor-4 slab silhouette cuts deeper further from
+the corner; the builder solves that automatically). Marks are functions of
+`({ sx, sy, shot, k })` addressing the screenshot by fraction, so they stay
+pinned whatever the asset resolution. Latest render: `generated/dev/r65.png`
+(crops `chk-boards`, `chk-boardB`, `chk-f3wide`).
 
-**Pending on the user:** review `r36.png` + the `chk-*` crops. Nothing is
+**Pending on the user:** review `r65.png` / the two-board crop. Nothing is
 blocked.
+
+## 1b. Start-of-session checklist (fresh session)
+
+1. Read this file, then `AGENTS.md` (the restriction on >30 images and the
+   free-assets-only rule) — the full history in
+   `STAGE_05.5_VISUAL_ENRICHMENT_CONTINUE.md` only on demand.
+2. `git log --oneline -5` + `git status` — expect the tree clean at the last
+   `stage 5.5 UPDATE #NN` commit (UPDATE #36).
+3. Sanity-render before touching anything: the commands in §2 produce
+   `generated/dev/rNN.png`; compare it with the previous round's PNG if the
+   user reports something broken.
+4. Wait for the user's revision list, implement, re-render, report with the
+   render path + crop names. Commit only when the user asks.
 
 ## 2. Dev workflow (exact commands, from the repo root `C:\repo\cv`)
 
@@ -86,9 +104,9 @@ p(u, v, h) = (750 + 0.7071u - 0.7071v, 985 - 0.2475u - 0.2475v - h)  // + determ
 Assembler order (`scripts/assemble-svg.mjs`) — this matters:
 ```
 terrain, ground-shadow, building[ floor-ground, staircase, freelancer-props,
-floor-01, floor-02, floor-03, floor-04, floor-05, architectural-details,
-elevator, floor-02-front, floor-03-front, floor-04-front, floor-05-front, tags ],
-entrance, path, career-sign
+floor-01, floor-02, floor-03, floor-03-team, floor-04, floor-05,
+architectural-details, elevator, floor-02-front, floor-03-front,
+floor-04-front, floor-05-front, tags ], entrance, path, career-sign
 ```
 - **TRAP: the `*-front` fragments are drawn AFTER `elevator`.** Anything that
   must be occluded by the shaft may NOT live there. Conversely, anything that
@@ -107,11 +125,15 @@ entrance, path, career-sign
   - `floor-02-front` = `slabTriangle` → `STANDKIOSK` → `columns` (the kiosk is
     therefore ABOVE the cables, which is what the user asked: the run emerges
     from under the kiosk's mini PC).
-- Slab-cut envelope (re-derived in UPDATE #6): a slab's left cut band at u = 0
-  (`h ∈ [hBot,hTop]`) hides points with `hBot ≤ h + 0.495u ≤ hTop` (when
-  `v ≥ u`); **the B-D-wall side (`v < u`) is exempt** — that is why the right
-  side props are fully visible. On floor 1 everything must satisfy
-  `h + 0.495·min(u,v) ≤ 197.5` (the floor-2 slab band).
+- Slab-cut envelope (CORRECTED in UPDATE #28): a slab's cut band hides points
+  with `hBot ≤ h + 0.495·min(u,v) ≤ hTop`. On floor 1 everything must satisfy
+  `h + 0.495·min(u,v) ≤ 197.5` (the floor-2 slab band). **TRAP: this is a
+  ONE-SIDED bound with NO upper branch and NO exemption** — a point is hidden
+  whenever `h + 0.495·min(u,v) ≥ hBot`, even for very large `min(u,v)`. (The
+  older "objects at `min(u,v) ≳ 172` clear the band" / "the B-D-wall side is
+  exempt" claims were WRONG; `r43.png` erased a whole cluster that way.) For
+  floor 3 the band is `h_local + 0.495·min(u,v) ≤ 92.5`: seated devs (top ~20u)
+  need `min(u,v) ≲ 146`, standing figures (top ~33u) need `min(u,v) ≲ 120`.
 - BA props behind partition-1 are visible iff `u < v - 139.944` (left wedge) or
   above the cut; the meeting table keeps ~13u margin.
 - Painter order is manual and far-to-near; when two props overlap in depth they
@@ -172,28 +194,61 @@ Proven recipe for new props/staffage:
   2*FH+38)`), and two SVG cable runs (`kioskCables`) from the kiosk's mini PC to
   the server, drawn below the kiosk. UPDATE #25 added the city-model board
   (`assetProp(CITY_BOARD, 123, 167, 2*FH)`, centre (144,188) — the user's first
-  red mark) and the AR/VR vignette in the left half behind the shaft
-  (`assetProp(ARVR_PERSON, 70, 403, 2*FH)` + `holoScreen(45, 67, 416,
-  2*FH+12, 2*FH+34)` — the user's second red mark; the person is +5% and sits
-  down-right of the original spot). The floor-2 left half now reads as
-  occupied.
-- **Floors 3–5**: architectural shell + tags only. Floor 5 is intentionally
-  unfinished (WIP). Props for 3/4/5 are deferred by user decision until 1–2 are
-  done.
+  red mark). UPDATE #26 added the tech-lead vignette at the rear C-D wall:
+  five seated devs with laptops (`SITDEVS`), a standing tech lead (`TECHLEAD`)
+  pointing at an SVG graph screen (`graphScreen(90, 134, LD-WALL_T-1.5,
+  2*FH+14, 2*FH+40)` — see the cutaway constraint note in the generator).
+  UPDATE #27 (r38 review, following the user's red arrows) set the final
+  positions: devs `assetProp(SITDEVS, 91, 531, 2*FH)` (v 559 → 531, ~36u off
+  the wall), tech lead `assetProp(TECHLEAD, 98, 564, 2*FH)` (centred under the
+  screen), AR/VR `assetProp(ARVR_PERSON, 24, 363, 2*FH)` + `holoScreen(4, 26,
+  376, 2*FH+12, 2*FH+34)` (v 403 → 363, toward the elevator; the holo panel is
+  emitted BEFORE the sprite so it sits in a layer below the person — r39
+  review). The floor-2 left section now reads as a busy engineering room.
+- **Floor 3 (Interactica large area + separate Indelve strip)**: UPDATE #34
+  `assetProp(TEAMCROSS, 100, 80, 3*FH)` (cross of 4 desks + 8 seated devs,
+  k 0.06568, sprite rect x 740..814 / y 563..626) and
+  `assetProp(BOSSES, 52, 83, 3*FH)` (two bosses + tech lead debating over
+  papers, k 0.0255) to its left. **Both live in the `floor-03-team` fragment,
+  stacked between `floor-03` and `floor-04`** — below the floor-4 base (user
+  requirement) but above the floor-03 slab. Two hard constraints:
+  (1) the floor-4 slab occludes anything deeper (measured: 99% of the
+  teamcross's pixels visible at v=68, 95% at v=80, 84% at v=96, 65% at
+  v=100), so deep/left placement is capped; (2) keep u ≥ ~50 for the bosses
+  (`slabTriangle(3*FH)` in `floor-03-front` repaints the front-left floor
+  rectangle u 0..48.2, v 0..222.4 over anything earlier).   The A column
+  (`floor-03-front`) still paints OVER the sprites. No Indelve content
+  (deferred).
+- **Floor 3 wall boards (UPDATE #35/#36)**: `wallAppBoard(cfg)` (end of
+  `floor-03`) prints app screenshots on paper taped flat to the right (B-D)
+  wall next to the B corner (`u = LW - WALL_T`): sheet B `IMC_HOME_BOARD`
+  (`02-imc-home.png`, v 56..87.6, h 318..373) and sheet A `HUB_LIVE_BOARD`
+  (`00-hub-menu.png`, v 5..52.07, h 318..391), sheet A drawn last so its paper
+  laps sheet B's shadow. One matrix per sheet on the wall plane:
+  `matrix(0.7071 0.2475 0 1 ox oy)`; the local rect == `uFace(...)`; height is
+  auto-solved against the floor-4 slab cap (`WALL_BOARD.ceiling/slope`). Marks
+  are functions of `({ sx, sy, shot, k })` addressing the screenshot by
+  fraction. NB `round()` returns a STRING — never use it inside arithmetic.
+- **Floors 4–5**: architectural shell + tags only. Floor 5 is intentionally
+  unfinished (WIP). Props for 4/5 are deferred by user decision until 1–3 are
+  settled.
 - **Elevator**: shaft + doors + per-story open doors, service conduit +
   junction boxes (SHAFT_V1-relative), year plaques on the enclosure.
 
 Sprite constants currently in `scripts/generate-geometry.mjs`:
 `PUEL_KIOSK`, `PUEL_STOOLS`, `PUEL_TABLE`, `FREELANCER_PC`, `DEV_GROUP`,
 `SITTER`, `STANDKIOSK`, `WS_C` (+`assetWorkstation`), `WS_D`, `PIPE_SPRITE`,
-`PIPE_H_SPRITE`, `CITY_BOARD`, `ARVR_PERSON`.
+`PIPE_H_SPRITE`, `CITY_BOARD`, `ARVR_PERSON`, `SITDEVS`, `TECHLEAD`,
+`TEAMCROSS`, `BOSSES`.
 
 ## 7. Next steps / open items
 
 1. Take the user's next revision list (they review `rNN.png` + the crops).
-2. Floor-2 left half is now filled (city board + AR/VR vignette). Likely next
-   content direction: floors 3/4/5 props — but the user said they were deferred
-   until 1–2 are finished, so **confirm before starting 3+**.
+2. Floor-2 left section is now busy (city board + AR/VR vignette + seated-dev
+   group + tech lead + graph screen); floor 3 now has the Interactica team
+   cluster + bosses. Likely next direction: more floor-3 content (the rest of
+   the large Interactica area, or the Indelve strip — but do NOT invent Indelve
+   content) or floors 4/5 props; **confirm with the user before starting 4/5**.
 3. Housekeeping whenever convenient: `AGENTS.md` → "Development Status" is
    still stale boilerplate ("Stage 0 is next"); refresh it to Stages 0–5 done,
    5.5 in progress.
@@ -202,3 +257,10 @@ Sprite constants currently in `scripts/generate-geometry.mjs`:
 5. After 5.5: Stage 6 (career content) → 7 (information layer) → 8 (display
    modes incl. the `?overview` query param) → 9 (Vue integration) → 10
    (polish/deploy to GitHub Pages).
+6. Known Stage-10 item: `src/svg/diorama.svg` is ~15.8 MB, almost all of it
+   base64 sprite PNGs (bosses 1.27 MB, sitdevs 1.03 MB, teamcross 0.95 MB,
+   arvr 0.87 MB, techlead 0.76 MB, plus the two app screenshots). A
+   downscale/re-encode pass (or external `<image href>` files) is needed
+   before deployment.
+7. Never commit `src/assets/*.tmp` (0-byte save leftovers from the user's
+   image drops); they show up as untracked and must stay out of the commit.

@@ -32,6 +32,7 @@ const buildingParts = [
   'floor-01',
   'floor-02',
   'floor-03',
+  'floor-03-team',
   'floor-04',
   'floor-05',
   'architectural-details',

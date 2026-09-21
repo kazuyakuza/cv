@@ -145,6 +145,18 @@ export const svgStyle = `
     .dw-holo-head { fill: #cbdde6; fill-opacity: 0.95; stroke: none; }
     .dw-holo-line { fill: none; stroke: #607d8c; stroke-width: 0.6; stroke-opacity: 0.75; stroke-linecap: round; }
 
+    /* Graph screen on the rear C-D wall (r37 review, tech-lead vignette): a
+       small dark presentation panel with a node diagram — the section's only
+       glowing surface, but small and low-contrast so it stays subordinate to
+       the architecture and the future information layer */
+    .dw-graph-frame { fill: #3d4750; stroke: #262c31; stroke-width: 0.6; }
+    .dw-graph-face { fill: #1f252a; stroke: none; }
+    .dw-graph-title { fill: #33414b; stroke: none; }
+    .dw-graph-tick { fill: none; stroke: #9fb7c2; stroke-width: 0.5; stroke-opacity: 0.7; stroke-linecap: round; }
+    .dw-graph-node { fill: #567484; stroke: #a7c1cc; stroke-width: 0.45; }
+    .dw-graph-nodeline { fill: none; stroke: #cfe0e6; stroke-width: 0.45; stroke-opacity: 0.8; stroke-linecap: round; }
+    .dw-graph-arrow { fill: none; stroke: #8fb0bd; stroke-width: 0.45; stroke-linecap: round; stroke-linejoin: round; }
+
     /* Workstations (Stage 5.5 §10): dev desks come from generated
        sprites (src/assets/workstation-0X-cut.png, placed by
        assetWorkstation()); the old SVG desk classes were removed with them. */
@@ -184,6 +196,19 @@ export const svgStyle = `
     .dw-pen-blue { fill: none; stroke: #4d5c7c; stroke-width: 0.9; stroke-linecap: round; }
     .dw-pen-black { fill: none; stroke: #3a3f47; stroke-width: 0.9; stroke-linecap: round; }
     .dw-marker-text { fill: #383d46; fill-opacity: 0.85; font: 3.6px system-ui, sans-serif; letter-spacing: 0.02em; }
+
+    /* Stage 5.5 §34 — Interactica wall board: a printed app mockup taped to
+       the building's right (B-D) wall near the B corner, annotated with a
+       marker during the meeting. Paper is a fresh warm white, the marker two
+       felt-tip inks (terracotta + slate blue), the notes a tiny hand script
+       that reads as scribble at diorama scale. */
+    .dw-note-shadow { fill: #3a3833; fill-opacity: 0.20; stroke: none; }
+    .dw-note-paper { fill: #fbfaf4; stroke: #b6b0a1; stroke-width: 0.5; }
+    .dw-note-edge { fill: none; stroke: #8e8778; stroke-width: 0.35; }
+    .dw-note-tape { fill: #ece5cf; fill-opacity: 0.9; stroke: #c6bfa9; stroke-width: 0.3; }
+    .dw-note-ink { fill: none; stroke: #a8503c; stroke-width: 0.8; stroke-linecap: round; stroke-linejoin: round; }
+    .dw-note-ink2 { fill: none; stroke: #47617a; stroke-width: 0.75; stroke-linecap: round; stroke-linejoin: round; }
+    .dw-note-text { fill: #a8503c; fill-opacity: 0.92; font: 1.9px system-ui, sans-serif; letter-spacing: 0.01em; }
 
     /* Stage 5 §9 — stair/elevator details. (§8 sparse-infrastructure pieces
        were all removed on user review — pipe, wall patch, panel, vent — so

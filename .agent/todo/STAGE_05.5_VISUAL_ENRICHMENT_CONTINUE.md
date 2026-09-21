@@ -8,11 +8,379 @@ the top update plus any section it references; the older updates are
 historical but keep the derived placement rules and traps (each is still
 valid unless a later update says otherwise).
 
-**UPDATE #25 is the newest session (floor-2: pipe base grounded, city-model
-board sprite, AR/VR staffage + holographic screen). A fresh condensed handoff
-for the NEXT session lives in
+**UPDATE #36 is the newest session (a SECOND app board — the user's IMC home
+screen — taped to the LEFT of the HUB LIVE one, and the board builder
+generalised into `wallAppBoard(cfg)` + per-app configs). A fresh condensed
+handoff for the NEXT session lives in
 `STAGE_05.5_VISUAL_ENRICHMENT_CONTINUE_2.md` — read that one first; this file
 stays as the full history.**
+
+## UPDATE #36 — 2026-09-20, thirty-sixth session (two app boards: builder generalised)
+
+User: "at the left of the added paper, add another similar, but with next
+screenshot" (the IMC rewards/news app home screen). Sent as a chat
+attachment; because the first attempt arrived only as an image in the
+conversation (not a file on disk, and `src/assets` had no new file), a
+generated stand-in was used at first, then the user re-sent it and the real
+file appeared at `src/assets/02-imc-home.png` (428x926, opaque) — the
+stand-in (`01-app-noticias.png`) was deleted. Verified in
+`generated/dev/r65.png` (crops `chk-boards`, `chk-boardB`). Lint clean.
+
+- **Refactor**: `interacticaWallBoard()` → `wallAppBoard({ file, srcW, srcH,
+  vRight, marks })` plus two configs, `HUB_LIVE_BOARD` (sheet on the right,
+  nearest the B corner) and `IMC_HOME_BOARD` (its neighbour to the left).
+  Both are emitted from the end of `floor-03`, the LEFT sheet first so the
+  nearer sheet's paper laps over its shadow. Shared numbers live in
+  `WALL_BOARD` (margin 7, marginBottom 10, hBot 318, ceiling 420.16, slope
+  0.4957, safe 3).
+- **Auto-fit**: the sheet height is solved from the slab cap instead of being
+  hand-tuned: `hShot = floor((ceiling - slope*(vRight + 2*margin) - hBot -
+  margin - marginBottom - safe) / (1 + slope*srcRatio))`. Because
+  `hTop <= ceiling - slope*vLeft`, a sheet further from the B corner (larger
+  v) is forced shorter. Sheet A ends up 47.07 x 73 (v 5..52.07, h 318..391,
+  screenshot 33 x 56); sheet B 31.6 x 55 (v 56..87.6, h 318..373, screenshot
+  17.6 x 38). Both tops sit clear of the floor-4 slab silhouette.
+- **Marks** are now functions of `({ sx, sy, shot, k })` and address the
+  screenshot by FRACTION of its size (resolution independent), so pinning them
+  to real UI elements no longer depends on the asset's pixel size. `k =
+  shot.w / 33` scales the fixed-size parts (stroke offsets, ticks, arrow heads,
+  wavy underline) so the same handwriting fits the smaller sheet.
+- **Sheet B marks**: ring the Cargar Compra card + arrow down the right
+  margin, blue cross over the second news story, tick beside Catálogo de
+  Premios, ring the "Hola / [Nombre de Usuario] · Nivel del usuario" block,
+  and two Spanish hand notes in the foot margin ("nombre y puntos desde la
+  API", "banner patrocinado: revisar").
+- **Bug worth remembering**: `round()` in `generate-geometry.mjs` returns a
+  STRING, so it must never be used inside arithmetic — `2 * margin +
+  round(w)` silently concatenated into `"1431.9"` and blew the sheets up to
+  1400 units wide (invisible off the wall). Keep plain numbers in the maths
+  and wrap them in `round()` only when emitting attributes.
+- **Note for Stage 10**: `src/svg/diorama.svg` is now ~15.8 MB, mostly the
+  base64 sprite PNGs (bosses 1.27 MB, teamcross 0.95 MB, sitdevs 1.03 MB,
+  arvr 0.87 MB, techlead 0.76 MB, plus the two screenshots). Worth a
+  downscale/re-encode pass before deployment.
+
+## UPDATE #35 — 2026-09-19, thirty-fifth session (Interactica wall board with the app mockup)
+
+User: "new element using an image and svg, in floor 3 Interactica section.
+over the building's right wall, near to the corner with the building's front
+wall, add like a big paper/board pasted/attached on the wall, which contains
+the following: this screenshot … from a mobile app, it should look like a
+mockup of the app, with some marks (circles, arrows, crosses), and some
+ilegible text. keep a white padding between the screenshot and the wall's
+paper/board, so you have space to draw with svg over it the marks. it should
+be big, high mostly like the wall's high." Verified in
+`generated/dev/r60.png` (crop `chk-board2`). Lint clean.
+
+- **Asset**: the user saved the app screenshot as
+  `src/assets/00-hub-menu.png` (375x635, HUB LIVE attendee menu). It is
+  inlined into `diorama.svg` as a base64 data URI by `inlineAsset()` like the
+  other sprites.
+- **New builder** `interacticaWallBoard()` in `generate-geometry.mjs`, emitted
+  at the end of `floor-03` (so it sits on the wall, under the cluster and
+  under the tags). It draws paper + shadow + tape + image + marks inside ONE
+  `<g transform="matrix(0.7071 0.2475 0 1 ox oy)">`: the board has its own 2D
+  space (x = 0..BOARD_W reading left→right **as seen**, y = 0..BOARD_H down)
+  and that single matrix places it exactly on the right (B-D) wall plane
+  `u = LW - WALL_T`. Local +x maps to −v and +y to screen-down, which is
+  precisely the wall's iso skew, so plain rects/ellipses/text land on the wall
+  (verticals stay vertical) and stay editable. The rect (0,0,BOARD_W,BOARD_H)
+  is identical to `uFace(u, vLeft, vRight, hBot, hTop)`.
+- **Geometry**: paper 46.8 wide (v 5..51.8, i.e. right next to the B corner)
+  × 72 tall (h 318..390); screenshot inset `x 7..39.8, y 6.5..62` (32.8 x
+  55.5 — the source ratio 0.591, so no distortion); white padding margin all
+  round (7 units) carries the marks, a deeper 10-unit bottom margin carries
+  the hand notes. **The height is capped by the floor-4 slab**: at
+  `u = 230.5` the slab's front edge crosses the wall at h ≈ 393 (v ≈ 52), so
+  390 is the tallest sheet that stays fully in front — the first attempt at
+  84 tall lost its top ~15px.
+- **Marks** (all anchored to the app's own 375x635 pixel coordinates via
+  `sx()`/`sy()` so they track the buttons): red felt-tip ellipse round the
+  Scavenger Hunt row + arrow down the right margin into it, red ellipse round
+  the score band, red tick beside Schedule a Meeting, blue cross over
+  E-Literature, a small cross and a wavy side note in the margins, and two
+  1.9px script lines + a wavy underline in the bottom margin (reads as
+  illegible handwriting at diorama scale). New classes in `style.mjs`:
+  `dw-note-paper/-shadow/-edge/-tape/-ink/-ink2/-text`.
+
+## UPDATE #34 — 2026-09-19, thirty-fourth session (floor-03-team layer below floor-04; measured ceiling budget)
+
+User: "check that the teamcross sprite must be in a layer below than the layer
+of the floor 4 base. move both teamcross and bosses sprite like 100px in
+direction to the building's left and rear walls corner." Verified in
+`generated/dev/r57.png`. Lint clean.
+
+1. **New fragment `floor-03-team`.** The two sprites were moved out of
+   `floor-03-front` into their own fragment, inserted in
+   `scripts/assemble-svg.mjs`'s `buildingParts` directly between `floor-03`
+   and `floor-04`, so the sprites now render **below the floor-4 base**
+   (confirmed in `diorama.svg`: floor-03 12132277 → floor-03-team 12135127 →
+   floor-04 15102751). The floor-4 slab therefore occludes them — the correct
+   cutaway depth cue, and the reason the earlier r53 sprite could paint over
+   the floor-4 floor surface. Order kept: the A column still paints over them
+   (`floor-03-front` is much later), and `slabTriangle(3*FH)`
+   (`floor-03-front`) still requires anchors with u ≥ ~50.
+2. **Measured the ceiling occlusion budget** with a Playwright hit-test of the
+   live DOM (localhost:5173), sampling only the sprite's non-transparent
+   pixels (alpha mask via canvas) — `document.elementFromPoint` per sample.
+   Teamcross content visible %:
+   `(140,68) 99%` · `(100,80) 95%` · `(90,70) 97%` · `(80,60) 98%` ·
+   `(112,96) 84%` · `(90,100) 78%` · `(80,100) 72%` · `(70,100) 65%`.
+   Bosses: 99-100% everywhere tried (`(52,83)`, `(60,140)`, …).
+   Occluders found in the stack at depth: `path.dw-slab-edge < elevator`
+   (the floor-4 slab's A-C edge band, bbox 334,420,417,158),
+   `path.dw-floor-fill dw-f4 < floor-04-front` (the floor-4 front-left floor
+   patch) and `path.dw-slab-edge < floor-04`. **Conclusion: the floor-4 slab
+   caps how deep/left the teamcross can sit; a full 150px rear move slices
+   ~16-25% of its content, while a ~95px move at ≤5% loss is the practical
+   limit.**
+3. **Move applied**: both sprites `Δ = (−40u, +12v)` — screen `(−37, +7)`
+   SVG px ≈ **94 render px left (+a little rear)**, the largest move that
+   keeps the teamcross at 95% visible:
+   `TEAMCROSS (140,68) → (100,80)`, `BOSSES (92,71) → (52,83)`
+   (bosses 100% visible). Rects in r57: teamcross x 740.1..814.2
+   y 562.7..626.4; bosses x 706.9..738.1 y 599.0..636.6.
+
+## UPDATE #33 — 2026-09-19, thirty-third session (right+back move; ceiling depth limit measured)
+
+User: "move both sprites to right and back … the movement direction to right
+and back. up is back right, down is front left" (with a 150px figure in the
+previous message). Verified in `generated/dev/r53.png`. Lint clean.
+
+Moved both by the same offset, `+45u, +7v` (screen `+27, −13` SVG px =
+`+67, −32` render px, i.e. right and back):
+`TEAMCROSS (95,61) → (140,68)`, `BOSSES (47,64) → (92,71)`. Rects in r53:
+teamcross x 776.7..850.8 y 555.0..618.7; bosses x 743.7..774.9 y 592.5..630.2.
+
+**Hard limit found — 150px is not achievable.** The floor-4 slab's underside
+near edge (from `p(0,0,410)` = (750,575) to `p(238,0,410)` = (918,516)) is the
+occluder. A floor-3 object is clipped where its top rises above that line, and
+the line rises to the right at the *same* rate as the sprite top when only `u`
+increases (the `u` terms cancel), so:
+
+- **moving right (`+u`) is free** — the ceiling clearance does not change;
+- **moving back (`+v`) costs ≈ 0.496 px of clearance per unit** (per the
+  `95 − 0.496v ≥ Hs + 0.3512·ax` relation), so the teamcross (`Hs` 63.7,
+  `ax` 24.0) is already at the visible limit at `v ≈ 68`.
+
+Evidence: an over-deep probe at `(153,107)` (`generated/dev/r52.png`) had a
+clearance of **−30 px** and visibly sliced the rear desks/devs under the
+ceiling (plus a disembodied head); r51 at `(95,61)` was −7 px and read clean.
+A full 150px rise (≈ 60 SVG px ⇒ `Δu=Δv=121`) would need `v ≈ 182`, i.e. a
+−67px clearance — the rear half of the cluster would vanish under the slab.
+
+Options if more depth is wanted (user to choose): (a) shrink TEAMCROSS again
+(smaller `Hs`/`ax` buys depth linearly), (b) accept partial ceiling occlusion
+of the rear desks, (c) keep the current limit. This round took option (c) plus
+the free `+u`.
+
+## UPDATE #32 — 2026-09-19, thirty-second session (column over sprites; rear-right nudge)
+
+User: "the black line (column) that goes from floor 3 to 4 must be in a
+superior layer than both sprites. also, check the red arrow … the teamcross
+sprite should be move a little in direction to the building's rear and right
+walls; same direction and amount for the bosses." Verified in
+`generated/dev/r51.png` (crops `chk-f3team`, `chk-f3wide`, `chk-boss3`). Lint
+clean.
+
+1. **Column layering fixed** — in `floor-03-front` the sprites are now emitted
+   between `slabTriangle` and `columns` (was after `columns`). The A column
+   (SVG x ≈ 749.7, the black line front-left, floor 3→4) now paints over both
+   sprites; fragment order confirmed (images at lines 4/6, `dw-column` at 7–9).
+2. **Both sprites nudged rear-right** — `+20u, +16v`, i.e. up and slightly
+   right on screen (`+x2.8, −y8.9`), matching the red arrows:
+   `TEAMCROSS (75,45) → (95,61)`, `BOSSES (25,48) → (47,64)`. Rects in r51:
+   teamcross x 750.3..824.3 y 567.5..631.2; bosses x 716.9..748.2
+   y 604.9..642.6.
+
+## UPDATE #31 — 2026-09-19, thirty-first session (floor-3 sizes tuned; bosses cut fixed)
+
+User: "reduce the teamcross sprite size 20%. move them a little to the
+building's right and front wall corner. the bosses sprite cut off in the
+middle, review that. increase bosses sprite size 15%." Verified in
+`generated/dev/r50.png`. Lint clean.
+
+1. **TEAMCROSS −20%** — k 0.0821 → **0.06568** (ax/ay 30.02/79.38 →
+   24.02/63.50; sprite rect 93×80 → 74×64 px).
+2. **TEAMCROSS moved toward the front-right (B) corner** — anchor
+   `(48, 62)` → **`(75, 45)`** (+u, −v).
+3. **BOSSES +15%** — k 0.02217 → **0.0255** (ax/ay 18.48/32.74 →
+   21.25/37.65; rect 27×33 → 31×38 px). Anchor stays `(25, 48)`.
+4. **"Bosses cut off in the middle" — root cause found and fixed.** It was not
+   the asset (the cut PNG has all three figures complete) and not the slab-cut
+   envelope. `slabTriangle(3*FH)` — emitted in **`floor-03-front`**, i.e. AFTER
+   `floor-03` — re-paints the opaque `dw-floor-fill` over the front-left floor
+   rectangle **u 0..48.2, v 0..222.4**. Any sprite emitted in `floor-03` whose
+   screen footprint overlaps that rectangle gets its lower half painted over —
+   which is why the trio at u 25 (inside the rectangle) lost its legs after
+   UPDATE #30 moved it left. **Fix: both floor-3 sprites (TEAMCROSS, BOSSES)
+   moved out of `floor-03` into `floor-03-front`, after `slabTriangle` and
+   `columns`** (they now paint over the triangle and the A column, and stay
+   under the floor-04 slab, so the cutaway envelope still holds). Rects in r50:
+   teamcross x 747.7..821.8 y 576.7..640.4; bosses x 712.7..744.0
+   y 613.8..651.5 — both fully visible.
+
+**Rule to remember:** any floor-3 prop in the front-left rectangle
+(u ≲ 48, v ≲ 222) must be emitted in `floor-03-front`, never in `floor-03`.
+
+## UPDATE #30 — 2026-09-19, thirtieth session (team cluster ×2, front-left; bosses to the left wall)
+
+User (red-arrow screenshot): "double the size of the teamcross sprite… move
+some the bosses sprite in direction to the building's left wall… move the
+teamcross in direction to the building's left and front walls corner, to the
+end of the red arrow." Verified in `generated/dev/r49.png` (crops `chk-f3team`,
+`chk-f3wide`). Lint clean.
+
+1. **TEAMCROSS ×2** — k 0.04105 → **0.0821** (ax/ay 15.01/39.69 →
+   30.02/79.38). Placed at the front-left of the floor-3 Interactica area:
+   anchor `(182.2, 125)` → **`(48, 62)`** (the sprite rect is now
+   x 710..803, y 564..643 — ~93×80 px, the devs finally read at staffage size).
+2. **BOSSES** anchor `(140, 90)` → **`(25, 48)`** — in front of and to the left
+   of the cluster (sprite x 716..743, y 619..652), i.e. toward the left (A-C)
+   wall as asked.
+
+The one-sided slab-cut envelope still governs the depth: with the cluster
+doubled the footprint is ~56u, and seated devs (top ~18.5u) need
+`min(u,v) ≲ 149`; at u 48..104 / v 62..118 every dev is clear. The bosses
+(top ~33u, `min(u,v) ≲ 120`) sit at v 48.
+
+## UPDATE #29 — 2026-09-19, twenty-ninth session (floor-3 team cluster moved right, bosses in front)
+
+User (with a red-arrow screenshot): the first placement was wrong — the
+teamcross belongs in the centre of the Interactica **section** (not the floor)
+and **nearer the building's right wall**; the bosses **just in front of them,
+nearer the left wall**; the teamcross is too small ("the people there are like
+ants"); and the user hand-edited the bosses sprite. Implemented and verified in
+`generated/dev/r46.png` (crops `chk-f3team`, `chk-f3wide`). Lint clean.
+
+1. **TEAMCROSS +25%** — k 0.03284 → **0.04105**, ax/ay scaled ×1.25
+   (12.01/31.75 → 15.01/39.69).
+2. **BOSSES re-measured after the user's hand-edit** — the cut PNG is still
+   1226x1480 / k 0.02217, but the bottommost foot moved (bottom pixel x 385 →
+   840), so **ax 8.68 → 18.48**; ay unchanged 32.74. (New helper:
+   `generated/dev/measure_asset.py <png> [target_h] [target_w]`.)
+3. **Position** — teamcross anchor `(137, 226.2)` → **`(182.2, 125)`** (cluster
+   centre ≈ (196, 128)); bosses anchor `(104, 224)` → **`(140, 90)`**. The
+   cluster now sits in the front-right of the floor-3 Interactica area, ~8u off
+   the B-D wall; the bosses stand directly in front and to the left (the two
+   groups share a screen x, the bosses ~24px lower).
+
+**Why the front-right and not the section centre:** the floor-4 slab cut on
+floor 3 is `h_local + 0.495·min(u,v) ≤ 92.5`, so the seated devs (top ~18.5u)
+need `min(u,v) ≲ 149`. Near the right wall that forces a small `v` — the
+visible band is the front strip (`v ≲ 149`), which is why the cluster sits at
+`v ≈ 128`. Deeper and the rear devs are erased. The bosses (top ~33u) need
+`min(u,v) ≲ 120`, satisfied here by `v = 90`.
+
+## UPDATE #28 — 2026-09-19, twenty-eighth session (floor-3 Interactica team cluster + bosses)
+
+User: "in floor 3, 'interactica' section, at the center of the section, add a
+group of tables with devs working, and in front of them 2 bosses + tech lead
+standing looking at papers… 4 tables, small, 2 devs each (one per long side),
+laptop + papers on each desk, the 4 tables forming a cross… the desks may be to
+the building's right wall side and the other people on the other side… the 3
+stand up near, debating over papers; nothing special, similar to the floor-2
+tech lead." Verified in `generated/dev/r44.png` (crops `chk-f3team`,
+`chk-f3wide`). Lint clean.
+
+Because the brief says floor 3 is "the remaining part of Interactica plus a
+separate Indelve section", floor 3 IS the Interactica section — the request is
+not a floor mix-up.
+
+Two new sprites, wireframe-only pipeline:
+
+1. **`TEAMCROSS`** (`src/assets/teamcross-01-cut.png`, 1128x970, k 0.03284,
+   ax 12.01, ay 31.75): four small desks in a cross/plus, each with two devs on
+   its long sides, laptops + papers. `generated/dev/make_wire_teamcross.py` →
+   `teamcross-wire.png` → NB2/Pro (sole input, n=3) → `teamcross2-cand_3.png` →
+   `generated/dev/key_cut_teamcross.py` (k matched to WIDTH ~29.5px; the first
+   batch `teamcross-cand*` was rejected — far too top-down). Anchor = the outer
+   dev of the south desk, placed at `p(137, 226.2, 3*FH)` so the cross centres
+   on ~(134, 240).
+2. **`BOSSES`** (`src/assets/bosses-01-cut.png`, 1226x1480, k 0.02217,
+   ax 8.68, ay 32.74): the two bosses + tech lead standing close, backs to us,
+   papers in hand. `generated/dev/make_wire_bosses.py` → `bosses-wire.png` →
+   NB2/Pro → `bosses-cand.png` → `generated/dev/key_cut_bosses.py` (k matched to
+   HEIGHT 32.7u). Anchor = the nearest foot, placed at `p(104, 224, 3*FH)` —
+   directly in front of the cluster (same screen x, ~11px lower).
+
+Both emitted at the end of `floor-03` (over the floor/walls/separation face),
+cluster first, bosses after (nearer camera).
+
+**Placement trap (important):** the floor-4 slab cut on floor 3 is a ONE-SIDED
+bound, `h_local + 0.495·min(u,v) ≤ 92.5` — there is NO upper branch. (An
+earlier assumption that objects at `min(u,v) ≳ 172` clear the band is WRONG;
+`r43.png` proved it — a cluster at `(188,205)` was almost entirely erased.) So
+on floor 3: seated devs (top ~20u) need `min(u,v) ≲ 146`, standing figures
+(top ~33u) need `min(u,v) ≲ 120`. This is why the vignette sits at
+`u ≈ 104–137` (left-of-centre on screen) and not nearer the right wall.
+
+## UPDATE #27 — 2026-09-19, twenty-seventh session (floor-2 position pass)
+
+User: "result is good, lets just modify the positions… follow the red arrows"
+(screenshot `20260919T122907.png`, three hand-drawn arrows). Verified in
+`generated/dev/r39.png` (crops `chk-f2left`, `chk-tlv`, `chk-arvr`,
+`overview`). Lint clean.
+
+Arrows were decoded with the year plaques (`2019` = (560.4, 668.4), `2021` =
+(560.4, 563.4) → scale 5.952, offset (-1968.5, -3079.3)); each arrow is a
+screen delta, converted to a floor delta by `Δu = (Δx/0.7071 − Δy/0.2475)/2`,
+`Δv = (−Δy/0.2475 − Δx/0.7071)/2`:
+
+1. **AR/VR person toward the elevator** — arrow ≈ pure −v (−40u): anchor
+   `(24,403)` → **`(24,363)`**; holo panel `(4,26,416)` → **`(4,26,376)`**.
+2. **Seated-dev group off the rear wall** — arrow ≈ pure −v (−28u): anchor
+   `(92,559)` → **`(91,531)`** (row v ~524..544, ~36u clear of the wall face).
+3. **Tech lead centred under the graph screen** — arrow `(+26u, −8v)`:
+   anchor `(72,572)` → **`(98,564)`**.
+
+All three remain in `floor-02`; no new overlaps (devs' right edge ~x487 vs the
+AR/VR sprite's left edge ~x500; the tech lead's right edge ~x430 vs the devs'
+left edge ~x431).
+
+4. **AR/VR holo panel moved to a layer BELOW the person sprite** (r39 review,
+   user): `holoScreen(...)` is now emitted BEFORE `spriteShadow`/`assetProp(
+   ARVR_PERSON, ...)` in `floor-02`, so where the panel's right edge overlaps
+   the sprite's left blob the person paints over the screen. Re-verified in
+   `generated/dev/r40.png` (crop `chk-arvr`).
+
+## UPDATE #26 — 2026-09-19, twenty-sixth session (floor-2 left section: AR/VR to the wall, dev group + tech lead + graph screen)
+
+User request with a marked screenshot (`20260919T112312.png`). Verified in
+`generated/dev/r38.png` (crops `chk-tlv`, `chk-f2left`, `chk-arvr`,
+`chk-city`, `overview`). Lint clean.
+
+1. **AR/VR vignette slid to the building's left wall.** Person anchor
+   `(70,403)` → **`(24,403)`** and holo panel `(45,67,416)` → **`(4,26,416)`** —
+   the sprite's left edge now lands ~SVG x 472, ~7 px from the u=0 floor edge
+   at that depth (x ≈ 465). Still in `floor-02`.
+2. **Seated-devs group sprite** (NEW `SITDEVS`, `src/assets/sitdevs-01-cut.png`,
+   1588x943, k 0.03538, ax 9.18, ay 33.25). Wireframe-only pipeline:
+   `generated/dev/make_wire_sitdevs.py` → `sitdevs-wire.png` → NB2/Pro (sole
+   input, n=3) → `sitdevs-cand_2.png` → `generated/dev/key_cut_sitdevs.py`.
+   Five developers sitting cross-legged with laptops, seen from behind, facing
+   the rear wall. k matched to the group WIDTH (56 px, the row of five) → the
+   person row lands ~33 px tall. Anchor = the nearest dev's foot, placed
+   `assetProp(SITDEVS, 92, 559, 2*FH)`, row spans u 92..156.
+3. **Tech-lead sprite** (NEW `TECHLEAD`, `src/assets/techlead-01-cut.png`,
+   726x1851, k 0.01771, ax 3.69, ay 32.74). Wireframe-only pipeline:
+   `generated/dev/make_wire_techlead.py` → `techlead-wire.png` → NB2/Pro →
+   `techlead-cand_2.png` → `generated/dev/key_cut_techlead.py`. A standing
+   person seen from behind, right arm raised, pointing up-right at the screen.
+   k matched to HEIGHT (32.7u). Anchor = the foot, placed
+   `assetProp(TECHLEAD, 72, 572, 2*FH)` — just left of the seated devs, at the
+   wall; his hand points at the screen's left edge.
+4. **SVG graph screen on the rear (C-D) wall** — NEW `graphScreen()` helper +
+   `.dw-graph-*` styles (`scripts/style.mjs`): a dark framed panel with a
+   title strip, illegible text ticks, five rounded nodes joined by arrows.
+   Placed `graphScreen(90, 134, LD-WALL_T-1.5, 2*FH+14, 2*FH+40)`.
+   **Cutaway constraint documented in the generator:** at height h the floor-3
+   slab hides a point on a v≥u wall when 302.5 ≤ h + 0.495u ≤ 315 (so the
+   visible ceiling boundary on the wall is a 19.29° line descending to the
+   right); the panel is kept low/left so only its top-right corner is grazed.
+5. Placement decoded from the screenshot via the year plaques (`2019` =
+   (560.4, 668.4), `2021` = (560.4, 563.4)): the red circle maps to the rear
+   wall around u 139, v 596 — i.e. floor-2's far-left corner area.
 
 ## UPDATE #25 — 2026-09-18, twenty-fifth session (floor-2 left half: pipe base, city board, AR/VR)
 

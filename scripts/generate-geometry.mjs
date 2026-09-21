@@ -379,6 +379,44 @@ const CITY_BOARD = { file: 'cityboard-01-cut.png', w: 2289, h: 1041, k: 0.02601,
 // +5% size (k/ax/ay all scaled ×1.05 about the foot) and nudged down-right
 // on screen (anchor (68,415) → (70,403): Δx ≈ +10, Δy ≈ +2.5 px).
 const ARVR_PERSON = { file: 'arvr-01-cut.png', w: 1036, h: 1815, k: 0.02187, ax: 10.59, ay: 39.63 }
+// Interactica seated-devs group (r37 review, user): five developers sitting on
+// the floor with laptops, seen from behind, facing the rear (C-D) wall. One
+// sprite for the whole group. Wireframe-only pipeline: generated/dev/
+// make_wire_sitdevs.py → sitdevs-wire.png → NB2/Pro → sitdevs-cand_2.png →
+// key_cut_sitdevs.py. k is matched to the group WIDTH (56px, the row of five)
+// because the model spread the row a little wider than the wireframe; height
+// then lands ~33px. Anchor = the nearest dev's foot, placed at p(92, 559, 2*FH).
+const SITDEVS = { file: 'sitdevs-01-cut.png', w: 1588, h: 943, k: 0.03538, ax: 9.18, ay: 33.25 }
+// Interactica tech-lead staffage (r37 review, user): a standing person seen
+// from behind, right arm raised, pointing at the wall-mounted graph screen.
+// Wireframe-only pipeline: generated/dev/make_wire_techlead.py →
+// techlead-wire.png → NB2/Pro → techlead-cand_2.png → key_cut_techlead.py.
+// k matched to HEIGHT (32.7u standing). Anchor = the foot, placed at
+// p(72, 572, 2*FH); he stands just left of the seated devs, at the wall.
+const TECHLEAD = { file: 'techlead-01-cut.png', w: 726, h: 1851, k: 0.01771, ax: 3.69, ay: 32.74 }
+// Floor-3 Interactica table cluster (r40 review, user): four small desks in a
+// cross/plus, each seating two developers (one per long side, laptops and
+// papers on the desks), eight people total. One sprite for the whole cluster.
+// Wireframe-only pipeline: generated/dev/make_wire_teamcross.py →
+// teamcross-wire.png → NB2/Pro → teamcross2-cand_3.png →
+// key_cut_teamcross.py. k matched to the cluster WIDTH (~29.5px), then ×1.25 on
+// the r41 review (the devs read as ants). Anchor = the nearest dev's foot,
+// placed at p(172, 125, 3*FH) so the cross centres on ~(186, 128) — the middle
+// of the visible floor-3 Interactica area, pushed toward the right (B-D) wall.
+// u ≈ 186 / v ≈ 128 keeps every seated dev inside the floor-4 slab-cut
+// envelope (h_local + 0.495·min(u,v) ≤ 92.5; devs top ~18.5u → min(u,v) ≲ 149).
+const TEAMCROSS = { file: 'teamcross-01-cut.png', w: 1128, h: 970, k: 0.06568, ax: 24.02, ay: 63.50 }
+// Floor-3 Interactica bosses (r40 review, user): two bosses plus a tech lead
+// standing close together, seen from behind, debating over papers they hold.
+// Wireframe-only pipeline: generated/dev/make_wire_bosses.py →
+// bosses-wire.png → NB2/Pro → bosses-cand.png → key_cut_bosses.py. k matched
+// to HEIGHT (32.7u standing). Re-measured after the user hand-edited the cut
+// PNG (r41 review): ax moved 8.68 → 18.48 (bottommost foot shifted right).
+// Anchor = the nearest foot, placed at p(136, 90, 3*FH) — just in front of the
+// cluster and toward the left (A-C) wall: the two groups share a screen x with
+// the bosses ~21px lower. min(u,v) = 90 keeps the standing trio clear of the
+// floor-4 slab cut.
+const BOSSES = { file: 'bosses-01-cut.png', w: 1226, h: 1480, k: 0.0255, ax: 21.25, ay: 37.65 }
 function spritePlace(sp, uAnchor, vAnchor, hBase) {
   const [bx, by] = p(uAnchor, vAnchor, hBase).split(',').map(Number)
   return { x: round(bx - sp.ax), y: round(by - sp.ay) }
@@ -418,6 +456,54 @@ function holoScreen(u0, u1, v, h0, h1) {
     const b = long ? u1 - 3.2 : u1 - 6.6
     out.push(el('dw-holo-line', `M ${p(a, v, h)} L ${p(b, v, h)}`))
     out.push(el('dw-holo-line', `M ${p(u1 - 3.0, v, h)} L ${p(u1 - 1.4, v, h)}`))
+  }
+  return out
+}
+
+// Graph screen on the rear (C-D) wall for the tech-lead vignette (r37 review,
+// user): a wall-mounted dark panel showing a node diagram — rounded nodes with
+// illegible text ticks, joined by arrows. Drawn in the wall's constant-v plane
+// so it belongs to the architecture. NOTE the cutaway constraint: at height h
+// the floor-3 slab hides a point on a v>=u wall when 302.5 <= h + 0.495u <=
+// 315, so the panel is kept low/left enough that only its top-right corner is
+// grazed by the ceiling cut.
+function graphScreen(u0, u1, v, h0, h1) {
+  const out = [el('dw-graph-frame', vFace(v, u0, u1, h0, h1))]
+  out.push(el('dw-graph-face', vFace(v, u0 + 1.0, u1 - 1.0, h0 + 1.0, h1 - 1.0)))
+  out.push(el('dw-graph-title', vFace(v, u0 + 1.6, u1 - 1.6, h1 - 4.2, h1 - 1.8)))
+  out.push(el('dw-graph-tick', `M ${p(u0 + 2.2, v, h1 - 3.0)} L ${p(u1 - 6.4, v, h1 - 3.0)}`))
+  const F = [
+    [0.14, 0.66], [0.46, 0.80], [0.86, 0.62],
+    [0.30, 0.28], [0.68, 0.24],
+  ].map(([fx, fy]) => [
+    u0 + 1.8 + fx * (u1 - u0 - 3.6),
+    h0 + 2.2 + fy * (h1 - h0 - 7.6),
+  ])
+  const EDGES = [[0, 1], [1, 2], [0, 3], [1, 4], [3, 4]]
+  for (const [a, b] of EDGES) {
+    const [ua, ha] = F[a]
+    const [ub, hb] = F[b]
+    out.push(el('dw-graph-arrow', `M ${p(ua, v, ha)} L ${p(ub, v, hb)}`))
+    const du = ub - ua
+    const dh = hb - ha
+    const L = Math.hypot(du, dh) || 1
+    const ux = du / L
+    const uh = dh / L
+    const bx = ub - ux * 2.2
+    const by = hb - uh * 2.2
+    const px = -uh
+    const py = ux
+    out.push(
+      el(
+        'dw-graph-arrow',
+        `M ${p(bx + px * 1.2, v, by + py * 1.2)} L ${p(ub, v, hb)} L ${p(bx - px * 1.2, v, by - py * 1.2)}`,
+      ),
+    )
+  }
+  for (const [u, h] of F) {
+    out.push(el('dw-graph-node', vFace(v, u - 2.5, u + 2.5, h - 1.8, h + 1.8)))
+    out.push(el('dw-graph-nodeline', `M ${p(u - 1.6, v, h + 0.45)} L ${p(u + 1.6, v, h + 0.45)}`))
+    out.push(el('dw-graph-nodeline', `M ${p(u - 1.6, v, h - 0.65)} L ${p(u + 0.3, v, h - 0.65)}`))
   }
   return out
 }
@@ -1359,6 +1445,21 @@ const floor01 = group('floor-01', [
 const floor02 = group('floor-02', [
   ...slab(2 * FH),
   ...backWalls(2 * FH),
+  // Tech-lead vignette (r37 review, user): a group of five seated developers
+  // with laptops (backs to the viewer, facing the rear C-D wall) and a standing
+  // tech lead pointing at a graph screen mounted on that wall. Drawn right
+  // after the rear wall so the screen sits on it and the figures stand in
+  // front of it. Kept low/left on the wall so the floor-3 slab's ceiling cut
+  // only grazes the screen's top-right corner (see graphScreen).
+  // r38 review (user): the seated group was too near the rear wall — moved
+  // along the arrow (a pure -v screen move) v 559 -> 531 (row now v ~524..544,
+  // ~36u clear of the wall face); the tech lead was moved right to sit centred
+  // under the graph screen (+26u, -8v): (72,572) -> (98,564).
+  ...graphScreen(90, 134, LD - WALL_T - 1.5, 2 * FH + 14, 2 * FH + 40),
+  spriteShadow(SITDEVS, 91, 531, 2 * FH),
+  assetProp(SITDEVS, 91, 531, 2 * FH),
+  spriteShadow(TECHLEAD, 98, 564, 2 * FH),
+  assetProp(TECHLEAD, 98, 564, 2 * FH),
   // A/B test 2: horizontal wall run from the pre-tilted sprite, starting at
   // the vertical pipe's base (skirting level — low runs stay visible from
   // this camera) and receding behind the story above. Drawn BEFORE the
@@ -1392,9 +1493,17 @@ const floor02 = group('floor-02', [
   // stays attached to the sprite. Both live in floor-02 (below the elevator
   // layer), which is correct: the person is physically behind the shaft, so
   // the shaft may occlude him if the silhouette ever overlaps.
-  spriteShadow(ARVR_PERSON, 70, 403, 2 * FH),
-  assetProp(ARVR_PERSON, 70, 403, 2 * FH),
-  ...holoScreen(45, 67, 416, 2 * FH + 12, 2 * FH + 34),
+  // r37 review (user): slid the whole vignette (person + panel) toward the
+  // building's left wall (u = 0) so it hugs the open border (now u 24; the
+  // u=0 floor edge at v403 is SVG x ~465, the sprite's left edge ~471).
+  // r38 review (user): nudged toward the elevator along the arrow = -40v
+  // (a pure -v screen move, down-right), so v 403 -> 363.
+  // r39 review (user): the holographic panel must sit in a layer BELOW the
+  // person's sprite, so it is emitted first — where the two overlap, the
+  // person's sprite paints over the screen.
+  ...holoScreen(4, 26, 376, 2 * FH + 12, 2 * FH + 34),
+  spriteShadow(ARVR_PERSON, 24, 363, 2 * FH),
+  assetProp(ARVR_PERSON, 24, 363, 2 * FH),
   // City-model board (r36 review, user): flat on the floor in the middle of
   // the left Interactica half, inside the user's red mark (screen centre
   // ≈ SVG (720, 693) -> floor point (u 144, v 188)). Its anchor is the
@@ -1438,6 +1547,131 @@ const floor02Front = group('floor-02-front', [
 // floor-03).
 const SEP_CLIP = ' clip-path="url(#dw-clip-sep3)"'
 
+// --- Interactica wall boards (r58/r60 review, user) -------------------------
+// Printed app screenshots taped flat on the building's RIGHT (B-D) wall just
+// left of the B corner (where the right wall meets the absent front wall),
+// side by side along the wall, annotated with a marker like a review printout.
+//
+// Everything is authored in each board's own 2D space — x: 0..W left to right
+// AS SEEN by the viewer, y: 0..H top edge down — and placed with ONE matrix on
+// the wall plane u = LW - WALL_T. The local axes (+x -> -v, +y -> screen down)
+// are exactly the wall's iso skew, so plain rects, ellipses and text land on
+// the wall (verticals stay vertical, horizontals ride the wall) and stay fully
+// editable; the local rect (0,0,W,H) is identical to
+// uFace(u, vLeft, vRight, hBot, hTop).
+//
+// Sheet height is capped by the floor-4 slab, whose front edge crosses this
+// wall along h = `ceiling - slope * vLeft` (empirically the slab's TOP surface
+// edge is what cuts): solving that against the sheet's aspect gives the
+// tallest paper that still stands fully in front of the slab.
+const WALL_BOARD = {
+  margin: 7, // white padding all round the screenshot (annotation space)
+  marginBottom: 10, // deeper foot margin for the hand notes
+  hBot: 318, // sheet bottom, just above the story slab (315)
+  ceiling: 420.16, // hTop <= ceiling - slope * vLeft
+  slope: 0.4957,
+  safe: 3, // keep the sheet clear of the slab silhouette
+}
+function wallAppBoard({ file, srcW, srcH, vRight, marks }) {
+  const { margin: m, marginBottom: mB, hBot, ceiling, slope, safe } = WALL_BOARD
+  const ratio = srcW / srcH
+  const hShot = Math.floor(
+    (ceiling - slope * (vRight + 2 * m) - hBot - m - mB - safe) / (1 + slope * ratio),
+  )
+  const shot = { x0: m, y0: m, w: ratio * hShot, h: hShot }
+  const W = 2 * m + shot.w
+  const H = m + shot.h + mB
+  const vLeft = vRight + W
+  const hTop = hBot + H
+  const [ox, oy] = p(LW - WALL_T, vLeft, hTop).split(',').map(Number)
+  // Marks address the screenshot by FRACTION of its own size, so they stay
+  // pinned to real UI elements whatever resolution the asset is saved at.
+  const sx = (fx) => shot.x0 + fx * shot.w
+  const sy = (fy) => shot.y0 + fy * shot.h
+  // `k` scales the fixed-size bits of a mark (stroke offsets, ticks, arrow
+  // heads) so the same handwriting reads the same on a smaller sheet.
+  const k = shot.w / 33
+  return [
+    `<g transform="matrix(0.7071 0.2475 0 1 ${ox} ${oy})">`,
+    `  <rect class="dw-note-shadow" x="1.7" y="2.3" width="${round(W)}" height="${round(H)}" />`,
+    `  <rect class="dw-note-paper" x="0" y="0" width="${round(W)}" height="${round(H)}" />`,
+    `  <image href="${inlineAsset(file)}" x="${shot.x0}" y="${shot.y0}" width="${round(shot.w)}" height="${shot.h}" preserveAspectRatio="none" />`,
+    `  <rect class="dw-note-edge" x="${shot.x0}" y="${shot.y0}" width="${round(shot.w)}" height="${shot.h}" />`,
+    `  <rect class="dw-note-tape" x="-3.4" y="4.2" width="7.8" height="3.6" transform="rotate(-7 -3.4 4.2)" />`,
+    `  <rect class="dw-note-tape" x="${round(W - 4.4)}" y="${round(H - 4.6)}" width="7.8" height="3.6" transform="rotate(6 ${round(W - 4.4)} ${round(H - 4.6)})" />`,
+    ...marks({ sx, sy, shot, W, H, k }).map((l) => `  ${l}`),
+    `</g>`,
+  ]
+}
+
+// Sheet A — HUB LIVE attendee app menu (375x635, the user's own asset).
+const HUB_LIVE_BOARD = {
+  file: '00-hub-menu.png',
+  srcW: 375,
+  srcH: 635,
+  vRight: 5,
+  marks: ({ sx, sy, shot }) => {
+    const mid = sx(0.508)
+    const row = (f0, f1) => (sy(f0) + sy(f1)) / 2
+    const halfW = (sx(0.952) - sx(0.048)) / 2
+    const rowH = (sy(0.921) - sy(0.795)) / 2 + 0.6
+    const noteY = shot.y0 + shot.h
+    return [
+      // Red felt-tip: circle the Scavenger Hunt row (the one to build first)
+      // and run an arrow down the right margin into it.
+      `<ellipse class="dw-note-ink" cx="${round(mid)}" cy="${round(row(0.795, 0.921))}" rx="${round(halfW + 2.4)}" ry="${round(rowH)}" />`,
+      `<path class="dw-note-ink" d="M ${round(sx(0.952) + 3)} ${round(row(0.449, 0.63) - 2)} Q ${round(sx(0.952) + 9)} ${round(row(0.63, 0.795))} ${round(sx(0.952) + 2)} ${round(row(0.795, 0.921) - 4)}" />`,
+      `<path class="dw-note-ink" d="M ${round(sx(0.952) + 2)} ${round(row(0.795, 0.921) - 4)} l 3.4 -3.2 M ${round(sx(0.952) + 2)} ${round(row(0.795, 0.921) - 4)} l 3 2.9" />`,
+      // Blue felt-tip: E-Literature is crossed out (out of v1 scope).
+      `<path class="dw-note-ink2" d="M ${round(mid - 3)} ${round(sy(0.46))} l 6 ${round(sy(0.564) - sy(0.46))} M ${round(mid + 3)} ${round(sy(0.46))} l -6 ${round(sy(0.564) - sy(0.46))}" />`,
+      // Red tick beside Schedule a Meeting.
+      `<path class="dw-note-ink" d="M ${round(sx(0.952) + 2.2)} ${round(row(0.63, 0.756)) - 1} l 1.4 2 l 3 -4.2" />`,
+      // Circle the score band, cross the top-right corner doodle.
+      `<ellipse class="dw-note-ink" cx="${round(mid)}" cy="${round(row(0.047, 0.098))}" rx="${round(halfW - 0.5)}" ry="${round(rowH * 0.5)}" />`,
+      `<path class="dw-note-ink" d="M ${round(sx(0.987))} ${round(sy(0.006))} l 2.6 2.8 M ${round(sx(0.987) + 2.6)} ${round(sy(0.006))} l -2.6 2.8" />`,
+      // Illegible hand notes in the bottom margin (1.9px script = scribble at
+      // diorama scale) over a wavy underline.
+      `<text class="dw-note-text" x="${round(shot.x0)}" y="${round(noteY + 4.2)}">ask about badge printing</text>`,
+      `<path class="dw-note-ink" d="M ${round(shot.x0)} ${round(noteY + 5.4)} q 4.2 -1.3 8.4 0 q 4.2 1.3 8.4 0 q 4.2 -1.3 8.4 0 q 4.2 1.3 8.4 0" />`,
+      `<text class="dw-note-text" x="${round(shot.x0)}" y="${round(noteY + 8.2)}">wifi + screen for demo</text>`,
+      `<path class="dw-note-ink" d="M ${round(sx(0.995))} ${round(row(0.795, 0.921) + rowH + 3)} q 2.6 2.2 0 4.4 q -2.6 2.2 0 4.4" />`,
+    ]
+  },
+}
+
+// Sheet B — the IMC rewards/news app home screen (428x926, the user's own
+// asset), taped to the LEFT of sheet A. Marks address the same landmarks as
+// sheet A does (the greeting, the middle quick-action card, the news feed,
+// the sponsored banner) but the fixed bits are scaled by `k` because this
+// sheet is shorter.
+const IMC_HOME_BOARD = {
+  file: '02-imc-home.png',
+  srcW: 428,
+  srcH: 926,
+  vRight: 56,
+  marks: ({ sx, sy, shot, k }) => {
+    const noteY = shot.y0 + shot.h
+    const tick = () => `l ${round(1.4 * k)} ${round(2 * k)} l ${round(3 * k)} ${round(-4.2 * k)}`
+    return [
+      // Red felt-tip: ring the Cargar Compra card — the receipt-upload flow, the
+      // one to build first — and run an arrow down the right margin into it.
+      `<ellipse class="dw-note-ink" cx="${round(sx(0.499))}" cy="${round(sy(0.188))}" rx="${round(sx(0.155))}" ry="${round(sy(0.05))}" />`,
+      `<path class="dw-note-ink" d="M ${round(sx(1.04))} ${round(sy(0.16))} Q ${round(sx(1.12))} ${round(sy(0.30))} ${round(sx(1.02))} ${round(sy(0.40))}" />`,
+      `<path class="dw-note-ink" d="M ${round(sx(1.02))} ${round(sy(0.40))} l ${round(2.2 * k)} ${round(-2.6 * k)} M ${round(sx(1.02))} ${round(sy(0.40))} l ${round(2.6 * k)} ${round(2.2 * k)}" />`,
+      // Blue felt-tip: the second news story is placeholder copy (crossed out).
+      `<path class="dw-note-ink2" d="M ${round(sx(0.36))} ${round(sy(0.58))} l ${round(4 * k)} ${round(sy(0.68) - sy(0.58))} M ${round(sx(0.36)) + round(4 * k)} ${round(sy(0.58))} l ${round(-4 * k)} ${round(sy(0.68) - sy(0.58))}" />`,
+      // Red tick beside Catálogo de Premios, ring the user name + points line
+      // (they have to come from the API, not be hard-coded).
+      `<path class="dw-note-ink" d="M ${round(sx(0.96))} ${round(sy(0.19))} ${tick()}" />`,
+      `<ellipse class="dw-note-ink" cx="${round(sx(0.32))}" cy="${round(sy(0.1))}" rx="${round(sx(0.29))}" ry="${round(sy(0.03))}" />`,
+      // Illegible hand notes in the bottom margin over a wavy underline.
+      `<text class="dw-note-text" x="${round(shot.x0)}" y="${round(noteY + 4.2)}">nombre y puntos desde la API</text>`,
+      `<path class="dw-note-ink" d="M ${round(shot.x0)} ${round(noteY + 5.4)} q ${round(3 * k)} ${round(-1.2 * k)} ${round(6 * k)} 0 q ${round(3 * k)} ${round(1.2 * k)} ${round(6 * k)} 0 q ${round(3 * k)} ${round(-1.2 * k)} ${round(6 * k)} 0" />`,
+      `<text class="dw-note-text" x="${round(shot.x0)}" y="${round(noteY + 8.2)}">banner patrocinado: revisar</text>`,
+    ]
+  },
+}
+
 const floor03 = group('floor-03', [
   ...slab(3 * FH),
   ...backWalls(3 * FH),
@@ -1478,11 +1712,37 @@ const floor03 = group('floor-03', [
     ' clip-path="url(#dw-clip-sep3b)"',
   ),
   `<defs><clipPath id="dw-clip-sep3b"><path d="${vFace(LD - WALL_T, SHAFT_U, LW, 3 * FH, 3 * FH + FH)}" /></clipPath></defs>`,
+  // Right wall, left of the B corner: the two app mockups (screenshots the
+  // team pinned up), printed on paper, taped, then marker-annotated. The
+  // left-hand sheet is drawn first so the nearer sheet's paper laps over its
+  // shadow.
+  ...wallAppBoard(IMC_HOME_BOARD),
+  ...wallAppBoard(HUB_LIVE_BOARD),
 ])
 
 const floor03Front = group('floor-03-front', [
   ...slabTriangle(3 * FH),
   ...columns(3 * FH, 3 * FH + STORY_H),
+])
+
+// --- floor-03-team: Interactica team cluster + bosses (r40/r42/r51/r54
+// reviews). The cross of desks with the eight seated devs, and the bosses +
+// tech lead debating in front of it (cluster first, bosses after — nearer to
+// camera). This is its OWN fragment, stacked in `assemble-svg.mjs` directly
+// between `floor-03` and `floor-04`, for two reasons:
+//   1. it must sit BELOW the floor-04 base (user revision) — the ceiling slab
+//      then correctly occludes anything pushed too deep, and the sprite can
+//      never paint over the floor-4 floor surface;
+//   2. it must sit ABOVE the floor-03 slab (and the front-left `slabTriangle`
+//      in `floor-03-front`, which repaints that floor rectangle much later in
+//      the stack — anything at plan u < 48.2, v < 222.4 would get its lower
+//      half covered; hence both anchors keep u >= ~50).
+// The A column (`floor-03-front`) still paints over the sprites.
+const floor03Team = group('floor-03-team', [
+  spriteShadow(TEAMCROSS, 100, 80, 3 * FH),
+  assetProp(TEAMCROSS, 100, 80, 3 * FH),
+  spriteShadow(BOSSES, 52, 83, 3 * FH),
+  assetProp(BOSSES, 52, 83, 3 * FH),
 ])
 
 const floor04 = group('floor-04', [...slab(4 * FH), ...backWalls(4 * FH)])
@@ -1801,6 +2061,7 @@ const fragments = {
   'floor-02': floor02,
   'floor-02-front': floor02Front,
   'floor-03': floor03,
+  'floor-03-team': floor03Team,
   'floor-03-front': floor03Front,
   'floor-04': floor04,
   'floor-04-front': floor04Front,
