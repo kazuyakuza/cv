@@ -14,19 +14,32 @@ The career diorama SVG is built and illustrated (Stages 0–5 complete). **Stage
 rendered PNG, sends a revision list (often with screenshots and red marks), the
 session implements it, renders a new `rNN.png`, and the user reviews again.
 
-Last round: **UPDATE #36** (2026-09-20) — the board builder was generalised to
-`wallAppBoard(cfg)` and now renders TWO app mockups taped on the right (B-D)
-wall of Interactica, side by side: sheet A `HUB_LIVE_BOARD`
-(`00-hub-menu.png`, 375x635, 47.07 x 73 units nearest the B corner) and, to its
-LEFT, sheet B `IMC_HOME_BOARD` (`02-imc-home.png`, 428x926, 31.6 x 55 units —
-it must be shorter because the floor-4 slab silhouette cuts deeper further from
-the corner; the builder solves that automatically). Marks are functions of
-`({ sx, sy, shot, k })` addressing the screenshot by fraction, so they stay
-pinned whatever the asset resolution. Latest render: `generated/dev/r65.png`
-(crops `chk-boards`, `chk-boardB`, `chk-f3wide`).
+Last round: **UPDATE #39** (2026-09-21) — the two Indelve PC towers are now a
+**generated sprite** (`PCTOWERS`, `src/assets/pctowers-01-cut.png`; pipeline:
+`generated/dev/make_wire_towers.py` → `pctowers-wire.png` → NB2 (wireframe
+input, n=2) → `pick_towers.py` picked `pctowers-cand.png` (silhouette err
+0.037) → `key_cut_towers.py`, W_TARGET 23px, anchor = pair front-left foot).
+They face the building's front wall (-v), are less tall / a little longer than
+the retired SVG boxes (physical height ~19 u), and sit near the C-D wall at
+`p(131, 564, 3*FH)`. The `.dw-cable` now drops straight down the wall from the
+screen's bottom edge, then crosses the floor to the towers. Latest render:
+`generated/dev/r69.png` (crops `chk-indelve`, `chk-indelve-ctx`, `chk-f3wide`).
 
-**Pending on the user:** review `r65.png` / the two-board crop. Nothing is
-blocked.
+Earlier, **UPDATE #38** — Indelve wall logo + screen nudged right
+(`indelveWallBranding`: logo u 10..62, screen u 72..) and the screen grown 10%
+(image 53.46u, bezel 55.46 x 32.07); first cut of the PC towers + `.dw-cable`.
+
+Earlier this session, **UPDATE #37** — (1) sheet B `IMC_HOME_BOARD` forced to
+sheet A's exact paper size (`size: { W: 47.07, H: 73 }`) — `wallAppBoard` gained
+an optional `size` and always letterboxes the screenshot inside the paper
+(`xMidYMid meet`), so the portrait IMC shot sits centred (25.9 x 56) on the same
+paper as HUB; the floor-4 slab lops its top-left corner (user accepted).
+(2) Indelve rear-wall branding first added (`indelveWallBranding()` +
+`cdWallSheet()`): the user's `trantorian-logo.png` and `trantorian-screen.jpg`.
+
+**Pending on the user:** review `r69.png` / the board + Indelve crops. The
+`src/assets/trantorian-*` and `pctowers-01-cut.png` files are still untracked
+and must be staged on the next commit.
 
 ## 1b. Start-of-session checklist (fresh session)
 
@@ -217,18 +230,34 @@ Proven recipe for new props/staffage:
   v=100), so deep/left placement is capped; (2) keep u ≥ ~50 for the bosses
   (`slabTriangle(3*FH)` in `floor-03-front` repaints the front-left floor
   rectangle u 0..48.2, v 0..222.4 over anything earlier).   The A column
-  (`floor-03-front`) still paints OVER the sprites. No Indelve content
-  (deferred).
-- **Floor 3 wall boards (UPDATE #35/#36)**: `wallAppBoard(cfg)` (end of
-  `floor-03`) prints app screenshots on paper taped flat to the right (B-D)
-  wall next to the B corner (`u = LW - WALL_T`): sheet B `IMC_HOME_BOARD`
-  (`02-imc-home.png`, v 56..87.6, h 318..373) and sheet A `HUB_LIVE_BOARD`
-  (`00-hub-menu.png`, v 5..52.07, h 318..391), sheet A drawn last so its paper
-  laps sheet B's shadow. One matrix per sheet on the wall plane:
-  `matrix(0.7071 0.2475 0 1 ox oy)`; the local rect == `uFace(...)`; height is
-  auto-solved against the floor-4 slab cap (`WALL_BOARD.ceiling/slope`). Marks
-  are functions of `({ sx, sy, shot, k })` addressing the screenshot by
-  fraction. NB `round()` returns a STRING — never use it inside arithmetic.
+  (`floor-03-front`) still paints OVER the sprites.
+- **Floor 3 wall boards (UPDATE #35/#36, resized #37)**: `wallAppBoard(cfg)`
+  (end of `floor-03`) prints app screenshots on paper taped flat to the right
+  (B-D) wall next to the B corner (`u = LW - WALL_T`): sheet B `IMC_HOME_BOARD`
+  (`02-imc-home.png`, v 56..103.07) and sheet A `HUB_LIVE_BOARD`
+  (`00-hub-menu.png`, v 5..52.07), both **47.07 x 73** (h 318..391), sheet A
+  drawn last so its paper laps sheet B's shadow. One matrix per sheet on the
+  wall plane: `matrix(0.7071 0.2475 0 1 ox oy)`; the local rect == `uFace(...)`.
+  UPDATE #37: sheet B carries a fixed `size` (no slab auto-solve) and both
+  screenshots are letterboxed inside their paper (`xMidYMid meet`) so nothing is
+  stretched; the floor-4 slab clips sheet B's top-left (accepted). Marks are
+  functions of `({ sx, sy, shot, k })` addressing the screenshot by fraction. NB
+  `round()` returns a STRING — never use it inside arithmetic.
+- **Floor 3 Indelve wall + floor (UPDATE #37/#38)**: `indelveWallBranding()`
+  + `cdWallSheet()` (end of `floor-03`, after the boards) mounts the user's
+  `trantorian-logo.png` (plain RGBA decal, u 10..62, local h 12..51.7) and a
+  promo screen (`trantorian-screen.jpg`, dark `dw-graph-frame` bezel 55.46 x
+  32.07 + 16:9 image, u 72..127.46) on the C-D rear wall's left end.
+  `cdWallSheet` uses the wall-plane matrix `matrix(0.7071 -0.2475 0 1 ox oy)`
+  anchored at `p(u0, LD-WALL_T-0.4, 3*FH + localH)` — REMEMBER the `3*FH` base
+  (p() wants the GLOBAL height).   (p() wants the GLOBAL height). `indelveFloorProps()` then adds two PC towers
+  as a generated sprite (`PCTOWERS`, `pctowers-01-cut.png`, anchor = pair
+  front-left foot at p(131, 564, 3*FH), faces -v) on the floor to the right of
+  the screen and near the wall, plus a `.dw-cable` that drops straight down the
+  wall from the screen's bottom edge then runs along the floor to the towers.
+  All drawn last so they paint over the cream section-divider fill; the floor-4
+  slab clips the screen's top (user accepted).
+
 - **Floors 4–5**: architectural shell + tags only. Floor 5 is intentionally
   unfinished (WIP). Props for 4/5 are deferred by user decision until 1–3 are
   settled.
@@ -239,7 +268,7 @@ Sprite constants currently in `scripts/generate-geometry.mjs`:
 `PUEL_KIOSK`, `PUEL_STOOLS`, `PUEL_TABLE`, `FREELANCER_PC`, `DEV_GROUP`,
 `SITTER`, `STANDKIOSK`, `WS_C` (+`assetWorkstation`), `WS_D`, `PIPE_SPRITE`,
 `PIPE_H_SPRITE`, `CITY_BOARD`, `ARVR_PERSON`, `SITDEVS`, `TECHLEAD`,
-`TEAMCROSS`, `BOSSES`.
+`TEAMCROSS`, `BOSSES`, `PCTOWERS`.
 
 ## 7. Next steps / open items
 

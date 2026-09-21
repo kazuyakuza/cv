@@ -157,6 +157,11 @@ export const svgStyle = `
     .dw-graph-nodeline { fill: none; stroke: #cfe0e6; stroke-width: 0.45; stroke-opacity: 0.8; stroke-linecap: round; }
     .dw-graph-arrow { fill: none; stroke: #8fb0bd; stroke-width: 0.45; stroke-linecap: round; stroke-linejoin: round; }
 
+    /* Indelve floor cable (UPDATE #38/#39, user): the power/video run from the
+       promo screen — drops straight down the wall, then crosses the floor to
+       the PC towers. Dark, thin. */
+    .dw-cable { fill: none; stroke: #2b2f33; stroke-width: 0.9; stroke-linecap: round; }
+
     /* Workstations (Stage 5.5 §10): dev desks come from generated
        sprites (src/assets/workstation-0X-cut.png, placed by
        assetWorkstation()); the old SVG desk classes were removed with them. */

@@ -417,6 +417,13 @@ const TEAMCROSS = { file: 'teamcross-01-cut.png', w: 1128, h: 970, k: 0.06568, a
 // the bosses ~21px lower. min(u,v) = 90 keeps the standing trio clear of the
 // floor-4 slab cut.
 const BOSSES = { file: 'bosses-01-cut.png', w: 1226, h: 1480, k: 0.0255, ax: 21.25, ay: 37.65 }
+// Floor-3 Indelve PC towers (UPDATE #39, user): two desktop towers side by
+// side, front panels facing the building's front wall (-v). Wireframe-only
+// pipeline: generated/dev/make_wire_towers.py -> pctowers-wire.png -> NB2
+// (wireframe as the ONLY input) -> pctowers-cand.png (best of 2 by silhouette)
+// -> key_cut_towers.py (W_TARGET 23px). Anchor = the pair's front-left foot,
+// placed at p(131, 564, 3*FH) right of the promo screen and near the C-D wall.
+const PCTOWERS = { file: 'pctowers-01-cut.png', w: 669, h: 798, k: 0.03464, ax: 10.84, ay: 27.54 }
 function spritePlace(sp, uAnchor, vAnchor, hBase) {
   const [bx, by] = p(uAnchor, vAnchor, hBase).split(',').map(Number)
   return { x: round(bx - sp.ax), y: round(by - sp.ay) }
@@ -1572,15 +1579,36 @@ const WALL_BOARD = {
   slope: 0.4957,
   safe: 3, // keep the sheet clear of the slab silhouette
 }
-function wallAppBoard({ file, srcW, srcH, vRight, marks }) {
+function wallAppBoard({ file, srcW, srcH, vRight, marks, size }) {
   const { margin: m, marginBottom: mB, hBot, ceiling, slope, safe } = WALL_BOARD
   const ratio = srcW / srcH
-  const hShot = Math.floor(
-    (ceiling - slope * (vRight + 2 * m) - hBot - m - mB - safe) / (1 + slope * ratio),
-  )
-  const shot = { x0: m, y0: m, w: ratio * hShot, h: hShot }
-  const W = 2 * m + shot.w
-  const H = m + shot.h + mB
+  let W
+  let H
+  if (size) {
+    // Fixed paper size (UPDATE #37, user): sheet B is forced to sheet A's exact
+    // paper size so the two printouts read as a matched pair. The floor-4 slab
+    // then lops the top-left corner off the sheet (accepted on review); the
+    // screenshot is letterboxed inside the paper, never stretched.
+    W = size.W
+    H = size.H
+  } else {
+    const hShot = Math.floor(
+      (ceiling - slope * (vRight + 2 * m) - hBot - m - mB - safe) / (1 + slope * ratio),
+    )
+    W = 2 * m + ratio * hShot
+    H = m + hShot + mB
+  }
+  // Largest screenshot that fits the paper's inner area at its own aspect,
+  // centred (letterboxed), so no image is ever distorted.
+  const inner = { w: W - 2 * m, h: H - m - mB }
+  const wShot = inner.w / inner.h > ratio ? ratio * inner.h : inner.w
+  const hShot = wShot / ratio
+  const shot = {
+    x0: m + (inner.w - wShot) / 2,
+    y0: m + (inner.h - hShot) / 2,
+    w: wShot,
+    h: hShot,
+  }
   const vLeft = vRight + W
   const hTop = hBot + H
   const [ox, oy] = p(LW - WALL_T, vLeft, hTop).split(',').map(Number)
@@ -1595,7 +1623,7 @@ function wallAppBoard({ file, srcW, srcH, vRight, marks }) {
     `<g transform="matrix(0.7071 0.2475 0 1 ${ox} ${oy})">`,
     `  <rect class="dw-note-shadow" x="1.7" y="2.3" width="${round(W)}" height="${round(H)}" />`,
     `  <rect class="dw-note-paper" x="0" y="0" width="${round(W)}" height="${round(H)}" />`,
-    `  <image href="${inlineAsset(file)}" x="${shot.x0}" y="${shot.y0}" width="${round(shot.w)}" height="${shot.h}" preserveAspectRatio="none" />`,
+    `  <image href="${inlineAsset(file)}" x="${round(shot.x0)}" y="${round(shot.y0)}" width="${round(shot.w)}" height="${round(shot.h)}" preserveAspectRatio="xMidYMid meet" />`,
     `  <rect class="dw-note-edge" x="${shot.x0}" y="${shot.y0}" width="${round(shot.w)}" height="${shot.h}" />`,
     `  <rect class="dw-note-tape" x="-3.4" y="4.2" width="7.8" height="3.6" transform="rotate(-7 -3.4 4.2)" />`,
     `  <rect class="dw-note-tape" x="${round(W - 4.4)}" y="${round(H - 4.6)}" width="7.8" height="3.6" transform="rotate(6 ${round(W - 4.4)} ${round(H - 4.6)})" />`,
@@ -1649,6 +1677,10 @@ const IMC_HOME_BOARD = {
   srcW: 428,
   srcH: 926,
   vRight: 56,
+  // UPDATE #37 (user): forced to sheet A's exact paper size (HUB_LIVE_BOARD's
+  // auto-solved 47.07 x 73) so the two mockups match; the portrait screenshot
+  // is letterboxed inside the same paper.
+  size: { W: 47.07, H: 73 },
   marks: ({ sx, sy, shot, k }) => {
     const noteY = shot.y0 + shot.h
     const tick = () => `l ${round(1.4 * k)} ${round(2 * k)} l ${round(3 * k)} ${round(-4.2 * k)}`
@@ -1671,6 +1703,72 @@ const IMC_HOME_BOARD = {
     ]
   },
 }
+
+// --- Indelve rear-wall branding (UPDATE #37, user) --------------------------
+// The section's logo and a promo screen, both mounted on the C-D rear wall at
+// the LEFT end of the story (left of the floor-1 Nextcode pamphlet below and
+// of the floor-2 graph screen). Sizes follow the user's references: the logo
+// is a little smaller than the Nextcode pamphlet (64u wide) and the screen is
+// ~15% bigger than the floor-2 graph screen (44x26). Both are drawn on the
+// wall plane with ONE matrix (like the wall boards) so they stay editable and
+// lie flat on the wall. Emitted last in floor-03 so they paint over the cream
+// section-divider fill; the floor-4 slab clips the screen's top-right (user
+// accepted partial hiding).
+function cdWallSheet(u0, hTop, children) {
+  // hTop is the LOCAL story height; p() needs the global height (3 * FH base).
+  const [ox, oy] = p(u0, LD - WALL_T - 0.4, 3 * FH + hTop).split(',').map(Number)
+  return [
+    `<g transform="matrix(0.7071 -0.2475 0 1 ${round(ox)} ${round(oy)})">`,
+    ...children.map((c) => `  ${c}`),
+    `</g>`,
+  ]
+}
+function indelveWallBranding() {
+  // Logo decal (transparent emblem), u 10..62, centred on local h = 32.
+  const LOGO_W = 52
+  const LOGO_H = LOGO_W * (238 / 314) // height follows the logo's aspect
+  // Screen: dark bezel + 16:9 promo image, u 72.., same centre line. UPDATE
+  // #38 (user): moved right with the logo and grown a further 10%.
+  const SCR_IW = 53.46
+  const SCR_IH = (SCR_IW * 9) / 16
+  const SCR_W = SCR_IW + 2
+  const SCR_H = SCR_IH + 2
+  return [
+    ...cdWallSheet(10, 32 + LOGO_H / 2, [
+      `<image href="${inlineAsset('trantorian-logo.png')}" x="0" y="0" width="${round(LOGO_W)}" height="${round(LOGO_H)}" preserveAspectRatio="xMidYMid meet" />`,
+    ]),
+    ...cdWallSheet(72, 32 + SCR_H / 2, [
+      `<rect class="dw-graph-frame" x="0" y="0" width="${round(SCR_W)}" height="${round(SCR_H)}" />`,
+      `<image href="${inlineAsset('trantorian-screen.jpg', 'image/jpeg')}" x="1" y="1" width="${round(SCR_IW)}" height="${round(SCR_IH)}" preserveAspectRatio="xMidYMid meet" />`,
+    ]),
+  ]
+}
+
+// --- Indelve floor props (UPDATE #38/#39, user): two PC towers stand on the
+// floor to the right of the promo screen and near the C-D wall, as a generated
+// sprite (`PCTOWERS`, see the const) facing the building's front wall. A
+// `.dw-cable` run drops straight down the wall from the screen's bottom edge,
+// then crosses the floor to the towers. Emitted after the section-divider fill
+// (the towers sit in front of the wall), so the floor-4 slab clips at most
+// their very top.
+function indelveFloorProps() {
+  const H = 3 * FH
+  const vWall = LD - WALL_T - 0.4
+  const out = [spriteShadow(PCTOWERS, 131, 564, H), assetProp(PCTOWERS, 131, 564, H)]
+  // Cable: screen-bottom -> straight down the wall -> along the floor.
+  const [x0, y0] = p(120, vWall, H + 15.96).split(',').map(Number)
+  const [x1, y1] = p(120, vWall, H + 1).split(',').map(Number)
+  const [x2, y2] = p(133, 576, H + 1).split(',').map(Number)
+  out.push(el('dw-cable', `M ${round(x0)} ${round(y0)} L ${round(x1)} ${round(y1)}`))
+  out.push(
+    el(
+      'dw-cable',
+      `M ${round(x1)} ${round(y1)} Q ${round((x1 + x2) / 2 + 2)} ${round((y1 + y2) / 2 + 3)} ${round(x2)} ${round(y2)}`,
+    ),
+  )
+  return out
+}
+
 
 const floor03 = group('floor-03', [
   ...slab(3 * FH),
@@ -1718,6 +1816,10 @@ const floor03 = group('floor-03', [
   // shadow.
   ...wallAppBoard(IMC_HOME_BOARD),
   ...wallAppBoard(HUB_LIVE_BOARD),
+  // Indelve section: logo + promo screen on the rear wall's left end.
+  ...indelveWallBranding(),
+  // ...and two PC towers + a cable on the floor to their right.
+  ...indelveFloorProps(),
 ])
 
 const floor03Front = group('floor-03-front', [
