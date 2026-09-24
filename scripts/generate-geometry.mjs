@@ -424,23 +424,61 @@ const BOSSES = { file: 'bosses-01-cut.png', w: 1226, h: 1480, k: 0.0255, ax: 21.
 // -> key_cut_towers.py (W_TARGET 23px). Anchor = the pair's front-left foot,
 // placed at p(131, 564, 3*FH) right of the promo screen and near the C-D wall.
 const PCTOWERS = { file: 'pctowers-01-cut.png', w: 669, h: 798, k: 0.03464, ax: 10.84, ay: 27.54 }
+// Floor-3 Indelve presenter (UPDATE #42, user): a standing person seen from
+// behind (he faces the building's right B-D wall), black t-shirt, a microphone
+// to his mouth and the other hand pointing up-right at the promo screen.
+// Wireframe-only pipeline: generated/dev/make_wire_presenter.py ->
+// presenter-wire.png -> NB2 (wireframe input, n=3) -> pick_presenter.py picked
+// presenter-cand_2.png -> key_cut_presenter.py. The user then HAND-EDITED the
+// cut PNG (turned him to face the right wall), asked to double it and then to
+// reduce it 30%; final size measured from the edited PNG (k 0.058318 = 45.78u
+// tall, ax/ay 11.34 / 45.9 from its bottommost foot). Anchor = the foot, placed
+// at p(52, 554, 3*FH): same screen x as the original (u-v unchanged) but
+// min(u,v)=52, clear of the floor-4 slab cut.
+const PRESENTER = { file: 'presenter-01-cut.png', w: 307, h: 790, k: 0.058318, ax: 11.34, ay: 45.9 }
+// Floor-3 Indelve AR/VR demo person (UPDATE #42, user): the user's sprite
+// `trantorian-vr.png`, hand-derived from arvr-01-cut.png — a person seen from
+// behind wearing a VR headset. UPDATE #44 (user): size +15% (height 30 → 34.5u)
+// and the image top-left pinned to the absolute point `VR_XY` (see below);
+// measured with measure_asset.py, no wireframe/NB run needed.
+const TRANTORIAN_VR = { file: 'trantorian-vr.png', w: 359, h: 1592, k: 0.0216845, ax: 2.8, ay: 34.5 }
+// Floor-3 Indelve queue (UPDATE #45, user): four different people waiting in a
+// line behind the AR/VR demo person, seen from behind. Wireframe-only pipeline:
+// generated/dev/make_wire_queue.py -> queue-wire.png -> NB2 (n=3) ->
+// pick_queue.py picked queue-cand.png -> key_cut_queue.py. The user then
+// HAND-EDITED the cut PNG to invert the queue direction; re-measured with
+// measure_asset.py (k 0.05415, ax/ay 21.36 / 37.91). Anchor = the bottommost
+// foot (now the NEAR end of the queue, the green sweater), placed so the queue
+// runs along -v (down-right, per the user's red line) just behind the VR
+// person's drawn foot.
+const QUEUE = { file: 'queue-01-cut.png', w: 485, h: 703, k: 0.05415, ax: 21.36, ay: 37.91 }
+// Floor-3 Indelve virtual-combat fleets (UPDATE #50, user): two painterly
+// fleets (1 capital + 4 fighters each) floating over the hex board, facing each
+// other (A points right, B points left). Wireframe-only pipeline:
+// generated/dev/make_wire_fleet.py -> fleet-a/b-wire.png -> NB2 (n=2 each) ->
+// pick_fleet.py picked the _2 candidate for both -> key_cut_fleet.py
+// (W_TARGET 42px). Anchors are the sprites' bottommost pixels.
+const FLEET_A = { file: 'fleet-a-01-cut.png', w: 958, h: 505, k: 0.04407, ax: 16.2, ay: 22.12 }
+const FLEET_B = { file: 'fleet-b-01-cut.png', w: 1269, h: 648, k: 0.03323, ax: 28.41, ay: 21.43 }
 function spritePlace(sp, uAnchor, vAnchor, hBase) {
   const [bx, by] = p(uAnchor, vAnchor, hBase).split(',').map(Number)
   return { x: round(bx - sp.ax), y: round(by - sp.ay) }
 }
-function assetProp(sp, uAnchor, vAnchor, hBase) {
+function assetProp(sp, uAnchor, vAnchor, hBase, off) {
   const { x, y } = spritePlace(sp, uAnchor, vAnchor, hBase)
-  return `<image href="${inlineAsset(sp.file)}" x="${x}" y="${y}" width="${round(sp.w * sp.k)}" height="${round(sp.h * sp.k)}" preserveAspectRatio="none" />`
+  const [ox, oy] = off || [0, 0]
+  return `<image href="${inlineAsset(sp.file)}" x="${round(Number(x) + ox)}" y="${round(Number(y) + oy)}" width="${round(sp.w * sp.k)}" height="${round(sp.h * sp.k)}" preserveAspectRatio="none" />`
 }
 // Soft contact shadow under a billboard sprite (user revision for the seated
 // sitter: a u/v footprint quad reads as a stray streak — a billboard has no
 // honest plan footprint). Screen-space ellipse sized to the sprite's base,
 // locked to the sprite via spritePlace; same blurred language as the
 // career-sign shadow (#141618, dw-soft).
-function spriteShadow(sp, uAnchor, vAnchor, hBase) {
+function spriteShadow(sp, uAnchor, vAnchor, hBase, off, bulge = 1) {
   const { x, y } = spritePlace(sp, uAnchor, vAnchor, hBase)
+  const [ox, oy] = off || [0, 0]
   const w = sp.w * sp.k
-  return `<ellipse cx="${round(x + w / 2)}" cy="${round(y + sp.ay - 1)}" rx="${round(w * 0.44)}" ry="3.6" fill="#141618" fill-opacity="0.22" filter="url(#dw-soft)" />`
+  return `<ellipse cx="${round(Number(x) + w / 2 + ox)}" cy="${round(Number(y) + sp.ay - 1 + oy)}" rx="${round(w * 0.44 * bulge)}" ry="${round(3.6 * bulge)}" fill="#141618" fill-opacity="0.22" filter="url(#dw-soft)" />`
 }
 
 // Floating holographic panel for the AR/VR vignette (r36 review, user): a
@@ -1744,28 +1782,133 @@ function indelveWallBranding() {
   ]
 }
 
+// --- Indelve virtual-combat board (UPDATE #48, user): a hex-grid "board base"
+// lying flat on the floor-3 Indelve area (the user's red-marked region), over
+// the user's `deep-space.jpg` nebula, with an electric-blue hex grid drawn in
+// SVG on top (faint blue cells so the nebula still reads through). Everything
+// is authored in the floor plane's local (u, v) space via one matrix, so the
+// board stays editable and lies flat on the floor. Placed under the queue /
+// presenter so they stand on it. Spaceships will be added on top later.
+const BOARD = { u0: 5, u1: 98.6, v0: 351, v1: 465, R: 9 }
+function indelveBoard() {
+  const { u0, u1, v0, v1, R } = BOARD
+  const W = u1 - u0
+  const H = v1 - v0
+  const [ox, oy] = p(u0, v0, 3 * FH).split(',').map(Number)
+  const out = [
+    // floor-plane matrix: local +x -> +u (up-right), local +y -> +v (up-left)
+    `<g transform="matrix(0.7071 -0.2475 -0.7071 -0.2475 ${round(ox)} ${round(oy)})">`,
+    `  <defs><clipPath id="dw-clip-board"><rect x="0" y="0" width="${round(W)}" height="${round(H)}" /></clipPath></defs>`,
+    `  <g clip-path="url(#dw-clip-board)">`,
+    `    <image href="${inlineAsset('deep-space.jpg', 'image/jpeg')}" x="0" y="0" width="${round(W)}" height="${round(H)}" preserveAspectRatio="none" />`,
+  ]
+  // pointy-top hex grid, odd-r offset
+  const colW = Math.sqrt(3) * R
+  const rowH = 1.5 * R
+  const nCols = Math.ceil(W / colW) + 1
+  const nRows = Math.ceil(H / rowH) + 1
+  for (let row = 0; row < nRows; row++) {
+    for (let col = 0; col < nCols; col++) {
+      const cx = col * colW + (row % 2 ? colW / 2 : 0)
+      const cy = row * rowH
+      const pts = []
+      for (let k = 0; k < 6; k++) {
+        const a = ((30 + 60 * k) * Math.PI) / 180
+        pts.push(`${round(cx + R * Math.cos(a))},${round(cy + R * Math.sin(a))}`)
+      }
+      out.push(`    <polygon class="dw-hex" points="${pts.join(' ')}" />`)
+    }
+  }
+  out.push(`  </g>`)
+  out.push(`</g>`)
+  return out
+}
+
+// --- Indelve fleets (UPDATE #50, user): the two fleets hover 10u above the
+// board, facing each other. Drawn after the board (so they fly over it) and
+// before the floor people (who are nearer the camera and occlude them). Each
+// fleet also carries a board/floor-plane contact shadow 10u below its hull: the
+// r87 review read the ships as parked on the floor without one.
+// UPDATE #52 (user review of r88): both fleets sit ON a board corner — A at the
+// board's near-left corner (its battle group entering the sector), B at the
+// far-right corner, which the elevator shaft hides (the user explicitly allowed
+// that). NOTE: each fleet sprite carries its capital in the sprite's UPPER-LEFT
+// (with the fighters trailing down-right and up-left), so the anchors below put
+// the CAPITAL — not the sprite rectangle's centre — just INSIDE the corner, so
+// the fleet hugs the corner while the hull stays over the board. The anchor is a
+// SCREEN-space device (the sprite's bottommost pixel), so its plan projection
+// falls outside the board (A: u < 0); only the contact-shadow ellipse lands on
+// the floor there, which is what grounds the hovering ship.
+// A anchor (u -34.4, v 395.4) = left corner, B anchor (u 47.1, v 294.5) = right
+// corner; both at h = 3*FH + 10.
+function indelveFleets() {
+  const H = 3 * FH + 10
+  return [
+    spriteShadow(FLEET_A, -34.4, 395.4, H - 10, null, 1.5),
+    spriteShadow(FLEET_B, 47.1, 294.5, H - 10, null, 1.5),
+    assetProp(FLEET_A, -34.4, 395.4, H),
+    assetProp(FLEET_B, 47.1, 294.5, H),
+  ]
+}
+
 // --- Indelve floor props (UPDATE #38/#39, user): two PC towers stand on the
-// floor to the right of the promo screen and near the C-D wall, as a generated
-// sprite (`PCTOWERS`, see the const) facing the building's front wall. A
-// `.dw-cable` run drops straight down the wall from the screen's bottom edge,
-// then crosses the floor to the towers. Emitted after the section-divider fill
-// (the towers sit in front of the wall), so the floor-4 slab clips at most
-// their very top.
+// floor to the right of the promo screen, as a generated sprite (`PCTOWERS`,
+// see the const) facing the building's front wall. A `.dw-cable` run drops
+// straight down the wall from the screen's bottom edge, then crosses the floor
+// to the towers. Emitted after the section-divider fill (the towers sit in
+// front of the wall), so the floor-4 slab clips at most their very top.
+// UPDATE #41 (user): the sprite is pinned to the ABSOLUTE screen point
+// (446, 468) — the requested top-left — by deriving the screen offset from the
+// plan-anchor projection, so the top-left lands exactly there; the cable's
+// floor run is re-aimed at the towers' new foot.
+const TOWER_XY = [446, 468]
+// Absolute screen top-left requested for the AR/VR demo person (UPDATE #44,
+// nudged up-right in #45 per the user's red arrow).
+const VR_XY = [455.5, 476]
 function indelveFloorProps() {
   const H = 3 * FH
   const vWall = LD - WALL_T - 0.4
-  const out = [spriteShadow(PCTOWERS, 131, 564, H), assetProp(PCTOWERS, 131, 564, H)]
-  // Cable: screen-bottom -> straight down the wall -> along the floor.
+  const [bx, by] = p(131, 564, H).split(',').map(Number)
+  const off = [TOWER_XY[0] - (bx - PCTOWERS.ax), TOWER_XY[1] - (by - PCTOWERS.ay)]
+  const out = [
+    spriteShadow(PCTOWERS, 131, 564, H, off),
+    assetProp(PCTOWERS, 131, 564, H, off),
+  ]
+  // Cable: screen-bottom -> straight down the wall -> along the floor into the
+  // towers' front foot (sprite-local bottommost pixel). UPDATE #42: extended so
+  // the run visibly meets the sprite instead of stopping short of it.
   const [x0, y0] = p(120, vWall, H + 15.96).split(',').map(Number)
   const [x1, y1] = p(120, vWall, H + 1).split(',').map(Number)
-  const [x2, y2] = p(133, 576, H + 1).split(',').map(Number)
+  const ex = TOWER_XY[0] + PCTOWERS.ax + 2
+  const ey = TOWER_XY[1] + PCTOWERS.ay - 2
   out.push(el('dw-cable', `M ${round(x0)} ${round(y0)} L ${round(x1)} ${round(y1)}`))
   out.push(
     el(
       'dw-cable',
-      `M ${round(x1)} ${round(y1)} Q ${round((x1 + x2) / 2 + 2)} ${round((y1 + y2) / 2 + 3)} ${round(x2)} ${round(y2)}`,
+      `M ${round(x1)} ${round(y1)} Q ${round((x1 + ex) / 2 + 2)} ${round((y1 + ey) / 2 + 3)} ${round(ex)} ${round(ey)}`,
     ),
   )
+  // AR/VR demo person pinned to the absolute screen top-left VR_XY (farthest:
+  // drawn first), then the presenter, then the queue copies (each nearer).
+  const [vx, vy] = p(126, 574, H).split(',').map(Number)
+  const vrOff = [VR_XY[0] - (vx - TRANTORIAN_VR.ax), VR_XY[1] - (vy - TRANTORIAN_VR.ay)]
+  out.push(spriteShadow(TRANTORIAN_VR, 126, 574, H, vrOff))
+  out.push(assetProp(TRANTORIAN_VR, 126, 574, H, vrOff))
+  // Presenter (reduced 30%, moved right per the user's red arrow) in the
+  // logo/screen gap.
+  out.push(spriteShadow(PRESENTER, 68, 546, H))
+  out.push(assetProp(PRESENTER, 68, 546, H))
+  // Queue of four people behind the AR/VR person: runs -v (down-right) from
+  // just behind his drawn foot, per the user's red line. UPDATE #46/#47 (user):
+  // repeated twice more along the same direction (3 copies total). The step is
+  // the sprite's own length (~28u in v) plus a ~5px screen gap, so consecutive
+  // copies read as separate groups with a minimal empty space between them.
+  const QUEUE_STEP = 34.8
+  for (const i of [0, 1, 2]) {
+    const qv = 485 - i * QUEUE_STEP
+    out.push(spriteShadow(QUEUE, 110, qv, H))
+    out.push(assetProp(QUEUE, 110, qv, H))
+  }
   return out
 }
 
@@ -1818,7 +1961,10 @@ const floor03 = group('floor-03', [
   ...wallAppBoard(HUB_LIVE_BOARD),
   // Indelve section: logo + promo screen on the rear wall's left end.
   ...indelveWallBranding(),
-  // ...and two PC towers + a cable on the floor to their right.
+  // The virtual-combat hex board on the floor, the fleets over it, then the
+  // props/people on it.
+  ...indelveBoard(),
+  ...indelveFleets(),
   ...indelveFloorProps(),
 ])
 

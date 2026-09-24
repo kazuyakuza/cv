@@ -56,7 +56,7 @@
   <circle class="dw-dot" cx="774.78" cy="731.74" r="1.4" />
   <path class="dw-contact" d="M792.53,856.13 L816.98,847.55 L749.91,825.09 L726.25,832.67 Z" />
   <path class="dw-contact" d="M836.8,816.54 L865.47,806.01 L833.23,794.11 L803.37,804.89 Z" />
-  <ellipse cx="NaN" cy="NaN" rx="12.43" ry="3.6" fill="#141618" fill-opacity="0.22" filter="url(#dw-soft)" />
+  <ellipse cx="796.49" cy="819.44" rx="12.43" ry="3.6" fill="#141618" fill-opacity="0.22" filter="url(#dw-soft)" />
   <path class="dw-ream" d="M811.2,806.42 L814,805.33 L814.35,794.06 L811.42,795.07 Z" />
   <path class="dw-ream-side" d="M811.2,806.42 L807.63,804.88 L807.75,793.61 L811.42,795.07 Z" />
   <path class="dw-paper" d="M811.42,795.07 L814.35,794.06 L810.06,792.41 L807.75,793.61 Z" />

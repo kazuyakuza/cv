@@ -162,6 +162,12 @@ export const svgStyle = `
        the PC towers. Dark, thin. */
     .dw-cable { fill: none; stroke: #2b2f33; stroke-width: 0.9; stroke-linecap: round; }
 
+    /* Indelve virtual-combat board (UPDATE #48, user): the deep-space nebula
+       texture lying flat on the floor with an electric-blue hex grid over it
+       (a "board base" like a chessboard). Cells are a faint blue wash so the
+       nebula still reads through. */
+    .dw-hex { fill: #1f7fd0; fill-opacity: 0.5; stroke: #5fdcff; stroke-width: 0.45; }
+
     /* Workstations (Stage 5.5 §10): dev desks come from generated
        sprites (src/assets/workstation-0X-cut.png, placed by
        assetWorkstation()); the old SVG desk classes were removed with them. */

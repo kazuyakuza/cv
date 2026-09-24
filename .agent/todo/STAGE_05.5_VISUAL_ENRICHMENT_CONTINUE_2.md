@@ -14,16 +14,49 @@ The career diorama SVG is built and illustrated (Stages 0–5 complete). **Stage
 rendered PNG, sends a revision list (often with screenshots and red marks), the
 session implements it, renders a new `rNN.png`, and the user reviews again.
 
-Last round: **UPDATE #39** (2026-09-21) — the two Indelve PC towers are now a
-**generated sprite** (`PCTOWERS`, `src/assets/pctowers-01-cut.png`; pipeline:
+Last round: **UPDATE #52** (2026-09-24) — the two Indelve fleets moved to the
+board's corners per the user's instruction (left fleet → the board's near-left
+corner, other fleet → the far-right corner, which the elevator shaft hides —
+explicitly allowed by the user). Each fleet capital now sits just inside its
+corner (the fleet sprite carries its capital in the sprite's UPPER-LEFT, so the
+anchor was solved for the capital, not the sprite rectangle's centre). Latest
+render: `generated/dev/r91.png` (crops `chk-fleets`, `chk-indelve-wide`).
+
+Earlier, **UPDATE #50/#51** — NEW spaceship fleets (`FLEET_A`/`FLEET_B`,
+`fleet-a-01-cut.png` / `fleet-b-01-cut.png`; pipeline `make_wire_fleet.py` → NB2
+(n=2 each) → `pick_fleet.py` picked the `_2` candidate for both →
+`key_cut_fleet.py`, W_TARGET 42; each sprite = 1 capital + 4 fighters, painterly,
+facing each other). #51 fixed the r87 review read ("ships parked on the floor"):
+each fleet gained a board/floor-plane contact shadow 10u below its hull via a new
+optional `bulge` arg on `spriteShadow` (1.5 for fleets vs 1 for standing
+figures). Fleet anchors currently `A (u -34.4, v 395.4)`, `B (u 47.1, v 294.5)`,
+both at `h = 3*FH + 10` — screen-space anchors, so their plan projection is
+outside the board by design (see the comment in `indelveFleets()`).
+
+Earlier, **UPDATE #49** — board retuned per the user: moved beside the elevator
+(it is allowed to be partially hidden by the shaft) and shrunk 10% with floor
+margin around it → `BOARD = { u0: 5, u1: 98.6, v0: 351, v1: 465, R: 9 }` (the
+down-right move of the user's r79 review); hexes now filled with blue at 50%
+(`.dw-hex` fill #1f7fd0, fill-opacity 0.5) and the rectangle border removed.
+
+Earlier, **UPDATE #48** — NEW Indelve virtual-combat board (`indelveBoard()`):
+`deep-space.jpg` nebula + SVG electric-blue hex grid on the floor.
+
+Earlier, **UPDATE #47** — 3 queue copies with a ~5px gap between them.
+
+Earlier, **UPDATE #40** — the `PCTOWERS` sprite was nudged +15 px right / +15 px
+down on screen via a new optional screen offset on `assetProp`/`spriteShadow`
+(this also fixed a latent `cx="NaN"` string-arithmetic bug in `spriteShadow`:
+all sprite contact shadows were previously invisible and now render).
+
+Earlier, **UPDATE #39** — the two Indelve PC towers became a **generated
+sprite** (`PCTOWERS`, `src/assets/pctowers-01-cut.png`; pipeline:
 `generated/dev/make_wire_towers.py` → `pctowers-wire.png` → NB2 (wireframe
 input, n=2) → `pick_towers.py` picked `pctowers-cand.png` (silhouette err
 0.037) → `key_cut_towers.py`, W_TARGET 23px, anchor = pair front-left foot).
 They face the building's front wall (-v), are less tall / a little longer than
 the retired SVG boxes (physical height ~19 u), and sit near the C-D wall at
-`p(131, 564, 3*FH)`. The `.dw-cable` now drops straight down the wall from the
-screen's bottom edge, then crosses the floor to the towers. Latest render:
-`generated/dev/r69.png` (crops `chk-indelve`, `chk-indelve-ctx`, `chk-f3wide`).
+`p(131, 564, 3*FH)`. Committed as `22ab3a8` together with `#37-#38`.
 
 Earlier, **UPDATE #38** — Indelve wall logo + screen nudged right
 (`indelveWallBranding`: logo u 10..62, screen u 72..) and the screen grown 10%
@@ -37,17 +70,21 @@ paper as HUB; the floor-4 slab lops its top-left corner (user accepted).
 (2) Indelve rear-wall branding first added (`indelveWallBranding()` +
 `cdWallSheet()`): the user's `trantorian-logo.png` and `trantorian-screen.jpg`.
 
-**Pending on the user:** review `r69.png` / the board + Indelve crops. The
-`src/assets/trantorian-*` and `pctowers-01-cut.png` files are still untracked
-and must be staged on the next commit.
+**Pending on the user:** review `r91.png` (the fleets now sit on the board's
+corners; the right-corner fleet B is fully hidden by the elevator — allowed).
+UPDATE #40-#52 plus all the new assets (`presenter-01-cut.png`,
+`trantorian-vr.png`, `queue-01-cut.png`, `deep-space.jpg`, `fleet-a-01-cut.png`,
+`fleet-b-01-cut.png`) were COMMITTED together at the end of the session, so the
+tree is clean here.
 
 ## 1b. Start-of-session checklist (fresh session)
 
 1. Read this file, then `AGENTS.md` (the restriction on >30 images and the
    free-assets-only rule) — the full history in
    `STAGE_05.5_VISUAL_ENRICHMENT_CONTINUE.md` only on demand.
-2. `git log --oneline -5` + `git status` — expect the tree clean at the last
-   `stage 5.5 UPDATE #NN` commit (UPDATE #36).
+2. `git log --oneline -5` + `git status` — expect a CLEAN tree at the
+   `stage 5.5 UPDATE #40-#52` commit (everything up to and including the Indelve
+   fleets is committed).
 3. Sanity-render before touching anything: the commands in §2 produce
    `generated/dev/rNN.png`; compare it with the previous round's PNG if the
    user reports something broken.
@@ -109,8 +146,9 @@ p(u, v, h) = (750 + 0.7071u - 0.7071v, 985 - 0.2475u - 0.2475v - h)  // + determ
 - Sprites are placed with `assetProp(sp, uAnchor, vAnchor, hBase)`: the anchor
   is the sprite's BOTTOMMOST opaque pixel; constants are
   `{ file, w, h, k, ax, ay }` with `ax/ay` in display px (image is drawn at
-  `x = p(anchor).x - ax`, `width = w*k`). `spriteShadow(sp, u, v, h)` adds the
-  soft contact ellipse.
+  `x = p(anchor).x - ax`, `width = w*k`). `spriteShadow(sp, u, v, h, off,
+  bulge = 1)` adds the soft contact ellipse (`bulge` scales it: 1 = a standing
+  figure, ~1.5 = a hovering fleet).
 
 ## 4. Occlusion / layering rules and traps
 
@@ -250,11 +288,28 @@ Proven recipe for new props/staffage:
   32.07 + 16:9 image, u 72..127.46) on the C-D rear wall's left end.
   `cdWallSheet` uses the wall-plane matrix `matrix(0.7071 -0.2475 0 1 ox oy)`
   anchored at `p(u0, LD-WALL_T-0.4, 3*FH + localH)` — REMEMBER the `3*FH` base
-  (p() wants the GLOBAL height).   (p() wants the GLOBAL height). `indelveFloorProps()` then adds two PC towers
-  as a generated sprite (`PCTOWERS`, `pctowers-01-cut.png`, anchor = pair
-  front-left foot at p(131, 564, 3*FH), faces -v) on the floor to the right of
-  the screen and near the wall, plus a `.dw-cable` that drops straight down the
-  wall from the screen's bottom edge then runs along the floor to the towers.
+  (p() wants the GLOBAL height). `indelveFloorProps()` then adds two PC towers
+  as a generated sprite (`PCTOWERS`, `pctowers-01-cut.png`, faces -v), pinned
+  to the absolute screen top-left `TOWER_XY = [446, 468]` (offset derived from
+  the plan anchor p(131, 564, 3*FH), so the plan anchor stays the wall-side
+  foot), a `.dw-cable` that drops straight down the wall from the screen's
+  bottom edge then runs along the floor into the towers' foot, the presenter
+  sprite (`PRESENTER`, user-edited to face the B-D wall, foot at
+  p(68, 546, 3*FH), 45.8u) between the logo and the screen, the AR/VR demo
+  person (`TRANTORIAN_VR`, pinned to the absolute screen top-left
+  `VR_XY = [455.5, 476]`, 34.5u) between the screen and the towers, and the
+  queue of four people (`QUEUE`, user-inverted, anchor p(110, 485, 3*FH))
+  repeated 3× along `-v` with a ~5px gap (`QUEUE_STEP = 34.8`, `qv` 485 /
+  450.2 / 415.4) so it runs -v (down-right) behind the VR person and its tail
+  is cut by the elevator shaft. The virtual-combat hex board (`indelveBoard()`,
+  `BOARD` u 5..98.6 / v 351..465, `deep-space.jpg` + SVG hex grid, blue cells
+  @50%, no rectangle border) lies on the floor beside the elevator (its far-right
+  corner is hidden by the shaft: a floor point is occluded when `v-u` is in
+  ~[174, 311]) and under/left of the queue. `indelveFleets()` then adds the two
+  spaceship fleets on the board plane 10u above it (`h = 3*FH + 10`) — one over
+  each of the board's left and right corners (the right one is hidden by the
+  shaft), each with its contact shadow on the floor 10u below — see the
+  UPDATE #50-#52 notes in §1.
   All drawn last so they paint over the cream section-divider fill; the floor-4
   slab clips the screen's top (user accepted).
 
@@ -268,11 +323,18 @@ Sprite constants currently in `scripts/generate-geometry.mjs`:
 `PUEL_KIOSK`, `PUEL_STOOLS`, `PUEL_TABLE`, `FREELANCER_PC`, `DEV_GROUP`,
 `SITTER`, `STANDKIOSK`, `WS_C` (+`assetWorkstation`), `WS_D`, `PIPE_SPRITE`,
 `PIPE_H_SPRITE`, `CITY_BOARD`, `ARVR_PERSON`, `SITDEVS`, `TECHLEAD`,
-`TEAMCROSS`, `BOSSES`, `PCTOWERS`.
+`TEAMCROSS`, `BOSSES`, `PCTOWERS`, `PRESENTER`, `TRANTORIAN_VR`, `QUEUE`,
+`FLEET_A`, `FLEET_B`.
 
 ## 7. Next steps / open items
 
-1. Take the user's next revision list (they review `rNN.png` + the crops).
+1. Take the user's next revision list (they review `rNN.png` + the crops). Next
+   render is `r92.png` (they last saw `r91.png`: Indelve board + fleets on the
+   board's corners). Known minor consequences to expect feedback on: at the
+   corners the fleets straddle the board edge (the capital hull is partly over
+   the wood floor) and their soft contact shadows fall partly off the board onto
+   the floor — physically honest, but the user may want them pulled inboard or
+   the shadows dropped.
 2. Floor-2 left section is now busy (city board + AR/VR vignette + seated-dev
    group + tech lead + graph screen); floor 3 now has the Interactica team
    cluster + bosses. Likely next direction: more floor-3 content (the rest of
