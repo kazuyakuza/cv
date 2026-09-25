@@ -42,6 +42,11 @@ const buildingParts = [
   'floor-04-front',
   'floor-05-front',
   'tags',
+  // UPDATE #53 (user): the near Indelve fleet must paint over the "Indelve"
+  // experience tag (and the floor base), so its fragment is stacked last —
+  // above `tags`. The far fleet deliberately stays in `floor-03`, under the
+  // elevator, so the shaft keeps occluding it.
+  'indelve-fleets',
 ]
 
 const fragmentsById = {

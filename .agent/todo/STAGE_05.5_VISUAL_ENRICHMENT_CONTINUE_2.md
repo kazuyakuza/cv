@@ -1,4 +1,8 @@
-# Stage 05.5 Visual Enrichment — Continuation #2 (fresh session handoff)
+# Stage 05.5 Visual Enrichment — Continuation #2 (session handoff, UPDATE #37–#56)
+
+> SUPERSEDED: the current handoff is
+> `STAGE_05.5_VISUAL_ENRICHMENT_CONTINUE_3.md` — start there. This file is kept as
+> the history of UPDATE #37–#56.
 
 > Start here. This is the condensed, self-contained handoff for the NEXT
 > session. The full history of every round lives in
@@ -14,30 +18,68 @@ The career diorama SVG is built and illustrated (Stages 0–5 complete). **Stage
 rendered PNG, sends a revision list (often with screenshots and red marks), the
 session implements it, renders a new `rNN.png`, and the user reviews again.
 
-Last round: **UPDATE #52** (2026-09-24) — the two Indelve fleets moved to the
-board's corners per the user's instruction (left fleet → the board's near-left
-corner, other fleet → the far-right corner, which the elevator shaft hides —
-explicitly allowed by the user). Each fleet capital now sits just inside its
-corner (the fleet sprite carries its capital in the sprite's UPPER-LEFT, so the
-anchor was solved for the capital, not the sprite rectangle's centre). Latest
-render: `generated/dev/r91.png` (crops `chk-fleets`, `chk-indelve-wide`).
+Last round: **UPDATE #56** (2026-09-24) — user review: the RIGHT fleet must read
+above the queue people. Inside `floor-03` the far fleet is now emitted AFTER
+`indelveFloorProps()` (it used to come straight after `indelveBoard()`), so its
+bow/upper fighters paint over the people's feet; it is still emitted inside
+`floor-03`, i.e. below the elevator fragment, so the shaft keeps hiding its stern.
+Verified with a 12x crop (`generated/dev/chk-fleet-queue.png`) and a pixel diff
+of r95 vs r96. Latest render: `generated/dev/r96.png`.
 
-Earlier, **UPDATE #50/#51** — NEW spaceship fleets (`FLEET_A`/`FLEET_B`,
+Earlier, **UPDATE #55** (2026-09-24) — the user hand-placed both fleets and asked
+for SVG shadows on the board. Each `<image>` is pinned to the exact screen
+top-left the user gave — A `410,525`, B `480,530` (the file had A `413.41,530.8`,
+B `491.69,541.58`) — with screen offsets `FLEET_A_OFF` / `FLEET_B_OFF` derived
+from the plan-anchor projection (the same technique as the PC towers), so the
+numbers in the SVG are exactly those. The screen-space clip path
+`dw-clip-board-screen` (the board's top face emitted as a polygon by
+`indelveBoard()`) wraps each fleet's contact shadow, so a shadow can only show ON
+the board — the user's "a shadow below each fleet, just over the board". The user
+also recoloured `fleet-b-01-cut.png` in place (fleet B is now purple; dimensions
+unchanged 1269x648, so the constants stand — re-measure if a future edit changes
+the size).
+
+Earlier, **UPDATE #54** (2026-09-24) — the board AND both fleets shifted ~20 units
+toward the building's rear (C-D) wall, and the fleets shrunk 15%. The board move
+is `+v` only (`BOARD` `v0/v1` 351/465 → 371/485), so on screen the whole group
+travels (-14.1, -5.0). The fleets followed with re-solved anchors (solved so each
+CAPITAL keeps its position relative to the board's moved corner, rather than
+drifting as the sprite scale changes), and both sprites became PLACED 62.9 / 62.8
+units wide (`k` 0.0657 / 0.04953, `ax/ay` scaled 0.85 from the #53 values).
+
+Earlier, **UPDATE #53** (2026-09-24) — two user points on the r91 fleets.
+(1) SIZE: the fleets were restored to the size the wireframe implies so they
+occupy most of the board — the key-cut had shrunken them to `W_TARGET 42`, so
+they were placed 74 units wide (#54 later trims that 15%, see above; the
+`generated/dev/key_cut_fleet.py` default is 74). Each fleet's capital is one long
+hull spanning the whole sprite width (the 4 fighters are separate alpha blobs
+above/below it), so the stern sits at a board corner and the bow reaches the
+board's centre: A (left, points right) stern on the near-left corner, B (right,
+points left) stern on the far-right corner, bows a few units apart, B set ~10u
+nearer the viewer so the two hulls read as separate fleets. (2) LAYERING: the
+left fleet was clipped by the "Indelve" experience plaque; the fleets are now
+emitted from TWO layers — `indelveFleetB()` stays in `floor-03` (the shaft, drawn
+later, hides its stern; only the bow shows in front of the shaft), while
+`indelveFleetA()` lives in a NEW `indelve-fleets` fragment assembled AFTER `tags`
+so it paints over the plaque and the floor base. Shadow bulge is back to 1 (the
+bigger sprites no longer need 1.5).
+
+Earlier, **UPDATE #50/#51/#52** — NEW spaceship fleets (`FLEET_A`/`FLEET_B`,
 `fleet-a-01-cut.png` / `fleet-b-01-cut.png`; pipeline `make_wire_fleet.py` → NB2
 (n=2 each) → `pick_fleet.py` picked the `_2` candidate for both →
-`key_cut_fleet.py`, W_TARGET 42; each sprite = 1 capital + 4 fighters, painterly,
-facing each other). #51 fixed the r87 review read ("ships parked on the floor"):
-each fleet gained a board/floor-plane contact shadow 10u below its hull via a new
-optional `bulge` arg on `spriteShadow` (1.5 for fleets vs 1 for standing
-figures). Fleet anchors currently `A (u -34.4, v 395.4)`, `B (u 47.1, v 294.5)`,
-both at `h = 3*FH + 10` — screen-space anchors, so their plan projection is
-outside the board by design (see the comment in `indelveFleets()`).
+`key_cut_fleet.py`; each sprite = 1 capital + 4 fighters, painterly, facing each
+other). #51 fixed the r87 review read ("ships parked on the floor"): each fleet
+gained a board/floor-plane contact shadow 10u below its hull via a new optional
+`bulge` arg on `spriteShadow`. #52 moved the fleets to the board's corners
+(left fleet → the board's near-left corner, other fleet → the far-right corner,
+which the elevator shaft hides).
 
 Earlier, **UPDATE #49** — board retuned per the user: moved beside the elevator
 (it is allowed to be partially hidden by the shaft) and shrunk 10% with floor
 margin around it → `BOARD = { u0: 5, u1: 98.6, v0: 351, v1: 465, R: 9 }` (the
-down-right move of the user's r79 review); hexes now filled with blue at 50%
-(`.dw-hex` fill #1f7fd0, fill-opacity 0.5) and the rectangle border removed.
+down-right move of the user's r79 review; #54 later pushed it to `v0/v1`
+371/485); hexes now filled with blue at 50% (`.dw-hex` fill #1f7fd0,
+fill-opacity 0.5) and the rectangle border removed.
 
 Earlier, **UPDATE #48** — NEW Indelve virtual-combat board (`indelveBoard()`):
 `deep-space.jpg` nebula + SVG electric-blue hex grid on the floor.
@@ -70,21 +112,21 @@ paper as HUB; the floor-4 slab lops its top-left corner (user accepted).
 (2) Indelve rear-wall branding first added (`indelveWallBranding()` +
 `cdWallSheet()`): the user's `trantorian-logo.png` and `trantorian-screen.jpg`.
 
-**Pending on the user:** review `r91.png` (the fleets now sit on the board's
-corners; the right-corner fleet B is fully hidden by the elevator — allowed).
-UPDATE #40-#52 plus all the new assets (`presenter-01-cut.png`,
-`trantorian-vr.png`, `queue-01-cut.png`, `deep-space.jpg`, `fleet-a-01-cut.png`,
-`fleet-b-01-cut.png`) were COMMITTED together at the end of the session, so the
-tree is clean here.
+**Pending on the user:** review `r96.png` (the right fleet now paints over the
+queue's feet; fleets at their hand-placed top-lefts, fleet B purple, shadows
+clipped to the board). The last commit is `stage 5.5 UPDATE #40-#52` (`b155553`,
+clean tree); the UPDATE #53-#56 changes (fleet size + anchors + layer order,
+`indelve-fleets` fragment, board move, board-clipped shadows, the recoloured
+`fleet-b-01-cut.png`, docs) are UNCOMMITTED until the user asks.
 
 ## 1b. Start-of-session checklist (fresh session)
 
 1. Read this file, then `AGENTS.md` (the restriction on >30 images and the
    free-assets-only rule) — the full history in
    `STAGE_05.5_VISUAL_ENRICHMENT_CONTINUE.md` only on demand.
-2. `git log --oneline -5` + `git status` — expect a CLEAN tree at the
-   `stage 5.5 UPDATE #40-#52` commit (everything up to and including the Indelve
-   fleets is committed).
+2. `git log --oneline -5` + `git status` — expect the UPDATE #40-#52 commit
+   (`b155553`) with the UPDATE #53 fleet-size/layering work possibly still
+   uncommitted on top.
 3. Sanity-render before touching anything: the commands in §2 produce
    `generated/dev/rNN.png`; compare it with the previous round's PNG if the
    user reports something broken.
@@ -147,8 +189,9 @@ p(u, v, h) = (750 + 0.7071u - 0.7071v, 985 - 0.2475u - 0.2475v - h)  // + determ
   is the sprite's BOTTOMMOST opaque pixel; constants are
   `{ file, w, h, k, ax, ay }` with `ax/ay` in display px (image is drawn at
   `x = p(anchor).x - ax`, `width = w*k`). `spriteShadow(sp, u, v, h, off,
-  bulge = 1)` adds the soft contact ellipse (`bulge` scales it: 1 = a standing
-  figure, ~1.5 = a hovering fleet).
+  bulge = 1)` adds the soft contact ellipse (`bulge` scales it; the fleets used
+  1.5 before their #53 size-up, now the default 1 — the ellipse is sized from the
+  sprite width, so it tracks the sprite).
 
 ## 4. Occlusion / layering rules and traps
 
@@ -157,8 +200,15 @@ Assembler order (`scripts/assemble-svg.mjs`) — this matters:
 terrain, ground-shadow, building[ floor-ground, staircase, freelancer-props,
 floor-01, floor-02, floor-03, floor-03-team, floor-04, floor-05,
 architectural-details, elevator, floor-02-front, floor-03-front,
-floor-04-front, floor-05-front, tags ], entrance, path, career-sign
+floor-04-front, floor-05-front, tags, indelve-fleets ], entrance, path,
+career-sign
 ```
+- `indelve-fleets` (UPDATE #53) holds ONLY the near/left Indelve fleet: it is
+  the one prop that must paint OVER an experience tag, so it is stacked above
+  `tags` (and above every floor). The far/right fleet deliberately stays in
+  `floor-03`, under the elevator, so the shaft keeps occluding it — but since
+  #56 it is emitted AFTER `indelveFloorProps()` inside that fragment, so it
+  paints over the queue people (the user's r95 review).
 - **TRAP: the `*-front` fragments are drawn AFTER `elevator`.** Anything that
   must be occluded by the shaft may NOT live there. Conversely, anything that
   must lie ON a floor surface (e.g. the SVG cables) must come after that
@@ -302,14 +352,23 @@ Proven recipe for new props/staffage:
   repeated 3× along `-v` with a ~5px gap (`QUEUE_STEP = 34.8`, `qv` 485 /
   450.2 / 415.4) so it runs -v (down-right) behind the VR person and its tail
   is cut by the elevator shaft. The virtual-combat hex board (`indelveBoard()`,
-  `BOARD` u 5..98.6 / v 351..465, `deep-space.jpg` + SVG hex grid, blue cells
+  `BOARD` u 5..98.6 / v 371..485 (#54: +20u toward the rear wall), `deep-space.jpg`
+  + SVG hex grid, blue cells
   @50%, no rectangle border) lies on the floor beside the elevator (its far-right
   corner is hidden by the shaft: a floor point is occluded when `v-u` is in
-  ~[174, 311]) and under/left of the queue. `indelveFleets()` then adds the two
-  spaceship fleets on the board plane 10u above it (`h = 3*FH + 10`) — one over
-  each of the board's left and right corners (the right one is hidden by the
-  shaft), each with its contact shadow on the floor 10u below — see the
-  UPDATE #50-#52 notes in §1.
+  ~[174, 311]) and under/left of the queue. `indelveFleetA()`/`indelveFleetB()`
+  then add the two spaceship fleets on the board plane 10u above it
+  (`h = 3*FH + 10`), each PLACED ~63 units wide (74 in #53, trimmed 15% in #54)
+  so together they cover most of the board: A (left, points right) with its stern
+  on the near-left corner and B (right, points left) with its stern on the
+  far-right corner, bows a few units apart and B ~10u nearer the viewer; each has
+  a contact shadow on the floor 10u below its capital. Since #55 both `<image>`s
+  are pinned to exact screen top-lefts (A 410/525, B 480/530) and each shadow is
+  clipped by `dw-clip-board-screen` so it can only show ON the board. B is emitted
+  in `floor-03` after the floor props (above the people, under the shaft, which
+  hides its stern); A is emitted in the `indelve-fleets` fragment so it paints
+  over the "Indelve" tag — see the UPDATE #50-#56 notes in §1 and the layer note
+  in §4.
   All drawn last so they paint over the cream section-divider fill; the floor-4
   slab clips the screen's top (user accepted).
 
@@ -329,12 +388,11 @@ Sprite constants currently in `scripts/generate-geometry.mjs`:
 ## 7. Next steps / open items
 
 1. Take the user's next revision list (they review `rNN.png` + the crops). Next
-   render is `r92.png` (they last saw `r91.png`: Indelve board + fleets on the
-   board's corners). Known minor consequences to expect feedback on: at the
-   corners the fleets straddle the board edge (the capital hull is partly over
-   the wood floor) and their soft contact shadows fall partly off the board onto
-   the floor — physically honest, but the user may want them pulled inboard or
-   the shadows dropped.
+   render is `r97.png` (they last saw `r96.png`: the right fleet now paints over
+   the queue's feet). Things the user may still react to: the fleet shadows are
+   subtle (dark #141618 @22% over a dark nebula — raise their opacity if asked),
+   and both fleets' fighter spread reaches past the board edge onto the wood floor
+   (only the shadows are clipped to the board, not the sprites).
 2. Floor-2 left section is now busy (city board + AR/VR vignette + seated-dev
    group + tech lead + graph screen); floor 3 now has the Interactica team
    cluster + bosses. Likely next direction: more floor-3 content (the rest of

@@ -453,13 +453,23 @@ const TRANTORIAN_VR = { file: 'trantorian-vr.png', w: 359, h: 1592, k: 0.0216845
 // person's drawn foot.
 const QUEUE = { file: 'queue-01-cut.png', w: 485, h: 703, k: 0.05415, ax: 21.36, ay: 37.91 }
 // Floor-3 Indelve virtual-combat fleets (UPDATE #50, user): two painterly
-// fleets (1 capital + 4 fighters each) floating over the hex board, facing each
-// other (A points right, B points left). Wireframe-only pipeline:
-// generated/dev/make_wire_fleet.py -> fleet-a/b-wire.png -> NB2 (n=2 each) ->
-// pick_fleet.py picked the _2 candidate for both -> key_cut_fleet.py
-// (W_TARGET 42px). Anchors are the sprites' bottommost pixels.
-const FLEET_A = { file: 'fleet-a-01-cut.png', w: 958, h: 505, k: 0.04407, ax: 16.2, ay: 22.12 }
-const FLEET_B = { file: 'fleet-b-01-cut.png', w: 1269, h: 648, k: 0.03323, ax: 28.41, ay: 21.43 }
+// fleets (1 long capital + 4 detached fighters each) floating over the hex
+// board, facing each other (A points right, B points left). Wireframe-only
+// pipeline: generated/dev/make_wire_fleet.py -> fleet-a/b-wire.png -> NB2 (n=2
+// each) -> pick_fleet.py picked the _2 candidate for both -> key_cut_fleet.py.
+// Anchors are the sprites' bottommost pixels, and each capital is a single long
+// hull spanning nearly the whole sprite width (fighters are separate blobs
+// above/below it), so `ax/ay` are far below the hull centre.
+// UPDATE #53 (user review of r91 — "get back the size, they should occupy most
+// of the board"): the key-cut had scaled both to `W_TARGET 42`, well under the
+// wireframe's implied scale, so both are now PLACED at a 74-unit width (about
+// the capital = 2/3 of the board's long side): `k` and the `ax/ay` anchor
+// offsets were scaled by 74/42.2 = 1.7536 (equivalent to re-cutting at
+// `W_TARGET 74`; the keyed PNGs themselves already carry that resolution).
+// UPDATE #54 (user): that width is reduced 15% -> 62.9 / 62.8u (k and ax/ay
+// scaled by 0.85 from the #53 values).
+const FLEET_A = { file: 'fleet-a-01-cut.png', w: 958, h: 505, k: 0.0657, ax: 24.15, ay: 32.97 }
+const FLEET_B = { file: 'fleet-b-01-cut.png', w: 1269, h: 648, k: 0.04953, ax: 42.35, ay: 31.94 }
 function spritePlace(sp, uAnchor, vAnchor, hBase) {
   const [bx, by] = p(uAnchor, vAnchor, hBase).split(',').map(Number)
   return { x: round(bx - sp.ax), y: round(by - sp.ay) }
@@ -1788,13 +1798,22 @@ function indelveWallBranding() {
 // SVG on top (faint blue cells so the nebula still reads through). Everything
 // is authored in the floor plane's local (u, v) space via one matrix, so the
 // board stays editable and lies flat on the floor. Placed under the queue /
-// presenter so they stand on it. Spaceships will be added on top later.
-const BOARD = { u0: 5, u1: 98.6, v0: 351, v1: 465, R: 9 }
+// presenter so they stand on it. Spaceships are added on top later.
+// UPDATE #54 (user): shifted ~20 units toward the building's rear (C-D) wall —
+// that is +v only, so on screen the board (and the fleets, moved with it) travel
+// up-left by (-0.7071, -0.2475) * 20 = (-14.1, -5.0).
+const BOARD = { u0: 5, u1: 98.6, v0: 371, v1: 485, R: 9 }
 function indelveBoard() {
   const { u0, u1, v0, v1, R } = BOARD
   const W = u1 - u0
   const H = v1 - v0
   const [ox, oy] = p(u0, v0, 3 * FH).split(',').map(Number)
+  // The board's TOP FACE as a screen-space polygon (the same 0.7071/-0.2475
+  // plane the matrix above uses). The fleets' SVG contact shadows are clipped by
+  // it (UPDATE #55, user: "a shadow below each fleet, just over the board"), so
+  // a shadow can only ever show on the board, never on the wood floor.
+  const sc = (lx, ly) =>
+    `${round(ox + 0.7071 * lx - 0.7071 * ly)},${round(oy - 0.2475 * lx - 0.2475 * ly)}`
   const out = [
     // floor-plane matrix: local +x -> +u (up-right), local +y -> +v (up-left)
     `<g transform="matrix(0.7071 -0.2475 -0.7071 -0.2475 ${round(ox)} ${round(oy)})">`,
@@ -1821,33 +1840,52 @@ function indelveBoard() {
   }
   out.push(`  </g>`)
   out.push(`</g>`)
+  out.push(
+    `<defs><clipPath id="dw-clip-board-screen"><polygon points="${sc(0, 0)} ${sc(W, 0)} ${sc(W, H)} ${sc(0, H)}" /></clipPath></defs>`,
+  )
   return out
 }
 
 // --- Indelve fleets (UPDATE #50, user): the two fleets hover 10u above the
-// board, facing each other. Drawn after the board (so they fly over it) and
-// before the floor people (who are nearer the camera and occlude them). Each
-// fleet also carries a board/floor-plane contact shadow 10u below its hull: the
-// r87 review read the ships as parked on the floor without one.
-// UPDATE #52 (user review of r88): both fleets sit ON a board corner — A at the
-// board's near-left corner (its battle group entering the sector), B at the
-// far-right corner, which the elevator shaft hides (the user explicitly allowed
-// that). NOTE: each fleet sprite carries its capital in the sprite's UPPER-LEFT
-// (with the fighters trailing down-right and up-left), so the anchors below put
-// the CAPITAL — not the sprite rectangle's centre — just INSIDE the corner, so
-// the fleet hugs the corner while the hull stays over the board. The anchor is a
-// SCREEN-space device (the sprite's bottommost pixel), so its plan projection
-// falls outside the board (A: u < 0); only the contact-shadow ellipse lands on
-// the floor there, which is what grounds the hovering ship.
-// A anchor (u -34.4, v 395.4) = left corner, B anchor (u 47.1, v 294.5) = right
-// corner; both at h = 3*FH + 10.
-function indelveFleets() {
+// board, facing each other (A's stern at the board's near-left corner, B's at
+// the far-right corner), bows meeting in the middle so together they cover most
+// of the board. Each carries a contact shadow 10u below its capital (not below
+// the sprite anchor, which is a fighter's bottom): `spriteShadow` with a
+// separate plan anchor under the hull, so the ellipse lands on the floor under
+// the capital; at the board's corner that floor point is half off the board, so
+// the shadow straddles the board edge — physically what a hovering ship casts.
+// UPDATE #53 (user): each fleet's TERMINATOR is the elevator shaft, so the
+// fleets are emitted from TWO layers — `indelveFleetB()` stays in `floor-03`
+// (the shaft, drawn later, hides its stern; only the bow shows in front of the
+// shaft), while `indelveFleetA()` lives in its own `indelve-fleets` fragment
+// assembled AFTER `tags`, so the left fleet paints OVER the "Indelve" plaque
+// (and the floor base) instead of being clipped by it — the user's r91 review.
+// UPDATE #56 (user): inside `floor-03` the far fleet is emitted AFTER
+// `indelveFloorProps()`, so its bow reads above the queue's feet rather than
+// behind them — the people no longer paint over the hull.
+// UPDATE #54 (user): both fleets (and their shadows) move with the board ~20
+// units toward the rear wall and shrink 15% — the anchors below were re-solved
+// so each CAPITAL keeps its position relative to the board's moved corner.
+// UPDATE #55 (user): each `<image>` is pinned to the exact screen top-left the
+// user asked for (A 410/525, B 480/530) with an `off` from the plan-anchor
+// projection (the same technique as the PC towers), and each shadow is wrapped
+// in `dw-clip-board-screen` so it can only show ON the board (the user's "a
+// shadow below each fleet, just over the board"); the off is added to the shadow
+// too, so it stays under its hull.
+const FLEET_A_OFF = [410 - 413.41, 525 - 530.8]
+const FLEET_B_OFF = [480 - 491.69, 530 - 541.58]
+function indelveFleetA() {
   const H = 3 * FH + 10
   return [
-    spriteShadow(FLEET_A, -34.4, 395.4, H - 10, null, 1.5),
-    spriteShadow(FLEET_B, 47.1, 294.5, H - 10, null, 1.5),
-    assetProp(FLEET_A, -34.4, 395.4, H),
-    assetProp(FLEET_B, 47.1, 294.5, H),
+    `<g clip-path="url(#dw-clip-board-screen)">${spriteShadow(FLEET_A, 5.2, 447.1, H - 10, FLEET_A_OFF)}</g>`,
+    assetProp(FLEET_A, -27.3, 414.6, H, FLEET_A_OFF),
+  ]
+}
+function indelveFleetB() {
+  const H = 3 * FH + 10
+  return [
+    `<g clip-path="url(#dw-clip-board-screen)">${spriteShadow(FLEET_B, 53.1, 358.8, H - 10, FLEET_B_OFF)}</g>`,
+    assetProp(FLEET_B, 21.2, 326.9, H, FLEET_B_OFF),
   ]
 }
 
@@ -1961,11 +1999,16 @@ const floor03 = group('floor-03', [
   ...wallAppBoard(HUB_LIVE_BOARD),
   // Indelve section: logo + promo screen on the rear wall's left end.
   ...indelveWallBranding(),
-  // The virtual-combat hex board on the floor, the fleets over it, then the
-  // props/people on it.
+  // The virtual-combat hex board on the floor, then the props/people standing on
+  // it, then the far (right) fleet OVER them — the user's r95 review: its bow
+  // overlaps the queue's feet, and the fleet must read above the people. It is
+  // still emitted here in `floor-03`, i.e. BELOW the elevator fragment, so the
+  // shaft keeps occluding its stern (only the bow shows in front of the shaft).
+  // The near (left) fleet lives in `indelve-fleets` instead (assembled after
+  // `tags`) so it paints over the "Indelve" plaque.
   ...indelveBoard(),
-  ...indelveFleets(),
   ...indelveFloorProps(),
+  ...indelveFleetB(),
 ])
 
 const floor03Front = group('floor-03-front', [
@@ -2321,6 +2364,11 @@ const fragments = {
   entrance: entrance(),
   'career-sign': careerSign(),
   tags: experienceTags(),
+  // The near (left) Indelve fleet must paint over the "Indelve" experience tag
+  // (user r91 review), so it is emitted from its own fragment, assembled AFTER
+  // `tags` (see assemble-svg.mjs); the far fleet stays in `floor-03` so the
+  // elevator shaft still occludes it.
+  'indelve-fleets': group('indelve-fleets', indelveFleetA()),
 }
 
 for (const [name, content] of Object.entries(fragments)) {
