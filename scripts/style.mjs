@@ -168,6 +168,35 @@ export const svgStyle = `
        nebula still reads through. */
     .dw-hex { fill: #1f7fd0; fill-opacity: 0.5; stroke: #5fdcff; stroke-width: 0.45; }
 
+    /* Pacer legacy-stack corner (UPDATE #57, user): crisp SVG accents over the
+       generated decaying-pile sprite — small electric sparks at the frayed
+       cable ends (with a soft glow). The dust, sparks and flies are baked into
+       the sprite raster; the SVG flies were removed in UPDATE #59 and the
+       floor-side spark-2 accent in UPDATE #60. */
+    .dw-spark { fill: none; stroke: #ffd45a; stroke-width: 0.55; stroke-linecap: round; }
+    .dw-spark-glow { fill: none; stroke: #ffd45a; stroke-width: 1.7; stroke-opacity: 0.22; stroke-linecap: round; }
+
+    /* Pacer spreadsheet "screenshot" (UPDATE #63, user): a white cardboard /
+       Google-Sheets page lying flat on floor 4, containing a neutral mix of a
+       functional-workflow and a sequence diagram. Light theme, editable SVG,
+       drawn in the floor plane. */
+    .dw-sheet-shadow { fill: #141618; fill-opacity: 0.15; filter: url(#dw-soft); }
+    .dw-sheet { fill: #fbfaf4; stroke: #cfc9bb; stroke-width: 0.5; }
+    .dw-sheet-grid { fill: none; stroke: #eae6dc; stroke-width: 0.14; }
+    .dw-sheet-head { fill: #e8eef7; stroke: #b6c4d9; stroke-width: 0.3; }
+    .dw-sheet-headtext { fill: #43506a; font: 3.1px system-ui, sans-serif; }
+    .dw-sheet-life { fill: none; stroke: #b6c4d9; stroke-width: 0.26; stroke-dasharray: 1.3 1.3; }
+    .dw-sheet-arrow { fill: none; stroke: #4a5b74; stroke-width: 0.34; stroke-linecap: round; }
+    .dw-sheet-arrowhead { fill: #4a5b74; stroke: none; }
+    .dw-sheet-label { fill: #3c4759; font: 2.5px system-ui, sans-serif; }
+    .dw-sheet-note { fill: #fdf6e3; stroke: #c9bf94; stroke-width: 0.3; }
+    .dw-sheet-flow { fill: #edf2e9; stroke: #b7c3ae; stroke-width: 0.3; }
+    .dw-sheet-flowtext { fill: #46523f; font: 2.9px system-ui, sans-serif; }
+    .dw-sheet-divider { fill: none; stroke: #ded9cd; stroke-width: 0.25; }
+    .dw-sheet-tab { fill: #eceae2; stroke: #d3cec1; stroke-width: 0.25; }
+    .dw-sheet-tab-on { fill: #ffffff; stroke: #b9c4d6; stroke-width: 0.3; }
+    .dw-sheet-tabtext { fill: #6c6a61; font: 2.4px system-ui, sans-serif; }
+
     /* Workstations (Stage 5.5 §10): dev desks come from generated
        sprites (src/assets/workstation-0X-cut.png, placed by
        assetWorkstation()); the old SVG desk classes were removed with them. */

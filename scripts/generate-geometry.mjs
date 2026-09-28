@@ -387,6 +387,21 @@ const ARVR_PERSON = { file: 'arvr-01-cut.png', w: 1036, h: 1815, k: 0.02187, ax:
 // because the model spread the row a little wider than the wireframe; height
 // then lands ~33px. Anchor = the nearest dev's foot, placed at p(92, 559, 2*FH).
 const SITDEVS = { file: 'sitdevs-01-cut.png', w: 1588, h: 943, k: 0.03538, ax: 9.18, ay: 33.25 }
+// Interactica single seated dev (Stage 5.5 UPDATE #68, user): `sitdev-01.png`, a
+// lone cross-legged developer with a laptop (same character family as the
+// SITDEVS row above). Placed on the RIGHT Interactica half, just west of the
+// city board, at the user's red mark. Height matched to the SITDEVS group
+// (~33u); anchor = the bottommost pixel (a foot), centre-x of the seat.
+// UPDATE #69 (user): 15% smaller (k/ax/ay x0.85) and moved to a layer ABOVE the
+// city board (emitted after CITY_BOARD).
+// UPDATE #70 (user): another 5% smaller (k/ax/ay x0.95) and nudged up-left toward
+// the elevator just enough that the sprite clears the board's rect.
+// UPDATE #71 (user): moved along the red arrow in the screenshot — its head maps
+// to floor (91.8, 180.6) (shot scale 6.377 px/u from the dev's own anchor + the
+// board's west corner), so the dev now sits just in FRONT of the board's west
+// corner (nearer: u+v 273 < 332, so it may legally overlap that corner).
+const SITDEV = { file: 'sitdev-01.png', w: 412, h: 536, k: 0.04974, ax: 7.64, ay: 26.62 }
+const SITDEV_ANCHOR = [92, 181]
 // Interactica tech-lead staffage (r37 review, user): a standing person seen
 // from behind, right arm raised, pointing at the wall-mounted graph screen.
 // Wireframe-only pipeline: generated/dev/make_wire_techlead.py →
@@ -470,6 +485,83 @@ const QUEUE = { file: 'queue-01-cut.png', w: 485, h: 703, k: 0.05415, ax: 21.36,
 // scaled by 0.85 from the #53 values).
 const FLEET_A = { file: 'fleet-a-01-cut.png', w: 958, h: 505, k: 0.0657, ax: 24.15, ay: 32.97 }
 const FLEET_B = { file: 'fleet-b-01-cut.png', w: 1269, h: 648, k: 0.04953, ax: 42.35, ay: 31.94 }
+// Pacer (floor 4) legacy-stack corner sprite (Stage 5.5 UPDATE #57, user): the
+// first authorized Pacer content — "one of the reasons I entered Pacer was to
+// replace its very old system (vanilla PHP etc.) with a newer tech stack." The
+// decaying old side of that story: three LOW old server boxes (not the tall
+// floor-2 racks) bursting with spaghetti cables, litter around them, dust,
+// sparks and flies. Wireframe-only pipeline: generated/dev/
+// make_wire_pacer_legacy.py -> pacer-legacy-wire.png -> NB2 Pro (wireframe as
+// the ONLY input, n=3) -> picked candidate pro_..._1 -> key_cut_pacer_legacy.py
+// (W_TARGET 38px). UPDATE #58 (user): the whole sprite is DOUBLED (k/ax/ay x2
+// -> ~76px wide, ~49u tall). UPDATE #59 (user): the user hand-edited the cut
+// PNG (size still 931x592; its bottommost pixel moved to x~804) and asked for
+// the sprite's TOP-LEFT to be pinned to the absolute screen point PACER_XY via
+// a derived screen offset (same technique as the fleets/PC towers), so ax/ay
+// were re-measured from the edited PNG. UPDATE #60 (user): PACER_XY nudged to
+// (815, 470) and the SVG cables follow the sprite (see PACER_CABLE_AX). UPDATE
+// #62 (user): the pile SHRINKS 15% (k/ax/ay x0.85) while keeping its corner
+// location — PACER_XY is re-solved so the sprite's bottom-right (its floor +
+// wall contact, image bottom-right = old 891.42, 518.59) stays put. UPDATE #67
+// (user): another 10% smaller (k/ax/ay x0.9); PACER_XY re-solved the same way
+// to keep the bottom-right contact fixed (→ 833.0, 481.4).
+const PACER_LEGACY = { file: 'pacer-legacy-01-cut.png', w: 931, h: 592, k: 0.06279, ax: 50.49, ay: 36.98 }
+// Absolute screen top-left of the sprite (UPDATE #59/#60/#62/#67). #67 value
+// keeps the pile's bottom-right corner fixed while it scales.
+const PACER_XY = [833.0, 481.4]
+// The cable runs / spark accents were authored against the sprite's ORIGINAL
+// plan pose (top-left = p(anchor) - (old ax, ay) = -10.34, -48.34). They are
+// kept attached to the pinned sprite by shifting them by the delta between
+// PACER_XY and that authored pose.
+const PACER_CABLE_AX = 10.34
+// Pacer floor two-person vignette (Stage 5.5 UPDATE #61, user): a man carrying
+// an axe walks toward the decaying pacer-legacy pile, and a second man just
+// behind him catches his shoulder to hold him back. Generated from two
+// back-view figures facing +u (the pile's direction): generated/dev/
+// make_wire_pacer_axe.py -> pacer-axe-wire.png -> NB2 Pro -> key_cut_pacer_axe.py
+// (H_TARGET 36px, scale set from height since the pair is tall/narrow). Anchor
+// = the rear man's back foot (bottommost pixel), placed on floor 4 to the LEFT
+// of the pile, walking up-right toward it. UPDATE #62 (user): +50% (k/ax/ay
+// x1.5); the anchor (rear foot) stays at PACER_AXE_ANCHOR so the location holds.
+// UPDATE #67 (user): 10% smaller (k/ax/ay x0.9); anchor unchanged.
+const PACER_AXE = { file: 'pacer-axe-01-cut.png', w: 736, h: 806, k: 0.06067, ax: 12.72, ay: 48.73 }
+const PACER_AXE_ANCHOR = [108, 30]
+// Pacer floor "team + tech lead" billboards (Stage 5.5 UPDATE #65, user): the
+// user supplied HORIZONTAL MIRRORS ("reflex") of the floor-2 tech-lead and
+// seated-dev sprites, to re-use on floor 4 as the Pacer team around the
+// spreadsheet. Same `k` as their floor-2 originals (verified exact mirror with
+// ImageChops); only the anchor x is mirrored — the bottommost foot centre flips
+// side (ax_new = mirrored foot x * k), ay unchanged.
+// UPDATE #66 (user): TECHLEAD2 grows +15% (k/ax/ay x1.15) and moves toward the
+// building's left-front walls corner (u,v -> 0,0) until its toes clear the
+// sheet's near edge (v < v0 = 110.5).
+// UPDATE #67 (user): another +10% (k/ax/ay x1.10) and ~10u further in the same
+// direction; also moved in the group order to BEFORE `columns()` so the A-corner
+// vertical line (the edge joining the floor-4 and floor-5 corners) draws OVER it.
+const TECHLEAD2 = { file: 'techlead-01-cut-2.png', w: 726, h: 1851, k: 0.02241, ax: 11.57, ay: 41.42 }
+const SITDEVS2 = { file: 'sitdevs-01-cut-2.png', w: 1588, h: 943, k: 0.03538, ax: 46.97, ay: 33.25 }
+// Placement on floor 4, taken from the user's red markers: the tech lead stands
+// just in FRONT of the sheet's near edge, between the sheet and the axe pair;
+// the seated-dev row sits just in front of the sheet's left edge, along the
+// marked constant-u line (u≈68).
+const TECHLEAD2_ANCHOR = [101, 93]
+const SITDEVS2_ANCHOR = [68, 150]
+// Pacer (floor 4) left-side dev clusters (Stage 5.5 UPDATE #68, user): TWO
+// instances of the floor-3 Interactica team sprite TEAMCROSS (the cross of desks
+// with eight seated devs), filling the left half of floor 4. Anchors kept at
+// u >= ~58 (clear of the front-left `slabTriangle` repaint) and v >= ~230
+// (behind the sheet), stacked along v.
+// UPDATE #69 (user): moved ~20u toward the building's REAR wall (+v) and into
+// the `floor-04` group (drawn BEFORE floor-05), so they sit BELOW the floor-5
+// slab and the elevator.
+// UPDATE #70 (user): another 15u further in the same direction.
+// UPDATE #71 (user): the LEFT cluster (larger v) another 15u toward the rear
+// wall; the other one 10u toward the building's RIGHT wall (B-D wall, u = LW).
+// UPDATE #72 (user): the right cluster another 20u toward the right wall.
+const PACER_TEAMCROSS = [
+  [88, 285],
+  [58, 435],
+]
 function spritePlace(sp, uAnchor, vAnchor, hBase) {
   const [bx, by] = p(uAnchor, vAnchor, hBase).split(',').map(Number)
   return { x: round(bx - sp.ax), y: round(by - sp.ay) }
@@ -1559,6 +1651,9 @@ const floor02 = group('floor-02', [
   ...holoScreen(4, 26, 376, 2 * FH + 12, 2 * FH + 34),
   spriteShadow(ARVR_PERSON, 24, 363, 2 * FH),
   assetProp(ARVR_PERSON, 24, 363, 2 * FH),
+  // Single seated dev on the right Interactica half (UPDATE #68, user): placed
+  // just WEST of the city board at the user's red mark. UPDATE #69 (user): moved
+  // to a layer ABOVE the board (emitted AFTER it).
   // City-model board (r36 review, user): flat on the floor in the middle of
   // the left Interactica half, inside the user's red mark (screen centre
   // ≈ SVG (720, 693) -> floor point (u 144, v 188)). Its anchor is the
@@ -1568,6 +1663,8 @@ const floor02 = group('floor-02', [
   // (farther than the near-left run) — depth order stays far-to-near.
   spriteShadow(CITY_BOARD, 123, 167, 2 * FH),
   assetProp(CITY_BOARD, 123, 167, 2 * FH),
+  spriteShadow(SITDEV, SITDEV_ANCHOR[0], SITDEV_ANCHOR[1], 2 * FH),
+  assetProp(SITDEV, SITDEV_ANCHOR[0], SITDEV_ANCHOR[1], 2 * FH),
   // Data cables from the Cleverlit kiosk's mini PC (r25 review): drawn ON the
   // floor — after the slab surface — and in a layer BELOW the kiosk sprite
   // (the kiosk lives in the later 'floor-02-front' fragment), so the run
@@ -2036,10 +2133,207 @@ const floor03Team = group('floor-03-team', [
   assetProp(BOSSES, 52, 83, 3 * FH),
 ])
 
-const floor04 = group('floor-04', [...slab(4 * FH), ...backWalls(4 * FH)])
+// --- Pacer (floor-4) legacy-stack corner vignette (UPDATE #57, user) --------
+// Content is user-authorized: Pacer's legacy (vanilla PHP era) system being
+// replaced by a newer stack. This first vignette shows the legacy side at the
+// building's front-right (B) corner: the generated pile sprite (three low old
+// boxes + spaghetti cables + litter + dust + sparks + flies baked into the
+// raster), SVG cables that spill from the boxes over the floor's v=0 front edge
+// with 2-3 frayed ends draping to (never past) the floor's base line, and crisp
+// SVG spark accents. UPDATE #58: sprite doubled, cables shortened. UPDATE #59:
+// the SVG flies removed (the sprite already has them) and the sprite pinned to
+// PACER_XY. Real tech names/logos are deferred. Emitted at the END of
+// floor-04-front so it sits on the slab over the corner column and is not hidden
+// by any lower floor.
+const PACER_U = 158 // plan reference (its screen projection feeds the pin offset)
+const PACER_V = 18
+// Smooth run through waypoints carrying an explicit height each ([u, v, h]).
+function cablePathFit(pts) {
+  const P = pts.map(([u, v, h]) => p(u, v, h))
+  let d = `M ${P[0]}`
+  for (let i = 1; i < P.length - 1; i++) {
+    const a = P[i].split(',').map(Number)
+    const b = P[i + 1].split(',').map(Number)
+    d += ` Q ${P[i]} ${round((a[0] + b[0]) / 2)},${round((a[1] + b[1]) / 2)}`
+  }
+  d += ` L ${P[P.length - 1]}`
+  return d
+}
+function pacerLegacyCorner() {
+  const H = 4 * FH
+  const at = (u, v, h) => p(u, v, h).split(',').map(Number)
+  const spark = (x, y, s, cls) => {
+    const d = [
+      `M ${round(x - s)} ${round(y)} L ${round(x + s)} ${round(y)}`,
+      `M ${round(x)} ${round(y - s)} L ${round(x)} ${round(y + s)}`,
+      `M ${round(x - s * 0.7)} ${round(y - s * 0.7)} L ${round(x + s * 0.7)} ${round(y + s * 0.7)}`,
+    ].join(' ')
+    return el(cls, d)
+  }
+  const out = []
+  // Cables drawn BEFORE the sprite so each strand reads as emerging from under
+  // the boxes. Three cross the v=0 edge and drape down the slab face, stopping
+  // AT the floor's base line (h = H - SLAB_T); the middle one is the quieter
+  // secondary tone. They are wrapped in a screen translate so they follow the
+  // pinned sprite (UPDATE #60).
+  const [c0x, c0y] = at(PACER_U, PACER_V, H)
+  const cableShift = [
+    PACER_XY[0] - (c0x - PACER_CABLE_AX),
+    PACER_XY[1] - (c0y - PACER_LEGACY.ay),
+  ]
+  const cables = []
+  const edgeU = [200, 208, 216]
+  edgeU.forEach((eu, i) => {
+    const pts = [
+      [eu - 13, 26 + i * 2, H],
+      [eu - 6, 15 + i, H],
+      [eu - 1.5, 5, H],
+      [eu, 0, H],
+      [eu + 1.5, -1.5, H - 4],
+      [eu + 2.5, -2.5, H - 7 - i],
+      [eu + 3.2, -3, H - 10 - i],
+    ]
+    cables.push(el(i === 1 ? 'dw-cable-2' : 'dw-cable', cablePathFit(pts)))
+    const [ex, ey] = at(eu + 3.2, -3, H - 10 - i)
+    cables.push(spark(ex, ey, 2.2, 'dw-spark-glow'))
+    cables.push(spark(ex, ey, 1.1, 'dw-spark'))
+  })
+  out.push(`<g transform="translate(${round(cableShift[0])} ${round(cableShift[1])})">${cables.join('')}</g>`)
+  // Sprite pinned to the user's absolute screen top-left (UPDATE #59): derive
+  // the offset from the plan-reference projection, then apply it to the sprite
+  // AND its shadow so they stay locked together.
+  const [pxx, pyy] = at(PACER_U, PACER_V, H)
+  const off = [PACER_XY[0] - (pxx - PACER_LEGACY.ax), PACER_XY[1] - (pyy - PACER_LEGACY.ay)]
+  out.push(spriteShadow(PACER_LEGACY, PACER_U, PACER_V, H, off, 0.8))
+  out.push(assetProp(PACER_LEGACY, PACER_U, PACER_V, H, off))
+  // The two men (UPDATE #61): drawn AFTER the pile so they read in front
+  // (nearer: u+v smaller), walking up-right toward the pile from the left.
+  out.push(spriteShadow(PACER_AXE, PACER_AXE_ANCHOR[0], PACER_AXE_ANCHOR[1], H))
+  out.push(assetProp(PACER_AXE, PACER_AXE_ANCHOR[0], PACER_AXE_ANCHOR[1], H))
+  return out
+}
+// --- Pacer spreadsheet "screenshot" (UPDATE #63, user): a LARGE "white
+// cardboard" lying flat on the right-centre of floor 4 that is really a
+// screenshot of a Google-Sheets page holding a neutral mix of a functional
+// workflow diagram and a sequence diagram (light theme, NORMAL arrows, no
+// browser chrome, no real business meaning). Authored in the floor plane's
+// local space via ONE matrix — local +x -> +u (up-right), local +y -> -v
+// (down-right, toward the front) — so it lies flat and stays editable. Emitted
+// in `floor-04` (BEFORE `floor-05`), so the floor-5 slab would paint over its
+// far part if it reached back that far. UPDATE #64 (user): the sheet is made
+// ~25% deeper in the front-ward direction (local +y -> -v): v0 132 -> 110.5
+// (the far edge v1 stays put, the near edge comes toward the front), and the
+// diagram is filled out with more lanes' steps, a self-call and a sheet-tab row.
+const PACER_SHEET = { u0: 92, u1: 210, v0: 110.5, v1: 218 }
+function pacerSheet() {
+  const H = 4 * FH
+  const { u0, u1, v0, v1 } = PACER_SHEET
+  const W = u1 - u0
+  const V = v1 - v0
+  const [ox, oy] = p(u0, v1, H).split(',').map(Number)
+  const r = (n) => round(n)
+  const rect = (cls, x, y, w, h, attrs = '') =>
+    `<rect class="${cls}" x="${r(x)}" y="${r(y)}" width="${r(w)}" height="${r(h)}"${attrs} />`
+  const line = (cls, x1, y1, x2, y2) =>
+    `<line class="${cls}" x1="${r(x1)}" y1="${r(y1)}" x2="${r(x2)}" y2="${r(y2)}" />`
+  const txt = (cls, x, y, s) => `<text class="${cls}" x="${r(x)}" y="${r(y)}" text-anchor="middle">${s}</text>`
+  const head = (x, y, dir) =>
+    `<polygon class="dw-sheet-arrowhead" points="${r(x)},${r(y)} ${r(x - dir * 2.4)},${r(y - 1.1)} ${r(x - dir * 2.4)},${r(y + 1.1)}" />`
+  // matrix: local +x -> +u, local +y -> -v (origin = far-left corner p(u0, v1))
+  const out = [`<g transform="matrix(0.7071 -0.2475 0.7071 0.2475 ${r(ox)} ${r(oy)})">`]
+  // cardboard: soft shadow, then the white sheet
+  out.push(rect('dw-sheet-shadow', 1.2, 1.8, W, V, ' rx="1"'))
+  out.push(rect('dw-sheet', 0, 0, W, V, ' rx="1"'))
+  // faint spreadsheet grid
+  for (let x = 5.9; x < W - 0.2; x += 5.9) out.push(line('dw-sheet-grid', x, 0, x, V))
+  for (let y = 5.37; y < V - 0.2; y += 5.37) out.push(line('dw-sheet-grid', 0, y, W, y))
+  // --- sequence diagram: 5 lanes -------------------------------------------
+  const names = ['Client', 'Gateway', 'Auth', 'Database', 'Worker']
+  const m = 4
+  const laneW = (W - 2 * m) / names.length
+  const xc = names.map((_, i) => m + laneW * (i + 0.5))
+  const hy0 = 3
+  const hh = 7
+  names.forEach((nm, i) => {
+    out.push(rect('dw-sheet-head', xc[i] - 9, hy0, 18, hh, ' rx="0.8"'))
+    out.push(txt('dw-sheet-headtext', xc[i], hy0 + hh / 2 + 1.1, nm))
+    out.push(line('dw-sheet-life', xc[i], hy0 + hh, xc[i], 78))
+  })
+  const seq = [
+    [0, 1, 16, 'request'],
+    [1, 2, 22, 'verify'],
+    [2, 3, 28, 'lookup'],
+    [3, 2, 34, 'found'],
+    [2, 1, 40, 'grant'],
+    [1, 4, 46, 'dispatch'],
+    [4, 3, 52, 'write'],
+    [4, 1, 58, 'ack'],
+    [1, 0, 64, 'result'],
+    [0, 4, 70, 'notify'],
+  ]
+  for (const [a, b, y, lab] of seq) {
+    const x0 = xc[a]
+    const x1 = xc[b]
+    out.push(line('dw-sheet-arrow', x0, y, x1, y))
+    out.push(head(x1, y, x1 > x0 ? 1 : -1))
+    out.push(txt('dw-sheet-label', (x0 + x1) / 2, y - 1.3, lab))
+  }
+  // self-call on the Database lifeline
+  out.push(rect('dw-sheet-note', xc[3], 71, 12, 5.5, ' rx="0.6"'))
+  out.push(txt('dw-sheet-label', xc[3] + 6, 74.6, 'retry'))
+  out.push(line('dw-sheet-arrow', xc[3] + 12, 75, xc[3], 75))
+  out.push(head(xc[3], 75, -1))
+  // --- functional workflow row --------------------------------------------
+  out.push(line('dw-sheet-divider', m, 80, W - m, 80))
+  const steps = ['Input', 'Validate', 'Process', 'Persist', 'Done']
+  const bw = 17
+  const gap = (W - 2 * m - steps.length * bw) / (steps.length - 1)
+  const by = 84
+  const bh = 12
+  steps.forEach((s, i) => {
+    const x = m + i * (bw + gap)
+    out.push(rect('dw-sheet-flow', x, by, bw, bh, ' rx="1"'))
+    out.push(txt('dw-sheet-flowtext', x + bw / 2, by + bh / 2 + 1.2, s))
+    if (i < steps.length - 1) {
+      out.push(line('dw-sheet-arrow', x + bw, by + bh / 2, x + bw + gap, by + bh / 2))
+      out.push(head(x + bw + gap, by + bh / 2, 1))
+    }
+  })
+  // sheet tabs strip (Google-Sheets cue)
+  out.push(line('dw-sheet-divider', m, 99.5, W - m, 99.5))
+  const tabs = ['Sheet1', 'Flow', 'Notes']
+  tabs.forEach((t, i) => {
+    const x = m + i * 19
+    out.push(rect(i === 0 ? 'dw-sheet-tab-on' : 'dw-sheet-tab', x, 101, 17, 5, ' rx="1"'))
+    out.push(txt('dw-sheet-tabtext', x + 8.5, 104.4, t))
+  })
+  out.push('</g>')
+  return out
+}
+const floor04 = group('floor-04', [
+  ...slab(4 * FH),
+  ...backWalls(4 * FH),
+  ...pacerSheet(),
+  // Two floor-3 Interactica team clusters (UPDATE #68/#69, user) filling the
+  // Pacer left half — far-to-near order (larger v first). In THIS group (before
+  // floor-05) so the floor-5 slab and the elevator paint OVER them.
+  ...[...PACER_TEAMCROSS]
+    .sort((a, b) => b[1] - a[1])
+    .flatMap(([u, v]) => [
+      spriteShadow(TEAMCROSS, u, v, 4 * FH),
+      assetProp(TEAMCROSS, u, v, 4 * FH),
+    ]),
+])
 const floor04Front = group('floor-04-front', [
   ...slabTriangle(4 * FH),
+  // TECHLEAD2 BEFORE the columns (UPDATE #67, user): the A-corner vertical line
+  // (the edge joining the floor-4 and floor-5 corners) must draw OVER the man.
+  spriteShadow(TECHLEAD2, TECHLEAD2_ANCHOR[0], TECHLEAD2_ANCHOR[1], 4 * FH),
+  assetProp(TECHLEAD2, TECHLEAD2_ANCHOR[0], TECHLEAD2_ANCHOR[1], 4 * FH),
   ...columns(4 * FH, 4 * FH + STORY_H),
+  spriteShadow(SITDEVS2, SITDEVS2_ANCHOR[0], SITDEVS2_ANCHOR[1], 4 * FH),
+  assetProp(SITDEVS2, SITDEVS2_ANCHOR[0], SITDEVS2_ANCHOR[1], 4 * FH),
+  ...pacerLegacyCorner(),
 ])
 
 // --- floor-05: full slab + D column + D-corner wall section below the
