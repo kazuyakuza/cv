@@ -411,7 +411,7 @@ same-session block:
   1).
 
 **Pending on the user:** review `generated/dev/r134.png` (UPDATE #80; the next
-render is `r135.png`). UPDATE #57–#80 is now COMMITTED (see the commit list below);
+render is `r135.png`). UPDATE #57–#80 is now COMMITTED as `701ffd4`;
 `git status` should be clean.
 
 ## 1b. Start-of-session checklist (fresh session)
