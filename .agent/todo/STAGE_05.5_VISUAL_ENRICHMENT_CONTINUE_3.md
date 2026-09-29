@@ -15,8 +15,151 @@ user-reviewed visual-enrichment loop**: the user looks at a rendered PNG, sends 
 revision list (often with exact numbers / red marks), the session implements it,
 renders a new `rNN.png`, and the user reviews again.
 
-Latest round: **UPDATE #72** (2026-09-27) — right cluster to the right wall
-(render `generated/dev/r114.png`):
+Latest round: **UPDATE #80** (2026-09-29) — elevator access ladder, BELOW the
+elevator, at the shaft's rear-left, half-occluded, now thick metallic-red
+(render `generated/dev/r134.png`):
+
+- **Access ladder to climb from the floor-5 left side over the shaft roof.** It
+  stands on the floor-5 slab just behind the shaft's rear-left corner (the point
+  the user's red circle marked) in the plane `v = vL` (parallel to the rear wall).
+- **`LADDER = { vL: 312, uC: -1.4, railGap: 4.6, hBot: 5*FH, hTop: TOP_H,
+  hookR: 7, run: 10, treads: 14 }`**: rails vertical at `u = uC ± railGap`; rungs
+  along +u; each rail tops out in a **rounded hook (in the v–h plane) that curves
+  over the roof (-v)** and ends in a short bar lying over the roof.
+- **Drawn in `floor-05` — a layer BELOW the `elevator` fragment.** Because it
+  sits behind the shaft, the shaft occludes its near rail below the roof: that
+  rail only appears above the roof, while the far rail (left of the shaft's
+  silhouette) stays fully visible from the slab up — the user's requested
+  half-occluded look (interpret left/right from the ladder's own side, i.e. the
+  ladder faces the viewer).
+- Rejected earlier shapes: r127 straight prongs; r129 tall semicircle "ears";
+  r130/r131 a bar along the roof rear edge (flat or hooked).
+- **Styling**: the bars are thick and **metallic red** (`.dw-ladder` stroke
+  `#b0332a` w2.1; `.dw-ladder-rung` `#b0332a` w1.5; `.dw-ladder-bracket`
+  `#7d221c` w1) — UPDATE #80 follow-up.
+- Checks clean (`npm run lint`, `npm run type-check`).
+
+Earlier this session:
+**UPDATE #79** (2026-09-27) — AI-workflow board + elevator ladder
+(render `generated/dev/r125.png`):
+
+- **NEW `aiWorkflowBoard()`**: the user's `ai-workflow.jpg` (1220x4139 — a very
+  tall vertical flowchart) mounted on the **C-D rear wall at the floor-5 D
+  corner**, via `cdWallSheet(AIWF.u0, AIWF.hTop, …, 5*FH)`. Reads as a slim
+  vertical workflow display: `AIWF = { u0: 192, W: 26, hTop: 96 }`, H derived
+  from the asset aspect (~88.2u), thin dark bezel (`.dw-graph-frame`). Emitted at
+  the end of `floor-05`.
+- **NEW `elevatorLadder()`**: a metal lean-to ladder against the elevator shaft's
+  LEFT wall (the far wall, parallel to the doors) — from the floor-5 slab up to
+  the shaft roof. Emitted in `floor-05` BEFORE the `elevator` fragment, so the
+  shaft hides its upper part: only the lower stretch shows (the user's "only part
+  of that ladder will be visible"). `LADDER = { u: 13, halfW: 3.2, vBase: 332,
+  vTop: 311 }`, 2 rails + 12 rungs (`.dw-ladder` / `.dw-ladder-rung`).
+  **(SUPERSEDED in UPDATE #80 — see the top of this file: the ladder now stands
+  on the shaft's rear wall at the "2026" corner.)**
+- Checks clean (`npm run lint`, `npm run type-check`).
+
+Earlier this session:
+**UPDATE #78** — whip simplified + impact effect
+(render `generated/dev/r124.png`):
+
+- **Whip is now ONE smooth curve** (removed the tapered-ribbon `lashRibbon()` and
+  the curling cracker). `whipperWhip()` emits a single `el('dw-whip', …)` cubic
+  Bézier from the handle tip, arcing to the **Toysite building's left face**.
+- **Grey cross "impact"** at the tip: two `cross()` sets (a soft wide
+  `.dw-whip-hit-glow` + a crisp `.dw-whip-hit`), i.e. 4 grey lines (＋ and ✕)
+  through the end point — the crack landing on the building.
+- `.dw-whip` is a stroked curve again (`fill:none`, width 1.0, `#3a2c22`).
+- Checks clean (`npm run lint`, `npm run type-check`).
+
+Earlier this session:
+**UPDATE #77** — whipper +15%, nearer, new lash
+(render `generated/dev/r123.png`):
+
+- **`WHIPPER` +15%** (`k`/`ax`/`ay` ×1.15 → 0.04942 / 10.26 / 50.70; ≈ 18.8u wide
+  × 50.9u tall) and moved NEARER the Toysite (`WHIPPER_ANCHOR`
+  `[34, 64] → [94, 64]`, +u): the person now stands just left of the crew
+  (`<image>` top-left `760.68, 370`), clear of the A-corner `dw-column` (x≈750).
+- **Whip lash rebuilt** as a **tapered ribbon** (`.dw-whip` is now a filled
+  polygon, not a stroked curve): `lashRibbon()` samples the cubic Bézier and
+  offsets a width falling nonlinearly (`1.5u → 0.1u`), so it reads as a real
+  lash. The tip ends in a **curling cracker** (`.dw-whip-crack`). Authored from
+  the sprite's own top-left so it stays glued to the hand.
+- Checks clean (`npm run lint`, `npm run type-check`).
+
+Earlier this session:
+**UPDATE #76** — toysite pinned + the whipper
+(render `generated/dev/r120.png`):
+
+- **`TOYSITE` pinned** to the exact requested screen top-left via `TOYSITE_OFF`
+  (same technique as the fleets): `<image>` now `x="790" y="345"` (was
+  `771.93, 349.1`).
+- **NEW sprite `WHIPPER`** (`whipper-01-cut.png`): the person with a raised arm
+  holding a whip, standing LEFT of the crew and facing `+u` (toward the robots),
+  on floor 5. Wireframe-only pipeline (`generated/dev/make_wire_whipper.py` →
+  NB2 Pro n=3 → picked `whipper_2`, which reads as a whip: handle up-left +
+  hanging lash loop → `key_cut_whipper.py`, `H_TARGET 44u` → body ~40u).
+  Anchor `WHIPPER_ANCHOR = [34, 64]` (back foot). Placed AFTER the Toysite.
+- **Whip lash as crisp SVG** (`whipperWhip()` + `.dw-whip` / `.dw-whip-crack`):
+  a screen-space curve anchored to the sprite's own top-left, so it stays glued
+  to the hand; arcs/cracks toward the nearest robot. (It crosses the A-corner
+  `dw-column` line — accepted: the lash reads as in front.)
+- Checks clean (`npm run lint`, `npm run type-check`).
+
+Earlier this session:
+**UPDATE #75** — toysite +15%, moved off the right
+wall (render `generated/dev/r118.png`):
+
+- **`TOYSITE` +15%** (`k`/`ax`/`ay` ×1.15 → 0.10706 / 36.40 / 71.20; now ≈ 98.3u
+  wide × 71.5u tall) and moved toward the elevator (`TOYSITE_ANCHOR`
+  `[170,20] → [122,40]`, i.e. −u / +v) so the **right-hand robot no longer
+  paints over the building's right wall** — it now stands on the floor left of
+  the wall base. NOTE: on this isometric, only −u (not +v) changes the
+  perpendicular distance to the right-wall base line; +v moves parallel to it.
+- Checks clean (`npm run lint`, `npm run type-check`).
+
+Earlier this session:
+**UPDATE #74** — floor-5 toysite begins (render `generated/dev/r116.png`):
+
+- **NEW sprite `TOYSITE`**: a HALF-BUILT TOY BUILDING with FOUR humanoid worker
+  robots assembling it, placed in the **B (front-right) corner of floor 5** on the
+  small-format tile patch, in front of the right-wall stub. Generated via the
+  wireframe-only pipeline (`generated/dev/make_wire_toysite.py` → NB2 Pro, n=3 →
+  picked `toysite-robots_2` → `key_cut_toysite.py`, `W_TARGET 85u` → sprite
+  61.7u tall; building ~45u, robots ~22u). Anchor = nearest robot's foot at
+  `TOYSITE_ANCHOR = [170, 20]` (h = 5*FH). CSS: none (pure sprite).
+- **First cut taken as human workers → re-prompted** for clearly robotic
+  machines (metal/white panels, single-eye visor, grippers, no faces). Lesson:
+  the wireframe's generic humanoids default to people unless the prompt insists
+  on robots.
+- Pending for this scene (part 2): the **person with the whip** sprite to the
+  LEFT (smaller u, facing +u) plus the **SVG whip arc**; SVG accents (loose
+  blocks/debris, welding sparks) deferred to that step.
+- Checks clean (`npm run lint`, `npm run type-check`).
+
+Earlier this session:
+**UPDATE #73** — Pacer WhatsApp chat screen (render `generated/dev/r115.png`):
+
+- **NEW SVG-only element `pacerChatScreen()`**: a tall wall-mounted display on
+  the C-D rear wall of **floor 4**, in the Pacer left half, in the SAME column
+  as the Trantorian logo (`u 10..60`) — the logo (floor 3) and the chat screen
+  (floor 4) stack vertically, just left of the Indelve promo screen.
+- Content = an editable-SVG **WhatsApp-style chat**: teal header (bot avatar +
+  "Asistente" / "en línea" + menu dots), the bot's LONG incoming messages on the
+  LEFT (white bubbles) and the user's SHORT outgoing replies on the RIGHT (green
+  bubbles, time + blue double ticks), plus a bottom input bar (paperclip +
+  "Escribe un mensaje" + green mic button) and faint chat-wall doodles. Neutral
+  placeholder copy only (greetings/help — no Pacer product facts).
+- **Geometry lesson (important):** the floor-5 slab juts over the C-D wall, so
+  the visible story height falls off with `u` (`h_ceiling ≈ 104.97 − 0.495·u`
+  local; ~70 at u 60). A floor-to-ceiling screen is only possible near `u 0`;
+  this is why the screen is above the logo, NOT directly above the Indelve promo
+  screen (whose `u 72..127` only shows ~42..69). `cdWallSheet` gained an optional
+  `hBase` param (default `3 * FH`) so it can mount on floor 4.
+- Checks clean (`npm run lint`, `npm run type-check`).
+
+Earlier this session:
+**UPDATE #72** — right cluster to the right wall (render `generated/dev/r114.png`):
 
 - **`PACER_TEAMCROSS`** right cluster another 20u toward the right wall (B-D,
   u=LW): `[68,285] → [88,285]`. It now clears most of the elevator shaft's
@@ -267,17 +410,17 @@ same-session block:
   shadow (`spriteShadow` gained an optional `bulge`; the fleets use the default
   1).
 
-**Pending on the user:** review `generated/dev/r114.png` (the next render is
-`r115.png`). The session that produced UPDATE #57–#72 committed everything in
-ONE commit (see `git log`); `git status` should be clean after it.
+**Pending on the user:** review `generated/dev/r134.png` (UPDATE #80; the next
+render is `r135.png`). UPDATE #57–#80 is now COMMITTED (see the commit list below);
+`git status` should be clean.
 
 ## 1b. Start-of-session checklist (fresh session)
 
 1. Read this file, then `AGENTS.md` (the >30-images cap and the free-assets-only
    rule); the older continuation docs only on demand.
 2. `git log --oneline -6` + `git status` — expect a CLEAN tree at the commit
-   carrying UPDATE #57–#72 (the Pacer legacy corner, the pacer sheet, the Pacer
-   team billboards and the floor-2 `SITDEV`).
+   carrying UPDATE #57–#80 (the Pacer floor-4 vignettes + floor-2 lone dev, the
+   ai-workflow board, the toysite/whipper, and the elevator access ladder).
 3. Sanity-render before touching anything (§2) and compare with the previous
    round's PNG if the user reports something broken.
 4. Wait for the user's revision list, implement, re-render, report with the
@@ -367,7 +510,12 @@ Key floor-3 Indelve numbers (current):
   `TRANTORIAN_VR` pinned to `VR_XY = [455.5, 476]`; `PCTOWERS` pinned to
   `TOWER_XY = [446, 468]`; `PRESENTER` foot at `p(68, 546, 3*FH)`, 45.8u tall.
 
-Key floor-4 Pacer numbers (current, after UPDATE #72):
+Key floor-4 Pacer numbers (current, after UPDATE #73):
+- `PACER_CHAT = { u0: 10, W: 50, hBot: 4, hTop: 66 }` — the tall WhatsApp chat
+  screen on the C-D rear wall (floor 4), same column as the Trantorian logo
+  (`u 10..62`), left of the Indelve promo screen. Authored by `pacerChatScreen()`
+  via `cdWallSheet(u0, hTop, [...], 4 * FH)` (the `hBase` override added in
+  #73). Screen box ≈ x 346.9..382.2, y 340.6..415 on the SVG canvas.
 - `PACER_SHEET = { u0: 92, u1: 210, v0: 110.5, v1: 218 }` — the flat SVG
   "spreadsheet screenshot" on the floor plane (one matrix), emitted in
   `floor-04` AFTER `backWalls(4*FH)`.
@@ -388,6 +536,32 @@ Key floor-4 Pacer numbers (current, after UPDATE #72):
   v first), so the floor-5 slab AND the elevator occlude them where they
   overlap. The right cluster (u=88) still tucks partially behind the shaft's
   projection (user is iterating on this).
+
+Key floor-5 toysite numbers (UPDATE #76):
+- `TOYSITE` `k 0.10706, ax 36.40, ay 71.20` (918x668 cut png), anchor
+  `TOYSITE_ANCHOR = [122, 40]` on the floor-5 slab (`5*FH`), emitted at the END
+  of `floor-05-front` (after the stub walls). Sprite ≈ 98.3u wide × 71.5u tall;
+  building ~52u, robots ~25u. Pinned via `TOYSITE_OFF = [790 - 771.93, 345 - 349.1]`
+  so its `<image>` top-left is exactly `(790, 345)`. PNG `src/assets/toysite-01-cut.png`.
+- `WHIPPER` `k 0.04942, ax 10.26, ay 50.70` (381x1029 cut png), anchor
+  `WHIPPER_ANCHOR = [94, 64]` (≈ 18.8u wide × 50.9u tall; `<image>` top-left
+  ≈ `(760.68, 370)`). PNG `src/assets/whipper-01-cut.png`. The SVG lash
+  (`whipperWhip()`, classes `.dw-whip` (one smooth curve) + `.dw-whip-hit` /
+  `.dw-whip-hit-glow` (grey ＋/✕ crack lines)) runs from the handle tip
+  (cut-px `232,6`) to the Toysite building, authored from the sprite's top-left.
+- `AIWF = { u0: 192, W: 26, hTop: 96 }` — the ai-workflow board on the C-D rear
+  wall at the floor-5 D corner (`aiWorkflowBoard()`, `hBase = 5*FH`, H ≈ 88.2u).
+  Asset `src/assets/ai-workflow.jpg` (1220x4139). Emitted at the end of
+  `floor-05`.
+- `LADDER = { vL: 312, uC: -1.4, railGap: 4.6, hBot: 5*FH, hTop: TOP_H,
+  hookR: 7, run: 10, treads: 14 }` — the elevator access ladder, standing on the
+  floor-5 slab just behind the shaft's rear-left corner (the user's red mark) in
+  the plane `v = vL`; rails vertical at `u = uC ± railGap`, rungs along +u; each
+  rail's top is a **rounded hook (v–h plane)** that curves over the roof (-v) and
+  ends in a short bar over the roof. `elevatorLadder()` is emitted in the
+  **`floor-05` group** (a layer BELOW `elevator`), so the shaft hides the near
+  rail below the roof while the far rail (left of the silhouette) stays fully
+  visible. Rails + 14 rungs (`.dw-ladder*`).
 
 Key floor-2 SITDEV numbers: `SITDEV` `k 0.04974, ax 7.64, ay 26.62`
 (412x536), anchor `SITDEV_ANCHOR = [92, 181]` — emitted in `floor-02` AFTER
@@ -502,17 +676,30 @@ career-sign
     the two fleets (`indelveFleetA()` in `indelve-fleets`, `indelveFleetB()` in
     `floor-03` after the props).
 - **Floors 4–5**: floor 4 carries the Pacer vignettes:
-  - `floor-04` group: the `pacerSheet()` spreadsheet cardboard (see
-    `PACER_SHEET`) and the two `PACER_TEAMCROSS` desk clusters in the left half
-    (both BEFORE `floor-05` so the floor-5 slab + elevator occlude them).
+  - `floor-04` group: the `pacerChatScreen()` WhatsApp chat screen on the C-D
+    rear wall (see `PACER_CHAT`, right after `backWalls(4*FH)`), the `pacerSheet()`
+    spreadsheet cardboard (see `PACER_SHEET`) and the two `PACER_TEAMCROSS` desk
+    clusters in the left half (all BEFORE `floor-05` so the floor-5 slab +
+    elevator occlude them).
   - `floor-04-front`: the legacy-stack corner at the right-front (B) corner —
     `PACER_LEGACY` pile (pinned to `PACER_XY`) + SVG cable spill + sparks, the
     `PACER_AXE` two-man vignette, and the mirrored floor-2 billboards
     `TECHLEAD2` (before `columns()`) + `SITDEVS2` (after) around the sheet's
     near edge.
-  The rest of floors 4–5 is architectural shell + tags only (floor 5 = WIP,
-  unfinished, by design). Pacer content beyond this is still undefined —
-  **do NOT invent it; get it from the user.**
+  - `floor-05` group: the D-corner wall arm carries the **ai-workflow board**
+    (`aiWorkflowBoard()`, UPDATE #79) and the **elevator access ladder**
+    (`elevatorLadder()`, UPDATE #80): it is emitted HERE so it is a layer BELOW
+    the `elevator` fragment — standing on the slab behind the shaft's rear-left
+    corner, with one rail fully visible (left of the shaft's silhouette) and the
+    other only above the roof, and its rails top out in hooks curving over the
+    roof.
+  - `floor-05-front`: the `TOYSITE` sprite (half-built toy building + four worker
+    robots) in the B corner (UPDATE #74), plus the `WHIPPER` person and his SVG
+    whip lash to its left (UPDATE #76).
+  The rest of floor 5 is architectural shell + WIP tags only (unfinished by
+  design). Pacer/floor-5 content beyond this is still undefined — **do NOT
+  invent it; get it from the user.** (Small SVG accents for the toysite —
+  loose blocks/debris, welding sparks — were deferred and are still optional.)
 - **Elevator**: shaft + doors + per-story open doors, service conduit + junction
   boxes, year plaques (`vMid = 266.658`).
 
@@ -521,15 +708,17 @@ Sprite constants in `scripts/generate-geometry.mjs`: `PUEL_KIOSK`,
 `STANDKIOSK`, `WS_C` (+`assetWorkstation`), `WS_D`, `PIPE_SPRITE`,
 `PIPE_H_SPRITE`, `CITY_BOARD`, `ARVR_PERSON`, `SITDEVS`, `TECHLEAD`, `SITDEV`,
 `TEAMCROSS`, `BOSSES`, `PCTOWERS`, `PRESENTER`, `TRANTORIAN_VR`, `QUEUE`,
-`FLEET_A`, `FLEET_B`, `PACER_LEGACY`, `PACER_AXE`, `TECHLEAD2`, `SITDEVS2`
+`FLEET_A`, `FLEET_B`, `PACER_LEGACY`, `PACER_AXE`, `TECHLEAD2`, `SITDEVS2`,
+`TOYSITE`, `WHIPPER`
 (plus the placement consts `PACER_XY`, `PACER_CABLE_AX`, `PACER_AXE_ANCHOR`,
 `TECHLEAD2_ANCHOR`, `SITDEVS2_ANCHOR`, `SITDEV_ANCHOR`, `PACER_TEAMCROSS`,
-`PACER_SHEET`).
+`PACER_SHEET`, `PACER_CHAT`, `TOYSITE_ANCHOR`, `TOYSITE_OFF`, `WHIPPER_ANCHOR`,
+`AIWF`, `LADDER`).
 
 ## 7. Pending work / next steps
 
 1. **Continue the review loop** (the main pending work). The user reviews
-   `generated/dev/r114.png`; the next render is `r115.png`. Expect a revision list
+   `generated/dev/r134.png`; the next render is `r135.png`. Expect a revision list
    with exact numbers; keep the §2 loop and commit only when asked.
 2. **Known open cosmetic items on floor 3 Indelve** (candidates for the user's
    next list): the fleet shadows are subtle against the dark nebula (raise the

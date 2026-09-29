@@ -562,6 +562,37 @@ const PACER_TEAMCROSS = [
   [88, 285],
   [58, 435],
 ]
+// Floor-5 toysite sprite (Stage 5.5 UPDATE #74, user): a HALF-BUILT TOY BUILDING
+// with FOUR humanoid worker robots assembling it, placed in the B (front-right)
+// corner of the unfinished fifth floor. User-authorized content (the floor-5
+// scene). Wireframe-only pipeline: generated/dev/make_wire_toysite.py ->
+// toysite-wire.png -> NB2 Pro (wireframe the only input, n=3) -> picked
+// toysite-robots_2 -> key_cut_toysite.py (W_TARGET 85u -> ~61.7u tall; the
+// building reads ~45u, robots ~22u). Anchor = the nearest robot's foot (the
+// sprite's bottommost pixel), placed on the floor-5 tile patch at the front of
+// the cluster; the building sits up-right (deeper, into the corner).
+// UPDATE #75 (user): +15% (k/ax/ay x1.15) and shifted toward the elevator
+// (-u / +v, screen up-left) so the right-hand robot no longer paints over the
+// building's right wall.
+const TOYSITE = { file: 'toysite-01-cut.png', w: 918, h: 668, k: 0.10706, ax: 36.40, ay: 71.20 }
+const TOYSITE_ANCHOR = [122, 40]
+// UPDATE #76 (user): pin the sprite's top-left to the exact requested screen
+// point (790, 345) via a screen offset derived from the plan projection (same
+// technique as the fleets / PC towers). Prior top-left was (771.93, 349.1).
+const TOYSITE_OFF = [790 - 771.93, 345 - 349.1]
+// Floor-5 WHIPPER sprite (Stage 5.5 UPDATE #76, user): the person with a raised
+// arm holding a whip, standing to the LEFT of the Toysite crew and facing +u
+// (toward the robots). Wireframe-only pipeline: generated/dev/
+// make_wire_whipper.py -> whipper-wire.png -> NB2 Pro (n=3) -> picked candidate
+// 2 (reads as a whip: handle up-left + a hanging lash loop) -> key_cut_whipper.py
+// (H_TARGET 44u -> body ~40u). Anchor = the person's back foot (bottommost
+// pixel). The long lash is continued as crisp SVG from the hand toward the crew
+// (see whipperWhip()).
+// UPDATE #77 (user): +15% (k/ax/ay x1.15) and moved NEARER the Toysite
+// (WHIPPER_ANCHOR [34,64] -> [94,64], i.e. +u) so the crew fills the frame on
+// its right; the SVG lash rebuilt as a tapered ribbon.
+const WHIPPER = { file: 'whipper-01-cut.png', w: 381, h: 1029, k: 0.04942, ax: 10.26, ay: 50.70 }
+const WHIPPER_ANCHOR = [94, 64]
 function spritePlace(sp, uAnchor, vAnchor, hBase) {
   const [bx, by] = p(uAnchor, vAnchor, hBase).split(',').map(Number)
   return { x: round(bx - sp.ax), y: round(by - sp.ay) }
@@ -1859,9 +1890,11 @@ const IMC_HOME_BOARD = {
 // lie flat on the wall. Emitted last in floor-03 so they paint over the cream
 // section-divider fill; the floor-4 slab clips the screen's top-right (user
 // accepted partial hiding).
-function cdWallSheet(u0, hTop, children) {
-  // hTop is the LOCAL story height; p() needs the global height (3 * FH base).
-  const [ox, oy] = p(u0, LD - WALL_T - 0.4, 3 * FH + hTop).split(',').map(Number)
+// hTop is the LOCAL story height; p() needs the global height. `hBase` defaults
+// to the floor-3 story (3 * FH) so the Indelve branding calls are unchanged;
+// the floor-4 chat screen overrides it (UPDATE #73).
+function cdWallSheet(u0, hTop, children, hBase = 3 * FH) {
+  const [ox, oy] = p(u0, LD - WALL_T - 0.4, hBase + hTop).split(',').map(Number)
   return [
     `<g transform="matrix(0.7071 -0.2475 0 1 ${round(ox)} ${round(oy)})">`,
     ...children.map((c) => `  ${c}`),
@@ -2310,9 +2343,94 @@ function pacerSheet() {
   out.push('</g>')
   return out
 }
+
+// --- Pacer WhatsApp-bot chat screen (UPDATE #73, user): a tall wall-mounted
+// display on the C-D rear wall of floor 4, in the Pacer left half — the same
+// column as the Trantorian logo (u 10..62), just left of the Indelve promo
+// screen, so the logo (floor 3) and the chat screen (floor 4) stack in one
+// column. NOTE (geometry): the floor-5 slab juts over the C-D wall, so the
+// visible story height falls off with u (h_ceiling ≈ 104.97 - 0.495·u local);
+// at the promo screen's u ≈ 72..127 only ~42..69 units show. This column keeps
+// the full story, hence the screen is here rather than directly above the
+// Indelve screen. It shows an editable-SVG WhatsApp-style chat: the bot's LONG
+// messages arrive on the left (white incoming bubbles) and the user's SHORT
+// replies go out on the right (green, time + blue double ticks) — a user
+// talking to a WhatsApp bot. Neutral placeholder copy only (no product facts).
+// Authored in the wall plane via cdWallSheet (one matrix), so it stays editable
+// and lies flat on the wall. Top at local 66 clears the ceiling (which falls
+// from ~100 at u 10 to ~70 at u 60); bottom at 4 sits just above the floor.
+const PACER_CHAT = { u0: 10, W: 50, hBot: 4, hTop: 66 }
+function pacerChatScreen() {
+  const { u0, W, hBot, hTop } = PACER_CHAT
+  const H = hTop - hBot
+  const r = round
+  const rect = (cls, x, y, w, h, attr = '') =>
+    `<rect class="${cls}" x="${r(x)}" y="${r(y)}" width="${r(w)}" height="${r(h)}"${attr} />`
+  const circle = (cls, cx, cy, rad) =>
+    `<circle class="${cls}" cx="${r(cx)}" cy="${r(cy)}" r="${r(rad)}" />`
+  const txt = (cls, x, y, s, extra = '') =>
+    `<text class="${cls}" x="${r(x)}" y="${r(y)}"${extra}>${s}</text>`
+  // Incoming (bot, LEFT) bubble: rounded pad + left tail + time bottom-right.
+  const inBub = (x, y, w, h, lines, time) => [
+    rect('dw-chat-in', x, y, w, h, ' rx="2"'),
+    `<polygon class="dw-chat-in" points="${r(x)},${r(y + h - 3.2)} ${r(x - 1.6)},${r(y + h - 2.2)} ${r(x)},${r(y + h - 1.2)}" />`,
+    ...lines.map((ln, i) => txt('dw-chat-text', x + 2, y + 3.6 + i * 3.4, ln)),
+    txt('dw-chat-time', x + w - 2, y + h - 1.3, time, ' text-anchor="end"'),
+  ]
+  // Outgoing (user, RIGHT) bubble: right tail + time + blue double tick.
+  const outBub = (x, y, w, h, lines, time) => [
+    rect('dw-chat-out', x, y, w, h, ' rx="2"'),
+    `<polygon class="dw-chat-out" points="${r(x + w)},${r(y + h - 3.2)} ${r(x + w + 1.6)},${r(y + h - 2.2)} ${r(x + w)},${r(y + h - 1.2)}" />`,
+    ...lines.map((ln, i) => txt('dw-chat-text', x + 2, y + 3.4 + i * 3.4, ln)),
+    txt('dw-chat-time', x + w - 5.4, y + h - 1.3, time, ' text-anchor="end"'),
+    `<path class="dw-chat-tick" d="M ${r(x + w - 4.4)} ${r(y + h - 2.3)} l 1 1 l 1.5 -2 M ${r(x + w - 2.9)} ${r(y + h - 2.3)} l 1 1 l 1.5 -2" />`,
+  ]
+  const out = [rect('dw-chat-shadow', 0.9, 1.4, W, H, ' rx="1.4"'), rect('dw-chat-bezel', 0, 0, W, H, ' rx="1.4"')]
+  // screen face + faint chat-wall doodles
+  out.push(rect('dw-chat-face', 1.6, 1.6, W - 3.2, H - 3.2, ' rx="1"'))
+  const doodles = [
+    [12, 17, 1.4],
+    [29, 21, 1.9],
+    [42, 15, 1.3],
+    [16, 31, 1.7],
+    [37, 41, 1.4],
+    [24, 48, 1.8],
+    [44, 37, 1.3],
+    [10, 43, 1.2],
+  ]
+  for (const [dx, dy, rad] of doodles) out.push(circle('dw-chat-doodle', dx, dy, rad))
+  // header (teal) with bot avatar + neutral name/status + menu dots
+  out.push(rect('dw-chat-header', 1.6, 1.6, W - 3.2, 8))
+  out.push(circle('dw-chat-avatar', 7.4, 5.8, 2.7))
+  out.push(circle('dw-chat-bot-dot', 6.9, 5.4, 0.36))
+  out.push(circle('dw-chat-bot-dot', 8.0, 5.4, 0.36))
+  out.push(`<path class="dw-chat-bot" d="M 6.5 6.5 a 0.9 0.9 0 0 0 1.7 0" />`)
+  out.push(`<line class="dw-chat-bot" x1="7.4" y1="3.1" x2="7.4" y2="2.4" />`)
+  out.push(circle('dw-chat-bot-dot', 7.4, 2.1, 0.35))
+  out.push(txt('dw-chat-name', 11.4, 5.2, 'Asistente'))
+  out.push(txt('dw-chat-status', 11.4, 8.0, 'en línea'))
+  for (const cx of [43.4, 45.4, 47.4]) out.push(circle('dw-chat-dot', cx, 5.8, 0.55))
+  // conversation: short outgoing (right) then long incoming (left)
+  out.push(...outBub(W - 3 - 14, 11.0, 14, 6.2, ['Hola'], '12:30'))
+  out.push(...inBub(3, 18.4, 36, 8.8, ['¡Hola! Soy tu asistente.', '¿En qué puedo ayudarte?'], '12:31'))
+  out.push(...outBub(W - 3 - 21, 28.4, 21, 6.2, ['¿Puedes ayudarme?'], '12:32'))
+  out.push(...inBub(3, 35.8, 36, 8.2, ['Claro, reviso tu solicitud', 'y te confirmo enseguida.'], '12:33'))
+  out.push(...outBub(W - 3 - 15, 45.2, 15, 6.2, ['Gracias'], '12:34'))
+  // input bar: pill + paperclip + placeholder + send/mic button
+  out.push(rect('dw-chat-input', 3, 52.0, W - 14, 5.4, ' rx="2.7"'))
+  out.push(`<path class="dw-chat-icon" d="M 6.6 53.1 l -2 2 a 1.3 1.3 0 0 0 1.8 1.8 l 2.2 -2.2" />`)
+  out.push(txt('dw-chat-inputtext', 10, 55.6, 'Escribe un mensaje'))
+  out.push(circle('dw-chat-send', W - 6, 54.7, 2.9))
+  out.push(rect('dw-chat-mic', W - 6.57, 53.3, 1.2, 2.0, ' rx="0.6"'))
+  out.push(`<path class="dw-chat-mic-line" d="M ${r(W - 7.3)} 54.9 a 1.35 1.35 0 0 0 2.7 0 M ${r(W - 5.95)} 56.1 l 0 0.6 M ${r(W - 6.75)} 56.7 l 1.6 0" />`)
+  return cdWallSheet(u0, hTop, out, 4 * FH)
+}
 const floor04 = group('floor-04', [
   ...slab(4 * FH),
   ...backWalls(4 * FH),
+  // Tall WhatsApp-bot chat screen on the C-D rear wall, above the Indelve promo
+  // (UPDATE #73, user). On the wall, drawn after the wall so it sits proud.
+  ...pacerChatScreen(),
   ...pacerSheet(),
   // Two floor-3 Interactica team clusters (UPDATE #68/#69, user) filling the
   // Pacer left half — far-to-near order (larger v first). In THIS group (before
@@ -2335,6 +2453,101 @@ const floor04Front = group('floor-04-front', [
   assetProp(SITDEVS2, SITDEVS2_ANCHOR[0], SITDEVS2_ANCHOR[1], 4 * FH),
   ...pacerLegacyCorner(),
 ])
+
+// Whip lash (UPDATE #76–#78, user): the lash continues from the whipper's
+// handle tip (the raster has the handle + a short hanging loop) as ONE smooth
+// SVG curve cracking toward the Toysite, ending near the building with a small
+// grey cross "impact" effect. Authored from the sprite's own top-left, so it
+// stays glued to the hand if WHIPPER_ANCHOR moves.
+function whipperWhip() {
+  const [sx, sy] = p(WHIPPER_ANCHOR[0], WHIPPER_ANCHOR[1], 5 * FH).split(',').map(Number)
+  const ox = sx - WHIPPER.ax
+  const oy = sy - WHIPPER.ay
+  const at = (px, py) => [ox + px * WHIPPER.k, oy + py * WHIPPER.k]
+  // handle tip -> one smooth arc -> end near the toysite building
+  const p0 = at(232, 6)
+  const c1 = at(480, -330)
+  const c2 = at(820, -230)
+  const p3 = at(1100, 300)
+  const [ex, ey] = p3
+  // grey cross "impact" lines at the tip (a soft wide set + a crisp set)
+  const cross = (s, cls) => [
+    `<line class="${cls}" x1="${round(ex - s)}" y1="${round(ey)}" x2="${round(ex + s)}" y2="${round(ey)}" />`,
+    `<line class="${cls}" x1="${round(ex)}" y1="${round(ey - s)}" x2="${round(ex)}" y2="${round(ey + s)}" />`,
+    `<line class="${cls}" x1="${round(ex - s * 0.7)}" y1="${round(ey - s * 0.7)}" x2="${round(ex + s * 0.7)}" y2="${round(ey + s * 0.7)}" />`,
+    `<line class="${cls}" x1="${round(ex - s * 0.7)}" y1="${round(ey + s * 0.7)}" x2="${round(ex + s * 0.7)}" y2="${round(ey - s * 0.7)}" />`,
+  ]
+  return [
+    el('dw-whip', `M ${round(p0[0])} ${round(p0[1])} C ${round(c1[0])} ${round(c1[1])} ${round(c2[0])} ${round(c2[1])} ${round(ex)} ${round(ey)}`),
+    ...cross(4.6, 'dw-whip-hit-glow'),
+    ...cross(2.7, 'dw-whip-hit'),
+  ]
+}
+
+// Floor-5 AI-workflow board (UPDATE #79, user): the tall vertical
+// ai-workflow.jpg mounted on the C-D REAR wall at the D (rear-right) corner of
+// the unfinished fifth floor. Authored on the wall plane via cdWallSheet with
+// hBase = 5*FH (like the Indelve branding). The asset is very tall (1220x4139),
+// so it reads as a slim vertical workflow display with a thin dark bezel.
+const AIWF = { u0: 192, W: 26, hTop: 96 }
+function aiWorkflowBoard() {
+  const H = AIWF.W * (4139 / 1220) // preserve the asset aspect (~88.2u tall)
+  const b = 0.9
+  return cdWallSheet(
+    AIWF.u0,
+    AIWF.hTop,
+    [
+      `<rect class="dw-graph-frame" x="${round(-b)}" y="${round(-b)}" width="${round(AIWF.W + 2 * b)}" height="${round(H + 2 * b)}" rx="0.6" />`,
+      `<image href="${inlineAsset('ai-workflow.jpg', 'image/jpeg')}" x="0" y="0" width="${round(AIWF.W)}" height="${round(H)}" preserveAspectRatio="none" />`,
+    ],
+    5 * FH,
+  )
+}
+
+// Floor-5 elevator access ladder (UPDATE #80, user): a ladder on the LEFT side
+// of the shaft, standing on the floor-5 slab just behind the shaft's rear-left
+// corner (where the red mark points), climbing up to get over the shaft roof.
+// Because it is drawn BELOW the `elevator` fragment and sits behind the shaft,
+// the shaft occludes its near rail below the roof — that rail only shows above
+// the roof — while the far rail (left of the shaft's silhouette) stays fully
+// visible from the slab up. Each rail tops out in a hook that curves over the
+// roof (-v) and ends on it.
+const LADDER = { vL: 312, uC: -1.4, railGap: 4.6, hBot: 5 * FH, hTop: TOP_H, hookR: 7, run: 10, treads: 14 }
+function elevatorLadder() {
+  const { vL, uC, railGap, hBot, hTop, hookR, run, treads } = LADDER
+  const out = []
+  const uA = uC - railGap // far/left rail — stays visible below the roof
+  const uB = uC + railGap // near/right rail — hidden by the shaft below the roof
+  const hKnee = hTop + 1 // rail top; the hook starts just over the roof
+  const at = (u, h) => p(u, vL, h).split(',').map(Number)
+  const seg = (u0, h0, u1, h1, cls) => {
+    const [x1, y1] = at(u0, h0)
+    const [x2, y2] = at(u1, h1)
+    out.push(`<line class="${cls}" x1="${round(x1)}" y1="${round(y1)}" x2="${round(x2)}" y2="${round(y2)}" />`)
+  }
+  const pt = (u, v, h) => {
+    const [x, y] = p(u, v, h).split(',').map(Number)
+    return `${round(x)} ${round(y)}`
+  }
+  // each rail: straight up from the slab, then a rounded 90° hook (in the v-h
+  // plane) turning -v over the roof, ending in a short bar lying on the roof.
+  const N = 14
+  for (const u of [uA, uB]) {
+    const d = [`M ${pt(u, vL, hBot)}`, `L ${pt(u, vL, hKnee)}`]
+    for (let i = 1; i <= N; i++) {
+      const phi = Math.PI - (Math.PI / 2) * (i / N)
+      d.push(`L ${pt(u, vL - hookR * (1 + Math.cos(phi)), hKnee + hookR * Math.sin(phi))}`)
+    }
+    d.push(`L ${pt(u, vL - hookR - run, hKnee + hookR)}`)
+    out.push(`<path class="dw-ladder" d="${d.join(' ')}" />`)
+  }
+  // treads along u (the ladder's width) from the slab up to the roof
+  for (let i = 0; i <= treads; i++) {
+    const h = hBot + ((hTop - hBot) * i) / treads
+    seg(uA, h, uB, h, 'dw-ladder-rung')
+  }
+  return out
+}
 
 // --- floor-05: full slab + D column + D-corner wall section below the
 // shaft; stub walls, exposed A/B/C columns and dashed perimeter over it ----
@@ -2364,6 +2577,11 @@ const floor05 = group('floor-05', [
   el('dw-wall', uFace(LW - WALL_T, LD - D_CORNER_ARM, LD - WALL_T, 5 * FH, TOP_H)),
   el('dw-slab-edge', vFace(LD - D_CORNER_ARM, LW - WALL_T, LW, 5 * FH, TOP_H)),
   el('dw-slab', hFace(LW - WALL_T, LW, LD - D_CORNER_ARM, LD - WALL_T, TOP_H)),
+  // AI-workflow board on the rear wall at the D corner (UPDATE #79, user).
+  ...aiWorkflowBoard(),
+  // Floor-5 elevator access ladder (UPDATE #80, user): BELOW the `elevator`
+  // fragment, so the shaft occludes its back rail below the roof.
+  ...elevatorLadder(),
 ])
 const floor05Front = group('floor-05-front', [
   ...slabTriangle(5 * FH),
@@ -2376,6 +2594,16 @@ const floor05Front = group('floor-05-front', [
   el('dw-wall-far', vFace(LD - WALL_T, 0, STUB_LEN * LW, 5 * FH, 5 * FH + STUB_H)),
   el('dw-slab-edge', uFace(0, LD - WALL_T, LD, 5 * FH, 5 * FH + STUB_H)),
   el('dw-slab', hFace(0, STUB_LEN * LW, LD - WALL_T, LD, 5 * FH + STUB_H)),
+  // Toysite (UPDATE #74, user): the half-built toy building + four worker robots
+  // in the B (front-right) corner. Drawn LAST so the scene reads in front of the
+  // right-wall stub; sits on the floor-5 slab (h = 5 * FH).
+  spriteShadow(TOYSITE, TOYSITE_ANCHOR[0], TOYSITE_ANCHOR[1], 5 * FH, TOYSITE_OFF, 1.1),
+  assetProp(TOYSITE, TOYSITE_ANCHOR[0], TOYSITE_ANCHOR[1], 5 * FH, TOYSITE_OFF),
+  // Whipper (UPDATE #76, user): to the LEFT of the crew, facing the robots.
+  spriteShadow(WHIPPER, WHIPPER_ANCHOR[0], WHIPPER_ANCHOR[1], 5 * FH),
+  assetProp(WHIPPER, WHIPPER_ANCHOR[0], WHIPPER_ANCHOR[1], 5 * FH),
+  // The whip lash cracking from his hand toward the robots.
+  ...whipperWhip(),
   // The dashed intended-top perimeter was removed (Stage 4.5 user revision):
   // the stub walls, exposed columns and open shaft already communicate the
   // unfinished state; the dashed guides read as construction leftovers.

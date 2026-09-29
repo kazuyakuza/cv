@@ -197,6 +197,47 @@ export const svgStyle = `
     .dw-sheet-tab-on { fill: #ffffff; stroke: #b9c4d6; stroke-width: 0.3; }
     .dw-sheet-tabtext { fill: #6c6a61; font: 2.4px system-ui, sans-serif; }
 
+    /* Pacer WhatsApp-bot chat screen (UPDATE #73, user): a tall wall-mounted
+       display on the floor-4 C-D wall showing a WhatsApp-style chat — the bot's
+       long incoming messages (white, left) and the user's short outgoing replies
+       (green, right, time + blue double ticks). Editable SVG on the wall. */
+    .dw-chat-shadow { fill: #3a3833; fill-opacity: 0.18; }
+    .dw-chat-bezel { fill: #23272b; stroke: #14171a; stroke-width: 0.5; }
+    .dw-chat-face { fill: #e6ddd4; }
+    .dw-chat-doodle { fill: none; stroke: #d6cabd; stroke-width: 0.35; }
+    .dw-chat-header { fill: #075e54; }
+    .dw-chat-avatar { fill: #128c7e; }
+    .dw-chat-bot { fill: none; stroke: #e9f4f2; stroke-width: 0.45; stroke-linecap: round; }
+    .dw-chat-bot-dot { fill: #e9f4f2; }
+    .dw-chat-name { fill: #ffffff; font: 3.2px system-ui, sans-serif; }
+    .dw-chat-status { fill: #9fd6cc; font: 2.2px system-ui, sans-serif; }
+    .dw-chat-dot { fill: #bfe6df; }
+    .dw-chat-in { fill: #ffffff; stroke: #e2d9cf; stroke-width: 0.25; }
+    .dw-chat-out { fill: #dcf8c6; stroke: #cbe9b5; stroke-width: 0.25; }
+    .dw-chat-text { fill: #33383d; font: 2.35px system-ui, sans-serif; }
+    .dw-chat-time { fill: #9aa0a4; font: 1.7px system-ui, sans-serif; }
+    .dw-chat-tick { fill: none; stroke: #34b7f1; stroke-width: 0.45; stroke-linecap: round; stroke-linejoin: round; }
+    .dw-chat-input { fill: #ffffff; stroke: #dad3c8; stroke-width: 0.25; }
+    .dw-chat-inputtext { fill: #9aa0a4; font: 2.25px system-ui, sans-serif; }
+    .dw-chat-icon { fill: none; stroke: #9aa0a4; stroke-width: 0.45; stroke-linecap: round; }
+    .dw-chat-send { fill: #128c7e; }
+    .dw-chat-mic { fill: #ffffff; }
+    .dw-chat-mic-line { fill: none; stroke: #ffffff; stroke-width: 0.4; stroke-linecap: round; }
+
+    /* Floor-5 whipper whip lash (UPDATE #76–#78, user): the lash is ONE crisp
+       SVG curve from the person's hand to the toysite building; at the end a
+       small grey cross marks the crack (a soft wide set + a crisp set). */
+    .dw-whip { fill: none; stroke: #3a2c22; stroke-width: 1.0; stroke-linecap: round; }
+    .dw-whip-hit { fill: none; stroke: #8f8f8a; stroke-width: 0.6; stroke-linecap: round; stroke-opacity: 0.9; }
+    .dw-whip-hit-glow { fill: none; stroke: #c9c9c4; stroke-width: 1.5; stroke-linecap: round; stroke-opacity: 0.22; }
+
+    /* Floor-5 elevator access ladder (UPDATE #80, user): the metal ladder on
+       the shaft's rear-left, based on the slab and hooking over the roof —
+       thick metallic-red rails + treads. */
+    .dw-ladder { fill: none; stroke: #b0332a; stroke-width: 2.1; stroke-linecap: round; }
+    .dw-ladder-rung { fill: none; stroke: #b0332a; stroke-width: 1.5; stroke-linecap: round; }
+    .dw-ladder-bracket { fill: none; stroke: #7d221c; stroke-width: 1; stroke-linecap: round; }
+
     /* Workstations (Stage 5.5 §10): dev desks come from generated
        sprites (src/assets/workstation-0X-cut.png, placed by
        assetWorkstation()); the old SVG desk classes were removed with them. */
