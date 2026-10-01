@@ -511,19 +511,17 @@ same-session block:
   1).
 
 **Pending on the user:** review `generated/dev/r147.png` (UPDATE #84; the next
-render is `r148.png`). UPDATE #57–#84 is now COMMITTED (UPDATE #57–#80 as
-`701ffd4`; UPDATE #81–#84 the starship on the elevator roof + the floor-5
-astronaut as the NEXT commit). The tree should be CLEAN after that commit — no
-untracked `src/assets/starship.png`, `src/assets/starship-01-cut.png` or
-`src/assets/astro-01-cut.png` should remain.
+render is `r148.png`). UPDATE #81–#84 is now COMMITTED as **`8a8d65b`** (UPDATE
+#57–#80 was `701ffd4`), so the tree should be CLEAN and the assets
+`src/assets/starship.png`, `starship-01-cut.png`, `astro-01-cut.png` are tracked.
 
 ## 1b. Start-of-session checklist (fresh session)
 
 1. Read this file, then `AGENTS.md` (the >30-images cap and the free-assets-only
    rule); the older continuation docs only on demand.
-2. `git log --oneline -6` + `git status` — expect a CLEAN tree at the commit
-   carrying UPDATE #81–#84 (the floor-5 starship on the elevator roof + its SVG
-   launch platform + the astronaut on the access ladder; `701ffd4` before it).
+2. `git log --oneline -6` + `git status` — expect a CLEAN tree at `8a8d65b`
+   (the floor-5 starship on the elevator roof + its SVG launch platform + the
+   astronaut on the access ladder; `701ffd4` before it).
 3. Sanity-render before touching anything (§2) and compare with the previous
    round's PNG if the user reports something broken.
 4. Wait for the user's revision list, implement, re-render, report with the
