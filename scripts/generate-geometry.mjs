@@ -2549,6 +2549,71 @@ function elevatorLadder() {
   return out
 }
 
+// Floor-5 ASTRONAUT climbing the elevator access ladder (Stage 5.5 UPDATE #84,
+// user): a plain WHITE-suited astronaut (no logos/words), helmet held in the
+// RIGHT hand, LEFT hand gripping a rung above the head, near the TOP end of the
+// ladder. He stands on the FAR side of the ladder — his BACK is to the building's
+// REAR wall and his FACE is toward the ELEVATOR ROOF — so we see his FRONT.
+// Generated with the nano-banana model (gemini-3-pro-image-preview) from a red
+// wireframe guide (generated/dev/make_wire_astro.py, _nb_gen_astro.py; picked
+// astro-gen_2 — front view, skin-toned face, fist gripping a rung, no ladder, no
+// floating backpack), keyed/cut with generated/dev/key_cut_astro.py.
+// UPDATE #84 r3 (user): (a) the face must have a normal SKIN tone (astro-gen_3
+// rendered a bald WHITE head — gen_2 replaces it); (b) the astronaut sits in a
+// layer UNDER the ladder, so emitted in `floor-05` BEFORE `elevatorLadder()` —
+// the red ladder rails/rungs draw OVER him (he grips it from the far side).
+const ASTRO = { file: 'astro-01-cut.png', w: 357, h: 891, k: 0.04740, ax: 8.22, ay: 42.09 }
+const ASTRO_ANCHOR = [-6.0, 312, 585] // [u, v = ladder plane, h = foot on a rung] (a bit left of LADDER.uC: the shaft hides anything right of its edge u=0)
+// UPDATE #84 r4 (user): exact screen point for the sprite — moves the <image>
+// from (516.71, 282.12) to (518.5, 275).
+const ASTRO_OFF = [518.5 - 516.71, 275 - 282.12] // = [1.79, -7.12]
+
+// Floor-5 elevator-roof starship (Stage 5.5 UPDATE #81, user): the silver
+// Starship-like rocket standing on the shaft roof, nose to the sky. The user
+// supplied src/assets/starship.png — a photo of a metal model, ALREADY
+// alpha-cut — and asked for the sprite instead of the hand-drawn SVG (a first
+// SVG attempt was rejected). Cut/measured with generated/dev/cut_starship.py.
+// Billboard sprite; ax/ay = the CYLINDER BASE CENTRE (not the bottommost pixel,
+// which is a fin tip 17px lower), so the base sits flush on the platform.
+// UPDATE #82 (user): −10% and CENTERED on the roof, standing on a NEW SVG
+// platform block — the stack reads [roof] -> [platform] -> [starship].
+// Placed with assetProp/starshipShadow at the END of floor-05-front (AFTER
+// `elevator`).
+const STARSHIP = { file: 'starship-01-cut.png', w: 437, h: 1613, k: 0.10150, ax: 22.43, ay: 162.0 }
+const STARSHIP_ANCHOR = [24.1, 266.66] // = the roof's plan centre (SHAFT_U+WALL_T)/2, (V0+V1)/2
+// UPDATE #84 r5 (user): nudge ONLY the rocket sprite to an exact screen point —
+// the <image> moves (556.3, 112.49) -> (555, 117.5). The launch platform stays
+// centred on the roof (r4), so this is a sprite-only offset (it does NOT move
+// the base).
+const STARSHIP_OFF = [555 - 556.3, 117.5 - 112.49] // = [-1.3, 5.01]
+// The SVG launch platform (block) between the roof and the rocket. Concrete
+// like the building (dw-slab top + dw-wall sides + a dw-contact seat).
+// UPDATE #83 (user): −50% height (16 → 8), +10% footprint (17 → 18.7).
+const STARSHIP_BASE = { halfU: 18.7, halfV: 18.7, h: 8 }
+function starshipBase() {
+  const { halfU, halfV, h } = STARSHIP_BASE
+  const [uC, vC] = STARSHIP_ANCHOR
+  const u0 = uC - halfU, u1 = uC + halfU
+  const v0 = vC - halfV, v1 = vC + halfV
+  const h1 = TOP_H + h
+  const b = 1.4 // seat overhang
+  return [
+    el('dw-contact', hFace(u0 - b, u1 + b, v0 - b, v1 + b, TOP_H)), // soft seat on the roof
+    el('dw-slab', hFace(u0, u1, v0, v1, h1)), // top (the rocket stands here)
+    el('dw-wall', uFace(u0, v0, v1, TOP_H, h1)), // -u side (toward the viewer)
+    el('dw-wall', vFace(v0, u0, u1, TOP_H, h1)), // -v side (toward the viewer)
+  ]
+}
+function starshipShadow() {
+  const { h } = STARSHIP_BASE
+  const [sx, sy] = p(STARSHIP_ANCHOR[0], STARSHIP_ANCHOR[1], TOP_H + h).split(',').map(Number)
+  // narrow base shadow: the sprite's width is mostly thin wire fins, so the
+  // default spriteShadow width (0.44 * placed width) would be far too wide.
+  return [
+    `<ellipse cx="${round(sx)}" cy="${round(sy + 0.4)}" rx="11" ry="4.4" fill="#141618" fill-opacity="0.22" filter="url(#dw-soft)" />`,
+  ]
+}
+
 // --- floor-05: full slab + D column + D-corner wall section below the
 // shaft; stub walls, exposed A/B/C columns and dashed perimeter over it ----
 const floor05 = group('floor-05', [
@@ -2579,6 +2644,12 @@ const floor05 = group('floor-05', [
   el('dw-slab', hFace(LW - WALL_T, LW, LD - D_CORNER_ARM, LD - WALL_T, TOP_H)),
   // AI-workflow board on the rear wall at the D corner (UPDATE #79, user).
   ...aiWorkflowBoard(),
+  // Astronaut climbing the access ladder (UPDATE #84, user): emitted HERE, in
+  // `floor-05`, BEFORE `elevatorLadder()` — i.e. UNDER the ladder — so the red
+  // rails/rungs draw OVER his body (he grips the ladder from its far side, back
+  // to the rear wall, face toward the elevator roof). Also under `elevator`, but
+  // he sits left of the shaft's silhouette so the shaft does not cover him.
+  assetProp(ASTRO, ASTRO_ANCHOR[0], ASTRO_ANCHOR[1], ASTRO_ANCHOR[2], ASTRO_OFF),
   // Floor-5 elevator access ladder (UPDATE #80, user): BELOW the `elevator`
   // fragment, so the shaft occludes its back rail below the roof.
   ...elevatorLadder(),
@@ -2604,6 +2675,14 @@ const floor05Front = group('floor-05-front', [
   assetProp(WHIPPER, WHIPPER_ANCHOR[0], WHIPPER_ANCHOR[1], 5 * FH),
   // The whip lash cracking from his hand toward the robots.
   ...whipperWhip(),
+  // Starship on the elevator roof (UPDATE #81–#84, user): an SVG launch
+  // platform, then the silver sprite on top — [roof] -> [platform] ->
+  // [starship] — the platform centred on the roof's plan centre (no nudge, so
+  // it never overhangs), and the SPRITE nudged to the exact requested screen
+  // point (STARSHIP_OFF). Drawn here — AFTER `elevator`.
+  ...starshipBase(),
+  ...starshipShadow(),
+  assetProp(STARSHIP, STARSHIP_ANCHOR[0], STARSHIP_ANCHOR[1], TOP_H + STARSHIP_BASE.h, STARSHIP_OFF),
   // The dashed intended-top perimeter was removed (Stage 4.5 user revision):
   // the stub walls, exposed columns and open shaft already communicate the
   // unfinished state; the dashed guides read as construction leftovers.

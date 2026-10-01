@@ -15,7 +15,107 @@ user-reviewed visual-enrichment loop**: the user looks at a rendered PNG, sends 
 revision list (often with exact numbers / red marks), the session implements it,
 renders a new `rNN.png`, and the user reviews again.
 
-Latest round: **UPDATE #80** (2026-09-29) — elevator access ladder, BELOW the
+Latest round: **UPDATE #84** (2026-09-30) — floor-5 astronaut on the access
+ladder + starship platform re-centred + rocket nudged (render
+`generated/dev/r147.png`):
+
+- **Starship launch platform RE-CENTRED on the roof (r4, user).** The #84 screen
+  nudge (`STARSHIP_OFF = [-2.3, 5.51]`, a `<g transform="translate(...)">` around
+  platform + shadow + sprite) also dragged the BASE off the roof centre — its
+  plan centre drifted to ≈(11.3, 276.2) and its `-u` edge overhung the roof's
+  left edge. The nudge is REMOVED: `starshipBase()` / `starshipShadow()` are
+  emitted with no offset, so the platform is centred on the roof's plan centre
+  `(24.1, 266.66)` (`u/v` half 18.7 ⇒ `u 5.4..42.8`, `v 248..285.4`, inside the
+  roof `u 0..48.2`, `v 222.4..310.9`) and never overhangs.
+- **r5 (user): the ROCKET only is nudged** to an exact screen point —
+  `STARSHIP_OFF = [-1.3, 5.01]` moves the `<image>` to `x 555, y 117.5` (was
+  `556.3, 112.49`). Sprite-only: the platform stays centred (r4).
+- **NEW sprite `ASTRO`** — an astronaut climbing the elevator access ladder,
+  near its TOP end. Plain matte WHITE suit, no logos/text/insignia; the space
+  helmet is held in his RIGHT hand (head bare) and his LEFT hand grips a rung
+  above the head.
+  **Orientation (user revision, r2 of the sprite):** he stands on the FAR side
+  of the ladder — his BACK to the building's REAR wall and his FACE toward the
+  ELEVATOR ROOF — so we see his FRONT (the first attempt was a BACK view and was
+  rejected). Generated with nano-banana (`gemini-3-pro-image-preview`) from a
+  FRONT-view red wireframe (`generated/dev/make_wire_astro.py`,
+  `_nb_gen_astro.py`), keyed/cut with `generated/dev/key_cut_astro.py`
+  (H_TARGET 42u). **Candidate: `astro-gen_2`** — r3 rejected `astro-gen_3`
+  because the model rendered a bald WHITE (grey) head; gen_2 has a normal
+  SKIN-toned face (and no floating backpack; it does have a faint rung in the
+  fist, invisible at final scale).
+  **r3 (user) also moved him UNDER the ladder**: emitted in `floor-05` BEFORE
+  `elevatorLadder()` (so the red rails/rungs draw OVER his body), i.e. he grips
+  the ladder from its far side.
+  `ASTRO = { file: 'astro-01-cut.png', w: 357, h: 891, k: 0.04740, ax: 8.22,
+  ay: 42.09 }` (anchor = the lower foot's bottommost pixel);
+  `ASTRO_ANCHOR = [-6.0, 312, 585]` = `[u, v = LADDER.vL, h = a rung near the
+  top]`. NOTE the u: the ladder straddles the shaft edge `u = 0` (far rail
+  `u=-6` visible, near rail `u=+3.2` occluded below the roof), so anything the
+  astronaut has at `u > 0` is hidden by the shaft — `u = -6` keeps him mostly
+  visible with the ladder crossing his body (centring on `LADDER.uC=-1.4` hides
+  ~40% of him behind the shaft).
+  **r4 (user):** an exact screen-point nudge — `ASTRO_OFF = [1.79, -7.12]` moves
+  the `<image>` `(516.71, 282.12) → (518.5, 275)`.
+- Checks clean (`npm run lint`, `npm run type-check`). Crops: `chk-astro` /
+  `-wide` / `-tight` / `-head`, `chk-base`, `chk-f5` (helper `crop_r140.py`).
+  Overlay/debug tools: `generated/dev/overlay_astro.py` (draws the projected
+  rails + sprite box on a render), `generated/dev/probe_astro.py` (pixel colours
+  vs SVG x), `generated/dev/_imgs_f5b.py` (lists every floor-5 `<image>` x/y/w/h).
+
+Earlier this round: **UPDATE #83** (2026-09-29) — starship platform reshaped
+(render `generated/dev/r138.png`; follow-up to #82):
+
+- **`STARSHIP_BASE` height −50%** (`h: 16 → 8`) and **footprint +10%**
+  (`halfU/halfV: 17 → 18.7`, i.e. 37.4×37.4u). The stack [roof] → [platform] →
+  [starship] reads as a low, wider launch pad. Checks clean.
+
+Earlier this round: **UPDATE #82** (2026-09-29) — starship −10% + centred + SVG
+platform (render `generated/dev/r137.png`; follow-up to #81):
+
+- **`STARSHIP` −10%**: `k 0.11278 → 0.10150` (placed ≈ 44.4u wide × 163.7u
+  tall; `ax 22.43, ay 162.0` — always `raw·k`).
+- **Re-centred on the roof**: `STARSHIP_ANCHOR [28, 248] → [24.1, 266.66]` =
+  the roof's plan centre `((SHAFT_U+WALL_T)/2, (SHAFT_V0+SHAFT_V1)/2)` (the
+  "empty on the ladder side" placement is dropped).
+- **NEW `STARSHIP_BASE` + `starshipBase()`**: an editable-SVG concrete launch
+  platform between the roof and the rocket — `{ halfU: 17, halfV: 17, h: 16 }`
+  (34×34u × 16u tall, centred on the roof, `h = TOP_H..TOP_H+16`). Drawn with
+  `dw-slab` top + `dw-wall` sides (`uFace(u0)` and `vFace(v0)` = the two
+  viewer-facing sides) + a `dw-contact` seat on the roof. `starshipShadow()` now
+  sits at `TOP_H + STARSHIP_BASE.h` (on the platform top). The stack reads
+  **[roof] → [platform] → [starship]**. Checks clean.
+
+Earlier this round: **UPDATE #81** (2026-09-29) — **starship on the elevator roof**
+(render `generated/dev/r136.png`):
+
+- **NEW sprite `STARSHIP`** on the shaft roof (`h = TOP_H`), nose to the sky,
+  leaving the **rear-left quarter (the access-ladder side) clear** (the user's
+  request). The user supplied `src/assets/starship.png` (a photo of a metal
+  Starship model, ALREADY alpha-cut) after REJECTING a first hand-drawn SVG
+  attempt; the sprite is used instead. NB the referenced spacerocketlab product
+  photo is not free-licensed — the user owns/provided this copy.
+- `STARSHIP = { file: 'starship-01-cut.png', w: 437, h: 1613, k: 0.11278,
+  ax: 24.93, ay: 180.0 }`; `STARSHIP_ANCHOR = [28, 248]` (base on the roof);
+  placed ≈ 49.3u wide × 181.9u tall, `<image>` x/y ≈ `(566.5, 107.5)`. Cut with
+  `generated/dev/cut_starship.py` (bbox crop of the alpha channel — no keying
+  needed). **Anchor = the CYLINDER BASE CENTRE**, not the sprite's bottommost
+  pixel: the bottommost pixel is the right fin tip, 17px lower (raw 1612 vs
+  base 1596), so `ax/ay` use raw x 221 / y 1596 × k. (REMEMBER: `ax/ay` are in
+  DISPLAY px, i.e. raw·k — a first cut passed raw px and flew the sprite to
+  y = −1309.)
+- **`starshipShadow()`** draws a NARROW base shadow (rx 10.5, ry 4.2): the
+  sprite's width is mostly thin wire fins, so the default `spriteShadow` width
+  (0.44·placed width ≈ 21.7) would be far too wide.
+- Emitted at the END of `floor-05-front` (AFTER `elevator`, so it sits on the
+  roof). No new CSS (the SVG `.dw-rocket*` classes + `#dw-rocket-steel`
+  gradient were removed with the rejected SVG). Checks clean (`npm run lint`,
+  `npm run type-check`).
+- Crops: `chk-roof-ship.png` / `-wide` / `-base` (helper `crop_r136.py`).
+  Size knob: set `STARSHIP.k` (height = 1596·k; width = 437·k) and re-derive
+  `ax = 221·k`, `ay = 1596·k`.
+
+Earlier this round: **UPDATE #80** (2026-09-29) — elevator access ladder, BELOW the
 elevator, at the shaft's rear-left, half-occluded, now thick metallic-red
 (render `generated/dev/r134.png`):
 
@@ -410,17 +510,20 @@ same-session block:
   shadow (`spriteShadow` gained an optional `bulge`; the fleets use the default
   1).
 
-**Pending on the user:** review `generated/dev/r134.png` (UPDATE #80; the next
-render is `r135.png`). UPDATE #57–#80 is now COMMITTED as `701ffd4`;
-`git status` should be clean.
+**Pending on the user:** review `generated/dev/r147.png` (UPDATE #84; the next
+render is `r148.png`). UPDATE #57–#84 is now COMMITTED (UPDATE #57–#80 as
+`701ffd4`; UPDATE #81–#84 the starship on the elevator roof + the floor-5
+astronaut as the NEXT commit). The tree should be CLEAN after that commit — no
+untracked `src/assets/starship.png`, `src/assets/starship-01-cut.png` or
+`src/assets/astro-01-cut.png` should remain.
 
 ## 1b. Start-of-session checklist (fresh session)
 
 1. Read this file, then `AGENTS.md` (the >30-images cap and the free-assets-only
    rule); the older continuation docs only on demand.
 2. `git log --oneline -6` + `git status` — expect a CLEAN tree at the commit
-   carrying UPDATE #57–#80 (the Pacer floor-4 vignettes + floor-2 lone dev, the
-   ai-workflow board, the toysite/whipper, and the elevator access ladder).
+   carrying UPDATE #81–#84 (the floor-5 starship on the elevator roof + its SVG
+   launch platform + the astronaut on the access ladder; `701ffd4` before it).
 3. Sanity-render before touching anything (§2) and compare with the previous
    round's PNG if the user reports something broken.
 4. Wait for the user's revision list, implement, re-render, report with the
@@ -562,6 +665,28 @@ Key floor-5 toysite numbers (UPDATE #76):
   **`floor-05` group** (a layer BELOW `elevator`), so the shaft hides the near
   rail below the roof while the far rail (left of the silhouette) stays fully
   visible. Rails + 14 rungs (`.dw-ladder*`).
+- `STARSHIP` (`starship-01-cut.png`, 437x1613) `k 0.10150, ax 22.43, ay 162.0`
+  — the sprite Starship on the shaft roof (UPDATE #81/#82; the user-supplied
+  `src/assets/starship.png`, alpha-cut, cut via `cut_starship.py`). Anchor
+  `STARSHIP_ANCHOR = [24.1, 266.66]` (the roof plan centre), `h = TOP_H +
+  STARSHIP_BASE.h`; **never put it at `5*FH`** (a first bug placed it on the
+  floor-5 slab, 105u too low). `ax/ay` in DISPLAY px (= raw·k).
+  `STARSHIP_OFF = [-1.3, 5.01]` (UPDATE #84 r5) is a **sprite-only** screen nudge
+  → `<image>` `x 555, y 117.5`; the platform must NOT inherit it (r4: the #84
+  group translate had dragged the base off the roof so it overhung the edge).
+- `STARSHIP_BASE = { halfU: 18.7, halfV: 18.7, h: 8 }` + `starshipBase()`
+  (UPDATE #82/#83): the concrete launch platform on the roof; `dw-slab` top +
+  `dw-wall` sides + `dw-contact` seat. Centred on `STARSHIP_ANCHOR` (the roof
+  plan centre) so it never overhangs. `starshipShadow()` uses its `h`.
+- `ASTRO` (`astro-01-cut.png`, 357x891) `k 0.04740, ax 8.22, ay 42.09` — the
+  floor-5 astronaut climbing the access ladder (UPDATE #84), FRONT view (back to
+  the rear wall, face toward the elevator roof). `ASTRO_ANCHOR = [-6.0, 312,
+  585]` (`u` left of `LADDER.uC` so the shaft's corner `u=0` clips less; `v =
+  LADDER.vL`; `h` = a rung near the top). `ASTRO_OFF = [1.79, -7.12]` → `<image>`
+  `x 518.5, y 275`. **Emitted in `floor-05` BEFORE `elevatorLadder()`** so the red
+  ladder draws OVER him (user's "under the ladder"), and before `elevator` — he
+  sits left of the shaft's silhouette (`x≈530`) so the shaft only shaves his far
+  side.
 
 Key floor-2 SITDEV numbers: `SITDEV` `k 0.04974, ax 7.64, ay 26.62`
 (412x536), anchor `SITDEV_ANCHOR = [92, 181]` — emitted in `floor-02` AFTER
@@ -692,10 +817,13 @@ career-sign
     the `elevator` fragment — standing on the slab behind the shaft's rear-left
     corner, with one rail fully visible (left of the shaft's silhouette) and the
     other only above the roof, and its rails top out in hooks curving over the
-    roof.
+    roof. The **`ASTRO` astronaut** (UPDATE #84) is emitted HERE too, just BEFORE
+    `elevatorLadder()`, so the ladder draws over him.
   - `floor-05-front`: the `TOYSITE` sprite (half-built toy building + four worker
     robots) in the B corner (UPDATE #74), plus the `WHIPPER` person and his SVG
-    whip lash to its left (UPDATE #76).
+    whip lash to its left (UPDATE #76), plus the SVG `starshipBase()` platform
+    and the `STARSHIP` sprite on the elevator roof (UPDATE #81/#82, re-centred
+    #84 r4, rocket nudged r5).
   The rest of floor 5 is architectural shell + WIP tags only (unfinished by
   design). Pacer/floor-5 content beyond this is still undefined — **do NOT
   invent it; get it from the user.** (Small SVG accents for the toysite —
@@ -709,16 +837,17 @@ Sprite constants in `scripts/generate-geometry.mjs`: `PUEL_KIOSK`,
 `PIPE_H_SPRITE`, `CITY_BOARD`, `ARVR_PERSON`, `SITDEVS`, `TECHLEAD`, `SITDEV`,
 `TEAMCROSS`, `BOSSES`, `PCTOWERS`, `PRESENTER`, `TRANTORIAN_VR`, `QUEUE`,
 `FLEET_A`, `FLEET_B`, `PACER_LEGACY`, `PACER_AXE`, `TECHLEAD2`, `SITDEVS2`,
-`TOYSITE`, `WHIPPER`
+`TOYSITE`, `WHIPPER`, `STARSHIP`, `ASTRO`
 (plus the placement consts `PACER_XY`, `PACER_CABLE_AX`, `PACER_AXE_ANCHOR`,
 `TECHLEAD2_ANCHOR`, `SITDEVS2_ANCHOR`, `SITDEV_ANCHOR`, `PACER_TEAMCROSS`,
 `PACER_SHEET`, `PACER_CHAT`, `TOYSITE_ANCHOR`, `TOYSITE_OFF`, `WHIPPER_ANCHOR`,
-`AIWF`, `LADDER`).
+`AIWF`, `LADDER`, `STARSHIP_ANCHOR`, `STARSHIP_OFF`, `STARSHIP_BASE`,
+`ASTRO_ANCHOR`, `ASTRO_OFF`).
 
 ## 7. Pending work / next steps
 
 1. **Continue the review loop** (the main pending work). The user reviews
-   `generated/dev/r134.png`; the next render is `r135.png`. Expect a revision list
+   `generated/dev/r147.png`; the next render is `r148.png`. Expect a revision list
    with exact numbers; keep the §2 loop and commit only when asked.
 2. **Known open cosmetic items on floor 3 Indelve** (candidates for the user's
    next list): the fleet shadows are subtle against the dark nebula (raise the
