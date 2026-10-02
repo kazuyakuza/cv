@@ -593,6 +593,31 @@ const TOYSITE_OFF = [790 - 771.93, 345 - 349.1]
 // its right; the SVG lash rebuilt as a tapered ribbon.
 const WHIPPER = { file: 'whipper-01-cut.png', w: 381, h: 1029, k: 0.04942, ax: 10.26, ay: 50.70 }
 const WHIPPER_ANCHOR = [94, 64]
+// Floor-5 CV-TOSSER sprite (Stage 5.5 UPDATE #85, user): a person standing on
+// the open fifth-floor slab midway between the elevator and the building's
+// right wall, LOOKING AT THE VIEWER. One hand holds a stack of BLANK WHITE
+// sheets (his CVs); the other hand is OPEN above his head — he has just flung
+// his CVs up into the air (the story: spamming his CV at every opportunity).
+// Wireframe-only pipeline: generated/dev/make_wire_cvtoss.py -> cvtoss-wire.png
+// -> NB2 Pro (n=3) -> picked cvtoss-gen_1 (front view, blank sheets, open
+// raised hand) -> key_cut_cvtoss.py (H_TARGET 50u -> body ~40u). Anchor = the
+// feet (bottommost pixel). The flying/loose papers are crisp SVG
+// (cvTossPapers()), NOT baked into the raster.
+const CVTOSS = { file: 'cvtoss-01-cut.png', w: 288, h: 995, k: 0.05051, ax: 10.03, ay: 50.10 }
+const CVTOSS_ANCHOR = [140, 210]
+// Floor-5 WORRIED person (Stage 5.5 UPDATE #88, user). REVISED from #87: the
+// screen is on the REAR wall, so a person looking at it faces AWAY from the
+// viewer — this is now a REAR THREE-QUARTER view (his back to us, turned up-left
+// toward the wall, his LEFT cheek toward the camera). Worried: a drop of sweat on
+// his LEFT cheek and his RIGHT hand (image right, as seen from behind) raised
+// scratching the top of his head. Wireframe-only pipeline (rear 3/4 view):
+// generated/dev/make_wire_worried2.py -> worried2-wire.png -> NB2 Pro (n=3) ->
+// picked worried2-gen_1 -> key_cut_worried.py (H_TARGET 45u -> body ~40u). Anchor =
+// the feet. UPDATE #89 (user, red arrow): moved to HIS LEFT (down-left on screen,
+// toward the viewer) — now standing in front of the screen, its right edge just
+// behind his shoulder.
+const WORRIED = { file: 'worried-01-cut.png', w: 283, h: 834, k: 0.05428, ax: 6.24, ay: 45.11 }
+const WORRIED_ANCHOR = [51, 552]
 function spritePlace(sp, uAnchor, vAnchor, hBase) {
   const [bx, by] = p(uAnchor, vAnchor, hBase).split(',').map(Number)
   return { x: round(bx - sp.ax), y: round(by - sp.ay) }
@@ -2484,6 +2509,61 @@ function whipperWhip() {
   ]
 }
 
+// Floor-5 tossed CVs (Stage 5.5 UPDATE #85, user): the flying paper sheets the
+// CV-TOSSER has flung up. Authored from the sprite's own top-left (like
+// whipperWhip), so the sheets stay glued to the hand when CVTOSS_ANCHOR is
+// nudged: ~5 sheets tumble just above/around the open raised hand, and ~6 arc
+// toward +u (up-right on screen) — the building's right wall — passing over it
+// into the dark. Sheets big enough to read carry the letters "CV"; small or
+// edge-on ones stay blank white. A paper is a rotated quad with a folded
+// corner, so it reads as a fresh sheet turning in the air.
+function cvTossPapers() {
+  const [sx, sy] = p(CVTOSS_ANCHOR[0], CVTOSS_ANCHOR[1], 5 * FH).split(',').map(Number)
+  const ox = sx - CVTOSS.ax
+  const oy = sy - CVTOSS.ay
+  const at = (px, py) => [ox + px * CVTOSS.k, oy + py * CVTOSS.k]
+  const [hx, hy] = at(172, 58) // the open hand near the top of the sprite
+  const out = []
+  const paper = (dx, dy, w, h, rot, cv, fold = 1) => {
+    const cx = hx + dx
+    const cy = hy + dy
+    const r = (rot * Math.PI) / 180
+    const c = Math.cos(r)
+    const s = Math.sin(r)
+    const P = (x, y) => `${round(cx + x * c - y * s)},${round(cy + x * s + y * c)}`
+    out.push(el('dw-paper-air', `M ${P(-w / 2, -h / 2)} L ${P(w / 2, -h / 2)} L ${P(w / 2, h / 2)} L ${P(-w / 2, h / 2)} Z`))
+    // folded corner (top-right for fold>0, top-left for fold<0): a curling sheet
+    const fx = fold >= 0 ? w / 2 : -w / 2
+    const f = h * 0.34
+    out.push(el('dw-paper-fold', `M ${P(fx, -h / 2)} L ${P(fx - fold * f, -h / 2)} L ${P(fx, -h / 2 + f * 0.7)} Z`))
+    if (cv) {
+      out.push(
+        `<text class="dw-cv-text" transform="translate(${round(cx)} ${round(cy)}) rotate(${round(rot)})" font-size="${round(h * 0.46)}">CV</text>`,
+      )
+    }
+  }
+  // 5 sheets tumbling just over the head, around the open raised hand
+  paper(-30, 8, 12, 9, -30, true, 1)
+  paper(2, -28, 10.5, 7.5, 16, false, -1)
+  paper(38, -4, 11.5, 8.5, 44, true, 1)
+  paper(-14, -32, 9.5, 7, -12, true, -1)
+  paper(18, -52, 10.5, 7.5, 4, false, 1)
+  // Denser fan INSIDE the flurry triangle above the hand (user revision r149):
+  // sheets spread from just above the head out to the upper-right, instead of a
+  // single thin trail into the dark.
+  paper(10, -95, 10.5, 8, -20, true, 1)
+  paper(46, -60, 11, 8.5, 30, true, -1)
+  paper(64, -108, 10, 7.5, -8, false, 1)
+  paper(100, -80, 12, 9, 42, true, 1)
+  paper(128, -112, 10, 7.5, 12, true, -1)
+  paper(34, -128, 9.5, 7, 6, false, -1)
+  // Only a short trail continues to the right edge (the far-off sheets were
+  // removed — they wandered too far out of the flurry).
+  paper(150, -48, 10.5, 8, 48, true, -1)
+  paper(184, -72, 12.5, 9, -14, false, 1)
+  return out
+}
+
 // Floor-5 AI-workflow board (UPDATE #79, user): the tall vertical
 // ai-workflow.jpg mounted on the C-D REAR wall at the D (rear-right) corner of
 // the unfinished fifth floor. Authored on the wall plane via cdWallSheet with
@@ -2499,6 +2579,32 @@ function aiWorkflowBoard() {
     [
       `<rect class="dw-graph-frame" x="${round(-b)}" y="${round(-b)}" width="${round(AIWF.W + 2 * b)}" height="${round(H + 2 * b)}" rx="0.6" />`,
       `<image href="${inlineAsset('ai-workflow.jpg', 'image/jpeg')}" x="0" y="0" width="${round(AIWF.W)}" height="${round(H)}" preserveAspectRatio="none" />`,
+    ],
+    5 * FH,
+  )
+}
+
+// Floor-5 AI-acceleration screen (Stage 5.5 UPDATE #86, user): the user-supplied
+// AI-Acceleration.png (1536x1024, a 3:2 "AI acceleration" headline collage)
+// mounted as a framed info screen on the unfinished fifth floor's REAR (C-D)
+// wall stub at the C corner — the surface the user's red circle marked, left of
+// the AI-workflow board. Same wall-plane sheet idiom as the Indelve promo screen
+// (cdWallSheet: dark bezel + inset image), with hBase = 5*FH so it sits on the
+// fifth story. Centred on the stub's mid-height (local h = 25) and about the
+// stub's u-centre (~47), so it fits inside the 50u-tall stub (u 0..95.2).
+const AISCREEN = { u0: 19, W: 56, hMid: 25 } // outer bezel: u 19..75, centred at h 25
+function aiAccelerationScreen() {
+  const b = 1 // bezel thickness
+  const imgW = AISCREEN.W - 2 * b
+  const imgH = imgW / (1536 / 1024) // preserve the asset's 3:2 aspect
+  const H = imgH + 2 * b
+  const hTop = AISCREEN.hMid + H / 2
+  return cdWallSheet(
+    AISCREEN.u0,
+    hTop,
+    [
+      `<rect class="dw-graph-frame" x="0" y="0" width="${round(AISCREEN.W)}" height="${round(H)}" rx="0.8" />`,
+      `<image href="${inlineAsset('AI-Acceleration.png')}" x="${round(b)}" y="${round(b)}" width="${round(imgW)}" height="${round(imgH)}" preserveAspectRatio="none" />`,
     ],
     5 * FH,
   )
@@ -2665,6 +2771,21 @@ const floor05Front = group('floor-05-front', [
   el('dw-wall-far', vFace(LD - WALL_T, 0, STUB_LEN * LW, 5 * FH, 5 * FH + STUB_H)),
   el('dw-slab-edge', uFace(0, LD - WALL_T, LD, 5 * FH, 5 * FH + STUB_H)),
   el('dw-slab', hFace(0, STUB_LEN * LW, LD - WALL_T, LD, 5 * FH + STUB_H)),
+  // AI-acceleration screen on the rear-wall stub (UPDATE #86, user): the user's
+  // red-marked surface. Drawn AFTER the stub so it paints on the wall.
+  ...aiAccelerationScreen(),
+  // Worried person reacting to the AI-acceleration screen (UPDATE #87/#88, user):
+  // stands on the floor just right of the screen, turned to FACE it (rear 3/4
+  // view). Drawn after the screen so he reads in front of the wall.
+  spriteShadow(WORRIED, WORRIED_ANCHOR[0], WORRIED_ANCHOR[1], 5 * FH),
+  assetProp(WORRIED, WORRIED_ANCHOR[0], WORRIED_ANCHOR[1], 5 * FH),
+  // CV-TOSSER (UPDATE #85, user): the person flinging his CVs up and toward the
+  // right wall, in the centre of the open fifth-floor area between the elevator
+  // and the right wall. Farther from the viewer than the toysite/whipper (larger
+  // v), so emitted before them.
+  spriteShadow(CVTOSS, CVTOSS_ANCHOR[0], CVTOSS_ANCHOR[1], 5 * FH),
+  assetProp(CVTOSS, CVTOSS_ANCHOR[0], CVTOSS_ANCHOR[1], 5 * FH),
+  ...cvTossPapers(),
   // Toysite (UPDATE #74, user): the half-built toy building + four worker robots
   // in the B (front-right) corner. Drawn LAST so the scene reads in front of the
   // right-wall stub; sits on the floor-5 slab (h = 5 * FH).

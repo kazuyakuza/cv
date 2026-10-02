@@ -238,6 +238,14 @@ export const svgStyle = `
     .dw-ladder-rung { fill: none; stroke: #b0332a; stroke-width: 1.5; stroke-linecap: round; }
     .dw-ladder-bracket { fill: none; stroke: #7d221c; stroke-width: 1; stroke-linecap: round; }
 
+    /* Floor-5 tossed CVs (UPDATE #85, user): the flying sheets the CV-tosser
+       has just flung up. Fresh near-white paper (a step brighter than the
+       floor papers so they read against the dark backdrop), a folded corner,
+       and the letters "CV" on the sheets large enough to carry them. */
+    .dw-paper-air { fill: #f7f5ee; stroke: #b3ac9c; stroke-width: 0.45; }
+    .dw-paper-fold { fill: #e7e2d4; stroke: #b3ac9c; stroke-width: 0.35; }
+    .dw-cv-text { fill: #3f4650; font-family: system-ui, sans-serif; font-weight: 700; text-anchor: middle; dominant-baseline: central; letter-spacing: -0.15; }
+
     /* Workstations (Stage 5.5 §10): dev desks come from generated
        sprites (src/assets/workstation-0X-cut.png, placed by
        assetWorkstation()); the old SVG desk classes were removed with them. */

@@ -15,7 +15,88 @@ user-reviewed visual-enrichment loop**: the user looks at a rendered PNG, sends 
 revision list (often with exact numbers / red marks), the session implements it,
 renders a new `rNN.png`, and the user reviews again.
 
-Latest round: **UPDATE #84** (2026-09-30) — floor-5 astronaut on the access
+Latest round: **UPDATE #88–#89** (2026-10-01) — worried person faces the AI screen
+(final render `generated/dev/r153.png`):
+
+- **`WORRIED` re-generated as a REAR three-quarter view (user revision).** The #87
+  sprite faced the VIEWER, i.e. away from the screen — wrong direction. The screen
+  is on the REAR wall, so a person looking at it faces AWAY from the camera: back to
+  us, turned up-left toward the wall, his LEFT cheek toward the camera (with the
+  sweat drop), his RIGHT hand (image right, as seen from behind) raised scratching
+  the top of his head. New wireframe `generated/dev/make_wire_worried2.py` →
+  `worried2-wire.png` → NB2 Pro (`_nb_gen_worried2.py`, n=3) → picked
+  `worried2-gen_1` → `key_cut_worried.py` (H_TARGET 45u → body ~40u). New
+  `WORRIED = { file: 'worried-01-cut.png', w: 283, h: 834, k: 0.05428, ax: 6.24,
+  ay: 45.11 }`; `WORRIED_ANCHOR = [79, 548]` — in front of and just right of the
+  screen, facing up-left at it. Checks clean (`npm run lint`, `npm run type-check`).
+  Crops `chk-worried` / `-wide` (helper `crop_r151.py`).
+- **r153 (user, red arrow):** the worried person moved to HIS LEFT (down-left on
+  screen, toward the viewer): `WORRIED_ANCHOR [79, 548] → [51, 552]`, so he now
+  stands IN FRONT of the screen (its right edge just behind his shoulder), still
+  facing up-left at it. Re-rendered `generated/dev/r153.png`.
+
+Earlier this round: **UPDATE #87** (2026-10-01) — floor-5 worried person (render
+`generated/dev/r151.png`):
+
+- **NEW sprite `WORRIED`** — a person standing on the fifth floor looking at the
+  AI-acceleration screen, worried: a drop of sweat on his LEFT cheek and his RIGHT
+  hand raised scratching the top of his head. Front view (we see the face). Same
+  wireframe-only pipeline: `generated/dev/make_wire_worried.py` →
+  `worried-wire.png` → NB2 Pro (`_nb_gen_worried.py`, n=3) → picked `worried-gen_1`
+  (worried face, head-scratch, sweat drop; gen_2 was cropped at the knees) →
+  `key_cut_worried.py` (H_TARGET 41u → body ~41u). `WORRIED = { file:
+  'worried-01-cut.png', w: 277, h: 824, k: 0.05006, ax: 7.73, ay: 41.10 }`
+  (anchor = feet); `WORRIED_ANCHOR = [95, 558]` — stands on the floor just right
+  of the screen, gazing up-left at it. Emitted in `floor-05-front` right after
+  `aiAccelerationScreen()` (so he reads in front of the wall). Checks clean
+  (`npm run lint`, `npm run type-check`). Crops: `chk-worried` / `-wide`
+  (helper `crop_r151.py`).
+
+Earlier this round: **UPDATE #86** (2026-10-01) — floor-5 AI-acceleration screen
+(render `generated/dev/r150.png`):
+
+- **NEW `aiAccelerationScreen()`** — the user-supplied `src/assets/AI-Acceleration.png`
+  (1536x1024, a 3:2 "AI acceleration" headline collage) mounted as a framed info
+  screen on the unfinished fifth floor's REAR (C-D) wall stub at the C corner —
+  the surface the user's red circle marked, left of the AI-workflow board. Same
+  wall-plane sheet idiom as the Indelve promo screen (`cdWallSheet`: `.dw-graph-frame`
+  bezel + inset image, `preserveAspectRatio="none"`), `hBase = 5*FH`.
+  `AISCREEN = { u0: 19, W: 56, hMid: 25 }` = outer bezel u 19..75, centred at
+  local h 25 (stub `u 0..95.2`, `h 0..50`). Emitted in `floor-05-front` right
+  after the stub walls so it paints on the wall. Checks clean (`npm run lint`,
+  `npm run type-check`). Crops: `chk-aiscreen` / `-tight` (helper `crop_r150.py`).
+
+Earlier this round: **UPDATE #85** (2026-09-30) — floor-5 CV-TOSSER (render
+`generated/dev/r148.png`):
+
+- **NEW sprite `CVTOSS`** — a person standing on the open fifth-floor slab midway
+  between the elevator and the building's right wall, LOOKING AT THE VIEWER. One
+  hand holds a stack of BLANK WHITE sheets (his CVs); the other hand is OPEN above
+  his head (he has just flung his CVs up) — the story: spamming his CV at every
+  opportunity. Wireframe-only pipeline (front-view figure, the ASTRO recipe):
+  `generated/dev/make_wire_cvtoss.py` → `cvtoss-wire.png` → NB2 Pro
+  (`_nb_gen_cvtoss.py`, n=3) → picked `cvtoss-gen_1` (front view, blank sheets,
+  open raised hand) → `key_cut_cvtoss.py` (H_TARGET 50u → body ~40u).
+  `CVTOSS = { file: 'cvtoss-01-cut.png', w: 288, h: 995, k: 0.05051, ax: 10.03,
+  ay: 50.10 }` (anchor = feet); `CVTOSS_ANCHOR = [140, 210]`.
+- **NEW `cvTossPapers()`** — the flying sheets, authored from the sprite's own
+  top-left (like `whipperWhip()`), so they follow the anchor: ~5 tumbling just
+  over the head / around the raised hand + 6 trailing toward +u (the building's
+  right wall), passing OVER the wall and out into the dark. Each sheet is a
+  rotated quad with a folded corner (`.dw-paper-air` + `.dw-paper-fold`); sheets
+  large enough carry the letters **"CV"** (`.dw-cv-text`), small/edge-on ones stay
+  blank white.
+- Emitted in `floor-05-front` BEFORE `TOYSITE` (farther from the viewer). Checks
+  clean (`npm run lint`, `npm run type-check`). Crops: `chk-cvtoss` / `-wide`,
+  `chk-f5cv` (helper `crop_r148.py`).
+- **r149 (user revision):** the THREE far-off trail sheets (hand-relative
+  `+240/-90`, `+292/-108`, `+334/-122`) were REMOVED — they wandered out of the
+  flurry — and the region was re-filled: the flurry now fans out INSIDE the
+  triangle just above the hand (5 over the head + 6 fanning up-right + a short
+  2-sheet trail to the right edge, ~13 sheets). Re-rendered `generated/dev/r149.png`
+  (crop `chk-cvflurry`, helper `crop_r149.py`).
+
+Earlier this round: **UPDATE #84** (2026-09-30) — floor-5 astronaut on the access
 ladder + starship platform re-centred + rocket nudged (render
 `generated/dev/r147.png`):
 
@@ -510,18 +591,21 @@ same-session block:
   shadow (`spriteShadow` gained an optional `bulge`; the fleets use the default
   1).
 
-**Pending on the user:** review `generated/dev/r147.png` (UPDATE #84; the next
-render is `r148.png`). UPDATE #81–#84 is now COMMITTED as **`8a8d65b`** (UPDATE
-#57–#80 was `701ffd4`), so the tree should be CLEAN and the assets
-`src/assets/starship.png`, `starship-01-cut.png`, `astro-01-cut.png` are tracked.
+**Pending on the user:** review `generated/dev/r153.png` (UPDATE #88–#89; the next
+render is `r154.png`). This whole round — **UPDATE #85–#89** (floor-5 CV-tosser,
+AI-acceleration screen, worried person) — is COMMITTED on top of **`8a8d65b`**
+(UPDATE #81–#84; UPDATE #57–#80 was `701ffd4`). The tree is CLEAN and the new
+assets `src/assets/cvtoss-01-cut.png`, `src/assets/worried-01-cut.png` and
+`src/assets/AI-Acceleration.png` are tracked.
 
 ## 1b. Start-of-session checklist (fresh session)
 
 1. Read this file, then `AGENTS.md` (the >30-images cap and the free-assets-only
    rule); the older continuation docs only on demand.
-2. `git log --oneline -6` + `git status` — expect a CLEAN tree at `8a8d65b`
-   (the floor-5 starship on the elevator roof + its SVG launch platform + the
-   astronaut on the access ladder; `701ffd4` before it).
+2. `git log --oneline -6` + `git status` — expect a CLEAN tree. HEAD is the
+   UPDATE #85–#89 commit (floor-5 CV-tosser + AI-acceleration screen + worried
+   person), whose parent is `8a8d65b` (starship on the elevator roof + SVG launch
+   platform + astronaut on the access ladder; `701ffd4` before it).
 3. Sanity-render before touching anything (§2) and compare with the previous
    round's PNG if the user reports something broken.
 4. Wait for the user's revision list, implement, re-render, report with the
@@ -650,10 +734,29 @@ Key floor-5 toysite numbers (UPDATE #76):
   (`whipperWhip()`, classes `.dw-whip` (one smooth curve) + `.dw-whip-hit` /
   `.dw-whip-hit-glow` (grey ＋/✕ crack lines)) runs from the handle tip
   (cut-px `232,6`) to the Toysite building, authored from the sprite's top-left.
+- `CVTOSS` `k 0.05051, ax 10.03, ay 50.10` (288x995 cut png), anchor
+  `CVTOSS_ANCHOR = [140, 210]` on the floor-5 slab (`5*FH`) — the CV-TOSSER
+  (UPDATE #85): a front-facing person flinging his CVs, midway between the
+  elevator and the right wall. Emitted in `floor-05-front` BEFORE `TOYSITE`.
+  PNG `src/assets/cvtoss-01-cut.png`. The flying sheets come from
+  `cvTossPapers()` — authored from the sprite's top-left via `at(px,py)` (open
+  hand at sprite-px `172,58`), the over-head burst within ±50 screen px of the
+  hand and the 6-sheet trail heading +u at ~19° into the dark. Classes
+  `.dw-paper-air` / `.dw-paper-fold` / `.dw-cv-text`.
 - `AIWF = { u0: 192, W: 26, hTop: 96 }` — the ai-workflow board on the C-D rear
   wall at the floor-5 D corner (`aiWorkflowBoard()`, `hBase = 5*FH`, H ≈ 88.2u).
   Asset `src/assets/ai-workflow.jpg` (1220x4139). Emitted at the end of
   `floor-05`.
+- `AISCREEN = { u0: 19, W: 56, hMid: 25 }` — the AI-acceleration screen
+  (`aiAccelerationScreen()`, UPDATE #86) on the C-corner rear-wall STUB
+  (`v = LD-WALL_T`, `hBase = 5*FH`): outer bezel `u 19..75`, centred at local
+  `h 25`; asset `src/assets/AI-Acceleration.png` (1536x1024, 3:2). Emitted in
+  `floor-05-front` right after the stub walls so it paints on the wall.
+- `WORRIED` `k 0.05428, ax 6.24, ay 45.11` (283x834 cut png), anchor
+  `WORRIED_ANCHOR = [51, 552]` on the floor-5 slab (`5*FH`) — the worried person
+  looking at the AI-acceleration screen (UPDATE #87/#88), in front of and just
+  right of it, REAR three-quarter view facing up-left at the wall. PNG
+  `src/assets/worried-01-cut.png`.
 - `LADDER = { vL: 312, uC: -1.4, railGap: 4.6, hBot: 5*FH, hTop: TOP_H,
   hookR: 7, run: 10, treads: 14 }` — the elevator access ladder, standing on the
   floor-5 slab just behind the shaft's rear-left corner (the user's red mark) in
@@ -817,11 +920,13 @@ career-sign
     other only above the roof, and its rails top out in hooks curving over the
     roof. The **`ASTRO` astronaut** (UPDATE #84) is emitted HERE too, just BEFORE
     `elevatorLadder()`, so the ladder draws over him.
-  - `floor-05-front`: the `TOYSITE` sprite (half-built toy building + four worker
-    robots) in the B corner (UPDATE #74), plus the `WHIPPER` person and his SVG
-    whip lash to its left (UPDATE #76), plus the SVG `starshipBase()` platform
-    and the `STARSHIP` sprite on the elevator roof (UPDATE #81/#82, re-centred
-    #84 r4, rocket nudged r5).
+  - `floor-05-front`: the `CVTOSS` person flinging his CVs (UPDATE #85) in the
+    centre of the area between the elevator and the right wall, with his flying
+    papers (`cvTossPapers()`), the `TOYSITE` sprite (half-built toy building +
+    four worker robots) in the B corner (UPDATE #74), the `WHIPPER` person and
+    his SVG whip lash to its left (UPDATE #76), plus the SVG `starshipBase()`
+    platform and the `STARSHIP` sprite on the elevator roof (UPDATE #81/#82,
+    re-centred #84 r4, rocket nudged r5).
   The rest of floor 5 is architectural shell + WIP tags only (unfinished by
   design). Pacer/floor-5 content beyond this is still undefined — **do NOT
   invent it; get it from the user.** (Small SVG accents for the toysite —
@@ -835,18 +940,20 @@ Sprite constants in `scripts/generate-geometry.mjs`: `PUEL_KIOSK`,
 `PIPE_H_SPRITE`, `CITY_BOARD`, `ARVR_PERSON`, `SITDEVS`, `TECHLEAD`, `SITDEV`,
 `TEAMCROSS`, `BOSSES`, `PCTOWERS`, `PRESENTER`, `TRANTORIAN_VR`, `QUEUE`,
 `FLEET_A`, `FLEET_B`, `PACER_LEGACY`, `PACER_AXE`, `TECHLEAD2`, `SITDEVS2`,
-`TOYSITE`, `WHIPPER`, `STARSHIP`, `ASTRO`
+`TOYSITE`, `WHIPPER`, `CVTOSS`, `WORRIED`, `STARSHIP`, `ASTRO`
 (plus the placement consts `PACER_XY`, `PACER_CABLE_AX`, `PACER_AXE_ANCHOR`,
 `TECHLEAD2_ANCHOR`, `SITDEVS2_ANCHOR`, `SITDEV_ANCHOR`, `PACER_TEAMCROSS`,
 `PACER_SHEET`, `PACER_CHAT`, `TOYSITE_ANCHOR`, `TOYSITE_OFF`, `WHIPPER_ANCHOR`,
-`AIWF`, `LADDER`, `STARSHIP_ANCHOR`, `STARSHIP_OFF`, `STARSHIP_BASE`,
-`ASTRO_ANCHOR`, `ASTRO_OFF`).
+`CVTOSS_ANCHOR`, `AIWF`, `AISCREEN`, `WORRIED_ANCHOR`, `LADDER`,
+`STARSHIP_ANCHOR`, `STARSHIP_OFF`, `STARSHIP_BASE`, `ASTRO_ANCHOR`, `ASTRO_OFF`).
 
 ## 7. Pending work / next steps
 
 1. **Continue the review loop** (the main pending work). The user reviews
-   `generated/dev/r147.png`; the next render is `r148.png`. Expect a revision list
-   with exact numbers; keep the §2 loop and commit only when asked.
+   `generated/dev/r153.png` (floor-5 CV-TOSSER + AI-acceleration screen + worried
+   person, UPDATE #88); the next render is `r154.png`. Expect a revision list with
+   exact numbers; keep the §2 loop and
+   commit only when asked.
 2. **Known open cosmetic items on floor 3 Indelve** (candidates for the user's
    next list): the fleet shadows are subtle against the dark nebula (raise the
    opacity or add a dedicated `.dw-fleet-shadow` class if asked); both fleets'
