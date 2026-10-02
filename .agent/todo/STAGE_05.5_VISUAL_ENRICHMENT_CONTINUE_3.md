@@ -593,19 +593,19 @@ same-session block:
 
 **Pending on the user:** review `generated/dev/r153.png` (UPDATE #88–#89; the next
 render is `r154.png`). This whole round — **UPDATE #85–#89** (floor-5 CV-tosser,
-AI-acceleration screen, worried person) — is COMMITTED on top of **`8a8d65b`**
-(UPDATE #81–#84; UPDATE #57–#80 was `701ffd4`). The tree is CLEAN and the new
-assets `src/assets/cvtoss-01-cut.png`, `src/assets/worried-01-cut.png` and
+AI-acceleration screen, worried person) — is COMMITTED as **`9ef78fe`** on top of
+**`8a8d65b`** (UPDATE #81–#84; UPDATE #57–#80 was `701ffd4`). The tree is CLEAN and
+the new assets `src/assets/cvtoss-01-cut.png`, `src/assets/worried-01-cut.png` and
 `src/assets/AI-Acceleration.png` are tracked.
 
 ## 1b. Start-of-session checklist (fresh session)
 
 1. Read this file, then `AGENTS.md` (the >30-images cap and the free-assets-only
    rule); the older continuation docs only on demand.
-2. `git log --oneline -6` + `git status` — expect a CLEAN tree. HEAD is the
-   UPDATE #85–#89 commit (floor-5 CV-tosser + AI-acceleration screen + worried
-   person), whose parent is `8a8d65b` (starship on the elevator roof + SVG launch
-   platform + astronaut on the access ladder; `701ffd4` before it).
+2. `git log --oneline -6` + `git status` — expect a CLEAN tree at **`9ef78fe`**
+   (UPDATE #85–#89: floor-5 CV-tosser + AI-acceleration screen + worried person);
+   its parent `8a8d65b` is UPDATE #81–#84 (starship on the elevator roof + SVG
+   launch platform + astronaut on the access ladder; `701ffd4` before it).
 3. Sanity-render before touching anything (§2) and compare with the previous
    round's PNG if the user reports something broken.
 4. Wait for the user's revision list, implement, re-render, report with the
