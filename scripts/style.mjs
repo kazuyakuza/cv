@@ -39,27 +39,30 @@ export const svgStyle = `
        faces, so horizontal surfaces read as catching light */
     .dw-slab { fill: #aab2b1; stroke: #4c4a44; stroke-width: 1.2; }
     /* Rear-wall inner faces: far side of the section — lighter lines and
-       warm greige fill, reduced contrast for depth (Stage 4 §8).
-       The interior stays warm and brighter than the cool exterior, but no
-       longer near-white: recessed depth without losing readability. */
-    .dw-wall-far { fill: #ddd5c2; stroke: #6e6b61; stroke-width: 0.9; }
+       reduced contrast for depth (Stage 4 §8).
+       UPDATE #92 palette pass (reference, Stage 5.5 §3): the interior walls
+       move from warm cream (#ddd5c2) to a cool light concrete, so the building
+       reads cool-grey like the reference while the WARM floors supply the
+       contrast. */
+    .dw-wall-far { fill: #d2d2cb; stroke: #6e6b61; stroke-width: 0.9; }
     /* Floor-3 section separation (Stage 4.5 §3.3): fill-only face with
        outline edges in the far stroke, base unstroked. Stage 5 review
        (user revision): the face is clipped to the rear wall's inner-face
        polygon in the generator, so it only ever paints over that wall —
        it therefore takes the WALL tone and merges with it seamlessly; the
        floor behind the separation stays one continuous floor material. */
-    .dw-wall-far-fill { fill: #ddd5c2; stroke: none; }
+    .dw-wall-far-fill { fill: #d2d2cb; stroke: none; }
     .dw-far-line { fill: none; stroke: #4c4a44; stroke-width: 1.2; }
     /* Panel joints on the interior far walls (Stage 5.5 §8): sparse vertical
        seams, hashed per story — painted-wall articulation, hand-placed feel.
        Low contrast on purpose: readable up close, quiet at overview size. */
-    .dw-wall-seam { fill: none; stroke: #c3b99e; stroke-width: 0.7; }
+    .dw-wall-seam { fill: none; stroke: #b7bbb6; stroke-width: 0.7; }
 
     /* Tier 2 — secondary architectural lines */
-    /* Interior partitions: warm greige, slightly lighter than the far walls
-       so the section's interior layering reads (Stage 5 §6) */
-    .dw-partition { fill: #e7e0cd; stroke: #7a766b; stroke-width: 0.75; }
+    /* Interior partitions: slightly lighter than the far walls so the
+       section's interior layering reads (Stage 5 §6); cool concrete to match
+       the UPDATE #92 palette pass. */
+    .dw-partition { fill: #dcddd8; stroke: #7a766b; stroke-width: 0.75; }
     .dw-opening { fill: none; stroke: #5d5a52; stroke-width: 0.9; }
     /* Elevator: solid architectural shaft (not glass). A distinctly darker,
        cooler structure than the floors and walls, so the shaft reads as its
@@ -96,14 +99,16 @@ export const svgStyle = `
        isometric slope of the wall tops, while constant-h parallelograms hug
        it exactly — and the stepped wash keeps the flat, illustrated
        material language. No outlines: shade only, subordinate to lines. */
-    .dw-shade-a { fill: #3a3833; fill-opacity: 0.15; stroke: none; }
-    .dw-shade-b { fill: #3a3833; fill-opacity: 0.08; stroke: none; }
-    .dw-shade-c { fill: #3a3833; fill-opacity: 0.04; stroke: none; }
+    /* UPDATE #92 palette pass (reference): the recessed areas read a touch
+       darker, for the reference's stronger under-slab / ceiling depth. */
+    .dw-shade-a { fill: #3a3833; fill-opacity: 0.19; stroke: none; }
+    .dw-shade-b { fill: #3a3833; fill-opacity: 0.10; stroke: none; }
+    .dw-shade-c { fill: #3a3833; fill-opacity: 0.05; stroke: none; }
 
     /* Floor/wall contact shadow (Stage 5.5 §9): a thin translucent band on
        the floor hugging each rear wall's base — quiet ambient occlusion so
        wall and floor visibly meet instead of floating apart */
-    .dw-contact { fill: #3a3833; fill-opacity: 0.10; stroke: none; }
+    .dw-contact { fill: #3a3833; fill-opacity: 0.13; stroke: none; }
 
     /* Service pipes (Stage 5.5 §7): vertical runs come from the
        user-approved generated sprite (src/assets/pipe-01.png, inlined by the

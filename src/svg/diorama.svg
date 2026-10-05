@@ -29,27 +29,30 @@
        faces, so horizontal surfaces read as catching light */
     .dw-slab { fill: #aab2b1; stroke: #4c4a44; stroke-width: 1.2; }
     /* Rear-wall inner faces: far side of the section — lighter lines and
-       warm greige fill, reduced contrast for depth (Stage 4 §8).
-       The interior stays warm and brighter than the cool exterior, but no
-       longer near-white: recessed depth without losing readability. */
-    .dw-wall-far { fill: #ddd5c2; stroke: #6e6b61; stroke-width: 0.9; }
+       reduced contrast for depth (Stage 4 §8).
+       UPDATE #92 palette pass (reference, Stage 5.5 §3): the interior walls
+       move from warm cream (#ddd5c2) to a cool light concrete, so the building
+       reads cool-grey like the reference while the WARM floors supply the
+       contrast. */
+    .dw-wall-far { fill: #d2d2cb; stroke: #6e6b61; stroke-width: 0.9; }
     /* Floor-3 section separation (Stage 4.5 §3.3): fill-only face with
        outline edges in the far stroke, base unstroked. Stage 5 review
        (user revision): the face is clipped to the rear wall's inner-face
        polygon in the generator, so it only ever paints over that wall —
        it therefore takes the WALL tone and merges with it seamlessly; the
        floor behind the separation stays one continuous floor material. */
-    .dw-wall-far-fill { fill: #ddd5c2; stroke: none; }
+    .dw-wall-far-fill { fill: #d2d2cb; stroke: none; }
     .dw-far-line { fill: none; stroke: #4c4a44; stroke-width: 1.2; }
     /* Panel joints on the interior far walls (Stage 5.5 §8): sparse vertical
        seams, hashed per story — painted-wall articulation, hand-placed feel.
        Low contrast on purpose: readable up close, quiet at overview size. */
-    .dw-wall-seam { fill: none; stroke: #c3b99e; stroke-width: 0.7; }
+    .dw-wall-seam { fill: none; stroke: #b7bbb6; stroke-width: 0.7; }
 
     /* Tier 2 — secondary architectural lines */
-    /* Interior partitions: warm greige, slightly lighter than the far walls
-       so the section's interior layering reads (Stage 5 §6) */
-    .dw-partition { fill: #e7e0cd; stroke: #7a766b; stroke-width: 0.75; }
+    /* Interior partitions: slightly lighter than the far walls so the
+       section's interior layering reads (Stage 5 §6); cool concrete to match
+       the UPDATE #92 palette pass. */
+    .dw-partition { fill: #dcddd8; stroke: #7a766b; stroke-width: 0.75; }
     .dw-opening { fill: none; stroke: #5d5a52; stroke-width: 0.9; }
     /* Elevator: solid architectural shaft (not glass). A distinctly darker,
        cooler structure than the floors and walls, so the shaft reads as its
@@ -86,14 +89,16 @@
        isometric slope of the wall tops, while constant-h parallelograms hug
        it exactly — and the stepped wash keeps the flat, illustrated
        material language. No outlines: shade only, subordinate to lines. */
-    .dw-shade-a { fill: #3a3833; fill-opacity: 0.15; stroke: none; }
-    .dw-shade-b { fill: #3a3833; fill-opacity: 0.08; stroke: none; }
-    .dw-shade-c { fill: #3a3833; fill-opacity: 0.04; stroke: none; }
+    /* UPDATE #92 palette pass (reference): the recessed areas read a touch
+       darker, for the reference's stronger under-slab / ceiling depth. */
+    .dw-shade-a { fill: #3a3833; fill-opacity: 0.19; stroke: none; }
+    .dw-shade-b { fill: #3a3833; fill-opacity: 0.10; stroke: none; }
+    .dw-shade-c { fill: #3a3833; fill-opacity: 0.05; stroke: none; }
 
     /* Floor/wall contact shadow (Stage 5.5 §9): a thin translucent band on
        the floor hugging each rear wall's base — quiet ambient occlusion so
        wall and floor visibly meet instead of floating apart */
-    .dw-contact { fill: #3a3833; fill-opacity: 0.10; stroke: none; }
+    .dw-contact { fill: #3a3833; fill-opacity: 0.13; stroke: none; }
 
     /* Service pipes (Stage 5.5 §7): vertical runs come from the
        user-approved generated sprite (src/assets/pipe-01.png, inlined by the
@@ -456,6 +461,7 @@
        <path class="dw-shade-c" d="M339.38,766.86 L507.9,707.03 L507.65,694.89 L339.39,754.44 Z" />
        <path class="dw-contact" d="M904.48,930.56 L912.76,927.41 L502.41,784.73 L494.27,787.1 Z" />
        <path class="dw-contact" d="M348.23,844.34 L516.5,785.22 L507.3,782.05 L340.01,841.22 Z" />
+       <image href="__ASSET__pipe-01.png__" x="866.57" y="821.26" width="7.36" height="97.5" preserveAspectRatio="none" />
        <path class="dw-paper" d="M466.3,885.16 L470.36,883.45 L463.21,881.6 L458.93,883.55 Z" />
        <path class="dw-paper" d="M463.73,883.8 L470.39,882.38 L465.67,879.99 L460.09,881.38 Z" />
        <path class="dw-paper" d="M468.91,879.22 L472.98,878.35 L466.44,876.05 L462.78,877.42 Z" />

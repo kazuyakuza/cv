@@ -904,6 +904,16 @@ function assetPipe(u, v, hBase, hLen) {
   const y = by - hLen
   return `<image href="${inlineAsset(PIPE_SPRITE.file)}" x="${round(x)}" y="${round(y)}" width="${PIPE_SPRITE.w}" height="${round(hLen)}" preserveAspectRatio="none" />`
 }
+// UPDATE #92 (reference): one service riser now runs the FULL building height.
+// Floor 2's single pipe was already reference-inspired ("like the reference's
+// pipes"); repeating it every story at the same plan position makes a bold
+// yellow run that reads as continuous vertical infrastructure crossing floors
+// (Stage 5.5 §7 + the primary reference's signature), instead of a one-floor
+// fragment. Each segment lives inside its own floor group, so the story above
+// occludes its top exactly like the floor-2 original.
+const RISER_U = 227.5
+const RISER_V = 60
+const serviceRiser = (hBase) => assetPipe(RISER_U, RISER_V, hBase - PIPE_DROP, STORY_H + PIPE_DROP)
 
 // Horizontal wall run from the pre-tilted sprite: the approved flat pipe
 // sprite rotated -19.29 deg once at full resolution with PIL (left end up,
@@ -1443,6 +1453,7 @@ function nextcodePamphlet() {
 const floorGround = group('floor-ground', [
   ...slab(0),
   ...backWalls(0),
+  serviceRiser(0),
   // Paper piles hugging partition-2's base on the freelancer side (user
   // screenshot 1 + 2, "correct layer"): emitted BEFORE the wall so the
   // wall's face paints over their far halves — they read as tucked under

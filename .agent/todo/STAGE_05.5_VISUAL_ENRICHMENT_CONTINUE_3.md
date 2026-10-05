@@ -15,7 +15,24 @@ user-reviewed visual-enrichment loop**: the user looks at a rendered PNG, sends 
 revision list (often with exact numbers / red marks), the session implements it,
 renders a new `rNN.png`, and the user reviews again.
 
-Latest: **UPDATE #91** (2026-10-05) — malformed-path fix + fleet shadows + favicon:
+Latest: **UPDATE #92** (2026-10-05) — reference palette pass + ground-floor pipe:
+
+- **Global palette pass (reference, Stage 5.5 §3; user-approved).** The interior
+  wall family moves from warm cream to cool light concrete — far walls /
+  section-separation fill `#ddd5c2` → `#d2d2cb`, partitions `#e7e0cd` → `#dcddd8`,
+  panel seams `#c3b99e` → `#b7bbb6` — and recesses deepen (under-slab bands
+  `0.15/0.08/0.04` → `0.19/0.10/0.05`, floor/wall contact `0.10` → `0.13`). Floors
+  stay warm, so the building now reads cool-concrete walls / warm floors like the
+  reference. BEFORE/AFTER `generated/dev/cmp-palette.png` (r155 vs r159); overview
+  `generated/dev/r159-overview.png`. A first attempt scoped to the ground floor only
+  was invisible (its rear walls are occluded by partitions) and was reverted.
+- **Ground-floor service pipe (user: pipes only on the ground floor).** The floor-2
+  pipe was generalized into a `serviceRiser(hBase)` helper and emitted ONCE, on the
+  ground floor (`serviceRiser(0)`, render `generated/dev/r158.png`); the riser
+  segments on floors 1/3/4/5 were removed. Floor 2's original pipe is untouched.
+- Checks clean (`npm run lint`, `npm run type-check`, `npm run build`).
+
+Earlier: **UPDATE #91** (2026-10-05) — malformed-path fix + fleet shadows + favicon:
 
 - **Bug fix — malformed SVG `d` (browser console warning).** The generator built the
   IMC board's second ink stroke as `M ${round(sx(0.36)) + round(4 * k)}`; because
@@ -1019,19 +1036,24 @@ Sprite constants in `scripts/generate-geometry.mjs`: `PUEL_KIOSK`,
 ## 7. Pending work / next steps
 
 1. **Continue the review loop** (the main pending work). `UPDATE #90` externalized
-   the raster assets (SVG 33 MB → 157 KB) and `UPDATE #91` fixed the malformed path,
-   the fleet shadows and the favicon — all VISUAL content is otherwise unchanged from
-   `generated/dev/r153.png` (floor-5 CV-TOSSER + AI-acceleration screen + worried
-   person, UPDATE #88; `r154.png`/`r155.png` are the post-#90/#91 self-checks). The
-   user marked all floors' content correct; expect the next revision list with exact
-   numbers, keep the §2 loop, and commit (#90+#91) only when asked.
+   the raster assets (SVG 33 MB → 157 KB), `#91` fixed the malformed path / fleet
+   shadows / favicon, and `#92` did the reference palette pass + the ground-floor
+   pipe (latest render `generated/dev/r159.png`, palette BEFORE/AFTER
+   `cmp-palette.png`). The user marked all floors' content correct and approved the
+   palette; expect the next revision list, keep the §2 loop, and commit only when
+   asked.
 2. **Known open cosmetic items on floor 3 Indelve** (candidates for the user's
-   next list; **fleet contact shadows are DONE in #91**): both fleets' fighter spread
+   next list; **fleet contact shadows DONE in #91**): both fleets' fighter spread
    extends past the board edge onto the wood floor (only the shadows are clipped, not
    the sprites); the near fleet's hull still crosses the board's near-left corner and
    the "Indelve" plaque's right edge (it is drawn over the plaque by design now); the
    board's far-right corner + fleet B's stern remain hidden behind the elevator
    (user-accepted).
+2b. **Reference-fidelity follow-ups** (spec §17; user-directed, do NOT expand
+   unilaterally): the palette is now cooler but did NOT add the reference's mustard
+   infrastructure accent — the vertical pipe exists only on the ground floor
+   (`serviceRiser(0)`), deliberately. Further reference work (accents, surface wear,
+   roof/shaft equipment) awaits the user.
 3. **Not-yet-done content** (ask the user before starting): the rest of the large
    floor-3 Interactica area, any further Indelve props (do NOT invent Indelve
    content), and the REST of Pacer/floor-5 props — Pacer currently has ONLY the
