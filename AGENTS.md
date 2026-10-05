@@ -58,6 +58,11 @@ Do not force every visual element to be vectorized.
 - HTML/CSS for information overlays where useful
 - Overview mode via query parameter (screenshot-friendly); Detailed mode is the default
 - Hosted on GitHub Pages; avoid unnecessary implementation complexity
+- **Raster assets are served as separate files, never base64.** The SVG generator
+  emits `__ASSET__<file>__` tokens; `src/App.vue` resolves them to Vite-hashed URLs
+  of the optimized derivatives in `src/assets/serve/` (built from the full-res
+  masters in `src/assets/` by `scripts/optimize-assets.py`). Update the master, run
+  that script, then `npm run svg:generate` + `svg:assemble`.
 - **Image generation (nano-banana MCP)** is available for generating utility
   raster assets that may be included in the diorama. Use it sparingly — only
   when a generated asset materially improves the result (the AGENTS.md

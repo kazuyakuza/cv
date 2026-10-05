@@ -15,7 +15,61 @@ user-reviewed visual-enrichment loop**: the user looks at a rendered PNG, sends 
 revision list (often with exact numbers / red marks), the session implements it,
 renders a new `rNN.png`, and the user reviews again.
 
-Latest round: **UPDATE #88–#89** (2026-10-01) — worried person faces the AI screen
+Latest: **UPDATE #91** (2026-10-05) — malformed-path fix + fleet shadows + favicon:
+
+- **Bug fix — malformed SVG `d` (browser console warning).** The generator built the
+  IMC board's second ink stroke as `M ${round(sx(0.36)) + round(4 * k)}`; because
+  `round()` returns a STRING, `+` concatenated it into `19.913.14`, so Chrome dropped
+  that "X" stroke and logged a warning. Now `round(sx(0.36) + 4 * k)`. Audited the
+  generator for other `round()`-concatenations — none remain. Console is clean.
+- **Fleet contact shadows fixed (user: "fix the fleet shadows").** `spriteShadow()`
+  gained an optional `shade` (`{ fill, opacity }`); the two Indelve fleets now use
+  `FLEET_SHADE = { fill: '#04060a', opacity: 0.5 }` with `FLEET_SHADE_BULGE = 1.2`
+  (was 22% `#141618`) so the hovering hulls visibly seat on the dark nebula board
+  (still clipped to `dw-clip-board-screen`). Crops `chk-fleets` / `-wide`
+  (`generated/dev/crop_r155.py`), render `generated/dev/r155.png` (last CONTENT
+  render is still `r153.png`).
+- **Favicon:** NEW `public/favicon.svg` — a "JEB" monogram (dark `#191b1d` rounded
+  square, cream `#d8d4ca` letters, electric-blue `#5fdcff` accent; palette matches
+  `src/styles/base.css`), linked from `index.html`
+  (`<link rel="icon" type="image/svg+xml" href="favicon.svg" />`). Verified HTTP 200
+  in the built preview.
+- **Unused masters verified NOT shipped** (D11): `pipe-h-01.png` and `starship.png`
+  are unreferenced, so they are absent from `src/assets/serve/` and `dist/`; they
+  remain in `src/assets/` as masters only. `dist/` total is unchanged.
+- Checks clean (`npm run lint`, `npm run type-check`, `npm run build`); built preview
+  shows 0 console errors / warnings and 0 failed requests.
+
+Earlier (infrastructure): **UPDATE #90** (2026-10-05) — raster assets externalized,
+base64 gone (user decision: use the image files directly):
+
+- **The assembled SVG no longer embeds base64 images.** `inlineAsset()` in
+  `scripts/generate-geometry.mjs` now emits a `__ASSET__<file>__` token per image;
+  `src/App.vue` resolves each token to the Vite-hashed URL of the matching
+  optimized derivative in `src/assets/serve/` via
+  `import.meta.glob('./assets/serve/*', { eager: true, query: '?url',
+  import: 'default' })` (throws if a token has no derivative). `vite.config.ts`
+  sets `build.assetsInlineLimit: 0` so Vite never re-inlines.
+- **NEW `scripts/optimize-assets.py`** builds `src/assets/serve/` from the
+  FULL-RES masters in `src/assets/` (masters are never written): only files the
+  generator references, longest side capped at **768 px** (exact aspect + alpha
+  preserved), PNG `optimize=True` / JPEG q82, and it keeps whichever of
+  (derivative, master) is smaller. 41 derivatives, **~9.7 MB** (masters 21.6 MB,
+  53% off). Rerun after adding/changing a referenced asset. Unreferenced masters
+  kept as-is: `pipe-h-01.png`, `starship.png`.
+- **Sizes:** `src/svg/diorama.svg` 33 MB → **157 KB**; fragments now KB-scale;
+  the production build serves 43 hashed image files. `vite build` + `vite preview`
+  verified in a browser: 46 `<image>` refs, 0 unresolved tokens, 0 failed asset
+  requests. Review render `r154.png` differs from `r153.png` on only 3.05% of
+  pixels (max delta 90) — the expected 768 px resample, geometry unchanged
+  (diff is image hrefs only).
+- **Dev preview updated:** `generated/dev/make_chk.py` now resolves the tokens to
+  inline base64 from `src/assets/serve/` and inlines the SVG into `chk.html` (an
+  SVG loaded via `<img>` cannot load external refs, so the wrapper no longer uses
+  `<img src="diorama.svg">`).
+- Checks clean (`npm run lint`, `npm run type-check`, `npm run build`).
+
+Earlier this round: **UPDATE #88–#89** (2026-10-01) — worried person faces the AI screen
 (final render `generated/dev/r153.png`):
 
 - **`WORRIED` re-generated as a REAR three-quarter view (user revision).** The #87
@@ -591,29 +645,37 @@ same-session block:
   shadow (`spriteShadow` gained an optional `bulge`; the fleets use the default
   1).
 
-**Pending on the user:** review `generated/dev/r153.png` (UPDATE #88–#89; the next
-render is `r154.png`). This whole round — **UPDATE #85–#89** (floor-5 CV-tosser,
-AI-acceleration screen, worried person) — is COMMITTED as **`9ef78fe`** on top of
-**`8a8d65b`** (UPDATE #81–#84; UPDATE #57–#80 was `701ffd4`). The tree is CLEAN and
-the new assets `src/assets/cvtoss-01-cut.png`, `src/assets/worried-01-cut.png` and
-`src/assets/AI-Acceleration.png` are tracked.
+**Pending on the user:** the VISUAL round to review is `generated/dev/r153.png`
+(UPDATE #88–#89; UPDATE #90 reproduced it as `r154.png` after the asset change, and
+the next REGULAR render is `r155.png`). **UPDATE #85–#89** (floor-5 CV-tosser,
+AI-acceleration screen, worried person) is COMMITTED as **`9ef78fe`** on top of
+**`8a8d65b`** (UPDATE #81–#84; UPDATE #57–#80 was `701ffd4`). **UPDATE #90** (asset
+externalization) and **UPDATE #91** (malformed-path fix + fleet shadows + favicon)
+are present in the working tree but **uncommitted** — the tree is DIRTY with the
+#90/#91 changes (`scripts/generate-geometry.mjs`, `src/App.vue`, `vite.config.ts`,
+`index.html`, `AGENTS.md`, regenerated `src/svg/*`, NEW `scripts/optimize-assets.py`,
+`src/assets/serve/`, `public/favicon.svg`).
 
 ## 1b. Start-of-session checklist (fresh session)
 
 1. Read this file, then `AGENTS.md` (the >30-images cap and the free-assets-only
    rule); the older continuation docs only on demand.
-2. `git log --oneline -6` + `git status` — expect a CLEAN tree at **`9ef78fe`**
-   (UPDATE #85–#89: floor-5 CV-tosser + AI-acceleration screen + worried person);
-   its parent `8a8d65b` is UPDATE #81–#84 (starship on the elevator roof + SVG
-   launch platform + astronaut on the access ladder; `701ffd4` before it).
+2. `git log --oneline -6` + `git status` — HEAD is **`9ef78fe`** (UPDATE #85–#89:
+   floor-5 CV-tosser + AI-acceleration screen + worried person; parent `8a8d65b` is
+   UPDATE #81–#84 starship/astronaut, `701ffd4` before it). The tree may be DIRTY
+   with the **uncommitted UPDATE #90/#91** changes (asset externalization + path
+   fix/fleet shadows/favicon); if so, do NOT be alarmed and do NOT revert them. See
+   UPDATE #90/#91 at the top of §1.
 3. Sanity-render before touching anything (§2) and compare with the previous
    round's PNG if the user reports something broken.
 4. Wait for the user's revision list, implement, re-render, report with the
    render path + crop names. **Commit only when the user asks.**
 5. The user often edits `src/assets/*.png` IN PLACE between rounds (e.g. they
-   recoloured fleet B). After such an edit: confirm the pixel size is unchanged,
-   rebuild (the assets are base64-inlined by `npm run svg:generate`), and
-   re-measure `ax/ay` only if the size changed.
+   recoloured fleet B). After such an edit: run `python scripts\optimize-assets.py`
+   to refresh the `src/assets/serve/` derivative, then `npm run svg:generate` (+
+   `svg:assemble`), and re-measure `ax/ay` only if the pixel size changed. (Pixel
+   sizes are virtual — an in-place edit with the same dimensions needs no constant
+   changes; UPDATE #90 externalized the images so nothing is base64-baked anymore.)
 
 ## 2. Dev workflow (exact commands, from the repo root `C:\repo\cv`)
 
@@ -635,7 +697,14 @@ Notes:
   `crop('chk-fleets', 400, 505, 600, 600, 5)`.
 - `generated/` is gitignored — all dev scripts, probes and renders live there and
   are NOT committed. Committed artifacts: `src/svg/diorama.svg`,
-  `src/svg/fragments/*.svg`, `src/assets/*`, `scripts/*.mjs` and the docs.
+  `src/svg/fragments/*.svg`, `src/assets/*` (masters) + `src/assets/serve/*`
+  (optimized derivatives), `scripts/*.mjs`, `scripts/optimize-assets.py` and the docs.
+- **Assets (UPDATE #90):** the assembled SVG carries `__ASSET__<file>__` tokens, not
+  base64. `inlineAsset()` emits the token; `src/App.vue` maps it to the Vite-hashed
+  URL of the matching `src/assets/serve/` derivative. To change/add a referenced
+  asset: edit the master in `src/assets/`, run `python scripts\optimize-assets.py`,
+  then `svg:generate` + `svg:assemble`. `make_chk.py` resolves the tokens to inline
+  base64 for the headless preview.
 - Handy dev tools in `generated/dev/`: `make_chk.py`, `crop_rNN.py` (copy the
   previous one and retune the boxes), `crop_fleet_queue.py` (zoomed fleet/queue
   boundary), `list_images.py` (prints every `<image>` x/y/w/h in the assembled
@@ -949,19 +1018,20 @@ Sprite constants in `scripts/generate-geometry.mjs`: `PUEL_KIOSK`,
 
 ## 7. Pending work / next steps
 
-1. **Continue the review loop** (the main pending work). The user reviews
+1. **Continue the review loop** (the main pending work). `UPDATE #90` externalized
+   the raster assets (SVG 33 MB → 157 KB) and `UPDATE #91` fixed the malformed path,
+   the fleet shadows and the favicon — all VISUAL content is otherwise unchanged from
    `generated/dev/r153.png` (floor-5 CV-TOSSER + AI-acceleration screen + worried
-   person, UPDATE #88); the next render is `r154.png`. Expect a revision list with
-   exact numbers; keep the §2 loop and
-   commit only when asked.
+   person, UPDATE #88; `r154.png`/`r155.png` are the post-#90/#91 self-checks). The
+   user marked all floors' content correct; expect the next revision list with exact
+   numbers, keep the §2 loop, and commit (#90+#91) only when asked.
 2. **Known open cosmetic items on floor 3 Indelve** (candidates for the user's
-   next list): the fleet shadows are subtle against the dark nebula (raise the
-   opacity or add a dedicated `.dw-fleet-shadow` class if asked); both fleets'
-   fighter spread extends past the board edge onto the wood floor (only the
-   shadows are clipped, not the sprites); the near fleet's hull still crosses the
-   board's near-left corner and the "Indelve" plaque's right edge (it is drawn
-   over the plaque by design now); the board's far-right corner + fleet B's stern
-   remain hidden behind the elevator (user-accepted).
+   next list; **fleet contact shadows are DONE in #91**): both fleets' fighter spread
+   extends past the board edge onto the wood floor (only the shadows are clipped, not
+   the sprites); the near fleet's hull still crosses the board's near-left corner and
+   the "Indelve" plaque's right edge (it is drawn over the plaque by design now); the
+   board's far-right corner + fleet B's stern remain hidden behind the elevator
+   (user-accepted).
 3. **Not-yet-done content** (ask the user before starting): the rest of the large
    floor-3 Interactica area, any further Indelve props (do NOT invent Indelve
    content), and the REST of Pacer/floor-5 props — Pacer currently has ONLY the
@@ -970,9 +1040,11 @@ Sprite constants in `scripts/generate-geometry.mjs`: `PUEL_KIOSK`,
    user's details. Then Stage 6 (career content) → 7 (information layer) → 8
    (display modes incl. the `?overview` query param) → 9 (Vue integration) →
    10 (polish/deploy to GitHub Pages).
-4. **Stage-10 item**: `src/svg/diorama.svg` is ~16 MB, almost all base64 sprite
-   PNGs. A downscale/re-encode pass (or external `<image href>` files) is needed
-   before deployment.
+4. **Stage-10 item — DONE in UPDATE #90**: the SVG's base64 bloat is gone (33 MB →
+   157 KB); raster assets are served as hashed files from `src/assets/serve/`
+   (~9.7 MB, 768 px cap). The user reviewed the size (UPDATE #91) and said it is OK
+   for now; the optional WebP (lossy+alpha) derivative pass is DEFERRED (masters
+   stay untouched if revisited).
 5. Never commit `src/assets/*.tmp` (0-byte save leftovers from the user's image
    drops) — they show up as untracked and must stay out of commits.
 6. Acceptance criteria for calling 5.5 complete: `.agent/todo/STAGE_05.5_VISUAL_ENRICHMENT.md` §17.

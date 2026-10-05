@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync } from 'node:fs'
+import { writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -8,12 +8,13 @@ import { fileURLToPath } from 'node:url'
 // labels.svg stay hand-authored. Edit parameters here, re-run
 // `npm run svg:generate`, then `npm run svg:assemble`.
 
-// Utility raster assets (Stage 5.5 §6): small generated elements embedded
-// into the SVG as base64 data URIs so the assembled master stays
-// self-contained (dev server, static build and standalone file all work).
-const ASSETS_DIR = join(dirname(fileURLToPath(import.meta.url)), '..', 'src', 'assets')
-const inlineAsset = (name, mime = 'image/png') =>
-  `data:${mime};base64,${readFileSync(join(ASSETS_DIR, name)).toString('base64')}`
+// Utility raster assets (Stage 5.5): the generator emits a `__ASSET__<file>__`
+// token per image instead of inlining base64 bytes. `src/App.vue` maps each
+// token to the Vite-hashed URL of the matching optimized derivative in
+// `src/assets/serve/` (built by `scripts/optimize-assets.py`); the dev preview
+// (`generated/dev/make_chk.py`) resolves the same tokens to inline data URIs.
+// Full-resolution masters live in `src/assets/` and are never modified.
+const inlineAsset = (name) => `__ASSET__${name}__`
 
 // ---------------------------------------------------------------------------
 // Shared parameters (mirror of src/svg/README.md)
@@ -632,11 +633,13 @@ function assetProp(sp, uAnchor, vAnchor, hBase, off) {
 // honest plan footprint). Screen-space ellipse sized to the sprite's base,
 // locked to the sprite via spritePlace; same blurred language as the
 // career-sign shadow (#141618, dw-soft).
-function spriteShadow(sp, uAnchor, vAnchor, hBase, off, bulge = 1) {
+function spriteShadow(sp, uAnchor, vAnchor, hBase, off, bulge = 1, shade = {}) {
   const { x, y } = spritePlace(sp, uAnchor, vAnchor, hBase)
   const [ox, oy] = off || [0, 0]
   const w = sp.w * sp.k
-  return `<ellipse cx="${round(Number(x) + w / 2 + ox)}" cy="${round(Number(y) + sp.ay - 1 + oy)}" rx="${round(w * 0.44 * bulge)}" ry="${round(3.6 * bulge)}" fill="#141618" fill-opacity="0.22" filter="url(#dw-soft)" />`
+  const fill = shade.fill ?? '#141618'
+  const opacity = shade.opacity ?? 0.22
+  return `<ellipse cx="${round(Number(x) + w / 2 + ox)}" cy="${round(Number(y) + sp.ay - 1 + oy)}" rx="${round(w * 0.44 * bulge)}" ry="${round(3.6 * bulge)}" fill="${fill}" fill-opacity="${opacity}" filter="url(#dw-soft)" />`
 }
 
 // Floating holographic panel for the AR/VR vignette (r36 review, user): a
@@ -1892,7 +1895,10 @@ const IMC_HOME_BOARD = {
       `<path class="dw-note-ink" d="M ${round(sx(1.04))} ${round(sy(0.16))} Q ${round(sx(1.12))} ${round(sy(0.30))} ${round(sx(1.02))} ${round(sy(0.40))}" />`,
       `<path class="dw-note-ink" d="M ${round(sx(1.02))} ${round(sy(0.40))} l ${round(2.2 * k)} ${round(-2.6 * k)} M ${round(sx(1.02))} ${round(sy(0.40))} l ${round(2.6 * k)} ${round(2.2 * k)}" />`,
       // Blue felt-tip: the second news story is placeholder copy (crossed out).
-      `<path class="dw-note-ink2" d="M ${round(sx(0.36))} ${round(sy(0.58))} l ${round(4 * k)} ${round(sy(0.68) - sy(0.58))} M ${round(sx(0.36)) + round(4 * k)} ${round(sy(0.58))} l ${round(-4 * k)} ${round(sy(0.68) - sy(0.58))}" />`,
+      // NOTE: arithmetic must happen INSIDE round(): round() returns a STRING,
+      // so `round(a) + round(b)` would concatenate digits (this produced the
+      // malformed `M 19.913.14 …` path fixed in UPDATE #91).
+      `<path class="dw-note-ink2" d="M ${round(sx(0.36))} ${round(sy(0.58))} l ${round(4 * k)} ${round(sy(0.68) - sy(0.58))} M ${round(sx(0.36) + 4 * k)} ${round(sy(0.58))} l ${round(-4 * k)} ${round(sy(0.68) - sy(0.58))}" />`,
       // Red tick beside Catálogo de Premios, ring the user name + points line
       // (they have to come from the API, not be hard-coded).
       `<path class="dw-note-ink" d="M ${round(sx(0.96))} ${round(sy(0.19))} ${tick()}" />`,
@@ -2029,17 +2035,22 @@ function indelveBoard() {
 // too, so it stays under its hull.
 const FLEET_A_OFF = [410 - 413.41, 525 - 530.8]
 const FLEET_B_OFF = [480 - 491.69, 530 - 541.58]
+// UPDATE #91 (user): the default 22% near-black contact shadow vanished against
+// the dark `deep-space.jpg` nebula. The hovering hulls use a stronger, wider
+// shade so they visibly seat on the board (still clipped to the board polygon).
+const FLEET_SHADE = { fill: '#04060a', opacity: 0.5 }
+const FLEET_SHADE_BULGE = 1.2
 function indelveFleetA() {
   const H = 3 * FH + 10
   return [
-    `<g clip-path="url(#dw-clip-board-screen)">${spriteShadow(FLEET_A, 5.2, 447.1, H - 10, FLEET_A_OFF)}</g>`,
+    `<g clip-path="url(#dw-clip-board-screen)">${spriteShadow(FLEET_A, 5.2, 447.1, H - 10, FLEET_A_OFF, FLEET_SHADE_BULGE, FLEET_SHADE)}</g>`,
     assetProp(FLEET_A, -27.3, 414.6, H, FLEET_A_OFF),
   ]
 }
 function indelveFleetB() {
   const H = 3 * FH + 10
   return [
-    `<g clip-path="url(#dw-clip-board-screen)">${spriteShadow(FLEET_B, 53.1, 358.8, H - 10, FLEET_B_OFF)}</g>`,
+    `<g clip-path="url(#dw-clip-board-screen)">${spriteShadow(FLEET_B, 53.1, 358.8, H - 10, FLEET_B_OFF, FLEET_SHADE_BULGE, FLEET_SHADE)}</g>`,
     assetProp(FLEET_B, 21.2, 326.9, H, FLEET_B_OFF),
   ]
 }
