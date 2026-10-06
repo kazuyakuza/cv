@@ -1,5 +1,10 @@
 # Stage 5.5 — Visual Enrichment, Assets and Diorama Atmosphere
 
+> **STATUS: COMPLETE (2026-10-05).** Every requirement below was implemented and
+> user-reviewed; the acceptance criteria (§17) were met. See
+> `.agent/todo/STAGE_05.5_VISUAL_ENRICHMENT_CONTINUE_3.md` for the final handoff.
+> Stages 6–10 are out of scope for 5.5 (future sessions).
+
 ## Purpose
 
 Significantly improve the visual quality of the current diorama without redesigning its established architecture.

@@ -24,13 +24,14 @@ Do not force every visual element to be vectorized.
 
 ## Development Status
 
-- Stages 0–5 are complete (wireframe → geometry → structure → illustration
-  style → materials/details); **Stage 5.5 (visual enrichment) is in
-  progress** — iterative, user-reviewed rounds driven by rendered reviews
-  (see `.agent/todo/STAGE_05.5_VISUAL_ENRICHMENT_CONTINUE_3.md` — the current
-  handoff; `…_CONTINUE_2.md` and `…_CONTINUE.md` are the history).
-- Remaining stages: 6 career content → 7 information layer → 8 display modes
-  → 9 Vue integration → 10 polish/deployment.
+- **Stages 0–5.5 are complete** (wireframe → geometry → structure →
+  illustration style → materials/details → visual enrichment). Stage 5.5 was
+  closed on 2026-10-05; it met its acceptance criteria
+  (`STAGE_05.5_VISUAL_ENRICHMENT.md` §17) and is documented in
+  `.agent/todo/STAGE_05.5_VISUAL_ENRICHMENT_CONTINUE_3.md` (the final handoff;
+  `…_CONTINUE_2.md` / `…_CONTINUE.md` are the history).
+- **Next: Stage 6 (career content)**, then 7 information layer → 8 display
+  modes → 9 Vue integration → 10 polish/deployment. These are future sessions.
 
 ## Core Principles
 

@@ -1,5 +1,10 @@
 # Stage 05.5 Visual Enrichment — Continuation #3 (fresh session handoff)
 
+> **STATUS: STAGE 5.5 COMPLETE (2026-10-05).** Closed after UPDATE #92; the §17
+> acceptance criteria are met (`STAGE_05.5_VISUAL_ENRICHMENT.md` §17). This file
+> is now the stage's final handoff/history, not an active work queue — see §7.
+> Stages 6–10 are out of scope here (future sessions).
+
 > Start here. This is the condensed, self-contained handoff for the NEXT session.
 > History: `STAGE_05.5_VISUAL_ENRICHMENT_CONTINUE_2.md` (UPDATE #37–#56) and
 > `STAGE_05.5_VISUAL_ENRICHMENT_CONTINUE.md` (UPDATE #1–#36) — read them only if
@@ -1033,40 +1038,32 @@ Sprite constants in `scripts/generate-geometry.mjs`: `PUEL_KIOSK`,
 `CVTOSS_ANCHOR`, `AIWF`, `AISCREEN`, `WORRIED_ANCHOR`, `LADDER`,
 `STARSHIP_ANCHOR`, `STARSHIP_OFF`, `STARSHIP_BASE`, `ASTRO_ANCHOR`, `ASTRO_OFF`).
 
-## 7. Pending work / next steps
+## 7. Status — STAGE 5.5 COMPLETE (2026-10-05)
 
-1. **Continue the review loop** (the main pending work). `UPDATE #90` externalized
-   the raster assets (SVG 33 MB → 157 KB), `#91` fixed the malformed path / fleet
-   shadows / favicon, and `#92` did the reference palette pass + the ground-floor
-   pipe (latest render `generated/dev/r159.png`, palette BEFORE/AFTER
-   `cmp-palette.png`). The user marked all floors' content correct and approved the
-   palette; expect the next revision list, keep the §2 loop, and commit only when
-   asked.
-2. **Known open cosmetic items on floor 3 Indelve** (candidates for the user's
-   next list; **fleet contact shadows DONE in #91**): both fleets' fighter spread
-   extends past the board edge onto the wood floor (only the shadows are clipped, not
-   the sprites); the near fleet's hull still crosses the board's near-left corner and
-   the "Indelve" plaque's right edge (it is drawn over the plaque by design now); the
-   board's far-right corner + fleet B's stern remain hidden behind the elevator
-   (user-accepted).
-2b. **Reference-fidelity follow-ups** (spec §17; user-directed, do NOT expand
-   unilaterally): the palette is now cooler but did NOT add the reference's mustard
-   infrastructure accent — the vertical pipe exists only on the ground floor
-   (`serviceRiser(0)`), deliberately. Further reference work (accents, surface wear,
-   roof/shaft equipment) awaits the user.
-3. **Not-yet-done content** (ask the user before starting): the rest of the large
-   floor-3 Interactica area, any further Indelve props (do NOT invent Indelve
-   content), and the REST of Pacer/floor-5 props — Pacer currently has ONLY the
-   legacy-stack corner (#57–#62), the spreadsheet sheet (#63–#64) and the team
-   billboards/clusters around it (#65–#72); everything else there needs the
-   user's details. Then Stage 6 (career content) → 7 (information layer) → 8
-   (display modes incl. the `?overview` query param) → 9 (Vue integration) →
-   10 (polish/deploy to GitHub Pages).
-4. **Stage-10 item — DONE in UPDATE #90**: the SVG's base64 bloat is gone (33 MB →
-   157 KB); raster assets are served as hashed files from `src/assets/serve/`
-   (~9.7 MB, 768 px cap). The user reviewed the size (UPDATE #91) and said it is OK
-   for now; the optional WebP (lossy+alpha) derivative pass is DEFERRED (masters
-   stay untouched if revisited).
-5. Never commit `src/assets/*.tmp` (0-byte save leftovers from the user's image
-   drops) — they show up as untracked and must stay out of commits.
-6. Acceptance criteria for calling 5.5 complete: `.agent/todo/STAGE_05.5_VISUAL_ENRICHMENT.md` §17.
+Stage 5.5 is closed. The §17 acceptance criteria are met (verified on user review):
+atmospheric dark backdrop; integrated ground/base; substantially stronger tonal
+contrast; distinguishable materials; populated interiors with meaningful props;
+infrastructure in multiple areas including multi-floor runs (elevator shaft conduit
++ staircase); surface seams and subtle variation; readable recessed depth; a richer
+coherent palette (UPDATE #92); integrated (not pasted) assets; unchanged building and
+career structure; modular/editable SVG; clear visual hierarchy; and the §17 final
+test — "an illustrated architectural diorama rather than a flat diagram" — passed.
+
+- Latest render: `generated/dev/r159.png` (current); palette BEFORE/AFTER
+  `generated/dev/cmp-palette.png` (r155 warm → r159 cool).
+- Content on every floor is user-approved. Closing commits: `#90/#91` (`323f3d8`,
+  asset externalization + malformed-path fix + fleet shadows + favicon) and `#92`
+  (`3ff09a1`, reference palette pass + ground-floor service pipe).
+
+**Intentionally NOT done in 5.5** (on request only, or out of scope):
+1. Optional detail: small SVG accents beside the floor-5 toy building (loose
+   blocks/debris, welding sparks).
+2. Optional size win: WebP derivatives for `src/assets/serve/` (served payload
+   ~9.7 MB; the user OK'd the size for now — masters must stay untouched).
+3. Floor-3 Indelve fleet fighters overhang the board onto the wood floor: the user
+   confirmed the fleets are correct as-is — leave them.
+4. **Out of scope for 5.5 → future sessions:** Stage 6 (career content) → 7
+   (information layer) → 8 (display modes, incl. the `?overview` query param) →
+   9 (Vue integration) → 10 (polish/deploy to GitHub Pages).
+
+Never commit `src/assets/*.tmp` (0-byte save leftovers from the user's image drops).
