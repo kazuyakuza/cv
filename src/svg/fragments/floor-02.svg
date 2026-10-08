@@ -19,6 +19,13 @@
   <path class="dw-shade-c" d="M339.99,556.17 L507.4,497.64 L507.54,485.14 L339.84,544.03 Z" />
   <path class="dw-contact" d="M903.95,720.82 L913.29,718.24 L502.34,574.1 L493.68,577.79 Z" />
   <path class="dw-contact" d="M347.88,634.24 L515.89,575.08 L507.54,572.42 L339.88,631.66 Z" />
+  <path class="dw-wear" d="M 387.03,795.24 L 390.17,793.64" />
+  <path class="dw-wear" d="M 391.13,774.25 L 396.58,772.97" />
+  <path class="dw-wear-seam" d="M 389.41,817.34 L 389.46,740.43" />
+  <path class="dw-crack" d="M 387.56,799.35 L 388.15,794.7 L 386.94,792.17 L 387.63,788.22" />
+  <path class="dw-patch" d="M374.08,780.87 L381.53,777.85 L381.44,752.24 L374,754.72 Z" />
+  <line class="dw-wall-seam" x1="372.09" y1="613.44" x2="371.72" y2="541.86" />
+  <g transform="matrix(0.7071 -0.2475 0 1 375.51 555.02)"><image href="__ASSET__fixture-lamp-01.png__" x="0" y="0" width="10" height="13" preserveAspectRatio="none" /></g>
   <path class="dw-graph-frame" d="M404.4,594.91 L435.66,584.17 L435.63,558.42 L404.59,568.92 Z" />
   <path class="dw-graph-face" d="M404.67,594.36 L434.48,583.52 L435.11,559.44 L404.92,570.15 Z" />
   <path class="dw-graph-title" d="M405.15,573.27 L434.23,563.65 L434.59,560.73 L405.61,570.54 Z" />
@@ -108,4 +115,9 @@
   <circle class="dw-rack-vent" cx="641.37" cy="693.44" r="0.6" />
   <line class="dw-rack-slot" x1="629.73" y1="701.03" x2="629.78" y2="670.01" />
   <line class="dw-rack-slot" x1="627.71" y1="699.94" x2="627.78" y2="668.93" />
+  <path class="dw-wall" style="stroke-width:0.5" d="M367.99,641.68 L339.82,631.7 L339.92,538.92 L368.03,549.04 L366.74,566.2 L370.76,587.19 L369.68,604.61 L369.24,623.73 Z" />
+  <path class="dw-slab" d="M368.03,549.04 L373,547.13 L344.74,537.59 L339.92,538.92 Z" />
+  <g transform="matrix(0.7071 0.2475 0 1 347.04 581.99)"><image href="__ASSET__fixture-vent-01.png__" x="0" y="0" width="14" height="14" preserveAspectRatio="none" /></g>
+  <path class="dw-wall" style="stroke-width:0.5" d="M902.41,721.5 L918.07,716.29 L917.86,624.04 L902.69,628.53 L899.94,648.42 L903.23,665.62 L906.14,683.78 L900.39,704.47 Z" />
+  <path class="dw-slab" d="M902.69,628.53 L917.86,624.04 L912.97,621.83 L897.97,627.55 Z" />
 </g>

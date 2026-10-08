@@ -2,6 +2,9 @@
   <path class="dw-floor dw-f0" d="M749.66,985.15 L918.11,925.82 L503.02,780.93 L334.67,839.09 Z" />
   <path class="dw-slab-edge" d="M749.66,985.15 L918.11,925.82 L917.93,938.77 L749.92,997.28 Z" />
   <path class="dw-slab-edge" d="M749.66,985.15 L334.67,839.09 L333.7,852.26 L749.92,997.28 Z" />
+  <path class="dw-slab-lip" d="M 749.92,997.28 L 917.93,938.77" />
+  <path class="dw-slab-seam" d="M 774.92,976.4 L 775.2,989.3" />
+  <path class="dw-slab-seam" d="M 894.76,934.2 L 895.44,946.37" />
   <path class="dw-wall-far" d="M912.76,927.41 L502.41,784.73 L502.96,678.88 L913.14,823.33 Z" />
   <path class="dw-slab-edge" d="M912.76,927.41 L918.11,925.82 L918.57,821.58 L913.14,823.33 Z" />
   <path class="dw-wall-far" d="M340.01,841.22 L507.3,782.05 L507.39,677.56 L339.84,735.92 Z" />
@@ -98,6 +101,13 @@
 </g>
   <image href="__ASSET__meeting-01-cut.png__" x="572.78" y="852.07" width="68.83" height="51.77" preserveAspectRatio="none" />
   <path class="dw-contact" d="M623.76,907.63 L668.99,891.38 L613.27,871.87 L567.95,887.56 Z" />
+  <path class="dw-partition" style="stroke-width:0.5" d="M650.67,948.82 L622.66,938.89 L624.49,929.01 L624.13,917.47 L620.38,905.36 L620.34,894.58 L621.84,884.47 L650.12,895.03 Z" />
+  <path class="dw-slab" d="M650.12,895.03 L655.5,892.9 L627.23,883.14 L621.84,884.47 Z" />
+  <path class="dw-wear" d="M 638.75,926.37 L 635.08,926.49" />
+  <path class="dw-wear" d="M 637.29,911.99 L 630.75,909.56" />
+  <path class="dw-wear-seam" d="M 632.91,933.2 L 633.01,895.25" />
+  <path class="dw-crack" d="M 632.78,924.66 L 632.04,920.96 L 633.51,917.23 L 632.63,913.69" />
+  <path class="dw-patch" d="M644.01,916.08 L638.24,914.46 L638.77,901.2 L644.41,902.84 Z" />
   <path class="dw-partition" d="M654.11,951.24 L654.25,858.84 L816.6,801.59 L817.01,894.64 L703.74,934.24 L703.7,881.01 L664.75,895.18 L664,947.83 Z" />
   <path class="dw-partition" d="M703.74,934.24 L697.79,931.97 L698.3,883.87 L703.7,881.01 Z" />
   <line class="dw-opening" x1="664.75" y1="895.18" x2="703.7" y2="881.01" />
@@ -132,6 +142,23 @@
   <path class="dw-crate" d="M825.43,905.79 L817.03,902.39 L816.73,890.45 L825.73,893.32 Z" />
   <path class="dw-crate-top" d="M825.73,893.32 L838.17,889.68 L828.29,886.62 L816.73,890.45 Z" />
   <path class="dw-crate-line" d="M 825.4,901.35 L 816.23,898.33" />
+  <path class="dw-wall" style="stroke-width:0.5" d="M749.66,985.15 L776.29,976.38 L776.39,957.03 L775.54,939.52 L776.48,920.44 L776.46,901.84 L776.17,883.31 L749.47,892.3 Z" />
+  <path class="dw-slab" d="M749.47,892.3 L776.17,883.31 L770.16,881.81 L744.28,890.68 Z" />
+  <path class="dw-wall" style="stroke-width:0.5" d="M749.66,985.15 L720.92,975.04 L718.73,955.78 L718.01,937.22 L722.89,919.47 L722.1,901.59 L720.49,881.92 L749.47,892.3 Z" />
+  <path class="dw-slab" d="M749.47,892.3 L755.56,891.05 L726.03,880.28 L720.49,881.92 Z" />
+  <path class="dw-wear" d="M 763.48,946.22 L 768,943.45" />
+  <path class="dw-wear" d="M 762.4,953.31 L 768.71,952.96" />
+  <path class="dw-wear-seam" d="M 760.65,970.24 L 760.46,897.93" />
+  <path class="dw-crack" d="M 763.28,952.27 L 763.95,947.66 L 762.94,944.77 L 763.26,941.72" />
+  <path class="dw-patch" d="M755.24,932.16 L761.29,930.95 L761.04,906.07 L755.67,908.46 Z" />
+  <path class="dw-wear" d="M 732.77,921.6 L 729.07,920.77" />
+  <path class="dw-wear" d="M 743.66,915.24 L 738.89,914.8" />
+  <path class="dw-wear-seam" d="M 730.14,967.03 L 730.69,895.46" />
+  <path class="dw-crack" d="M 735.21,951.58 L 734.89,947.68 L 735.9,944.76 L 735.69,940.81" />
+  <path class="dw-patch" d="M743.6,932.15 L737.17,929.85 L737.63,905.98 L743.05,907.74 Z" />
+  <g transform="matrix(0.7071 -0.2475 0 1 755.61 910.93)"><image href="__ASSET__fixture-panel-01.png__" x="0" y="0" width="15" height="19" preserveAspectRatio="none" /></g>
+  <g transform="matrix(0.7071 -0.2475 0 1 769.06 938)"><image href="__ASSET__fixture-switch-01.png__" x="0" y="0" width="6" height="8.5" preserveAspectRatio="none" /></g>
+  <g transform="matrix(0.7071 0.2475 0 1 726.34 906.9)"><image href="__ASSET__fixture-vent-01.png__" x="0" y="0" width="17" height="17" preserveAspectRatio="none" /></g>
   <line class="dw-column" x1="749.66" y1="985.15" x2="749.47" y2="892.3" />
   <line class="dw-column" x1="918.11" y1="925.82" x2="918.58" y2="833.35" />
   <line class="dw-column" x1="334.67" y1="839.09" x2="334.49" y2="747.04" />

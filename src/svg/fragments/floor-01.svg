@@ -20,6 +20,13 @@
   <path class="dw-contact" d="M904.86,826.37 L913.14,823.33 L502.96,678.88 L494.43,682.7 Z" />
   <path class="dw-contact" d="M347.78,739.11 L363.09,733.87 L355.01,731.4 L339.84,735.92 Z" />
   <path class="dw-contact" d="M438,707.7 L515.81,679.97 L507.39,677.56 L429.06,704.38 Z" />
+  <path class="dw-wear" d="M 376.38,786.85 L 382.03,785.48" />
+  <path class="dw-wear" d="M 374.5,763.47 L 378.54,761.46" />
+  <path class="dw-wear" d="M 376.05,795.45 L 380.23,793.75" />
+  <path class="dw-wear" d="M 368.84,789.27 L 371.28,788.96" />
+  <path class="dw-wear-seam" d="M 377.8,821.14 L 378.15,744.9" />
+  <path class="dw-crack" d="M 379.18,802.04 L 379.57,798.38 L 378.76,795.86 L 379.29,791.86" />
+  <path class="dw-patch" d="M347.64,789.37 L363.19,783.97 L363.01,758.63 L347.62,764.66 Z" />
   <path class="dw-paper" d="M358.13,727.96 L402.96,712.13 L403.83,652.41 L358.18,667.91 Z" />
   <path class="dw-paper" d="M359.11,726.12 L402.94,711.34 L402.35,653.5 L358.89,668.64 Z" />
   <path class="dw-scribble" d="M 359.87 723.38 Q 375.4 718.84 392.61 712.22" />
@@ -328,6 +335,10 @@
   <path class="dw-partition" d="M684.53,792.64 L679.01,791.04 L679.22,741.85 L684.46,740.79 Z" />
   <line class="dw-opening" x1="646.02" y1="754.17" x2="684.46" y2="740.79" />
   <path class="dw-slab-edge" d="M626.39,812.57 L621.64,811.47 L621.04,718.97 L627.08,721.07 Z" />
+  <g transform="matrix(0.7071 0.2475 0 1 901.66 760.71)"><image href="__ASSET__fixture-vent-01.png__" x="0" y="0" width="14" height="14" preserveAspectRatio="none" /></g>
+  <g transform="matrix(0.7071 -0.2475 0 1 343.66 685.36)"><image href="__ASSET__fixture-panel-01.png__" x="0" y="0" width="12" height="15" preserveAspectRatio="none" /></g>
+  <path class="dw-wall" style="stroke-width:0.5" d="M736.13,875.23 L643.61,842.38 L646.1,825.19 L641.18,805.21 L642.88,787.28 L641.33,767.35 L644.09,750.85 L736.02,782.19 L737.42,801.43 L735.17,819.14 L736.99,838 L735.52,856.09 Z" />
+  <path class="dw-slab" d="M736.02,782.19 L740.68,780.82 L649.35,748.13 L644.09,750.85 Z" />
   <line class="dw-column" x1="750.14" y1="879.67" x2="750.37" y2="787.05" />
   <line class="dw-column" x1="918.57" y1="821.58" x2="918.67" y2="728.48" />
   <line class="dw-column" x1="334.63" y1="734.76" x2="333.85" y2="642.45" />

@@ -23,21 +23,26 @@
 // No gradients yet: flat tonal separation first.
 
 export const svgStyle = `
-    /* Tier 1 — primary structural lines */
-    .dw-column { fill: none; stroke: #3a3833; stroke-width: 1.8; stroke-linecap: round; }
+    /* Tier 1 — primary structural lines.
+       Stage 5.6 §13 (user: conservative bump): the contour hierarchy is a
+       modest step heavier than Stage 5.5 — silhouette, slab edges, walls,
+       columns and floor outlines carry the reference's stronger definition
+       while tier-2/3 stay comparatively lighter, so not all lines read
+       equally dark. */
+    .dw-column { fill: none; stroke: #3a3833; stroke-width: 2; stroke-linecap: round; }
     /* Floor top surfaces: warm pale base tone, clearly apart from the walls.
        Per-floor material classes (dw-f0 … dw-f5) override this in Phase 2. */
-    .dw-floor { fill: #cdc6b0; stroke: #4c4a44; stroke-width: 1.2; }
+    .dw-floor { fill: #cdc6b0; stroke: #4c4a44; stroke-width: 1.35; }
     /* Cut faces (open-side slab bands, wall/partition cut ends): section
        poché — darker warm tone + restrained 45° hatch (Stage 4 §7, §24) */
-    .dw-slab-edge { fill: url(#dw-cut); stroke: #4c4a44; stroke-width: 1.2; }
+    .dw-slab-edge { fill: url(#dw-cut); stroke: #4c4a44; stroke-width: 1.45; }
     /* Near/exterior wall faces (entrance portal, fifth-floor wall arms):
        muted cool concrete — the exterior material identity (Stage 5 §6),
        now distinctly darker/cooler than the interior (Stage 5.5 §3) */
-    .dw-wall { fill: #98a2a3; stroke: #4c4a44; stroke-width: 1.2; }
+    .dw-wall { fill: #98a2a3; stroke: #4c4a44; stroke-width: 1.4; }
     /* Thin wall/shaft top caps: slightly lighter concrete than the wall
        faces, so horizontal surfaces read as catching light */
-    .dw-slab { fill: #aab2b1; stroke: #4c4a44; stroke-width: 1.2; }
+    .dw-slab { fill: #aab2b1; stroke: #4c4a44; stroke-width: 1.3; }
     /* Rear-wall inner faces: far side of the section — lighter lines and
        reduced contrast for depth (Stage 4 §8).
        UPDATE #92 palette pass (reference, Stage 5.5 §3): the interior walls
@@ -117,6 +122,9 @@ export const svgStyle = `
        brackets) are the supporting cast */
     .dw-jbox { fill: #4a4842; stroke: #2e2c28; stroke-width: 0.8; }
     .dw-conduit { fill: #55534c; stroke: #3a3833; stroke-width: 0.7; }
+    /* Open service runs (segRun): stroke-only, so a polyline stays a tube-like
+       line instead of filling the polygon it spans */
+    .dw-conduit-line { fill: none; stroke: #3a3833; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
 
     /* Server rack (Stage 5.5 §10): Health Platforms' DBA story. Same dark
        steel family as the junction boxes but as a full-height cabinet:
@@ -308,6 +316,48 @@ export const svgStyle = `
        were all removed on user review — pipe, wall patch, panel, vent — so
        only the banister line survives.) */
     .dw-rail { fill: none; stroke: #5d5a52; stroke-width: 1; stroke-linecap: round; }
+
+    /* Stage 5.6 — architectural-refinement vocabulary (floor-by-floor pass).
+       Partial walls reuse the wall/partition families; the fixtures, surface
+       wear, slab construction and red/orange construction accents live in
+       their own quiet classes so they stay subordinate to the architecture
+       and to the information layer. */
+    /* Wall-mounted fixtures: panels, boxes, switches — light metal, a step
+       below the information plaques */
+    .dw-fixture { fill: #bcb8ad; stroke: #5d5a52; stroke-width: 0.7; }
+    .dw-fixture-side { fill: #9a968b; stroke: #5d5a52; stroke-width: 0.7; }
+    .dw-fixture-top { fill: #c9c5ba; stroke: #5d5a52; stroke-width: 0.6; }
+    /* Ventilation grille: recessed dark opening with lighter slats */
+    .dw-grille { fill: #57544c; stroke: #3a3833; stroke-width: 0.6; }
+    .dw-grille-line { fill: none; stroke: #8f8b80; stroke-width: 0.55; }
+    /* Switch plate + toggle */
+    .dw-switch { fill: #c4c0b5; stroke: #5d5a52; stroke-width: 0.6; }
+    .dw-switch-dot { fill: #4a4842; stroke: none; }
+    /* Wall light: warm body + soft glow (a wash, never a hard UI glow) */
+    .dw-lamp { fill: #b7b3a8; stroke: #5d5a52; stroke-width: 0.6; }
+    .dw-lamp-core { fill: #f2e3b0; stroke: none; }
+    .dw-lamp-warm { fill: #ffd98a; }
+    .dw-glow { fill: #ffe4a6; fill-opacity: 0.16; stroke: none; }
+    .dw-glow-red { fill: #e08a72; fill-opacity: 0.2; }
+    /* Indicator/status lights */
+    .dw-indicator { fill: #8aa878; stroke: none; }
+    .dw-indicator-red { fill: #c0503f; stroke: none; }
+    /* Surface wear (Stage 5.6 §10): quiet scratches, seams, cracks, patches —
+       walls used and maintained, not destroyed */
+    .dw-wear { fill: none; stroke: #9d998e; stroke-width: 0.5; stroke-opacity: 0.5; stroke-linecap: round; }
+    .dw-wear-seam { fill: none; stroke: #b3afa4; stroke-width: 0.6; stroke-opacity: 0.55; }
+    .dw-crack { fill: none; stroke: #8c877c; stroke-width: 0.55; stroke-opacity: 0.6; stroke-linecap: round; stroke-linejoin: round; }
+    .dw-patch { fill: #c6c2b7; fill-opacity: 0.4; stroke: none; }
+    /* Slab construction (Stage 5.6 §9) */
+    .dw-slab-lip { fill: none; stroke: #b8b4a9; stroke-width: 1; stroke-linecap: round; }
+    .dw-slab-seam { fill: none; stroke: #7d786d; stroke-width: 0.6; stroke-opacity: 0.7; }
+    .dw-bracket { fill: none; stroke: #4a4842; stroke-width: 1.1; stroke-linecap: round; stroke-linejoin: round; }
+    /* Red/orange construction & utility accents (Stage 5.6 §7): deliberate
+       and sparse against the muted palette — never a whole red floor */
+    .dw-accent-red { fill: #b0332a; stroke: #6e1f19; stroke-width: 0.7; }
+    .dw-accent-red-line { fill: none; stroke: #b0332a; stroke-width: 1.6; stroke-linecap: round; }
+    .dw-accent-orange { fill: #c06a34; stroke: #6e3a1a; stroke-width: 0.7; }
+    .dw-accent-orange-line { fill: none; stroke: #c06a34; stroke-width: 1.4; stroke-linecap: round; }
 
     /* Tier 3 — tertiary / subtle lines. Stage 5.5 §4: the terrain is now a
        dark presentation base that frames the building — a quiet stage plane

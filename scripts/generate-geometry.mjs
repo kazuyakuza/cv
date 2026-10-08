@@ -141,6 +141,203 @@ const boxOnUWall = (uFront, uWall, v0, v1, h0, h1, cls = 'dw-jbox') => [
   el(cls, vFace(v1, uFront, uWall, h0, h1)),
 ]
 
+// ---------------------------------------------------------------------------
+// Stage 5.6 — architectural-refinement vocabulary
+// ---------------------------------------------------------------------------
+// Reusable primitives for the floor-by-floor pass (partial walls, wall
+// fixtures, surface wear, slab construction, brackets and connected
+// infrastructure). All are authored in the building's own u/v/h projection
+// through the same p()/uFace()/vFace()/hFace() helpers, so they carry the
+// shared hand-drawn jitter and stay editable. Class names resolve in
+// scripts/style.mjs.
+
+// Mirror of boxOnUWall for a constant-v wall plane: the box is mounted against
+// the wall at vWall and protrudes toward -v (toward the viewer). Near v should
+// be < the wall's v.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const boxOnVWall = (vFront, vWall, u0, u1, h0, h1, cls = 'dw-jbox') => [
+  el(cls, vFace(vFront, u0, u1, h0, h1)),
+  el(cls, hFace(u0, u1, vFront, vWall, h1)),
+  el(cls, uFace(u1, vFront, vWall, h0, h1)),
+]
+
+// Partial wall fragment (Stage 5.6 §1/§12): a short wall volume with a chosen
+// near face toward the viewer, a top cap and both cut ends. `plane` is the
+// axis the wall RUNS along; `at` is its viewer-side coordinate; the wall is
+// WALL_T thick away from the viewer.
+//   plane 'u' -> runs along u (a..a+t span), thickness along v
+//   plane 'v' -> runs along v (a..a+t span), thickness along u
+// `face` is the near-face material class (dw-wall for exterior concrete,
+// dw-wall-far / dw-partition for interior surfaces).
+// `ends` = [bool, bool] draws each end's thickness cap; `scrap` = [bool, bool]
+// makes that end a ragged section cut (user r165: the added wall ends should
+// look "scrapped"/cut to reveal the interior, not cleanly terminated). The
+// profile's top/bottom corners stay exact, so the top cap always closes.
+function partialWall(plane, a0, a1, at, h0, h1, opts = {}) {
+  const {
+    t = WALL_T,
+    face = 'dw-wall',
+    cap = 'dw-slab',
+    end = 'dw-slab-edge',
+    ends = [true, true],
+    scrap = [false, false],
+    scrapSeed = 0,
+    scrapAmp = 4.5,
+    outline = true,
+  } = opts
+  // Vertical profile at an end: straight (two points) or a ragged cut (n steps,
+  // deterministic, corners exact).
+  const prof = (a, ragged) => {
+    if (!ragged) return [[a, h0], [a, h1]]
+    const n = 5
+    const pts = []
+    for (let i = 0; i <= n; i++) {
+      const h = h0 + (h1 - h0) * (i / n)
+      const jitter =
+        i === 0 || i === n
+          ? 0
+          : (hash2(Math.round(a * 11) + scrapSeed * 97, (plane === 'u' ? i * 13 : i * 17) + 5) - 0.5) * 2 * scrapAmp
+      pts.push([a + jitter, h])
+    }
+    return pts
+  }
+  const L = prof(a0, scrap[0])
+  const R = prof(a1, scrap[1])
+  const poly = [L[0], ...R, ...L.slice(1).reverse()]
+  const faceAttrs = outline === false ? ' style="stroke:none"' : typeof outline === 'number' ? ` style="stroke-width:${outline}"` : ''
+  const out = []
+  if (plane === 'u') {
+    const v0 = at
+    const v1 = at + t
+    out.push(el(face, path(poly.map(([a, h]) => p(a, v0, h))), faceAttrs))
+    if (ends[0]) out.push(el(end, path([...L.map(([a, h]) => p(a, v0, h)), ...L.slice().reverse().map(([a, h]) => p(a, v1, h))])))
+    if (ends[1]) out.push(el(end, path([...R.map(([a, h]) => p(a, v0, h)), ...R.slice().reverse().map(([a, h]) => p(a, v1, h))])))
+    if (cap) out.push(el(cap, hFace(a0, a1, v0, v1, h1)))
+  } else {
+    const u0 = at
+    const u1 = at + t
+    out.push(el(face, path(poly.map(([a, h]) => p(u0, a, h))), faceAttrs))
+    if (ends[0]) out.push(el(end, path([...L.map(([a, h]) => p(u0, a, h)), ...L.slice().reverse().map(([a, h]) => p(u1, a, h))])))
+    if (ends[1]) out.push(el(end, path([...R.map(([a, h]) => p(u0, a, h)), ...R.slice().reverse().map(([a, h]) => p(u1, a, h))])))
+    if (cap) out.push(el(cap, hFace(u0, u1, a0, a1, h1)))
+  }
+  return out
+}
+
+// Wall-mounted ventilation grille (Stage 5.6 §11): a shallow recessed box on a
+// constant-u or constant-v wall face with a row of slats. `a0..a1` is the
+// in-plane horizontal span; `h0..h1` the vertical span.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function ventGrille(plane, at, a0, a1, h0, h1) {
+  const out = []
+  const out2 = plane === 'u' ? el('dw-grille', vFace(at, a0, a1, h0, h1)) : el('dw-grille', uFace(at, a0, a1, h0, h1))
+  out.push(out2)
+  const n = 4
+  for (let i = 1; i <= n; i++) {
+    const a = a0 + ((a1 - a0) * i) / (n + 1)
+    out.push(el('dw-grille-line', `M ${pv(plane, at, a, h0 + 0.8)} L ${pv(plane, at, a, h1 - 0.8)}`))
+  }
+  return out
+}
+
+// Point on a constant plane in the building projection (in-plane axis a,
+// height h): constant-u plane for plane 'u', constant-v for plane 'v'.
+const pv = (plane, at, a, h) => (plane === 'u' ? p(a, at, h) : p(at, a, h))
+
+// Small wall-mounted switch plate (Stage 5.6 §11): a tiny plate with one
+// toggle dot, proud of the wall.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function switchPlate(plane, at, a, h) {
+  const w = 3.4
+  const hh = 4.2
+  const [x, y] = pv(plane, at, a, h).split(',').map(Number)
+  const out = []
+  out.push(plane === 'u' ? el('dw-switch', vFace(at, a - w / 2, a + w / 2, h - hh / 2, h + hh / 2)) : el('dw-switch', uFace(at, a - w / 2, a + w / 2, h - hh / 2, h + hh / 2)))
+  out.push(`<circle class="dw-switch-dot" cx="${round(x)}" cy="${round(y - 0.6)}" r="0.9" />`)
+  return out
+}
+
+// Small wall light fixture (Stage 5.6 §5/§11): a compact body proud of the
+// wall plus a soft warm glow. Returns a group of raw strings.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function wallLight(plane, at, a, h, { glow = 9, warm = false } = {}) {
+  const out = []
+  const arm = plane === 'u' ? el('dw-lamp', vFace(at, a - 1.6, a + 1.6, h - 1.2, h + 1.2)) : el('dw-lamp', uFace(at, a - 1.6, a + 1.6, h - 1.2, h + 1.2))
+  out.push(arm)
+  const [x, y] = pv(plane, at, a, h).split(',').map(Number)
+  out.push(`<circle class="dw-glow" cx="${round(x)}" cy="${round(y + (warm ? 3 : 1.4))}" r="${round(glow)}" />`)
+  out.push(`<circle class="${warm ? 'dw-lamp-core dw-lamp-warm' : 'dw-lamp-core'}" cx="${round(x)}" cy="${round(y)}" r="1.5" />`)
+  return out
+}
+
+// Small indicator/status light (Stage 5.6 §8): a tiny colored dot with a soft
+// halo, for the elevator and maintenance panels.
+function indicatorLight(plane, at, a, h, { red = false, r = 1.5 } = {}) {
+  const [x, y] = pv(plane, at, a, h).split(',').map(Number)
+  const cls = red ? 'dw-indicator-red' : 'dw-indicator'
+  return [
+    `<circle class="dw-glow ${red ? 'dw-glow-red' : ''}" cx="${round(x)}" cy="${round(y)}" r="${round(r * 4)}" />`,
+    `<circle class="${cls}" cx="${round(x)}" cy="${round(y)}" r="${round(r)}" />`,
+  ]
+}
+
+// Wall-mounted fixture sprite (Stage 5.6 §11, user-approved generated sheet):
+// a flat front-view fixture image (src/assets/fixture-*.png) laid on a wall
+// plane with the wall's own skew matrix, so it belongs to the wall exactly
+// like the pinned app boards. plane 'u' = a constant-v face (faces -v, local
+// +x = +u); plane 'v' = a constant-u face (faces -u, local +x = -v). (a0,hTop)
+// is the local (0,0) corner; w/h are the on-wall size in wall units.
+function wallFixture(file, plane, at, a0, hTop, w, h) {
+  const [ox, oy] = (plane === 'u' ? p(a0, at, hTop) : p(at, a0, hTop)).split(',').map(Number)
+  const m = plane === 'u' ? '0.7071 -0.2475 0 1' : '0.7071 0.2475 0 1'
+  return `<g transform="matrix(${m} ${round(ox)} ${round(oy)})"><image href="${inlineAsset(file)}" x="0" y="0" width="${round(w)}" height="${round(h)}" preserveAspectRatio="none" /></g>`
+}
+
+// Structural L-bracket (Stage 5.6 §3/§9/§14): a small steel angle under a slab
+// edge or against a wall, in a constant plane. `dir` points away from the
+// mounting surface (+1 / -1 over the in-plane axis).
+function bracket(plane, at, a, h0, h1, { dir = 1, leg = 5, cls = 'dw-bracket' } = {}) {
+  const out = []
+  out.push(el(cls, `M ${pv(plane, at, a, h1)} L ${pv(plane, at, a, h0)} L ${pv(plane, at, a + dir * leg, h0)}`))
+  out.push(el(cls, `M ${pv(plane, at, a, h0 + (h1 - h0) * 0.5)} L ${pv(plane, at, a + dir * leg * 0.6, h0 + (h1 - h0) * 0.5)}`))
+  return out
+}
+
+// Localized surface wear (Stage 5.6 §10): deterministic sparse scratches, one
+// panel seam, one short crack and a faint patch on a chosen wall face — the
+// reference's walls read used but maintained, not destroyed. `seed` re-rolls
+// the layout so no two walls repeat. Kept subtle and few on purpose.
+function surfaceWear(plane, at, a0, a1, h0, h1, seed = 0) {
+  const span = a1 - a0
+  const hspan = h1 - h0
+  const rnd = (i, k) => hash2(Math.round(at * 7) + seed * 131 + i * 17, k * 29 + 7)
+  const out = []
+  const q = (a, h) => pv(plane, at, a, h)
+  // scratches: short hand strokes, a slight tilt
+  const n = Math.max(2, Math.round(span / 22))
+  for (let i = 0; i < n; i++) {
+    const a = a0 + 0.08 * span + rnd(i, 1) * span * 0.84
+    const h = h0 + 0.12 * hspan + rnd(i, 2) * hspan * 0.72
+    const len = 2.5 + rnd(i, 3) * 6
+    const dh = (rnd(i, 4) - 0.5) * 3
+    out.push(el('dw-wear', `M ${q(a, h)} L ${q(a + len, h + dh)}`))
+  }
+  // one quiet panel seam
+  const sa = a0 + (0.3 + 0.4 * rnd(0, 5)) * span
+  out.push(el('dw-wear-seam', `M ${q(sa, h0 + 1)} L ${q(sa, h1 - 1)}`))
+  // one short crack
+  const ca = a0 + (0.2 + 0.55 * rnd(1, 6)) * span
+  const ch = h0 + 0.25 * hspan
+  out.push(el('dw-crack', `M ${q(ca, ch)} L ${q(ca + 1.4, ch + 3.6)} L ${q(ca - 0.7, ch + 7) } L ${q(ca + 0.5, ch + 10.5)}`))
+  // one faint patched area
+  const pa0 = a0 + 0.12 * span
+  const pa1 = a0 + 0.38 * span
+  const ph0 = h0 + 0.55 * hspan
+  const ph1 = h0 + 0.88 * hspan
+  out.push(el('dw-patch', plane === 'u' ? vFace(at, pa0, pa1, ph0, ph1) : uFace(at, pa0, pa1, ph0, ph1)))
+  return out
+}
+
 // Server rack (Stage 5.5 §10, user revision): a GROUP of three cabinets on
 // the Health Platforms stretch (DBA story — database/server equipment is
 // the believable piece) — two tall, one short — each drawn with the same
@@ -971,6 +1168,26 @@ function slab(hTop, { stairOpening = false } = {}) {
   return out
 }
 
+// Slab construction detail (Stage 5.6 §9): strengthens the visible slab edge
+// and underside at the open (front, A-B) side without changing the slab's
+// footprint. `seams` are u positions for vertical joint lines across the front
+// cut band; `brackets` are u positions for a small support under that edge.
+function slabDetail(hTop, { seams = [], brackets = [] } = {}) {
+  const hBot = hTop - SLAB_T
+  const out = [el('dw-slab-lip', `M ${p(0, 0, hBot)} L ${p(LW, 0, hBot)}`)]
+  for (const u of seams) out.push(el('dw-slab-seam', `M ${p(u, 0, hTop)} L ${p(u, 0, hBot)}`))
+  for (const u of brackets) out.push(...bracket('u', 0, u, hBot - 7, hBot, { dir: 1, leg: 2.4 }))
+  return out
+}
+
+// Straight-segment service run (Stage 5.6 §14) through explicit [u, v, h]
+// waypoints, so a conduit/pipe can climb, turn a corner and enter a wall in
+// one editable path. Class defaults to the dark-steel conduit family.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function segRun(pts, cls = 'dw-conduit-line') {
+  return el(cls, `M ${pts.map(([u, v, h]) => p(u, v, h)).join(' L ')}`)
+}
+
 // Floor triangle at the shaft's front-right (user revision): the slab strip
 // between the building's left wall (u = 0), the elevator's doors side (W2
 // outer face, v = SHAFT_V0 - WALL_T) and the shaft's width line (u =
@@ -1450,8 +1667,50 @@ function nextcodePamphlet() {
   out.push(`<circle class="dw-dot" cx="${round(px)}" cy="${round(py)}" r="0.9" />`)
   return out
 }
+// --- Stage 5.6 ground-floor architecture (§2) ------------------------------
+// The ground floor gets the strongest selective-wall treatment because several
+// areas currently read as large open boxes. Each section gets a DIFFERENT
+// intervention (the spec forbids duplicating one treatment everywhere).
+function pueloArchitecture() {
+  const out = []
+  // Two wall sections forming the building's front-left (A) corner. User
+  // revisions: r164 built them corner->door / corner->tag; r165 ragged cut
+  // ends; r167 removed the side caps and tried no outline; r168 halves the
+  // corner (both arms) and keeps a THIN line on the vertical borders.
+  //  Front wall: corner -> half the distance to the entrance's left jamb.
+  //  Left wall:  corner -> v = 41 (half of the earlier tag-middle length).
+  const frontLen = (0.35 * LW - 10) * 0.5 // half toward the entrance
+  const leftLen = 41
+  out.push(...partialWall('u', 0, frontLen, 0, 0, STORY_H, { face: 'dw-wall', ends: [false, false], scrap: [false, true], scrapSeed: 3, outline: 0.5 }))
+  out.push(...partialWall('v', 0, leftLen, 0, 0, STORY_H, { face: 'dw-wall', ends: [false, false], scrap: [false, true], scrapSeed: 8, outline: 0.5 }))
+  // Surface marks (kept) + a reduced set of generated wall fixtures that fit
+  // the smaller walls (panel + switch on the front wall, vent on the left).
+  out.push(...surfaceWear('u', 0, 4, frontLen - 3, 10, 84, 3))
+  out.push(...surfaceWear('v', 0, 6, leftLen - 4, 10, 84, 5))
+  out.push(wallFixture('fixture-panel-01.png', 'u', -0.3, 7, 72, 15, 19))
+  out.push(wallFixture('fixture-switch-01.png', 'u', -0.3, 27, 40, 6, 8.5))
+  out.push(wallFixture('fixture-vent-01.png', 'v', -0.3, 33, 70, 17, 17))
+  return out
+}
+
+function baArchitecture() {
+  const out = []
+  // BA Technology: a short low stub partition emerging from partition-1's
+  // BA-side face at the OPEN LEFT corner (u ≈ 3) — clear of the door-height
+  // passage (u 15–70), so the opening stays readable. Both end caps are hidden
+  // (the near end butts into partition-1; the far end must not read as an open
+  // cut from outside — user r164 mark 3). Thin border line (user r168).
+  const vFace0 = PARTITION_G[0] + WALL_T / 2
+  out.push(...partialWall('v', vFace0, vFace0 + 40, 3, 0, 54, { face: 'dw-partition', ends: [false, false], scrap: [false, true], scrapSeed: 12, outline: 0.5 }))
+  out.push(...surfaceWear('v', 3, vFace0 + 5, vFace0 + 36, 8, 48, 7))
+  return out
+}
+
 const floorGround = group('floor-ground', [
   ...slab(0),
+  // Ground slab construction (Stage 5.6 §9): the most "finished/established"
+  // surface — a clean lip and two quiet joints, no exposed supports.
+  ...slabDetail(0, { seams: [35, 205] }),
   ...backWalls(0),
   serviceRiser(0),
   // Paper piles hugging partition-2's base on the freelancer side (user
@@ -1505,11 +1764,15 @@ const floorGround = group('floor-ground', [
   wallSheet(19, 86, 0.08),
   wallSheet(7, 78, 0.1),
   wallSheet(13, 90, -0.08),
+  // (Stage 5.6 §2 Freelancer wall element removed on user review r164 — the
+  // SVG box/conduit read badly; a generated sprite may replace it later.)
   // BA-side paper piles near the passage were moved into the freelancer
   // section (floor-ground, before partition-2) so the doorway reveals them.
   ...baProps,
+  ...baArchitecture(),
   ...partition(PARTITION_G[0], 0, { opening: true }),
   ...pueloProps,
+  ...pueloArchitecture(),
   ...columns(0, STORY_H),
 ])
 
@@ -1565,6 +1828,9 @@ const freelancerProps = group('freelancer-props', [
 const floor01 = group('floor-01', [
   ...slab(FH, { stairOpening: true }),
   ...backWalls(FH),
+  // Subtle panel seams / wear on the C-D rear wall's left stretch (Nextcode
+  // side) — drawn before the pamphlet so the sheet stays on top (Stage 5.6 §3).
+  ...surfaceWear('u', LD - WALL_T - 0.3, 0, 88, 6, 84, 27),
   // Nextcode pamphlet (user request): a big white sheet pinned on the rear
   // wall's left corner just above where the staircase rises into floor 1
   // (u 26..58, h 107..127), covered in unreadable hand-written lines. Drawn
@@ -1652,6 +1918,19 @@ const floor01 = group('floor-01', [
     `M ${p(RAIL_MID_U, LD - WALL_T, FH)} L ${p(STAIR_U1, LD - WALL_T, FH + RAIL_H)} L ${p(STAIR_U1 + 12, LD - WALL_T, FH + RAIL_H)}`,
   ),
   ...shaftReturnWalls(FH),
+  // Stage 5.6 §3 — first-floor wall-mounted technical elements (generated
+  // fixture sprites), each on an actual wall surface inside the visible
+  // envelope: a vent grille on the B-D wall's front stretch (clear of the
+  // server racks, v 20..94) and a compact panel on the C-D wall's left stretch
+  // (Nextcode). Emitted after the return walls so they sit on their faces,
+  // before the columns. (The W2 return-wall junction box was removed on user
+  // review r171 — it read badly against the elevator.)
+  wallFixture('fixture-vent-01.png', 'v', LW - WALL_T - 0.3, 16, FH + 58, 14, 14),
+  wallFixture('fixture-panel-01.png', 'u', LD - WALL_T - 0.3, 6, FH + 50, 12, 15),
+  // Stage 5.6 — partial wall section on floor 1 (user r173 mark 2): the left
+  // edge on the Health Platforms side of the elevator, full story. No side
+  // caps (no internal borders shown), matching the Puelo treatment (r176).
+  ...partialWall('v', 20, 150, 0, FH, FH + STORY_H, { face: 'dw-wall', ends: [false, false], scrap: [true, true], scrapSeed: 42, outline: 0.5 }),
   ...columns(FH, FH + STORY_H),
 ])
 
@@ -1662,6 +1941,12 @@ const floor01 = group('floor-01', [
 const floor02 = group('floor-02', [
   ...slab(2 * FH),
   ...backWalls(2 * FH),
+  // Stage 5.6 §4 — Left Interactica: sparse wall marks, a visible panel joint,
+  // and one localized light on the C-D rear wall's left stretch (clear of the
+  // graph screen at u 90..134, and of the floor-2 rear-left partial wall).
+  ...surfaceWear('u', LD - WALL_T - 0.3, 44, 84, 6, 84, 33),
+  seamLine(46, LD - WALL_T - 0.2, 2 * FH + 6, 2 * FH + 78),
+  wallFixture('fixture-lamp-01.png', 'u', LD - WALL_T - 0.3, 50, 2 * FH + 64, 10, 13),
   // Tech-lead vignette (r37 review, user): a group of five seated developers
   // with laptops (backs to the viewer, facing the rear C-D wall) and a standing
   // tech lead pointing at a graph screen mounted on that wall. Drawn right
@@ -1702,6 +1987,8 @@ const floor02 = group('floor-02', [
   // wall (uBack 221.5 → 213.5).
   assetWorkstation(WS_D, 213.5, 82, 2 * FH),
   assetWorkstation(WS_C, 213.5, 26, 2 * FH),
+  // (Stage 5.6 §4 Right Interactica additions — junction box, conduit run and
+  // slab bracket — removed on user review r173: all read badly.)
   // AR/VR vignette (r36 review, user): the person stands behind the shaft
   // (v 403) so his projection is screen-left of the elevator — the spot the
   // user circled. Drawn first (farther than the city board), then his
@@ -1748,6 +2035,11 @@ const floor02 = group('floor-02', [
   // right in it. MUST stay in this fragment (below the elevator layer) so the
   // shaft's faces can occlude it if they ever overlap.
   ...serverRackFront(52, 68, 220, 2 * FH, 2 * FH + 38),
+  // Stage 5.6 — partial wall sections on floor 2 (user r180): the rear-left
+  // wall (with the vent on its outer face) AND the front-right corner wall.
+  ...partialWall('v', 540, 580, 0, 2 * FH, 2 * FH + STORY_H, { face: 'dw-wall', ends: [false, false], scrap: [true, false], scrapSeed: 41, outline: 0.5 }),
+  wallFixture('fixture-vent-01.png', 'v', -0.3, 570, 2 * FH + 52, 14, 14),
+  ...partialWall('u', 216, 238, 0, 2 * FH, 2 * FH + STORY_H, { face: 'dw-wall', ends: [false, false], scrap: [true, false], scrapSeed: 43, outline: 0.5 }),
 ])
 const floor02Front = group('floor-02-front', [
   ...slabTriangle(2 * FH),
@@ -2128,6 +2420,8 @@ function indelveFloorProps() {
 }
 
 
+const H3 = 3 * FH // floor-3 story base height (Stage 5.6 §5)
+
 const floor03 = group('floor-03', [
   ...slab(3 * FH),
   ...backWalls(3 * FH),
@@ -2186,11 +2480,24 @@ const floor03 = group('floor-03', [
   ...indelveBoard(),
   ...indelveFloorProps(),
   ...indelveFleetB(),
+  // Stage 5.6 §5 — third floor Indelve: subtle wall marks above the Trantorian
+  // logo (the one r185 detail kept on user review). Generic treatment only.
+  ...surfaceWear('u', LD - WALL_T - 0.3, 0, 38, H3 + 60, H3 + 76, 52),
 ])
 
 const floor03Front = group('floor-03-front', [
   ...slabTriangle(3 * FH),
   ...columns(3 * FH, 3 * FH + STORY_H),
+  // Stage 5.6 §5/§1 — Interactica partial wall (user r186, red-marked): a
+  // section of the building's left edge (u = 0) framing the front of the
+  // floor-3 Interactica area (v ~75..161), full story, ragged free ends, no
+  // side caps, thin outline. `cap: false` (user r187 follow-up) drops the top
+  // cap: its visible fold read as a spurious flap above the wall. Emitted after
+  // the elevator so it layers over the shaft's re-layered floor bands.
+  ...partialWall('v', 75, 161, 0, 3 * FH, 3 * FH + STORY_H, { face: 'dw-wall', cap: false, ends: [false, false], scrap: [true, true], scrapSeed: 49, outline: 0.5 }),
+  // Stage 5.6 §9 — third-floor slab: a stronger visible front edge, one joint
+  // and support brackets under the open edge (Interactica and Indelve sides).
+  ...slabDetail(3 * FH, { seams: [72], brackets: [40, 150] }),
 ])
 
 // --- floor-03-team: Interactica team cluster + bosses (r40/r42/r51/r54
@@ -2882,11 +3189,28 @@ function staircase() {
 }
 
 // --- elevator: continuous shaft walls with floor bands crossing at each level
+// Floor-specific elevator detailing (Stage 5.6 §4/§8): a wall-mounted
+// indicator and a small maintenance panel beside the doors, plus a base collar
+// at the slab junction, so the core reads as part of the building. Added per
+// story as the stage progresses (currently floor 2).
+function elevatorStoryDetails(hBase) {
+  const vW2 = SHAFT_V0 - WALL_T
+  const out = []
+  // base collar at the slab intersection (just above the floor line)
+  out.push(el('dw-slab-edge', vFace(vW2 - 0.2, 0, SHAFT_U + WALL_T, hBase + 0.5, hBase + 4)))
+  // indicator light right of the doors
+  out.push(...indicatorLight('u', vW2 - 0.5, DOOR_U1 + 5, hBase + DOOR_H - 12, { r: 1.2 }))
+  // subtle technical marking (a seam) right of the doors
+  out.push(el('dw-door-line', `M ${p(DOOR_U1 + 3, vW2 - 0.4, hBase + 20)} L ${p(DOOR_U1 + 3, vW2 - 0.4, hBase + 46)}`))
+  return out
+}
+
 function elevator() {
   const out = []
   for (let story = 1; story <= 5; story++) {
     const hBase = story * FH
     out.push(...shaftStory(hBase, story < 5 ? hBase + STORY_H : TOP_H, { openDoors: story === 5 }))
+    if (story === 2) out.push(...elevatorStoryDetails(hBase))
   }
   // Enclosure, drawn after the story walls so it occludes the interior: the
   // building's invisible left wall closing the shaft's open A-C side from

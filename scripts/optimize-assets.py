@@ -32,8 +32,9 @@ GEOM = ROOT / "scripts" / "generate-geometry.mjs"
 MAX_SIDE = 768
 IMAGE_EXTS = {".png", ".jpg", ".jpeg", ".webp"}
 
-# Names the generator references: `inlineAsset('x')` and `file: 'x'`.
-REF_RE = re.compile(r"(?:inlineAsset\(\s*|file:\s*)'([^']+)'")
+# Names the generator references: `inlineAsset('x')`, `file: 'x'` and
+# `wallFixture('x', ...)`.
+REF_RE = re.compile(r"(?:inlineAsset\(\s*|file:\s*|wallFixture\(\s*)'([^']+)'")
 
 
 def referenced_names() -> list[str]:

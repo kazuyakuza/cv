@@ -13,21 +13,26 @@
 >
   <title id="diorama-title">Professional Career Diorama — sectional architectural illustration</title>
   <style>
-    /* Tier 1 — primary structural lines */
-    .dw-column { fill: none; stroke: #3a3833; stroke-width: 1.8; stroke-linecap: round; }
+    /* Tier 1 — primary structural lines.
+       Stage 5.6 §13 (user: conservative bump): the contour hierarchy is a
+       modest step heavier than Stage 5.5 — silhouette, slab edges, walls,
+       columns and floor outlines carry the reference's stronger definition
+       while tier-2/3 stay comparatively lighter, so not all lines read
+       equally dark. */
+    .dw-column { fill: none; stroke: #3a3833; stroke-width: 2; stroke-linecap: round; }
     /* Floor top surfaces: warm pale base tone, clearly apart from the walls.
        Per-floor material classes (dw-f0 … dw-f5) override this in Phase 2. */
-    .dw-floor { fill: #cdc6b0; stroke: #4c4a44; stroke-width: 1.2; }
+    .dw-floor { fill: #cdc6b0; stroke: #4c4a44; stroke-width: 1.35; }
     /* Cut faces (open-side slab bands, wall/partition cut ends): section
        poché — darker warm tone + restrained 45° hatch (Stage 4 §7, §24) */
-    .dw-slab-edge { fill: url(#dw-cut); stroke: #4c4a44; stroke-width: 1.2; }
+    .dw-slab-edge { fill: url(#dw-cut); stroke: #4c4a44; stroke-width: 1.45; }
     /* Near/exterior wall faces (entrance portal, fifth-floor wall arms):
        muted cool concrete — the exterior material identity (Stage 5 §6),
        now distinctly darker/cooler than the interior (Stage 5.5 §3) */
-    .dw-wall { fill: #98a2a3; stroke: #4c4a44; stroke-width: 1.2; }
+    .dw-wall { fill: #98a2a3; stroke: #4c4a44; stroke-width: 1.4; }
     /* Thin wall/shaft top caps: slightly lighter concrete than the wall
        faces, so horizontal surfaces read as catching light */
-    .dw-slab { fill: #aab2b1; stroke: #4c4a44; stroke-width: 1.2; }
+    .dw-slab { fill: #aab2b1; stroke: #4c4a44; stroke-width: 1.3; }
     /* Rear-wall inner faces: far side of the section — lighter lines and
        reduced contrast for depth (Stage 4 §8).
        UPDATE #92 palette pass (reference, Stage 5.5 §3): the interior walls
@@ -107,6 +112,9 @@
        brackets) are the supporting cast */
     .dw-jbox { fill: #4a4842; stroke: #2e2c28; stroke-width: 0.8; }
     .dw-conduit { fill: #55534c; stroke: #3a3833; stroke-width: 0.7; }
+    /* Open service runs (segRun): stroke-only, so a polyline stays a tube-like
+       line instead of filling the polygon it spans */
+    .dw-conduit-line { fill: none; stroke: #3a3833; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
 
     /* Server rack (Stage 5.5 §10): Health Platforms' DBA story. Same dark
        steel family as the junction boxes but as a full-height cabinet:
@@ -299,6 +307,48 @@
        only the banister line survives.) */
     .dw-rail { fill: none; stroke: #5d5a52; stroke-width: 1; stroke-linecap: round; }
 
+    /* Stage 5.6 — architectural-refinement vocabulary (floor-by-floor pass).
+       Partial walls reuse the wall/partition families; the fixtures, surface
+       wear, slab construction and red/orange construction accents live in
+       their own quiet classes so they stay subordinate to the architecture
+       and to the information layer. */
+    /* Wall-mounted fixtures: panels, boxes, switches — light metal, a step
+       below the information plaques */
+    .dw-fixture { fill: #bcb8ad; stroke: #5d5a52; stroke-width: 0.7; }
+    .dw-fixture-side { fill: #9a968b; stroke: #5d5a52; stroke-width: 0.7; }
+    .dw-fixture-top { fill: #c9c5ba; stroke: #5d5a52; stroke-width: 0.6; }
+    /* Ventilation grille: recessed dark opening with lighter slats */
+    .dw-grille { fill: #57544c; stroke: #3a3833; stroke-width: 0.6; }
+    .dw-grille-line { fill: none; stroke: #8f8b80; stroke-width: 0.55; }
+    /* Switch plate + toggle */
+    .dw-switch { fill: #c4c0b5; stroke: #5d5a52; stroke-width: 0.6; }
+    .dw-switch-dot { fill: #4a4842; stroke: none; }
+    /* Wall light: warm body + soft glow (a wash, never a hard UI glow) */
+    .dw-lamp { fill: #b7b3a8; stroke: #5d5a52; stroke-width: 0.6; }
+    .dw-lamp-core { fill: #f2e3b0; stroke: none; }
+    .dw-lamp-warm { fill: #ffd98a; }
+    .dw-glow { fill: #ffe4a6; fill-opacity: 0.16; stroke: none; }
+    .dw-glow-red { fill: #e08a72; fill-opacity: 0.2; }
+    /* Indicator/status lights */
+    .dw-indicator { fill: #8aa878; stroke: none; }
+    .dw-indicator-red { fill: #c0503f; stroke: none; }
+    /* Surface wear (Stage 5.6 §10): quiet scratches, seams, cracks, patches —
+       walls used and maintained, not destroyed */
+    .dw-wear { fill: none; stroke: #9d998e; stroke-width: 0.5; stroke-opacity: 0.5; stroke-linecap: round; }
+    .dw-wear-seam { fill: none; stroke: #b3afa4; stroke-width: 0.6; stroke-opacity: 0.55; }
+    .dw-crack { fill: none; stroke: #8c877c; stroke-width: 0.55; stroke-opacity: 0.6; stroke-linecap: round; stroke-linejoin: round; }
+    .dw-patch { fill: #c6c2b7; fill-opacity: 0.4; stroke: none; }
+    /* Slab construction (Stage 5.6 §9) */
+    .dw-slab-lip { fill: none; stroke: #b8b4a9; stroke-width: 1; stroke-linecap: round; }
+    .dw-slab-seam { fill: none; stroke: #7d786d; stroke-width: 0.6; stroke-opacity: 0.7; }
+    .dw-bracket { fill: none; stroke: #4a4842; stroke-width: 1.1; stroke-linecap: round; stroke-linejoin: round; }
+    /* Red/orange construction & utility accents (Stage 5.6 §7): deliberate
+       and sparse against the muted palette — never a whole red floor */
+    .dw-accent-red { fill: #b0332a; stroke: #6e1f19; stroke-width: 0.7; }
+    .dw-accent-red-line { fill: none; stroke: #b0332a; stroke-width: 1.6; stroke-linecap: round; }
+    .dw-accent-orange { fill: #c06a34; stroke: #6e3a1a; stroke-width: 0.7; }
+    .dw-accent-orange-line { fill: none; stroke: #c06a34; stroke-width: 1.4; stroke-linecap: round; }
+
     /* Tier 3 — tertiary / subtle lines. Stage 5.5 §4: the terrain is now a
        dark presentation base that frames the building — a quiet stage plane
        with a rim-lit edge and a slightly darker inner surface, so the
@@ -444,6 +494,9 @@
        <path class="dw-floor dw-f0" d="M749.66,985.15 L918.11,925.82 L503.02,780.93 L334.67,839.09 Z" />
        <path class="dw-slab-edge" d="M749.66,985.15 L918.11,925.82 L917.93,938.77 L749.92,997.28 Z" />
        <path class="dw-slab-edge" d="M749.66,985.15 L334.67,839.09 L333.7,852.26 L749.92,997.28 Z" />
+       <path class="dw-slab-lip" d="M 749.92,997.28 L 917.93,938.77" />
+       <path class="dw-slab-seam" d="M 774.92,976.4 L 775.2,989.3" />
+       <path class="dw-slab-seam" d="M 894.76,934.2 L 895.44,946.37" />
        <path class="dw-wall-far" d="M912.76,927.41 L502.41,784.73 L502.96,678.88 L913.14,823.33 Z" />
        <path class="dw-slab-edge" d="M912.76,927.41 L918.11,925.82 L918.57,821.58 L913.14,823.33 Z" />
        <path class="dw-wall-far" d="M340.01,841.22 L507.3,782.05 L507.39,677.56 L339.84,735.92 Z" />
@@ -540,6 +593,13 @@
      </g>
        <image href="__ASSET__meeting-01-cut.png__" x="572.78" y="852.07" width="68.83" height="51.77" preserveAspectRatio="none" />
        <path class="dw-contact" d="M623.76,907.63 L668.99,891.38 L613.27,871.87 L567.95,887.56 Z" />
+       <path class="dw-partition" style="stroke-width:0.5" d="M650.67,948.82 L622.66,938.89 L624.49,929.01 L624.13,917.47 L620.38,905.36 L620.34,894.58 L621.84,884.47 L650.12,895.03 Z" />
+       <path class="dw-slab" d="M650.12,895.03 L655.5,892.9 L627.23,883.14 L621.84,884.47 Z" />
+       <path class="dw-wear" d="M 638.75,926.37 L 635.08,926.49" />
+       <path class="dw-wear" d="M 637.29,911.99 L 630.75,909.56" />
+       <path class="dw-wear-seam" d="M 632.91,933.2 L 633.01,895.25" />
+       <path class="dw-crack" d="M 632.78,924.66 L 632.04,920.96 L 633.51,917.23 L 632.63,913.69" />
+       <path class="dw-patch" d="M644.01,916.08 L638.24,914.46 L638.77,901.2 L644.41,902.84 Z" />
        <path class="dw-partition" d="M654.11,951.24 L654.25,858.84 L816.6,801.59 L817.01,894.64 L703.74,934.24 L703.7,881.01 L664.75,895.18 L664,947.83 Z" />
        <path class="dw-partition" d="M703.74,934.24 L697.79,931.97 L698.3,883.87 L703.7,881.01 Z" />
        <line class="dw-opening" x1="664.75" y1="895.18" x2="703.7" y2="881.01" />
@@ -574,6 +634,23 @@
        <path class="dw-crate" d="M825.43,905.79 L817.03,902.39 L816.73,890.45 L825.73,893.32 Z" />
        <path class="dw-crate-top" d="M825.73,893.32 L838.17,889.68 L828.29,886.62 L816.73,890.45 Z" />
        <path class="dw-crate-line" d="M 825.4,901.35 L 816.23,898.33" />
+       <path class="dw-wall" style="stroke-width:0.5" d="M749.66,985.15 L776.29,976.38 L776.39,957.03 L775.54,939.52 L776.48,920.44 L776.46,901.84 L776.17,883.31 L749.47,892.3 Z" />
+       <path class="dw-slab" d="M749.47,892.3 L776.17,883.31 L770.16,881.81 L744.28,890.68 Z" />
+       <path class="dw-wall" style="stroke-width:0.5" d="M749.66,985.15 L720.92,975.04 L718.73,955.78 L718.01,937.22 L722.89,919.47 L722.1,901.59 L720.49,881.92 L749.47,892.3 Z" />
+       <path class="dw-slab" d="M749.47,892.3 L755.56,891.05 L726.03,880.28 L720.49,881.92 Z" />
+       <path class="dw-wear" d="M 763.48,946.22 L 768,943.45" />
+       <path class="dw-wear" d="M 762.4,953.31 L 768.71,952.96" />
+       <path class="dw-wear-seam" d="M 760.65,970.24 L 760.46,897.93" />
+       <path class="dw-crack" d="M 763.28,952.27 L 763.95,947.66 L 762.94,944.77 L 763.26,941.72" />
+       <path class="dw-patch" d="M755.24,932.16 L761.29,930.95 L761.04,906.07 L755.67,908.46 Z" />
+       <path class="dw-wear" d="M 732.77,921.6 L 729.07,920.77" />
+       <path class="dw-wear" d="M 743.66,915.24 L 738.89,914.8" />
+       <path class="dw-wear-seam" d="M 730.14,967.03 L 730.69,895.46" />
+       <path class="dw-crack" d="M 735.21,951.58 L 734.89,947.68 L 735.9,944.76 L 735.69,940.81" />
+       <path class="dw-patch" d="M743.6,932.15 L737.17,929.85 L737.63,905.98 L743.05,907.74 Z" />
+       <g transform="matrix(0.7071 -0.2475 0 1 755.61 910.93)"><image href="__ASSET__fixture-panel-01.png__" x="0" y="0" width="15" height="19" preserveAspectRatio="none" /></g>
+       <g transform="matrix(0.7071 -0.2475 0 1 769.06 938)"><image href="__ASSET__fixture-switch-01.png__" x="0" y="0" width="6" height="8.5" preserveAspectRatio="none" /></g>
+       <g transform="matrix(0.7071 0.2475 0 1 726.34 906.9)"><image href="__ASSET__fixture-vent-01.png__" x="0" y="0" width="17" height="17" preserveAspectRatio="none" /></g>
        <line class="dw-column" x1="749.66" y1="985.15" x2="749.47" y2="892.3" />
        <line class="dw-column" x1="918.11" y1="925.82" x2="918.58" y2="833.35" />
        <line class="dw-column" x1="334.67" y1="839.09" x2="334.49" y2="747.04" />
@@ -666,6 +743,13 @@
        <path class="dw-contact" d="M904.86,826.37 L913.14,823.33 L502.96,678.88 L494.43,682.7 Z" />
        <path class="dw-contact" d="M347.78,739.11 L363.09,733.87 L355.01,731.4 L339.84,735.92 Z" />
        <path class="dw-contact" d="M438,707.7 L515.81,679.97 L507.39,677.56 L429.06,704.38 Z" />
+       <path class="dw-wear" d="M 376.38,786.85 L 382.03,785.48" />
+       <path class="dw-wear" d="M 374.5,763.47 L 378.54,761.46" />
+       <path class="dw-wear" d="M 376.05,795.45 L 380.23,793.75" />
+       <path class="dw-wear" d="M 368.84,789.27 L 371.28,788.96" />
+       <path class="dw-wear-seam" d="M 377.8,821.14 L 378.15,744.9" />
+       <path class="dw-crack" d="M 379.18,802.04 L 379.57,798.38 L 378.76,795.86 L 379.29,791.86" />
+       <path class="dw-patch" d="M347.64,789.37 L363.19,783.97 L363.01,758.63 L347.62,764.66 Z" />
        <path class="dw-paper" d="M358.13,727.96 L402.96,712.13 L403.83,652.41 L358.18,667.91 Z" />
        <path class="dw-paper" d="M359.11,726.12 L402.94,711.34 L402.35,653.5 L358.89,668.64 Z" />
        <path class="dw-scribble" d="M 359.87 723.38 Q 375.4 718.84 392.61 712.22" />
@@ -974,6 +1058,10 @@
        <path class="dw-partition" d="M684.53,792.64 L679.01,791.04 L679.22,741.85 L684.46,740.79 Z" />
        <line class="dw-opening" x1="646.02" y1="754.17" x2="684.46" y2="740.79" />
        <path class="dw-slab-edge" d="M626.39,812.57 L621.64,811.47 L621.04,718.97 L627.08,721.07 Z" />
+       <g transform="matrix(0.7071 0.2475 0 1 901.66 760.71)"><image href="__ASSET__fixture-vent-01.png__" x="0" y="0" width="14" height="14" preserveAspectRatio="none" /></g>
+       <g transform="matrix(0.7071 -0.2475 0 1 343.66 685.36)"><image href="__ASSET__fixture-panel-01.png__" x="0" y="0" width="12" height="15" preserveAspectRatio="none" /></g>
+       <path class="dw-wall" style="stroke-width:0.5" d="M736.13,875.23 L643.61,842.38 L646.1,825.19 L641.18,805.21 L642.88,787.28 L641.33,767.35 L644.09,750.85 L736.02,782.19 L737.42,801.43 L735.17,819.14 L736.99,838 L735.52,856.09 Z" />
+       <path class="dw-slab" d="M736.02,782.19 L740.68,780.82 L649.35,748.13 L644.09,750.85 Z" />
        <line class="dw-column" x1="750.14" y1="879.67" x2="750.37" y2="787.05" />
        <line class="dw-column" x1="918.57" y1="821.58" x2="918.67" y2="728.48" />
        <line class="dw-column" x1="334.63" y1="734.76" x2="333.85" y2="642.45" />
@@ -999,6 +1087,13 @@
        <path class="dw-shade-c" d="M339.99,556.17 L507.4,497.64 L507.54,485.14 L339.84,544.03 Z" />
        <path class="dw-contact" d="M903.95,720.82 L913.29,718.24 L502.34,574.1 L493.68,577.79 Z" />
        <path class="dw-contact" d="M347.88,634.24 L515.89,575.08 L507.54,572.42 L339.88,631.66 Z" />
+       <path class="dw-wear" d="M 387.03,795.24 L 390.17,793.64" />
+       <path class="dw-wear" d="M 391.13,774.25 L 396.58,772.97" />
+       <path class="dw-wear-seam" d="M 389.41,817.34 L 389.46,740.43" />
+       <path class="dw-crack" d="M 387.56,799.35 L 388.15,794.7 L 386.94,792.17 L 387.63,788.22" />
+       <path class="dw-patch" d="M374.08,780.87 L381.53,777.85 L381.44,752.24 L374,754.72 Z" />
+       <line class="dw-wall-seam" x1="372.09" y1="613.44" x2="371.72" y2="541.86" />
+       <g transform="matrix(0.7071 -0.2475 0 1 375.51 555.02)"><image href="__ASSET__fixture-lamp-01.png__" x="0" y="0" width="10" height="13" preserveAspectRatio="none" /></g>
        <path class="dw-graph-frame" d="M404.4,594.91 L435.66,584.17 L435.63,558.42 L404.59,568.92 Z" />
        <path class="dw-graph-face" d="M404.67,594.36 L434.48,583.52 L435.11,559.44 L404.92,570.15 Z" />
        <path class="dw-graph-title" d="M405.15,573.27 L434.23,563.65 L434.59,560.73 L405.61,570.54 Z" />
@@ -1088,6 +1183,11 @@
        <circle class="dw-rack-vent" cx="641.37" cy="693.44" r="0.6" />
        <line class="dw-rack-slot" x1="629.73" y1="701.03" x2="629.78" y2="670.01" />
        <line class="dw-rack-slot" x1="627.71" y1="699.94" x2="627.78" y2="668.93" />
+       <path class="dw-wall" style="stroke-width:0.5" d="M367.99,641.68 L339.82,631.7 L339.92,538.92 L368.03,549.04 L366.74,566.2 L370.76,587.19 L369.68,604.61 L369.24,623.73 Z" />
+       <path class="dw-slab" d="M368.03,549.04 L373,547.13 L344.74,537.59 L339.92,538.92 Z" />
+       <g transform="matrix(0.7071 0.2475 0 1 347.04 581.99)"><image href="__ASSET__fixture-vent-01.png__" x="0" y="0" width="14" height="14" preserveAspectRatio="none" /></g>
+       <path class="dw-wall" style="stroke-width:0.5" d="M902.41,721.5 L918.07,716.29 L917.86,624.04 L902.69,628.53 L899.94,648.42 L903.23,665.62 L906.14,683.78 L900.39,704.47 Z" />
+       <path class="dw-slab" d="M902.69,628.53 L917.86,624.04 L912.97,621.83 L897.97,627.55 Z" />
      </g>
      <g id="floor-03">
        <path class="dw-floor dw-f3" d="M749.74,670.47 L918.78,611.17 L502.55,465.06 L334.09,524.21 Z" />
@@ -1263,6 +1363,11 @@
        <image href="__ASSET__queue-01-cut.png__" x="512.94" y="502.06" width="26.26" height="38.07" preserveAspectRatio="none" />
        <g clip-path="url(#dw-clip-board-screen)"><ellipse cx="511.74" cy="555.64" rx="33.19" ry="4.32" fill="#04060a" fill-opacity="0.5" filter="url(#dw-soft)" /></g>
        <image href="__ASSET__fleet-b-01-cut.png__" x="480" y="530" width="62.85" height="32.1" preserveAspectRatio="none" />
+       <path class="dw-wear" d="M 342.32,453.79 L 345.71,453.19" />
+       <path class="dw-wear" d="M 350.22,450.99 L 355.83,449.35" />
+       <path class="dw-wear-seam" d="M 351.88,461.07 L 351.67,447.13" />
+       <path class="dw-crack" d="M 351.45,458.08 L 352.73,453.85 L 351.9,451.11 L 352.42,447.57" />
+       <path class="dw-patch" d="M343.29,456.12 L350.27,453.84 L350.33,449.02 L342.46,451.13 Z" />
      </g>
      <g id="floor-03-team">
        <ellipse cx="776.99" cy="624.29" rx="32.6" ry="3.6" fill="#141618" fill-opacity="0.22" filter="url(#dw-soft)" />
@@ -1531,6 +1636,10 @@
        <line class="dw-door-line" x1="599.99" y1="703.54" x2="608.14" y2="700.21" />
        <line class="dw-door-line" x1="611.36" y1="699.29" x2="620.54" y2="696.12" />
        <text class="dw-floor-num" transform="matrix(0.7071 -0.2475 0 1 609.87 653.62)" text-anchor="middle" dominant-baseline="central">2</text>
+       <path class="dw-slab-edge" d="M593.13,719.24 L626.87,707.92 L627.25,703.9 L593.32,716.54 Z" />
+       <circle class="dw-glow " cx="626.37" cy="668.53" r="4.8" />
+       <circle class="dw-indicator" cx="626.37" cy="668.53" r="1.2" />
+       <path class="dw-door-line" d="M 624.89,689.29 L 624.52,663.37" />
        <path class="dw-shaft" d="M616.02,603.16 L563.74,585.21 L564.5,492.75 L616.37,510.31 Z" />
        <path class="dw-shaft" d="M616.02,603.16 L621.98,601.61 L621.62,508.51 L616.37,510.31 Z" />
        <path class="dw-shaft" d="M535.58,594.7 L569.94,583.42 L569.49,490.24 L535.87,502.71 Z" />
@@ -1641,6 +1750,13 @@
        <line class="dw-column" x1="749.74" y1="670.47" x2="749.74" y2="577.26" />
        <line class="dw-column" x1="918.78" y1="611.17" x2="918.62" y2="518.17" />
        <line class="dw-column" x1="334.09" y1="524.21" x2="333.71" y2="432.3" />
+       <path class="dw-wall" style="stroke-width:0.5" d="M696.88,651.36 L636.32,629.73 L636.52,611.73 L633.16,592.12 L633.6,574.01 L639.42,557.48 L636.65,537.58 L696.43,558.75 L695.76,577.05 L697.94,596.71 L694.42,614.02 L695.89,632.21 Z" />
+       <path class="dw-slab-lip" d="M 750.06,682.91 L 917.86,624.04" />
+       <path class="dw-slab-seam" d="M 800.67,652.17 L 800.4,664.45" />
+       <path class="dw-bracket" d="M 778.56,672.94 L 777.88,679.42 L 779.75,678.71" />
+       <path class="dw-bracket" d="M 777.85,676.63 L 779.39,676.22" />
+       <path class="dw-bracket" d="M 856.54,645.74 L 856.13,652.78 L 857.86,652.17" />
+       <path class="dw-bracket" d="M 856.06,648.65 L 857.35,648.86" />
      </g>
      <g id="floor-04-front">
        <path class="dw-floor-fill dw-f4" d="M750.21,565.18 L783.61,552.9 L626.28,497.65 L592.6,510.03 Z" />

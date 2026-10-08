@@ -21,6 +21,10 @@
   <line class="dw-door-line" x1="599.99" y1="703.54" x2="608.14" y2="700.21" />
   <line class="dw-door-line" x1="611.36" y1="699.29" x2="620.54" y2="696.12" />
   <text class="dw-floor-num" transform="matrix(0.7071 -0.2475 0 1 609.87 653.62)" text-anchor="middle" dominant-baseline="central">2</text>
+  <path class="dw-slab-edge" d="M593.13,719.24 L626.87,707.92 L627.25,703.9 L593.32,716.54 Z" />
+  <circle class="dw-glow " cx="626.37" cy="668.53" r="4.8" />
+  <circle class="dw-indicator" cx="626.37" cy="668.53" r="1.2" />
+  <path class="dw-door-line" d="M 624.89,689.29 L 624.52,663.37" />
   <path class="dw-shaft" d="M616.02,603.16 L563.74,585.21 L564.5,492.75 L616.37,510.31 Z" />
   <path class="dw-shaft" d="M616.02,603.16 L621.98,601.61 L621.62,508.51 L616.37,510.31 Z" />
   <path class="dw-shaft" d="M535.58,594.7 L569.94,583.42 L569.49,490.24 L535.87,502.71 Z" />
