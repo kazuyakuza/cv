@@ -28,7 +28,7 @@ Reference characteristics to borrow include:
 
 ---
 
-## Status — IN PROGRESS (2026-10-08)
+## Status — COMPLETE (2026-10-09)
 
 Worked floor-by-floor, bottom-to-top, one user-reviewed render per pass.
 
@@ -39,44 +39,62 @@ Worked floor-by-floor, bottom-to-top, one user-reviewed render per pass.
   left-edge wall section. Approved `r171.png`.
 - **§4 Second floor** — Left Interactica lamp + marks + seam; Right Interactica
   rear-left wall + vent and front-right corner wall. Approved `r181.png`.
-- **§5 Third floor** (in progress):
-  - **Indelve** — subtle wall marks above the Trantorian logo (`surfaceWear`);
-    the one r185 detail the user kept.
-  - **Interactica** — a partial wall section on the building's **left edge
-    (u = 0), v ≈ 75..161**, full story, ragged free ends, no side caps and no
-    top cap. Current render `generated/dev/r188.png`. (The r181 front-left
-    corner "L" wall was rejected as a disaster and removed.)
-  - Third-floor slab front-edge refinement:
-    `slabDetail(3*FH, { seams: [72], brackets: [40, 150] })`.
+- **§5 Third floor** — Indelve wall marks (generic only) above the Trantorian
+  logo; Interactica partial wall on the building's left edge (u = 0, v 75..161,
+  full story, ragged ends, no caps); slab front-edge refinement
+  `slabDetail(3*FH, { seams:[72], brackets:[40,150] })`. Approved `r188.png`.
+- **§6 Fourth floor (Pacer)** — left C-D wall wear + lamp, right B-D wall vent,
+  `slabDetail(4*FH, { seams:[64], brackets:[120] })`, elevator story-4
+  maintenance panel + conduit. Approved `r189.png`.
+- **§7 Fifth floor** — generated safety-railing sprite along the open left edge
+  (`rail-01.png`; hand-drawn railing rejected and replaced), B-D-stub junction
+  box + `segRun` conduit, `slabDetail(5*FH, { seams:[40,96,170,214],
+  brackets:[56,140] })`, elevator story-5 minimal variant. Approved `r192.png`
+  (railing repositioned after user edits to the sprite + removal of the chalk
+  layout/rebar marks; final `r194.png`).
+- **§8 Elevator variations** — per-story detail sets (1 riser, 2 indicator+seam,
+  3 +warning, 4 panel+conduit, 5 indicator-only). Approved with M1/M3.
+- **§9 Slabs** — `slabDetail` on every floor with controlled variation
+  (ground finished, first edge+supports, second joints only, third joints+
+  brackets, fourth joint+bracket, fifth most exposed). Approved with M1–M3.
+- **§10–§15 global pass** — floor-2/3/5 wall wear (correct story heights),
+  floor-3 B-D vent + conduit, and the §13 tier-1 line-weight bump. `r198.png`.
 
 **Removed / rejected:** the floor-3 front-left corner "L" wall (r181); the
 r185/r186 hand-drawn **and** sprite wall fixtures on the occluded C-D right
-stretch, B-D right wall and elevator face.
+stretch, B-D right wall and elevator face; the hand-drawn SVG safety railing
+(replaced by a generated sprite); the floor-5 chalk layout + rebar stakes
+(removed on review); the floor-1/2 C-D wall wear that was mis-layered at ground
+level (moved into `floor-ground`, beneath the Freelancer wall papers and the
+staircase).
 
-**Where to resume:** review `generated/dev/r188.png` (floor-3 Interactica
-left-edge wall). Then optionally add fixtures on that wall → **§6 fourth floor**
-→ **§7 fifth floor** → **§8 elevator variations** → **§9 slabs** → §10–§15
-global pass → §18 acceptance → update `src/svg/README.md`.
-
-**Hard-won constraints (do not relearn the hard way):**
-- The floor above occludes a wall face above **`h = 420 − 0.495 · c`**, where
-  `c` is the in-plane coordinate increasing away from the camera-front (u on the
-  C-D far wall, v on the B-D right wall). On floor 3 the C-D wall is visible
-  only at its left end (u ≲ 130) and the B-D wall only at v ≲ 145, so most of
-  floor 3's wall area is simply unavailable.
+**Hard-won constraints:**
+- The floor above occludes a wall face above **`h = (n+1)·FH − 0.495 · c`**,
+  where `c` is the in-plane coordinate increasing away from the camera-front
+  (u on the C-D far wall, v on the B-D right wall). Fixtures/wear only go on the
+  visible wedge (e.g. floor-3 B-D is clear only past the taped app boards at
+  v 5–103).
 - Wall-mounted fixtures **must** use the generated sprite sheets via
   `wallFixture('fixture-*.png', plane, at, a0, hTop, w, h)` — **not** the
   hand-drawn `wallLight` / `ventGrille` / `boxOn*Wall` primitives; the user
-  rejected the hand-drawn look.
-- `partialWall(...)` now accepts **`cap: false`** to omit the top cap (its fold
-  read as a spurious flap on the floor-3 wall). `boxOnVWall`, `ventGrille`,
-  `wallLight`, `segRun` and `switchPlate` are currently unused (kept for later
-  floors) and carry `eslint-disable` directives.
+  rejected the hand-drawn look. The shaft face takes only the built-in
+  collar/indicator/seam/conduit vocabulary.
+- `partialWall(...)` accepts **`cap: false`** to omit the top cap. The unused
+  primitives (`ventGrille`, `wallLight`, `switchPlate`, `boxOnVWall`) are kept
+  with `eslint-disable` directives; `segRun` and `boxOnUWall` are now used.
+
+**Acceptance (§18):** all checklist items met — partial-wall fragments at
+ground/first/second/third, wall-mounted sprite fixtures, localized wall wear,
+per-floor slab construction, elevator story variants, fifth-floor construction
+accents (generated railing), a stronger tier-1 contour hierarchy, the building
+still clearly sectional/open, the entrance sign unchanged, and all Stage 5.5
+career content intact. Documented in `src/svg/README.md` (Stage 5.6 section).
 
 **Render/check pipeline:** `npm run svg:generate` → `npm run svg:assemble` →
 `python generated\dev\make_chk.py` → headless msedge screenshot to
 `generated/dev/rNN.png` (3000×2625) → PIL crops; then `npm run lint`,
 `npm run type-check`, `npm run build`. `generated/` is gitignored.
+
 
 ---
 

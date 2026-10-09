@@ -791,6 +791,17 @@ const TOYSITE_OFF = [790 - 771.93, 345 - 349.1]
 // its right; the SVG lash rebuilt as a tapered ribbon.
 const WHIPPER = { file: 'whipper-01-cut.png', w: 381, h: 1029, k: 0.04942, ax: 10.26, ay: 50.70 }
 const WHIPPER_ANCHOR = [94, 64]
+// Floor-5 construction SAFETY RAILING sprite (Stage 5.6 §7, user revision: the
+// hand-drawn SVG railing "looked horrible"). Generated from a wireframe guide
+// drawn in the diorama's exact constant-u projection (generated/dev/
+// make_wire_rail.py -> rail-wire.png -> nano-banana Pro -> rail-gen.png ->
+// key_cut_rail.py -> src/assets/rail-01.png). The sprite's own geometry carries
+// the 19.29° recede, so it is placed as a billboard: anchor = the near (front)
+// post base; k maps the sprite's 1081 px width to the projected length of the
+// run (906 wire px × 0.7471/8 = 84.6 units).
+const RAIL = { file: 'rail-01.png', w: 1081, h: 693, k: 0.07826, ax: 80.7, ay: 53.9 }
+const RAIL_ANCHOR = [0, 8]
+
 // Floor-5 CV-TOSSER sprite (Stage 5.5 UPDATE #85, user): a person standing on
 // the open fifth-floor slab midway between the elevator and the building's
 // right wall, LOOKING AT THE VIEWER. One hand holds a stack of BLANK WHITE
@@ -1183,7 +1194,6 @@ function slabDetail(hTop, { seams = [], brackets = [] } = {}) {
 // Straight-segment service run (Stage 5.6 §14) through explicit [u, v, h]
 // waypoints, so a conduit/pipe can climb, turn a corner and enter a wall in
 // one editable path. Class defaults to the dark-steel conduit family.
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function segRun(pts, cls = 'dw-conduit-line') {
   return el(cls, `M ${pts.map(([u, v, h]) => p(u, v, h)).join(' L ')}`)
 }
@@ -1712,6 +1722,13 @@ const floorGround = group('floor-ground', [
   // surface — a clean lip and two quiet joints, no exposed supports.
   ...slabDetail(0, { seams: [35, 205] }),
   ...backWalls(0),
+  // Stage 5.6 §3/§4 C-D wall wear (user r195 revision): the floor-1 and
+  // floor-2 wall marks sit on the ground-level C-D wall behind the
+  // staircase/Freelancer area, so they must render UNDER the Freelancer wall
+  // papers and UNDER the staircase and the floor-1 layer — hence emitted here
+  // at the top of `floor-ground`, not in `floor-01`/`floor-02`.
+  ...surfaceWear('u', LD - WALL_T - 0.3, 0, 88, 6, 84, 27),
+  ...surfaceWear('u', LD - WALL_T - 0.3, 44, 84, 6, 84, 33),
   serviceRiser(0),
   // Paper piles hugging partition-2's base on the freelancer side (user
   // screenshot 1 + 2, "correct layer"): emitted BEFORE the wall so the
@@ -1827,10 +1844,12 @@ const freelancerProps = group('freelancer-props', [
 // --- floor-01: slab-1 with stair opening, story-1 walls, shaft return walls -
 const floor01 = group('floor-01', [
   ...slab(FH, { stairOpening: true }),
+  // Stage 5.6 §9 — first-floor slab: a clear edge lip, one joint and supports
+  // under the open front edge (clear of the entrance portal at u 83..155).
+  ...slabDetail(FH, { seams: [96], brackets: [50, 210] }),
   ...backWalls(FH),
-  // Subtle panel seams / wear on the C-D rear wall's left stretch (Nextcode
-  // side) — drawn before the pamphlet so the sheet stays on top (Stage 5.6 §3).
-  ...surfaceWear('u', LD - WALL_T - 0.3, 0, 88, 6, 84, 27),
+  // (The C-D wall wear that used to live here is now emitted in `floor-ground`,
+  // before the Freelancer wall papers and the staircase — user r195 revision.)
   // Nextcode pamphlet (user request): a big white sheet pinned on the rear
   // wall's left corner just above where the staircase rises into floor 1
   // (u 26..58, h 107..127), covered in unreadable hand-written lines. Drawn
@@ -1940,11 +1959,20 @@ const floor01 = group('floor-01', [
 // over the elevator) ----------------------------------------------
 const floor02 = group('floor-02', [
   ...slab(2 * FH),
+  // Stage 5.6 §9 — second-floor slab: subtle structural joints (no exposed
+  // supports, so it differs from the floors above and below).
+  ...slabDetail(2 * FH, { seams: [60, 170] }),
   ...backWalls(2 * FH),
-  // Stage 5.6 §4 — Left Interactica: sparse wall marks, a visible panel joint,
-  // and one localized light on the C-D rear wall's left stretch (clear of the
-  // graph screen at u 90..134, and of the floor-2 rear-left partial wall).
-  ...surfaceWear('u', LD - WALL_T - 0.3, 44, 84, 6, 84, 33),
+  // (The C-D wall wear that used to live here is now emitted in `floor-ground`,
+  // beneath the floor-1 layer and the Freelancer wall papers — r195 revision.)
+  // Stage 5.6 §4/§10 — Left Interactica wall wear at the CORRECT story height
+  // (the mis-placed ground-level copy moved to `floor-ground`), on the C-D
+  // wall's left stretch near the service core (shaft at u 0..48), clear of the
+  // lamp (u 50+) and the graph screen (u 90+).
+  ...surfaceWear('u', LD - WALL_T - 0.3, 0, 42, 2 * FH + 6, 2 * FH + 70, 34),
+  // Stage 5.6 §4 — Left Interactica: a visible panel joint and one localized
+  // light on the C-D rear wall's left stretch (clear of the graph screen at
+  // u 90..134, and of the floor-2 rear-left partial wall).
   seamLine(46, LD - WALL_T - 0.2, 2 * FH + 6, 2 * FH + 78),
   wallFixture('fixture-lamp-01.png', 'u', LD - WALL_T - 0.3, 50, 2 * FH + 64, 10, 13),
   // Tech-lead vignette (r37 review, user): a group of five seated developers
@@ -2483,6 +2511,19 @@ const floor03 = group('floor-03', [
   // Stage 5.6 §5 — third floor Indelve: subtle wall marks above the Trantorian
   // logo (the one r185 detail kept on user review). Generic treatment only.
   ...surfaceWear('u', LD - WALL_T - 0.3, 0, 38, H3 + 60, H3 + 76, 52),
+  // Stage 5.6 §10/§11/§14 — third floor Interactica: architectural detail on
+  // the B-D wall just past the two taped app boards (which occupy v 5..103):
+  // sparse wall wear, a ventilation outlet with a conduit drop into the slab
+  // (infrastructure → floor connection). Generic treatment only (no invented
+  // Interactica specifics). The visible wall wedge here is narrow, so this is
+  // a single fixture rather than a cluster.
+  ...surfaceWear('v', LW - WALL_T - 0.3, 120, 134, H3 + 6, H3 + 30, 44),
+  ...segRun([
+    [LW - WALL_T, 111, H3 + 24],
+    [LW - WALL_T, 111, H3 + 1],
+    [LW - WALL_T - 7, 116, H3 + 0.5],
+  ]),
+  wallFixture('fixture-vent-01.png', 'v', LW - WALL_T - 0.3, 118, H3 + 38, 14, 14),
 ])
 
 const floor03Front = group('floor-03-front', [
@@ -2786,6 +2827,20 @@ const floor04 = group('floor-04', [
   // (UPDATE #73, user). On the wall, drawn after the wall so it sits proud.
   ...pacerChatScreen(),
   ...pacerSheet(),
+  // Stage 5.6 §6 — fourth floor (Pacer) architectural shell. Generic only, no
+  // invented Pacer meaning; the two sides stay deliberately different:
+  //   left  — subtle wear + one wall light on the C-D wall's right stretch,
+  //           clear of the chat screen (u 10..60);
+  //   right — a vent outlet on the B-D wall's visible near stretch (v ≲ 212),
+  //           plus slab construction.
+  // (Ceiling for this story falls as ~105 - 0.495·c local, so both fixtures
+  // sit low where the wall is fully visible.)
+  ...surfaceWear('u', LD - WALL_T - 0.3, 66, 104, 4 * FH + 8, 4 * FH + 46, 61),
+  wallFixture('fixture-lamp-01.png', 'u', LD - WALL_T - 0.3, 70, 4 * FH + 46, 10, 13),
+  wallFixture('fixture-vent-01.png', 'v', LW - WALL_T - 0.3, 30, 4 * FH + 52, 14, 14),
+  // Floor slab (§9): visible edge + one joint, a stronger underside than the
+  // floors below and a support bracket under the open front edge.
+  ...slabDetail(4 * FH, { seams: [64], brackets: [120] }),
   // Two floor-3 Interactica team clusters (UPDATE #68/#69, user) filling the
   // Pacer left half — far-to-near order (larger v first). In THIS group (before
   // floor-05) so the floor-5 slab and the elevator paint OVER them.
@@ -3089,8 +3144,38 @@ const floor05 = group('floor-05', [
   // fragment, so the shaft occludes its back rail below the roof.
   ...elevatorLadder(),
 ])
+
+// Stage 5.6 §7 — fifth-floor construction vocabulary. The unfinished top floor
+// gets the strongest architectural/mechanical treatment: a service drop on the
+// B-D stub wall (infrastructure → wall connection) plus the generated RAIL
+// sprite along the open left edge (assetProp, not hand-drawn SVG). The earlier
+// chalk layout + rebar stakes were removed on user review (they read as clutter
+// between the railing and the elevator).
+function floor5Construction() {
+  const H = 5 * FH
+  const out = []
+  // Service connection on the B-D stub wall: a wall-mounted junction box with a
+  // conduit drop that turns onto the floor (infrastructure → wall connection).
+  // Uses the building-projection box idiom (not a flat sprite), so it reads as
+  // mounted, like the Stage 5.5 junction boxes. Placed at the near (front) end
+  // of the stub, clear of the toysite's screen footprint.
+  out.push(...boxOnUWall(224, LW - WALL_T, 12, 26, H + 8, H + 22))
+  out.push(
+    ...segRun([
+      [LW - WALL_T, 19, H + 8],
+      [LW - WALL_T, 19, H + 1],
+      [LW - WALL_T - 6, 24, H + 0.5],
+    ]),
+  )
+  return out
+}
+
 const floor05Front = group('floor-05-front', [
   ...slabTriangle(5 * FH),
+  // Stage 5.6 §9 — the most exposed/unfinished slab: extra joints and support
+  // brackets under the open front edge (clear of the Pacer legacy corner below
+  // the B end, hence u ≤ 196).
+  ...slabDetail(5 * FH, { seams: [40, 96, 170, 214], brackets: [56, 140] }),
   ...columns(5 * FH, TOP_H, ['A', 'B', 'C']),
   // Stub walls (incomplete masonry) on the two back walls with visible tops;
   // far faces like the completed floors' rear walls (Stage 4 §8).
@@ -3100,6 +3185,18 @@ const floor05Front = group('floor-05-front', [
   el('dw-wall-far', vFace(LD - WALL_T, 0, STUB_LEN * LW, 5 * FH, 5 * FH + STUB_H)),
   el('dw-slab-edge', uFace(0, LD - WALL_T, LD, 5 * FH, 5 * FH + STUB_H)),
   el('dw-slab', hFace(0, STUB_LEN * LW, LD - WALL_T, LD, 5 * FH + STUB_H)),
+  // Stage 5.6 §10 — fifth-floor stub wall wear: a used, unfinished surface
+  // (right of the AI-acceleration screen at u 19..75, on the visible stub).
+  ...surfaceWear('u', LD - WALL_T - 0.3, 78, 94, 5 * FH + 6, 5 * FH + 40, 55),
+  // Stage 5.6 §7 — construction service intervention (B-D stub junction box +
+  // conduit). Drawn after the stub walls so the box sits on the B-D stub;
+  // before the people so they read in front of it.
+  ...floor5Construction(),
+  // The generated temporary safety railing, standing along the open left edge
+  // (billboard anchored on the near post base). Emitted here, on the floor, so
+  // the people nearby read in front of it.
+  spriteShadow(RAIL, RAIL_ANCHOR[0], RAIL_ANCHOR[1], 5 * FH, undefined, 1.5, { opacity: 0.16 }),
+  assetProp(RAIL, RAIL_ANCHOR[0], RAIL_ANCHOR[1], 5 * FH),
   // AI-acceleration screen on the rear-wall stub (UPDATE #86, user): the user's
   // red-marked surface. Drawn AFTER the stub so it paints on the wall.
   ...aiAccelerationScreen(),
@@ -3191,17 +3288,45 @@ function staircase() {
 // --- elevator: continuous shaft walls with floor bands crossing at each level
 // Floor-specific elevator detailing (Stage 5.6 §4/§8): a wall-mounted
 // indicator and a small maintenance panel beside the doors, plus a base collar
-// at the slab junction, so the core reads as part of the building. Added per
-// story as the stage progresses (currently floor 2).
-function elevatorStoryDetails(hBase) {
+// at the slab junction, so the core reads as part of the building. Each story
+// gets a DIFFERENT combination (the spec forbids repeating one decoration on
+// every floor); hand-drawn fixture sprites stay off the shaft face (user
+// rejected them in r185/r186) — only the built-in collar, indicator, seam and
+// conduit vocabulary is used.
+function elevatorStoryDetails(
+  hBase,
+  { indicator = true, seam = true, panel = false, conduit = false, riser = false, warning = false } = {},
+) {
   const vW2 = SHAFT_V0 - WALL_T
   const out = []
   // base collar at the slab intersection (just above the floor line)
   out.push(el('dw-slab-edge', vFace(vW2 - 0.2, 0, SHAFT_U + WALL_T, hBase + 0.5, hBase + 4)))
   // indicator light right of the doors
-  out.push(...indicatorLight('u', vW2 - 0.5, DOOR_U1 + 5, hBase + DOOR_H - 12, { r: 1.2 }))
+  if (indicator) out.push(...indicatorLight('u', vW2 - 0.5, DOOR_U1 + 5, hBase + DOOR_H - 12, { r: 1.2 }))
   // subtle technical marking (a seam) right of the doors
-  out.push(el('dw-door-line', `M ${p(DOOR_U1 + 3, vW2 - 0.4, hBase + 20)} L ${p(DOOR_U1 + 3, vW2 - 0.4, hBase + 46)}`))
+  if (seam)
+    out.push(el('dw-door-line', `M ${p(DOOR_U1 + 3, vW2 - 0.4, hBase + 20)} L ${p(DOOR_U1 + 3, vW2 - 0.4, hBase + 46)}`))
+  // full-height service riser beside the doors (story 1 variant)
+  if (riser)
+    out.push(
+      el('dw-conduit-line', `M ${p(DOOR_U1 + 3.5, vW2 - 0.4, hBase + 1)} L ${p(DOOR_U1 + 3.5, vW2 - 0.4, hBase + STORY_H)}`),
+    )
+  // compact maintenance access panel: a plain rectangular outline low beside
+  // the doors (a marking, not a fixture sprite)
+  if (panel) {
+    const u0 = DOOR_U1 + 1.5
+    const u1 = DOOR_U1 + 5.5
+    const p0 = hBase + 9
+    const p1 = hBase + 26
+    out.push(
+      el('dw-door-line', `M ${p(u0, vW2 - 0.4, p0)} L ${p(u1, vW2 - 0.4, p0)} L ${p(u1, vW2 - 0.4, p1)} L ${p(u0, vW2 - 0.4, p1)} Z`),
+    )
+  }
+  // short conduit connection from the panel down into the slab
+  if (conduit)
+    out.push(el('dw-conduit-line', `M ${p(DOOR_U1 + 3.5, vW2 - 0.4, hBase + 9)} L ${p(DOOR_U1 + 3.5, vW2 - 0.4, hBase + 4)}`))
+  // small red warning/technical mark beside the doors
+  if (warning) out.push(...indicatorLight('u', vW2 - 0.5, DOOR_U1 + 3.5, hBase + 32, { red: true, r: 1.0 }))
   return out
 }
 
@@ -3210,7 +3335,18 @@ function elevator() {
   for (let story = 1; story <= 5; story++) {
     const hBase = story * FH
     out.push(...shaftStory(hBase, story < 5 ? hBase + STORY_H : TOP_H, { openDoors: story === 5 }))
+    // A DIFFERENT combination per story (spec §8): no single decoration repeats.
+    // Story 1: collar + a full-height service riser (no light).
+    if (story === 1) out.push(...elevatorStoryDetails(hBase, { indicator: false, seam: false, riser: true }))
+    // Story 2: collar + indicator + seam (the approved baseline).
     if (story === 2) out.push(...elevatorStoryDetails(hBase))
+    // Story 3: collar + indicator + seam + a red warning mark.
+    if (story === 3) out.push(...elevatorStoryDetails(hBase, { warning: true }))
+    // Story 4: collar + indicator + maintenance panel + conduit drop.
+    if (story === 4) out.push(...elevatorStoryDetails(hBase, { seam: false, panel: true, conduit: true }))
+    // Story 5 (open doors, unfinished): a minimal collar + indicator only, so
+    // the core stays compatible with the open-air construction floor.
+    if (story === 5) out.push(...elevatorStoryDetails(hBase, { seam: false }))
   }
   // Enclosure, drawn after the story walls so it occludes the interior: the
   // building's invisible left wall closing the shaft's open A-C side from

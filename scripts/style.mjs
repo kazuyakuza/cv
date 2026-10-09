@@ -24,25 +24,25 @@
 
 export const svgStyle = `
     /* Tier 1 — primary structural lines.
-       Stage 5.6 §13 (user: conservative bump): the contour hierarchy is a
-       modest step heavier than Stage 5.5 — silhouette, slab edges, walls,
-       columns and floor outlines carry the reference's stronger definition
-       while tier-2/3 stay comparatively lighter, so not all lines read
-       equally dark. */
-    .dw-column { fill: none; stroke: #3a3833; stroke-width: 2; stroke-linecap: round; }
+       Stage 5.6 §13 (user: stronger contour): a further, clearly visible bump
+       over the earlier conservative pass — the building silhouette, slab edges,
+       near walls, columns and floor outlines now read noticeably heavier (the
+       reference's strong contour definition), while tier-2/3 stay comparatively
+       lighter so not all lines read equally dark. */
+    .dw-column { fill: none; stroke: #3a3833; stroke-width: 2.25; stroke-linecap: round; }
     /* Floor top surfaces: warm pale base tone, clearly apart from the walls.
        Per-floor material classes (dw-f0 … dw-f5) override this in Phase 2. */
-    .dw-floor { fill: #cdc6b0; stroke: #4c4a44; stroke-width: 1.35; }
+    .dw-floor { fill: #cdc6b0; stroke: #4c4a44; stroke-width: 1.5; }
     /* Cut faces (open-side slab bands, wall/partition cut ends): section
        poché — darker warm tone + restrained 45° hatch (Stage 4 §7, §24) */
-    .dw-slab-edge { fill: url(#dw-cut); stroke: #4c4a44; stroke-width: 1.45; }
+    .dw-slab-edge { fill: url(#dw-cut); stroke: #4c4a44; stroke-width: 1.65; }
     /* Near/exterior wall faces (entrance portal, fifth-floor wall arms):
        muted cool concrete — the exterior material identity (Stage 5 §6),
        now distinctly darker/cooler than the interior (Stage 5.5 §3) */
-    .dw-wall { fill: #98a2a3; stroke: #4c4a44; stroke-width: 1.4; }
+    .dw-wall { fill: #98a2a3; stroke: #4c4a44; stroke-width: 1.55; }
     /* Thin wall/shaft top caps: slightly lighter concrete than the wall
        faces, so horizontal surfaces read as catching light */
-    .dw-slab { fill: #aab2b1; stroke: #4c4a44; stroke-width: 1.3; }
+    .dw-slab { fill: #aab2b1; stroke: #4c4a44; stroke-width: 1.45; }
     /* Rear-wall inner faces: far side of the section — lighter lines and
        reduced contrast for depth (Stage 4 §8).
        UPDATE #92 palette pass (reference, Stage 5.5 §3): the interior walls
@@ -57,7 +57,7 @@ export const svgStyle = `
        it therefore takes the WALL tone and merges with it seamlessly; the
        floor behind the separation stays one continuous floor material. */
     .dw-wall-far-fill { fill: #d2d2cb; stroke: none; }
-    .dw-far-line { fill: none; stroke: #4c4a44; stroke-width: 1.2; }
+    .dw-far-line { fill: none; stroke: #4c4a44; stroke-width: 1.3; }
     /* Panel joints on the interior far walls (Stage 5.5 §8): sparse vertical
        seams, hashed per story — painted-wall articulation, hand-placed feel.
        Low contrast on purpose: readable up close, quiet at overview size. */
@@ -68,18 +68,18 @@ export const svgStyle = `
        section's interior layering reads (Stage 5 §6); cool concrete to match
        the UPDATE #92 palette pass. */
     .dw-partition { fill: #dcddd8; stroke: #7a766b; stroke-width: 0.75; }
-    .dw-opening { fill: none; stroke: #5d5a52; stroke-width: 0.9; }
+    .dw-opening { fill: none; stroke: #5d5a52; stroke-width: 1.05; }
     /* Elevator: solid architectural shaft (not glass). A distinctly darker,
        cooler structure than the floors and walls, so the shaft reads as its
        own material — including where it legitimately passes in front of a
        floor corner (Stage 5 §6, §10); deeper door opening on the unfinished
        fifth floor */
-    .dw-shaft { fill: #8e9189; stroke: #5d5a52; stroke-width: 1; }
+    .dw-shaft { fill: #8e9189; stroke: #5d5a52; stroke-width: 1.2; }
     /* Door panels: lighter than the shaft face so the doors read on it;
        the open doorway is the darkest interior tone so openings read as
        depth, not decoration */
-    .dw-door { fill: #b2b0a2; stroke: #5d5a52; stroke-width: 1; }
-    .dw-door-open { fill: #5b584e; stroke: #5d5a52; stroke-width: 1; }
+    .dw-door { fill: #b2b0a2; stroke: #5d5a52; stroke-width: 1.1; }
+    .dw-door-open { fill: #5b584e; stroke: #5d5a52; stroke-width: 1.1; }
     /* Door panel articulation (Stage 5.5 §8): one quiet horizontal groove
        per leaf — the doors read as metal panels, not blank quads */
     .dw-door-line { fill: none; stroke: #5d5a52; stroke-width: 0.7; }

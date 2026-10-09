@@ -1,5 +1,14 @@
 <g id="floor-05-front">
   <path class="dw-floor-fill dw-f5" d="M749.49,459.96 L784.16,447.81 L626.66,393.15 L592.51,404.54 Z" />
+  <path class="dw-slab-lip" d="M 750.09,472.2 L 917.94,413.86" />
+  <path class="dw-slab-seam" d="M 778.55,449.72 L 777.83,462.22" />
+  <path class="dw-slab-seam" d="M 817.62,436.06 L 818.35,448.46" />
+  <path class="dw-slab-seam" d="M 870,418.24 L 870.41,430.3" />
+  <path class="dw-slab-seam" d="M 901.74,407.45 L 901.71,419.94" />
+  <path class="dw-bracket" d="M 790.02,458.78 L 789.94,465.78 L 790.75,465.01" />
+  <path class="dw-bracket" d="M 790.14,462.22 L 791.1,462.07" />
+  <path class="dw-bracket" d="M 848.67,437.49 L 848.69,444.33 L 850.7,443.9" />
+  <path class="dw-bracket" d="M 848.92,441.87 L 850.05,441.51" />
   <line class="dw-column" x1="749.49" y1="459.96" x2="750.44" y2="355.43" />
   <line class="dw-column" x1="918.73" y1="401.06" x2="918.01" y2="296.42" />
   <line class="dw-column" x1="333.78" y1="314.25" x2="333.83" y2="209.92" />
@@ -9,6 +18,100 @@
   <path class="dw-wall-far" d="M339,316.22 L406.5,292.74 L406.47,242.71 L339.66,266.83 Z" />
   <path class="dw-slab-edge" d="M339,316.22 L333.78,314.25 L333.94,264.13 L339.66,266.83 Z" />
   <path class="dw-slab" d="M339.66,266.83 L406.47,242.71 L401.35,241.45 L333.94,264.13 Z" />
+  <path class="dw-wear" d="M 404.16,278.96 L 408.59,278.6" />
+  <path class="dw-wear" d="M 399.12,277.39 L 403.01,276.49" />
+  <path class="dw-wear-seam" d="M 402.86,287.01 L 402.5,255.97" />
+  <path class="dw-crack" d="M 399.23,281.33 L 400.24,277.27 L 399.25,273.65 L 400.08,270.12" />
+  <path class="dw-patch" d="M396.15,271.57 L399.72,271.27 L399.37,259.39 L396.01,260.95 Z" />
+  <path class="dw-jbox" d="M899.52,393.22 L890.07,389.85 L890.53,376.06 L900.19,379.42 Z" />
+  <path class="dw-jbox" d="M900.19,379.42 L904.03,377.76 L894.07,374.74 L890.53,376.06 Z" />
+  <path class="dw-jbox" d="M890.07,389.85 L894.26,388.35 L894.07,374.74 L890.53,376.06 Z" />
+  <
+  p
+  a
+  t
+  h
+   
+  c
+  l
+  a
+  s
+  s
+  =
+  "
+  d
+  w
+  -
+  c
+  o
+  n
+  d
+  u
+  i
+  t
+  -
+  l
+  i
+  n
+  e
+  "
+   
+  d
+  =
+  "
+  M
+   
+  8
+  9
+  9
+  .
+  0
+  3
+  ,
+  3
+  9
+  0
+  .
+  3
+  7
+   
+  L
+   
+  8
+  9
+  9
+  .
+  4
+  8
+  ,
+  3
+  9
+  7
+  .
+  1
+  2
+   
+  L
+   
+  8
+  9
+  2
+  .
+  0
+  9
+  ,
+  3
+  9
+  7
+  .
+  6
+  1
+  "
+   
+  /
+  >
+  <ellipse cx="706.38" cy="456.75" rx="55.84" ry="5.4" fill="#141618" fill-opacity="0.16" filter="url(#dw-soft)" />
+  <image href="__ASSET__rail-01.png__" x="664.08" y="403.85" width="84.6" height="54.23" preserveAspectRatio="none" />
   <g transform="matrix(0.7071 -0.2475 0 1 353.67 268.21)">
     <rect class="dw-graph-frame" x="0" y="0" width="56" height="38" rx="0.8" />
     <image href="__ASSET__AI-Acceleration.png__" x="1" y="1" width="54" height="36" preserveAspectRatio="none" />

@@ -24,12 +24,15 @@ Do not force every visual element to be vectorized.
 
 ## Development Status
 
-- **Stages 0–5.5 are complete** (wireframe → geometry → structure →
-  illustration style → materials/details → visual enrichment). Stage 5.5 was
-  closed on 2026-10-05; it met its acceptance criteria
-  (`STAGE_05.5_VISUAL_ENRICHMENT.md` §17) and is documented in
-  `.agent/todo/STAGE_05.5_VISUAL_ENRICHMENT_CONTINUE_3.md` (the final handoff;
-  `…_CONTINUE_2.md` / `…_CONTINUE.md` are the history).
+- **Stages 0–5.6 are complete** (wireframe → geometry → structure →
+  illustration style → materials/details → visual enrichment → floor-by-floor
+  architectural refinement). Stage 5.5 was closed on 2026-10-05
+  (`STAGE_05.5_VISUAL_ENRICHMENT.md` §17, documented in
+  `.agent/todo/STAGE_05.5_VISUAL_ENRICHMENT_CONTINUE_3.md`). Stage 5.6
+  (selective partial walls, wall fixtures, surface wear, slab construction,
+  elevator story variants, stronger tier-1 outlines, and a generated safety
+  railing) is documented in `src/svg/README.md` and
+  `STAGE_05.6_Floor-by-Floor_Architectural_Refinement.md`.
 - **Next: Stage 6 (career content)**, then 7 information layer → 8 display
   modes → 9 Vue integration → 10 polish/deployment. These are future sessions.
 

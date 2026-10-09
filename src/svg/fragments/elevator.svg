@@ -10,6 +10,8 @@
   <line class="dw-door-line" x1="599.61" y1="808.65" x2="608.08" y2="805.3" />
   <line class="dw-door-line" x1="611.59" y1="803.86" x2="619.74" y2="801.57" />
   <text class="dw-floor-num" transform="matrix(0.7071 -0.2475 0 1 609.93 758.96)" text-anchor="middle" dominant-baseline="central">1</text>
+  <path class="dw-slab-edge" d="M592.87,824.92 L627.14,812.69 L626.74,809.2 L592.74,820.91 Z" />
+  <path class="dw-conduit-line" d="M 625.14,813.4 L 624.63,721.06" />
   <path class="dw-shaft" d="M616.09,708.56 L564.51,689.76 L564.44,597.53 L616.35,615.74 Z" />
   <path class="dw-shaft" d="M616.09,708.56 L621.05,705.67 L621.31,613.41 L616.35,615.74 Z" />
   <path class="dw-shaft" d="M535.7,700.05 L569.37,688.27 L569.77,595.55 L535.58,607.26 Z" />
@@ -36,6 +38,12 @@
   <line class="dw-door-line" x1="599.43" y1="598.19" x2="607.6" y2="595.35" />
   <line class="dw-door-line" x1="612.26" y1="594.17" x2="620.48" y2="591.88" />
   <text class="dw-floor-num" transform="matrix(0.7071 -0.2475 0 1 610.01 549.02)" text-anchor="middle" dominant-baseline="central">3</text>
+  <path class="dw-slab-edge" d="M592.46,614.67 L627.39,602.14 L627.32,598.62 L593.33,610.7 Z" />
+  <circle class="dw-glow " cx="626.1" cy="562.93" r="4.8" />
+  <circle class="dw-indicator" cx="626.1" cy="562.93" r="1.2" />
+  <path class="dw-door-line" d="M 624.24,584.48 L 624.61,558.41" />
+  <circle class="dw-glow dw-glow-red" cx="625.02" cy="572.09" r="4" />
+  <circle class="dw-indicator-red" cx="625.02" cy="572.09" r="1" />
   <path class="dw-shaft" d="M616.42,498.16 L564.3,480.06 L564.59,387.47 L616.67,406 Z" />
   <path class="dw-shaft" d="M616.42,498.16 L621.91,496.61 L621.99,403.95 L616.67,406 Z" />
   <path class="dw-shaft" d="M535.32,489.94 L569.18,478.38 L569.93,385.7 L535.79,397.67 Z" />
@@ -47,6 +55,11 @@
   <line class="dw-door-line" x1="598.93" y1="494.03" x2="607.16" y2="490.49" />
   <line class="dw-door-line" x1="612.42" y1="489.08" x2="620.64" y2="486.88" />
   <text class="dw-floor-num" transform="matrix(0.7071 -0.2475 0 1 609.24 443.51)" text-anchor="middle" dominant-baseline="central">4</text>
+  <path class="dw-slab-edge" d="M592.46,509.51 L626.81,497.32 L626.82,494.21 L593.2,505.72 Z" />
+  <circle class="dw-glow " cx="625.58" cy="458.23" r="4.8" />
+  <circle class="dw-indicator" cx="625.58" cy="458.23" r="1.2" />
+  <path class="dw-door-line" d="M 623.78,490.62 L 626.41,489.19 L 626.84,472.15 L 623.37,472.87 Z" />
+  <path class="dw-conduit-line" d="M 624.51,490.26 L 625.37,495.22" />
   <path class="dw-shaft" d="M616.44,392.72 L564.12,375.3 L563.98,269.36 L616.01,287.56 Z" />
   <path class="dw-shaft" d="M616.44,392.72 L622.04,391.52 L621.12,285.77 L616.01,287.56 Z" />
   <path class="dw-shaft" d="M535.77,384.86 L569.34,373.31 L569.96,268.22 L535.59,280.15 Z" />
@@ -57,6 +70,9 @@
   <path class="dw-door" d="M597.16,403.84 L603.51,401.87 L603.13,348.52 L597.1,351.05 Z" />
   <path class="dw-door" d="M616.23,396.43 L622.46,394.68 L621.81,342.49 L616.75,343.61 Z" />
   <text class="dw-floor-num" transform="matrix(0.7071 -0.2475 0 1 610.18 338.46)" text-anchor="middle" dominant-baseline="central">5</text>
+  <path class="dw-slab-edge" d="M592.88,404.92 L626.5,392.96 L627.12,388.99 L593.11,400.52 Z" />
+  <circle class="dw-glow " cx="625.77" cy="352.93" r="4.8" />
+  <circle class="dw-indicator" cx="625.77" cy="352.93" r="1.2" />
   <path class="dw-shaft" d="M587.39,823.43 L535.9,805.04 L535.59,280.15 L587.04,298.15 Z" />
   <path class="dw-slab-edge" d="M750.37,787.05 L333.85,642.45 L334.64,629.17 L750.18,774.66 Z" />
   <path class="dw-slab-edge" d="M750.06,682.91 L334.1,537.19 L334.09,524.21 L749.74,670.47 Z" />

@@ -171,6 +171,61 @@ Material system (STAGE_05 §4–§7, `scripts/style.mjs` + per-floor patterns in
   pending review; the `architectural-details` group is an empty placeholder
   again.
 
+## Stage 5.6 — floor-by-floor architectural refinement
+
+A pass that enriches the **architecture itself** (not more generic objects),
+developed floor-by-floor with a user-reviewed render each pass (see
+`STAGE_05.6_Floor-by-Floor_Architectural_Refinement.md`). The goal is the
+reference's vocabulary — partial walls, visible slab construction, wall
+fixtures, surface wear, infrastructure and stronger outlines — applied at
+specific locations.
+
+**Vocabulary** (`scripts/generate-geometry.mjs`): `partialWall(plane,a0,a1,at,h0,h1,opts)`
+(short wall fragments; `cap:false` omits the top cap, `scrap:[…]` gives ragged
+cut ends, `outline` sets a thin/thick border), `wallFixture(file,plane,at,a0,hTop,w,h)`
+(generated fixture **sprites** laid on a wall plane with the wall's skew),
+`surfaceWear(plane,at,a0,a1,h0,h1,seed)` (sparse scratches + one seam + one
+crack + one patch), `slabDetail(hTop,{seams,brackets})` (front-edge lip, joints,
+underside brackets), `bracket`, `segRun` (connected conduit polylines) and
+`indicatorLight`. The hand-drawn `ventGrille`/`wallLight`/`switchPlate`/
+`boxOnVWall` primitives are kept but **unused** — the user rejected the
+hand-drawn wall-fixture look; fixtures use the generated sprites
+(`fixture-lamp/panel/switch/vent-01.png`; masters for alarm/exit/firstaid/
+intercom/meter/thermostat/junction/valve also exist).
+
+**Per floor:** ground — Puelo front/left partial walls + panel/switch/vent
+sprites, a BA stub partition, slab seams; first — a vent + panel sprite, a
+left-edge partial wall, slab edge + brackets; second — left-Interactica lamp +
+panel joint, rear-left + front-right partial walls, slab joints; third —
+Indelve wear (generic only) and an Interactica partial wall on the open left
+edge, a B-D-wall vent + conduit and wear, slab joints + brackets; fourth —
+left lamp + wear, right vent, slab joint + bracket; fifth — the strongest
+construction treatment (see below).
+
+**Generated safety railing (§7):** the hand-drawn railing was replaced by a
+sprite. `generated/dev/make_wire_rail.py` draws an isometric wireframe in the
+diorama's exact constant-u projection → nano-banana (Pro) renders it →
+`key_cut_rail.py` keys it to `src/assets/rail-01.png` → placed as a billboard
+(`RAIL` spec, anchored on the near post base) along the open left edge of the
+fifth floor. The fifth floor also has a B-D-stub junction box + `segRun`
+conduit (infrastructure → wall connection).
+
+**Elevator (§8):** `elevatorStoryDetails(hBase, opts)` gives each story a
+different detail set (1: service riser; 2: indicator + seam; 3: + red warning;
+4: maintenance panel + conduit; 5: indicator only, compatible with the open
+doors). No fixture sprites on the shaft face (user rejected those).
+
+**Line-weight hierarchy (§13, `style.mjs`):** a further tier-1 bump — columns
+2.25, slab edges 1.65, near walls 1.55, floors 1.5, slab caps 1.45, shaft 1.2,
+openings 1.05, doors 1.1 — while tier-2/3 stay comparatively lighter.
+
+**Hard-won constraints:** the floor above occludes a wall face above
+`h = (n+1)·FH − 0.495·c` (`c` = u on C-D, v on B-D), so fixtures/wear only go
+on the visible wedge (e.g. floor-3 B-D is clear only past the taped app boards
+at v 5–103). The floor-1/floor-2 C-D wall wear is emitted at the top of
+`floor-ground` (beneath the Freelancer wall papers and the staircase) — its
+marks sit at ground level and must layer under them.
+
 ## Layout: fragments + assembled master (Stage 2)
 
 The diorama is authored as **modular fragments** — one `<g>` per architectural
