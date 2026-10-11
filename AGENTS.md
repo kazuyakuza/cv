@@ -24,17 +24,19 @@ Do not force every visual element to be vectorized.
 
 ## Development Status
 
-- **Stages 0–5.6 are complete** (wireframe → geometry → structure →
+- **Stages 0–6 are complete** (wireframe → geometry → structure →
   illustration style → materials/details → visual enrichment → floor-by-floor
-  architectural refinement). Stage 5.5 was closed on 2026-10-05
-  (`STAGE_05.5_VISUAL_ENRICHMENT.md` §17, documented in
-  `.agent/todo/STAGE_05.5_VISUAL_ENRICHMENT_CONTINUE_3.md`). Stage 5.6
-  (selective partial walls, wall fixtures, surface wear, slab construction,
-  elevator story variants, stronger tier-1 outlines, and a generated safety
-  railing) is documented in `src/svg/README.md` and
-  `STAGE_05.6_Floor-by-Floor_Architectural_Refinement.md`.
-- **Next: Stage 6 (career content)**, then 7 information layer → 8 display
-  modes → 9 Vue integration → 10 polish/deployment. These are future sessions.
+  architectural refinement → career content/exterior sign). Stage 5.5 was
+  closed on 2026-10-05 and Stage 5.6 on 2026-10-09 (see
+  `.agent/todo/STAGE_05.5_VISUAL_ENRICHMENT_CONTINUE_3.md` and
+  `STAGE_05.6_Floor-by-Floor_Architectural_Refinement.md`). Stage 6 (2026-10-10)
+  removed the ground-standing entrance sign, added a vertical blade sign on the
+  building's front-right corner projecting rear→front, shortened the path and
+  cropped the composed `viewBox`; the career scenes were reviewed and left
+  unchanged. Documented in `src/svg/README.md` and
+  `STAGE_06_CAREER_CONTENT.md`.
+- **Next: Stage 7 (information layer)**, then 8 display modes → 9 Vue
+  integration → 10 polish/deployment. These are future sessions.
 
 ## Core Principles
 

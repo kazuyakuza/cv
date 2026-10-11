@@ -3,7 +3,7 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 // Stage 2 geometry generator — emits the repetitive architectural fragments
-// (floors, staircase, elevator, entrance, career-sign) from the shared
+// (floors, staircase, elevator, entrance, projecting-sign) from the shared
 // parameter block documented in src/svg/README.md. terrain.svg, path.svg and
 // labels.svg stay hand-authored. Edit parameters here, re-run
 // `npm run svg:generate`, then `npm run svg:assemble`.
@@ -840,7 +840,7 @@ function assetProp(sp, uAnchor, vAnchor, hBase, off) {
 // sitter: a u/v footprint quad reads as a stray streak — a billboard has no
 // honest plan footprint). Screen-space ellipse sized to the sprite's base,
 // locked to the sprite via spritePlace; same blurred language as the
-// career-sign shadow (#141618, dw-soft).
+// ground contact shadow (#141618, dw-soft).
 function spriteShadow(sp, uAnchor, vAnchor, hBase, off, bulge = 1, shade = {}) {
   const { x, y } = spritePlace(sp, uAnchor, vAnchor, hBase)
   const [ox, oy] = off || [0, 0]
@@ -3460,32 +3460,52 @@ function architecturalDetails() {
   return group('architectural-details', [])
 }
 
-// --- career-sign: posts and placeholder panel -------------------------------
-// The sign stands on the open terrain in front-right of the building, outside
-// the building's u/v coordinate system, so it is expressed in screen space.
-// User revision: the floating placeholder card becomes a physical sign object
-// — a framed board carried by two posts planted in the terrain, with a soft
-// contact shadow on the ground. Placeholder content stays (final content is
-// Stage 7).
-function careerSign() {
-  return group('career-sign', [
-    tagGroup(
-      [
-        // soft contact shadow where the posts meet the terrain
-        '<ellipse cx="1110" cy="1044" rx="88" ry="11" fill="#141618" fill-opacity="0.28" filter="url(#dw-soft)" />',
-        // two posts planted in the ground (right post nearer, ground lower)
-        '<line class="dw-column" x1="1052" y1="986" x2="1052" y2="1042" />',
-        '<line class="dw-column" x1="1168" y1="984" x2="1168" y2="1048" />',
-        // board frame + placeholder panel with photo circle and text bars
-        '<rect class="dw-sign-frame" x="1024" y="864" width="172" height="122" rx="3" />',
-        '<rect class="dw-sign" x="1032" y="872" width="156" height="106" />',
-        '<circle class="dw-shaft" cx="1066" cy="906" r="21" />',
-        '<rect x="1098" y="890" width="58" height="10" fill="#a8a49c" />',
-        '<rect x="1098" y="910" width="42" height="10" fill="#a8a49c" />',
-      ],
-      'dw-sign-group',
-    ),
-  ])
+// --- projecting-sign: vertical blade at the front-right corner --------------
+// Stage 6 (user revision): the old ground-standing entrance sign is removed
+// entirely. A vertical blade sign is mounted at the building's front-right
+// corner (corner B, where the absent front wall A-B meets the right wall B-D)
+// and projects outward along the building's DEPTH axis, rear -> front (toward
+// the viewer / -v) — the same direction as an arrow from the C-D rear wall to
+// the A-B front wall. It mounts on the right wall's front end (v = 0) with a
+// small gap. Its broad faces are therefore constant-u (perpendicular to the
+// front wall); the -u face is the one the camera sees. Two arms bridge the gap
+// from the wall end to the blade. Placeholder identity motif only (photo disc +
+// name bars), reflowed vertically; no real copy — the information layer is
+// Stage 7.
+function projectingSign() {
+  const uNear = LW - 11 // visible (-u) broad face
+  const uFar = LW - 1 // hidden (+u) broad face (blade thickness 10)
+  const vBack = -12 // blade inner edge: small gap off the building front
+  const vFront = -100 // blade outer (front) edge
+  const h0 = FH + 2 // spans the floor-2 story...
+  const h1 = 3 * FH - 2 // ...and the floor-3 story
+  const out = []
+  // Closed volume: far face, bottom/top caps and the front end edge.
+  out.push(el('dw-sign', uFace(uFar, vFront, vBack, h0, h1)))
+  out.push(el('dw-sign-frame', hFace(uNear, uFar, vFront, vBack, h0)))
+  out.push(el('dw-sign-frame', hFace(uNear, uFar, vFront, vBack, h1)))
+  out.push(el('dw-sign-frame', vFace(vFront, uNear, uFar, h0, h1)))
+  // Two mounting arms bridging the gap from the wall's front end (v = 0) to the
+  // blade, each with a wall plate and screw/nail attachment points.
+  const armH = 8
+  for (const ha of [h0 + 20, h1 - 20 - armH]) {
+    out.push(el('dw-jbox', uFace(uNear, vBack, 0, ha, ha + armH)))
+    out.push(el('dw-jbox', hFace(uNear, uFar, vBack, 0, ha + armH)))
+    out.push(el('dw-jbox', vFace(0, uNear, uFar, ha, ha + armH)))
+    out.push(dot(uNear + 1.5, -1.5, ha + armH / 2))
+    out.push(dot(uFar - 1.5, -1.5, ha + armH / 2))
+  }
+  // Casing frame + inset panel on the visible (-u) face.
+  out.push(el('dw-sign-frame', uFace(uNear, vFront, vBack, h0, h1)))
+  out.push(el('dw-sign', uFace(uNear - 0.7, vFront + 5, vBack - 5, h0 + 5, h1 - 5)))
+  // Placeholder identity motif, vertical: photo disc above two name bars.
+  const vMid = (vFront + vBack) / 2
+  const hMid = (h0 + h1) / 2
+  const [dx, dy] = p(uNear - 1.4, vMid, hMid + 30).split(',').map(Number)
+  out.push(`<circle class="dw-shaft" cx="${round(dx)}" cy="${round(dy)}" r="15" />`)
+  out.push(el('dw-sign-bar', uFace(uNear - 1.2, vFront + 18, vBack - 18, hMid - 6, hMid + 1)))
+  out.push(el('dw-sign-bar', uFace(uNear - 1.2, vFront + 30, vBack - 18, hMid - 24, hMid - 17)))
+  return group('projecting-sign', [tagGroup(out, 'dw-sign-group')])
 }
 
 // --- experience tags: section names on the invisible left wall --------------
@@ -3566,7 +3586,7 @@ const fragments = {
   elevator: elevator(),
   'architectural-details': architecturalDetails(),
   entrance: entrance(),
-  'career-sign': careerSign(),
+  'projecting-sign': projectingSign(),
   tags: experienceTags(),
   // The near (left) Indelve fleet must paint over the "Indelve" experience tag
   // (user r91 review), so it is emitted from its own fragment, assembled AFTER

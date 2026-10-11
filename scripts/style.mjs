@@ -88,15 +88,18 @@ export const svgStyle = `
     .dw-stair { fill: #d9cfb5; stroke: #7a766b; stroke-width: 0.9; }
     .dw-stair-riser { fill: #c3b89d; stroke: #7a766b; stroke-width: 0.9; }
     .dw-stair-side { fill: #c5ba9e; stroke: #7a766b; stroke-width: 0.9; }
-    /* Information-layer plaques and the career sign stay near-white:
-       they must keep the highest readability (Stage 5 §15) — on the dark
-       environment they intentionally stay the brightest flat surfaces */
+    /* Information-layer plaques and the sign stay near-white: they must keep
+       the highest readability (Stage 5 §15) — on the dark environment they
+       intentionally stay the brightest flat surfaces */
     .dw-tag { fill: #fffefb; stroke: #5d5a52; stroke-width: 0.9; }
     .dw-sign { fill: #fffefb; stroke: #6b675e; stroke-width: 1.1; }
-    /* Career sign (Stage 5.5 §12 user revision): the board frame reads as
-       warm wood matching the crate family, so the sign reads as a built
-       object planted in the terrain, not a floating UI card */
+    /* Projecting sign casing (Stage 5.5 §12 user revision, remounted Stage 6):
+       the frame reads as warm wood matching the crate family, so the sign reads
+       as a built object, not a floating UI card */
     .dw-sign-frame { fill: #9c8760; stroke: #4c4a44; stroke-width: 1; }
+    /* Sign name-line bars (Stage 6): the muted placeholder bars carried over
+       from the old entrance sign, reflowed vertically onto the projecting blade */
+    .dw-sign-bar { fill: #a8a49c; stroke: none; }
 
     /* Restrained structural shading (Stage 5 §7): stepped translucent bands
        under the slabs along the rear walls' tops. Steps instead of a linear

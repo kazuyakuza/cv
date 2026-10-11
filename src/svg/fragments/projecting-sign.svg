@@ -1,0 +1,23 @@
+<g id="projecting-sign">
+  <g class="dw-sign-group">
+  <path class="dw-sign" d="M988.31,843.79 L925.84,822.51 L926.59,615.86 L988.6,638.56 Z" />
+  <path class="dw-sign-frame" d="M981.13,846.59 L988.31,843.79 L925.84,822.51 L919.26,825.15 Z" />
+  <path class="dw-sign-frame" d="M981.42,640.03 L988.6,638.56 L926.59,615.86 L919.38,618.91 Z" />
+  <path class="dw-sign-frame" d="M981.13,846.59 L988.31,843.79 L988.6,638.56 L981.42,640.03 Z" />
+  <path class="dw-jbox" d="M918.94,804.26 L910.35,802.22 L910.16,794.35 L918.52,796.68 Z" />
+  <path class="dw-jbox" d="M918.52,796.68 L926.42,793.8 L917.29,791.18 L910.16,794.35 Z" />
+  <path class="dw-jbox" d="M910.35,802.22 L917.55,799.63 L917.29,791.18 L910.16,794.35 Z" />
+  <circle class="dw-dot" cx="912.61" cy="797.66" r="1.4" />
+  <circle class="dw-dot" cx="917.14" cy="795.94" r="1.4" />
+  <path class="dw-jbox" d="M919.11,646.64 L910.6,643.74 L910.35,636.23 L919.3,638.78 Z" />
+  <path class="dw-jbox" d="M919.3,638.78 L925.63,636.15 L917.89,632.88 L910.35,636.23 Z" />
+  <path class="dw-jbox" d="M910.6,643.74 L917.83,641.67 L917.89,632.88 L910.35,636.23 Z" />
+  <circle class="dw-dot" cx="912.67" cy="639.84" r="1.4" />
+  <circle class="dw-dot" cx="917.93" cy="637.96" r="1.4" />
+  <path class="dw-sign-frame" d="M981.13,846.59 L919.26,825.15 L919.38,618.91 L981.42,640.03 Z" />
+  <path class="dw-sign" d="M976.88,840.48 L921.78,821.69 L922.26,625.17 L977.45,644.69 Z" />
+  <circle class="dw-shaft" cx="948.93" cy="702.59" r="15" />
+  <path class="dw-sign-bar" d="M967.56,745.21 L931.15,732.29 L930.97,725.42 L967.21,738.8 Z" />
+  <path class="dw-sign-bar" d="M958.94,760.21 L930.52,750.24 L930.46,744.05 L959.07,753.01 Z" />
+</g>
+</g>

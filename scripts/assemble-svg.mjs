@@ -12,13 +12,19 @@ const fragmentsDir = join(root, 'src', 'svg', 'fragments')
 
 const readFragment = (name) => readFileSync(join(fragmentsDir, `${name}.svg`), 'utf8').trim()
 
+// Composition frame (Stage 6 revision): cropped from the original
+// "0 0 1200 1050" to remove the empty side/foreground margins left once the
+// entrance sign was removed, re-centred on the building + blade so the
+// diorama fills the frame. Keeps the blade sign (right) and fifth floor (top).
+const VIEW_BOX = '200 95 900 955'
+
 const indent = (text, spaces) => text.replace(/^/gm, ' '.repeat(spaces))
 
 // Root order inside the SVG (Stage 3 spec §7): background/base first, then
 // the building (rear elements → interior → slabs → foreground faces), then
 // entrance, then the exterior path and sign in the foreground. The ground
 // shadow sits between terrain and building (Stage 5 §7 shading).
-const rootOrder = ['terrain', 'ground-shadow', 'building', 'entrance', 'path', 'career-sign']
+const rootOrder = ['terrain', 'ground-shadow', 'building', 'entrance', 'path', 'projecting-sign']
 
 // Vertical stacking order inside <g id="building"> (Stage 3.5 revision): the
 // staircase sits under floor-01 (the slab occludes it); every shaft-crossing
@@ -66,7 +72,7 @@ const svg = `<!--
 -->
 <svg
   xmlns="http://www.w3.org/2000/svg"
-  viewBox="0 0 1200 1050"
+  viewBox="${VIEW_BOX}"
   role="img"
   aria-labelledby="diorama-title"
 >

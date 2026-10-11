@@ -226,6 +226,39 @@ at v 5–103). The floor-1/floor-2 C-D wall wear is emitted at the top of
 `floor-ground` (beneath the Freelancer wall papers and the staircase) — its
 marks sit at ground level and must layer under them.
 
+## Stage 6 — career content: exterior sign redesign
+
+A restrained content pass (see `STAGE_06_CAREER_CONTENT.md`). The career scenes
+were reviewed floor-by-floor and **left unchanged** — no specific, documented
+omission was found, and the brief forbids inventing Indelve/Pacer/floor-5
+content (Stage 7 adds the information layer; Stage 8 the display modes).
+
+**Removed:** the old ground-standing entrance sign (`career-sign`: two posts +
+a framed 160×110 placeholder board with a screen-space photo disc and two grey
+text bars, cast on the terrain in the lower-right foreground). Its posts, board
+and contact shadow are gone; the `career-sign` fragment is deleted.
+
+**Added:** `projecting-sign` — a vertical blade sign mounted at the building's
+front-right corner (corner B, where the absent front wall A‑B meets the right
+wall B‑D) and projecting outward along the building's **depth axis, rear → front**
+(toward the viewer / −v), i.e. parallel to an arrow from the C‑D rear wall to
+the A‑B front wall. It mounts on the right wall's front end (v = 0) with a small
+gap. The blade is a closed box (thickness 10 along `u`, u 227…237; depth 88 along
+`v`, v −100…−12; spanning the floor‑2/floor‑3 stories); its broad faces are
+constant‑`u`, and the visible `−u` face carries the casing frame, near-white
+inset panel and the **same placeholder motif reflowed vertically** (photo disc
+above two name bars) — wording/meaning preserved, no new copy. It bolts to the
+wall through two `dw-jbox` arms bridging the gap, with wall plates and `dw-dot`
+attachment points.
+
+**Composition:** the now-terminal `path` (fragment hand-authored) was shortened
+(~40%) so it no longer leads to the removed sign, and the assembled `viewBox`
+was cropped from `0 0 1200 1050` to `200 95 900 955` (`VIEW_BOX` in
+`assemble-svg.mjs`) to cut the empty side/foreground margins left behind —
+re-centred on the building + blade. All content (building, blade sign, terrain,
+fifth floor) stays; the terrain's far right/anterior is clipped at the frame
+edge, which reads as ground reaching the border.
+
 ## Layout: fragments + assembled master (Stage 2)
 
 The diorama is authored as **modular fragments** — one `<g>` per architectural
@@ -234,8 +267,8 @@ module — and assembled into a **single complete master SVG**:
 ```text
 src/svg/
 ├── fragments/                  ← authoritative source (one root <g> each)
-│   ├── terrain.svg, path.svg, entrance.svg, career-sign.svg   (hand-edited;
-│   │                                                            entrance/career-sign generated)
+│   ├── terrain.svg, path.svg, entrance.svg, projecting-sign.svg (hand-edited;
+│   │                                                            entrance/projecting-sign generated)
 │   ├── floor-ground.svg, floor-01.svg … floor-05.svg          (generated)
 │   ├── staircase.svg, elevator.svg, tags.svg                  (generated)
 │   ├── ground-shadow.svg, architectural-details.svg           (generated, Stage 5)
@@ -375,7 +408,8 @@ W1 face, staircase relocated against the C–D rear wall, passages in the sectio
 partitions, floor-1 return walls, entrance portal, single-post sign.
 
 ```text
-viewBox        0 0 1200 1050
+viewBox        200 95 900 955   (model space is 1200×1050; Stage 6 crops the
+                                empty side margins — see VIEW_BOX in assemble-svg.mjs)
 isometric axes width (0.7071, -0.2475)   depth (-0.7071, -0.2475)   height (0, -1)
                (corner-on symmetric isometric; both plan axes drop equally,
                 rear corner D recedes up-left at ~40° toward image center)
@@ -454,8 +488,15 @@ the A–B face at ground level, plus a minimal portal frame — two jambs (10 wi
 on the threshold; the right jamb (higher u) renders in a layer below the
 entrance block; the hand-authored path starts exactly at the block's base
 edge (v = -37.5, h = -SLAB_T)
-career-sign: single central post + larger placeholder panel (160×110) on the
-terrain, outside the building coordinate system (screen-space geometry)
+projecting-sign: vertical blade sign at the building's front-right corner
+(corner B), projecting along the depth axis rear → front (−v, toward the
+viewer). Mounted on the right wall's front end (v = 0) with a 12-unit gap; the
+blade is thickness 10 along u (u 227…237), depth 88 along v (v −100…−12),
+spanning the floor-2 and floor-3 stories (h FH+2…3·FH−2); broad faces are
+constant-u (the −u face is visible), two wall-bolted arms at h0+20 / h1−20 with
+attachment dots, a wood casing frame and near-white inset panel, and the
+placeholder identity motif (photo disc + two name bars) reflowed vertically —
+no real copy (Stage 7)
 experience tags: vertical signs like the year plaques (thin depth: face proud
 of the invisible left wall at u = −1.5, top cap + front-end side), one per
 section over its own floor, at the floor's
@@ -474,7 +515,7 @@ Assembled in this order so occlusion obeys physical structure:
 `terrain` → `ground-shadow` → `building` (floor-ground, staircase, floor-01,
 floor-02…05 rear groups — sections behind the shaft, architectural-details,
 elevator, floor-02…05-front planes, tags) → `entrance` → `path` →
-`career-sign`.
+`projecting-sign`.
 
 ## Group-ID naming
 
@@ -484,8 +525,8 @@ IDs describe architectural meaning, never generated names (`group42`, `rect891`)
 | --------------------------- | ------------------------------------------ |
 | `terrain`                   | ground/base plane                          |
 | `ground-shadow`             | soft building contact shadow (Stage 5)     |
-| `career-sign`               | personal identification sign (placeholder) |
-| `path`                      | path from sign/foreground to entrance      |
+| `projecting-sign`           | exterior identity sign, blade on the front-right corner (Stage 6) |
+| `path`                      | path from foreground to entrance           |
 | `entrance`                  | entrance threshold + portal frame          |
 | `floor-ground`, `floor-01`… | stacked floor modules                      |
 | `floor-02-front`…           | story column layers of shaft-crossing floors |
