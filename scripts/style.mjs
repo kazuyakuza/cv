@@ -115,7 +115,9 @@ export const svgStyle = `
        near-white plates so any brand colour reads on the floor. */
     .dw-role-wall,
     .dw-role-door,
-    .dw-role-floor {
+    .dw-role-floor,
+    .dw-role-door-lg,
+    .dw-role-floor-lg {
       fill: #2f2c28;
       font: 700 10px system-ui, sans-serif;
       letter-spacing: 0.02em;
@@ -124,6 +126,8 @@ export const svgStyle = `
       stroke-width: 1.7px;
       stroke-linejoin: round;
     }
+    .dw-role-door-lg { font-size: 11.5px; }
+    .dw-role-floor-lg { font-size: 12.5px; }
     .dw-logo-plate { fill: #fbf9f2; fill-opacity: 0.94; stroke: #6b675e; stroke-width: 0.6; }
     /* Current-identity title block (fifth-floor rear wall) */
     .dw-id-title { fill: #33302a; font: 700 14px system-ui, sans-serif; letter-spacing: 0.02em; }

@@ -41,24 +41,31 @@ const buildingParts = [
   'information-ground',
   'floor-01',
   'information-01',
+  // Nextcode desk/crates/devs, drawn ABOVE information-01 so the floor
+  // tech-logo decals render under them (Stage 7 review).
+  'nextcode-props',
   'floor-02',
   'information-02',
   'floor-03',
   'floor-03-team',
-  'information-03',
   'floor-04',
   'floor-05',
   'architectural-details',
   'elevator',
+  // Elevator-mounted role label (Dev over the floor-2 digit): must sit above
+  // the elevator fragment, which paints its W2 face.
+  'information-elev',
   'floor-02-front',
+  // Interactica f2-right floor logos, above the floor-02-front base layer
+  // (its slabTriangle was cutting them).
+  'information-02-front',
+  // Left-wall information for floor 3 is emitted AFTER the floor-03 partial
+  // wall so it reads as mounted on that wall (like the floor-1 Health labels).
   'floor-03-front',
+  'information-03',
   'floor-04-front',
   'floor-05-front',
   'tags',
-  'information',
-  // Stage 7 information layer (roles/periods/technologies/descriptions +
-  // current identity) renders above the company tags; the near Indelve fleet
-  // still stacks above `tags` and is unaffected (no info plaque there).
   'information',
   // UPDATE #53 (user): the near Indelve fleet must paint over the "Indelve"
   // experience tag (and the floor base), so its fragment is stacked last —

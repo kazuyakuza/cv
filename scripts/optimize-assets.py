@@ -29,23 +29,30 @@ ASSETS = ROOT / "src" / "assets"
 SERVE = ASSETS / "serve"
 GEOM = ROOT / "scripts" / "generate-geometry.mjs"
 CAREER = ROOT / "scripts" / "career-data.mjs"
+TECH = ROOT / "scripts" / "tech-logos.mjs"
 
 MAX_SIDE = 768
 IMAGE_EXTS = {".png", ".jpg", ".jpeg", ".webp"}
 
 # Names the generator references: `inlineAsset('x')`, `file: 'x'`,
 # `wallFixture('x', ...)` and `photo: 'x'` (the identity profile photo lives in
-# career-data.mjs). career-data.mjs is scanned too for that reason.
-REF_RE = re.compile(r"(?:inlineAsset\(\s*|file:\s*|wallFixture\(\s*|photo:\s*)'([^']+)'")
+# career-data.mjs). Raw `__ASSET__x__` tokens are also honoured, so logos that
+# point straight at a raster master (e.g. tech-logos.mjs) are copied too.
+REF_RE = re.compile(
+    r"(?:inlineAsset\(\s*|file:\s*|wallFixture\(\s*|photo:\s*)'([^']+)'"
+    r"|__ASSET__([^_\s\"'<>{}]+\.(?:png|jpe?g|webp))__"
+)
 
 
 def referenced_names() -> list[str]:
     text = GEOM.read_text(encoding="utf-8")
-    if CAREER.exists():
-        text += "\n" + CAREER.read_text(encoding="utf-8")
+    for extra in (CAREER, TECH):
+        if extra.exists():
+            text += "\n" + extra.read_text(encoding="utf-8")
     seen: list[str] = []
-    for name in REF_RE.findall(text):
-        if name not in seen:
+    for a, b in REF_RE.findall(text):
+        name = a or b
+        if name and name not in seen:
             seen.append(name)
     return seen
 

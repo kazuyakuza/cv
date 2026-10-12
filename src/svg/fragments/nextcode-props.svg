@@ -1,0 +1,12 @@
+<g id="nextcode-props">
+  <image href="__ASSET__workstation-04-cut.png__" x="452.5" y="702.08" width="43.31" height="38.36" preserveAspectRatio="none" />
+  <path class="dw-crate-side" d="M437.92,757.45 L444.52,754.89 L444.89,743.56 L437.75,745.62 Z" />
+  <path class="dw-crate" d="M437.92,757.45 L430.24,755.22 L430.69,743.36 L437.75,745.62 Z" />
+  <path class="dw-crate-top" d="M437.75,745.62 L444.89,743.56 L437.65,741.29 L430.69,743.36 Z" />
+  <path class="dw-crate-line" d="M 437.12,752.72 L 429.98,750.19" />
+  <path class="dw-crate-side" d="M450.37,760.85 L461.18,757.61 L461.57,742.76 L449.91,746.74 Z" />
+  <path class="dw-crate" d="M450.37,760.85 L440.43,757.44 L440.48,742.85 L449.91,746.74 Z" />
+  <path class="dw-crate-top" d="M449.91,746.74 L461.57,742.76 L451.22,738.95 L440.48,742.85 Z" />
+  <path class="dw-crate-line" d="M 449.72,755.34 L 439.8,752.22" />
+  <image href="__ASSET__devs-01-cut.png__" x="487.27" y="725.04" width="45.07" height="64.23" preserveAspectRatio="none" />
+</g>

@@ -10,6 +10,26 @@
 > Do NOT mark Stage 7 complete or start Stage 8 until the user approves the
 > renders.
 
+## 0. Current status & commit (2026-10-12)
+
+- **Base commit:** `c30e5b9` — "stage 7 WIP: information layer (per-section roles
+  + tech logos + real projecting-sign content) + fresh-session handoff".
+- **This commit:** `__HASH__` — second feedback round r214–r217 (details in §1):
+  per-section placement/size fixes; new fragments `nextcode-props`,
+  `information-02-front`, `information-elev`; A-Frame official raster logo wired
+  through the `__ASSET__` pipeline; Health DBA diamond; Tech Lead depth-reading;
+  Soft Arch 2×2 centring. `npm run lint` / `type-check` / `build` clean; render
+  `generated/dev/r218.png` (byte-identical to `r217.png`), verified via
+  `r217b-*.png`.
+- **State:** Stage 7 **WIP — NOT COMPLETE**; placements await the user's review.
+  Stage 8 must not start.
+- **Continue in a new session:** read this file, then `AGENTS.md`,
+  `.agent/todo/STAGE_07_INFORMATION_LAYER.md`, `src/svg/README.md` §"Stage 7",
+  `.agent/project-info/PROJECT_BRIEF.md`. Re-render to confirm `r218`, get the
+  user's verdict on the §5 open items, then iterate or close out Stage 7.
+- **Git note:** `generated/` (dev scripts, `rNNN.png` renders, crops) and `dist/`
+  are gitignored — re-render locally after checkout (`§2`).
+
 ## 1. Where the project stands
 
 The career diorama (isometric cutaway, one floor per career stage) is built and
@@ -20,12 +40,74 @@ and the real content on the exterior projecting sign. It is developed as an
 a revision list (often with screenshots + red annotations), implement, re-render,
 review again.
 
-Latest render: **`generated/dev/r208.png`** (full composition). Close crops this
-round: `r208-ground.png`, `r208-next.png`, `r208-f2left.png`, `r208-f2.png`,
-`r208-f3.png`, `r205-sign.png`.
+Latest render: **`generated/dev/r218.png`** (full composition), re-rendered
+2026-10-12 and byte-identical to `r217.png`; from revision rounds r214–r217
+(2026-10-12). Crops: `r217b-*.png` (verification set). `npm run lint`,
+`type-check`, `build` all clean at r217.
 
-The user's verdict on r208: *"too many issues"* — so the current placements are
-**not approved**. A per-section correction list is expected next session.
+### Revision round r214/r215/r216/r217 (applied; awaiting user review)
+
+Second feedback pass (user screenshots
+`20261012T123351.png` = Co-Founder arrow, `20261012T124339.png` = Tech Lead
+line). Changes:
+
+- **Puelo:** `unity` floor logo →(170,42) size 45 (toward the kiosk/TV, clears
+  the entrance jamb); `c#` wall logo size 38 (−15%) on the ground left wall
+  below the vent.
+- **BA:** `php` removed from `informationGround`; now an inline `logoPlate` in
+  `floor-ground` BEFORE `baArchitecture()` with a literal floor matrix so the BA
+  stub wall occludes its edge ("layer below the left-wall part"); `mysql` stays
+  by the BA↔Freelancer door.
+- **Freelancer:** both staircase-side logos size 31 (−15%).
+- **Nextcode:** `Co-Founder` →`floorLabel(...,52,530,FH)` (read along the arrowed
+  line); node/mongo now render below the desk/people via the new
+  `nextcode-props` fragment (moved `assetWorkstation`, 2 crates, `DEV_GROUP`),
+  assembled right after `information-01`.
+- **Health:** DBA diamond on the left wall centred on v85 — `DBA` top (h FH+74),
+  `aws` (+v) / `mysql` (−v) sides (h FH+48), `salesforce` bottom (h FH+22).
+- **Interactica:** f2-left `Tech Lead` → `floorLabelDepth(...,55,537,2*FH,` +
+  `dw-role-floor-lg`) so it reads along the depth axis (matches the red line);
+  f2-right logos moved to `information-02-front` (after `floor-02-front`) so the
+  `slabTriangle` no longer cuts them (`nestjs` (150,118) size 41, `mongodb`
+  (46,178), `angular` (24,40)); f3-right `Soft Arch` + 2×2 logos centred on v118
+  (−15% → size 29).
+
+Verified on `r217b-*.png`: Health diamond correct, Tech Lead depth-reading
+correct, f2-right logos visible/uncut, Puelo unity+c# and BA php visible.
+
+### Revision round r209/r210 (applied; superseded by r214–r217 above)
+
+Addressed the user's per-section list:
+
+- **Puelo:** `Unity Dev` door label +15% (`dw-role-door-lg`); `unity` floor logo
+  size 45 (+25%) moved to (119,48) off the entrance; `c#` moved to the
+  ground-floor **left wall below the vent** (wall logo at v30, h42).
+- **BA:** php/mysql size 45 (+25%); mysql moved to (26,378) by the BA↔Freelancer
+  door. (php layer request not applicable — no A-C wall at BA's depth.)
+- **Freelancer:** unity/c# moved onto the staircase's **solid side wall**
+  (`v=STAIR_V0`) via new `frontLogo`, low along its base.
+- **Nextcode:** new `nextcode-people` fragment (dev sprite drawn AFTER
+  `information-01`) so `angular` renders **under** the people; `nodedotjs`
+  →(156,560); `mongodb`→(140,479) (user's red circle, above the devs' heads);
+  `Co-Founder`→(92,483). **Co-Founder intent still ambiguous — see §5.**
+- **Health:** left wall reorganised into **3 stacked rows** (`wallLogoRowCentered`):
+  `DBA` top (h=FH+72), `aws`+`mysql` middle (h=FH+44), `salesforce` bottom
+  (h=FH+16), all centred on v130.
+- **Interactica:** f2-left `Tech Lead` resized (`dw-role-floor-lg`) →(40,430);
+  **A-Frame logo** now the user-supplied official brand raster
+  (`src/assets/aframe-logo.png` via the `__ASSET__` pipeline; `tech-logos.mjs`
+  `aframe.body` is an `<image>`); f2-right `Dev` added **over the "2"** via new
+  fragment `information-elev` (placed after `elevator`); `nestjs` size 41
+  (+15%); f2-right `mongodb`→(46,178) (off the kiosk cable); f3-right `Soft Arch`
+  + 2×2 logos as 3 rows, and `information-03` now emitted **after `floor-03-front`**
+  so it mounts on that partial wall (it was hidden behind it).
+- **Identity block:** moved off the rear wall to the **B-D right wall at the D
+  corner** (`bdWallSheet`), titles only (`Software Architect` / `Technical Lead`).
+- `assemble-svg.mjs`: added `nextcode-people` + `information-elev`, removed the
+  duplicated `information` entry, reordered `information-03`.
+
+`npm run lint`, `type-check`, `build` clean. All placements are **not yet
+approved** — the user reviews `r210.png`.
 
 ## 2. Dev workflow (exact commands, from repo root `C:\repo\cv`)
 
@@ -167,49 +249,32 @@ Lead` + AI focus, on the rear C-D wall via `cdWallSheet(108, 80, …, 5*FH)`.
 - QR verified byte-for-byte against `QRCode.create(url,{errorCorrectionLevel:'H'})`
   (a disposable `generated/dev/qr_check.mjs`).
 
-## 5. Open issues / user feedback not yet resolved (r208)
+## 5. Open issues / user feedback not yet resolved (r217)
 
-The user said *"too many issues"* and asked to register status. Known open items:
+The r209–r217 rounds actioned the user's first two feedback passes. Still
+needing the user's verdict (do NOT guess further — ask):
 
-1. **"On the wall" sections (Health `DBA`+logos, Interactica-f3 `Soft Arch`+logos).**
-   They are placed on the building's **invisible left wall** (u = −1.5), so they
-   render as small plates floating over the interior near the left edge. **Ask
-   the user which wall they mean** — the invisible left wall (current) vs a
-   *visible* rear wall (C‑D / B‑D). This is the single biggest look question.
-2. **Puelo `csharp`** — user said "on the wall corner down the ventilation
-   element"; it is currently a **floor** plate at (38, 16). The vent is on the
-   *front wall* (v=0) at u 33..50, h 70..87. Confirm: mount c# on the front wall
-   below the vent, or keep on the floor?
-3. **Nextcode logos** (node/mongo/angular) — user's reference screenshot (Image 1)
-   shows a specific arrangement (js at stair top, mongodb past the desk, angular
-   between boxes and people) with a red "Co-Founder" annotation; the current
-   guess may need nudging. The user also said they'd place the Nextcode role
-   themselves — now set to `Co-Founder` on the floor; confirm.
-4. **Interactica f2 `Dev`** — user wrote "over the **'1'** of the elevator". The
-   story number for floor index 2 is **"2"** (the "1" is on the floor-1/Nextcode
-   story). Currently `Dev` is above the elevator doors on floor index 2. Confirm
-   the intended floor/number.
-5. **`Tech Lead` (f2 left)** — user says position/orientation still wrong and
-   references Image 2 (a horizontal red annotation on the floor). Currently a
-   floor label at (30, 452) reading along +u. Need the user's exact intent.
-6. **General clutter / floating look.** Large floor-decals over interiors and the
-   white plates can read as floating cards. May need smaller plates, no plate
-   (text/logo only), or placement nearer the open edges.
-7. **Indelve / Pacer** — no content yet (unverified; must not be invented).
-8. **Current identity block** on the floor-5 rear wall was kept (Stage 7 spec
-   requires current identity in the upper building). Confirm keep/drop — it was
-   not in the user's section list.
+1. **Nextcode `Co-Founder`** now reads along the arrowed line at (52,530,FH).
+   Confirm it matches the annotation.
+2. **BA `php`** is an inline decal in `floor-ground` before the BA stub wall
+   (literal floor matrix). Interpretation of "layer below the left-wall part"
+   is still a guess — confirm.
+3. **Puelo `unity`** at (170,42) is inside the entrance near the 2013 door;
+   confirm it clears the jambs as intended.
+4. **Health diamond** and **Soft Arch 2×2** centring (−15%) — confirm.
+5. **Indelve / Pacer** — still no content (must not be invented).
+6. General clutter / floating look of the larger plates remains a judgement call.
 
 ## 6. Crop helper used this round (paste into `python -`)
 
 ```python
 from PIL import Image
-im = Image.open(r"generated/dev/r208.png")
+im = Image.open(r"generated/dev/r210.png")
 S=2.5; ox=200; oy=95
 def crop(x0,y0,x1,y1,name,scale=2):
     b=(int((x0-ox)*S), int((y0-oy)*S), int((x1-ox)*S), int((y1-oy)*S))
     c=im.crop(b); c=c.resize((int(c.width*scale),int(c.height*scale)))
-    c.save(f"generated/dev/r208-{name}.png")
+    c.save(f"generated/dev/r210-{name}.png")
 crop(430,760,790,1000,"ground")   # etc.
 ```
 
@@ -236,7 +301,7 @@ Useful existing dev tools in `generated/dev/`: `make_chk.py`, `qr_check.mjs`,
 ## 8. Suggested next-session checklist
 
 1. Render the current state first: `svg:generate` + `svg:assemble` + `make_chk` +
-   msedge → `r209.png`; confirm it matches `r208.png`.
+   msedge → `r218.png`; confirm it matches `r217.png`.
 2. Get the user's per-section correction list (positions/sizes + which wall for
    DBA/Soft Arch). Do NOT guess further on the open items in §5 — ask.
 3. Implement corrections in `career-data.mjs` / `tech-logos.mjs` (content) and
