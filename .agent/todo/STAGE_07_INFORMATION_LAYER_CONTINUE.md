@@ -14,7 +14,7 @@
 
 - **Base commit:** `c30e5b9` — "stage 7 WIP: information layer (per-section roles
   + tech logos + real projecting-sign content) + fresh-session handoff".
-- **This commit:** `__HASH__` — second feedback round r214–r217 (details in §1):
+- **This commit:** `bd14e30` — second feedback round r214–r217 (details in §1):
   per-section placement/size fixes; new fragments `nextcode-props`,
   `information-02-front`, `information-elev`; A-Frame official raster logo wired
   through the `__ASSET__` pipeline; Health DBA diamond; Tech Lead depth-reading;
