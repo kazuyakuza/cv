@@ -271,6 +271,7 @@ src/svg/
 │   │                                                            entrance/projecting-sign generated)
 │   ├── floor-ground.svg, floor-01.svg … floor-05.svg          (generated)
 │   ├── staircase.svg, elevator.svg, tags.svg                  (generated)
+│   ├── information.svg                                        (generated, Stage 7)
 │   ├── ground-shadow.svg, architectural-details.svg           (generated, Stage 5)
 │   └── (labels.svg removed in Stage 3.5 — replaced by tags.svg)
 └── diorama.svg                 ← assembled single-SVG deliverable (committed)
@@ -514,8 +515,8 @@ WIP markers at both positions
 Assembled in this order so occlusion obeys physical structure:
 `terrain` → `ground-shadow` → `building` (floor-ground, staircase, floor-01,
 floor-02…05 rear groups — sections behind the shaft, architectural-details,
-elevator, floor-02…05-front planes, tags) → `entrance` → `path` →
-`projecting-sign`.
+elevator, floor-02…05-front planes, tags, information, indelve-fleets) →
+`entrance` → `path` → `projecting-sign`.
 
 ## Group-ID naming
 
@@ -534,13 +535,64 @@ IDs describe architectural meaning, never generated names (`group42`, `rect891`)
 | `elevator`                  | persistent vertical shaft, floor 1 up      |
 | `architectural-details`     | sparse infrastructure + wall patch (Stage 5) |
 | `tags`                      | career-stage signs on the left wall        |
+| `information`               | roles/periods/technologies/descriptions + current identity (Stage 7) |
 
 ## Architecture vs information layer
 
 Keep architectural geometry separate from professional information. The
-`tags` group holds small wall-mounted section identifiers only (Stage 3.5);
-the real information layer (roles, dates, technologies) lives in Vue/HTML/CSS
-in a later stage — never baked permanently into the architecture.
+`tags` group holds the primary company/section identifiers and the `information`
+group (Stage 7) holds the secondary/supporting content — roles, periods,
+selected technologies and short project notes. Both are generated from
+`scripts/career-data.mjs` (a plain data module) into their own fragments, so
+changing a role/date/technology is a data edit that touches no geometry; the
+`information` group is a single unit so a future display-mode switch (Stage 8)
+can show/hide it wholesale. Final typography/HTML overlays and the data-model
+binding belong to later stages (Stage 9 Vue integration).
+
+## Stage 7 — information layer
+
+The career is now readable as well as illustrated (see
+`STAGE_07_INFORMATION_LAYER.md`). Content lives in `scripts/career-data.mjs`
+(section roles + identity) and `scripts/tech-logos.mjs` (brand logo paths).
+The generated `information` fragment holds two light devices, placed per
+section (no résumé plaques):
+
+- **Section role labels** — short text (`Unity Dev`, `Jr. Developer`, `DBA`,
+  `Dev`, `Tech Lead`, `Soft Arch`) set over a section door (on the partition's
+  near face), on the invisible left wall, or lying flat on the floor. Dark bold
+  text with a light keyline halo (`.dw-role-*`, `paint-order: stroke`) so it
+  stays legible over concrete, wood or the open background.
+- **Technology logo plates** — monochrome brand marks on small near-white
+  plates (`.dw-logo-plate`), lying flat on each section's floor (or on the left
+  wall for the DBA / architect sections). Only verified brands with a logo are
+  used; AWS DMS, "SQL", "angular micro-frontends" and "microservices" have no
+  logo and are dropped.
+  - floor plane matrix is **orientation-preserving**
+    (`0.7071 -0.2475 0.7071 0.2475`) so text/logos are not mirrored.
+- **Current identity** — `Software Architect` / `Technical Lead` + the
+  AI-workflow focus line, on the fifth (current-work) floor's rear C-D wall via
+  `cdWallSheet` (the wall itself is untouched). Never on the exterior sign.
+- **Projecting sign** (`projecting-sign` fragment) — the Stage 6 placeholder
+  bars are replaced by the real personal-identification content: a circular
+  profile photo (`__ASSET__photo2_2.jpg__`, replaceable via `IDENTITY.photo`),
+  the name, a LinkedIn QR with a centered LinkedIn mark, and the full LinkedIn
+  URL. Stage 7 review widened the blade 25% (deeper along −v) and enlarged the
+  content. The photo ring uses a dedicated `fill:none` class (`dw-photo-ring`) —
+  a presentation `fill` attribute would be overridden by the CSS class and paint
+  a disc over the photo. Casing/arms/perspective unchanged; no job titles,
+  companies or technologies on the sign.
+- **QR**: generated deterministically from `IDENTITY.linkedin` by
+  `scripts/generate-geometry.mjs` via the `qrcode` dev-dependency (ECC level H
+  so the center logo is recoverable; run-length-merged single path; 2-module
+  quiet zone). The embedded module matrix was verified byte-for-byte against the
+  encoder output for the URL during review (a disposable dev check lives in the
+  gitignored `generated/dev/` workspace).
+
+Indelve and Pacer get no role/logo content yet (unverified — nothing invented);
+they are the next section-by-section pass. If the profile photo changes, update
+the master in `src/assets/` and re-run `scripts/optimize-assets.py` (it scans
+`career-data.mjs` for `photo: '…'` too), then `npm run svg:generate` +
+`svg:assemble`.
 
 ## Tooling rules
 

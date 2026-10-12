@@ -35,10 +35,17 @@ const buildingParts = [
   'floor-ground',
   'staircase',
   'freelancer-props',
+  // Ground-floor role labels + logos: BELOW floor-01 so the first-floor slab
+  // base occludes their top (Stage 7 review), but above the staircase so they
+  // read as pasted on its base.
+  'information-ground',
   'floor-01',
+  'information-01',
   'floor-02',
+  'information-02',
   'floor-03',
   'floor-03-team',
+  'information-03',
   'floor-04',
   'floor-05',
   'architectural-details',
@@ -48,6 +55,11 @@ const buildingParts = [
   'floor-04-front',
   'floor-05-front',
   'tags',
+  'information',
+  // Stage 7 information layer (roles/periods/technologies/descriptions +
+  // current identity) renders above the company tags; the near Indelve fleet
+  // still stacks above `tags` and is unaffected (no info plaque there).
+  'information',
   // UPDATE #53 (user): the near Indelve fleet must paint over the "Indelve"
   // experience tag (and the floor base), so its fragment is stacked last —
   // above `tags`. The far fleet deliberately stays in `floor-03`, under the

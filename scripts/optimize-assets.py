@@ -28,17 +28,21 @@ ROOT = Path(__file__).resolve().parent.parent
 ASSETS = ROOT / "src" / "assets"
 SERVE = ASSETS / "serve"
 GEOM = ROOT / "scripts" / "generate-geometry.mjs"
+CAREER = ROOT / "scripts" / "career-data.mjs"
 
 MAX_SIDE = 768
 IMAGE_EXTS = {".png", ".jpg", ".jpeg", ".webp"}
 
-# Names the generator references: `inlineAsset('x')`, `file: 'x'` and
-# `wallFixture('x', ...)`.
-REF_RE = re.compile(r"(?:inlineAsset\(\s*|file:\s*|wallFixture\(\s*)'([^']+)'")
+# Names the generator references: `inlineAsset('x')`, `file: 'x'`,
+# `wallFixture('x', ...)` and `photo: 'x'` (the identity profile photo lives in
+# career-data.mjs). career-data.mjs is scanned too for that reason.
+REF_RE = re.compile(r"(?:inlineAsset\(\s*|file:\s*|wallFixture\(\s*|photo:\s*)'([^']+)'")
 
 
 def referenced_names() -> list[str]:
     text = GEOM.read_text(encoding="utf-8")
+    if CAREER.exists():
+        text += "\n" + CAREER.read_text(encoding="utf-8")
     seen: list[str] = []
     for name in REF_RE.findall(text):
         if name not in seen:

@@ -97,9 +97,39 @@ export const svgStyle = `
        the frame reads as warm wood matching the crate family, so the sign reads
        as a built object, not a floating UI card */
     .dw-sign-frame { fill: #9c8760; stroke: #4c4a44; stroke-width: 1; }
-    /* Sign name-line bars (Stage 6): the muted placeholder bars carried over
-       from the old entrance sign, reflowed vertically onto the projecting blade */
-    .dw-sign-bar { fill: #a8a49c; stroke: none; }
+    /* Projecting sign content (Stage 7): the Stage 6 placeholder bars are
+       replaced by the real identity content — name, profile photo (raster),
+       LinkedIn QR and label. The QR keeps pure black on a white quiet-zone
+       plate for contrast; the LinkedIn mark carries the brand blue. */
+    .dw-sign-name { fill: #2f2c28; font: 700 11px system-ui, sans-serif; letter-spacing: 0.02em; }
+    .dw-sign-link { fill: #3d6a97; font: 600 7.5px system-ui, sans-serif; letter-spacing: 0.02em; }
+    .dw-photo-ring { fill: none; stroke: #4c4a44; stroke-width: 1; }
+    .dw-qr-plate { fill: #fffefb; stroke: none; }
+    .dw-qr { fill: #1b1a17; stroke: none; }
+    .dw-ln { fill: #0a66c2; }
+
+    /* Information layer (Stage 7): section role labels + technology logo
+       plates. Role labels are dark bold text with a light keyline halo so they
+       stay legible over concrete, wood or the open background, whether set on
+       a wall, over a door, or lying flat on the floor. Logos sit on small
+       near-white plates so any brand colour reads on the floor. */
+    .dw-role-wall,
+    .dw-role-door,
+    .dw-role-floor {
+      fill: #2f2c28;
+      font: 700 10px system-ui, sans-serif;
+      letter-spacing: 0.02em;
+      paint-order: stroke;
+      stroke: #f6f3ea;
+      stroke-width: 1.7px;
+      stroke-linejoin: round;
+    }
+    .dw-logo-plate { fill: #fbf9f2; fill-opacity: 0.94; stroke: #6b675e; stroke-width: 0.6; }
+    /* Current-identity title block (fifth-floor rear wall) */
+    .dw-id-title { fill: #33302a; font: 700 14px system-ui, sans-serif; letter-spacing: 0.02em; }
+    .dw-id-rule { stroke: #8a8579; stroke-width: 1; }
+    .dw-id-sub { fill: #4a463f; font: 600 10px system-ui, sans-serif; letter-spacing: 0.02em; }
+    .dw-id-focus { fill: #5c574e; font: 6px system-ui, sans-serif; }
 
     /* Restrained structural shading (Stage 5 §7): stepped translucent bands
        under the slabs along the rear walls' tops. Steps instead of a linear

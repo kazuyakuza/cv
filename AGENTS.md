@@ -35,8 +35,22 @@ Do not force every visual element to be vectorized.
   cropped the composed `viewBox`; the career scenes were reviewed and left
   unchanged. Documented in `src/svg/README.md` and
   `STAGE_06_CAREER_CONTENT.md`.
-- **Next: Stage 7 (information layer)**, then 8 display modes → 9 Vue
-  integration → 10 polish/deployment. These are future sessions.
+- **Stage 7 (2026-10-11): information layer implemented** (iterating with user
+  review). Content is data-driven from `scripts/career-data.mjs` (section roles
+  + identity) and `scripts/tech-logos.mjs` (brand logo paths), emitted into a
+  dedicated generated `information` SVG fragment: short per-section role labels
+  (`Unity Dev`, `Jr. Developer`, `DBA`, `Dev`, `Tech Lead`, `Soft Arch`) and
+  technology logo plates (unity/c#/php/mysql/node/mongodb/angular/aws/aframe/
+  flutter/postgresql/salesforce/nestjs), plus the current `Software Architect` /
+  `Technical Lead` identity on the fifth-floor rear wall. The exterior
+  `projecting-sign` carries the real content — circular profile photo
+  (`src/assets/photo2_2.jpg`), name "J. E. Barrocal", a LinkedIn QR (generated
+  with `qrcode`, ECC-H, centered LinkedIn mark) and the full LinkedIn URL; no
+  titles on the sign. Existing `tags`/`elevator`/`entrance` fragments are
+  unchanged; indelve/pacer not yet populated; no Stage 8 mode logic/variants.
+  See `src/svg/README.md` and `STAGE_07_INFORMATION_LAYER.md`.
+- **Next: finish Stage 7 (Indelve/Pacer section content)** → Stage 8 (display
+  modes) → 9 Vue integration → 10 polish/deployment.
 
 ## Core Principles
 

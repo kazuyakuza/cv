@@ -1,6 +1,9 @@
 import { writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import QRCode from 'qrcode'
+import { IDENTITY, SECTIONS, CURRENT_IDENTITY } from './career-data.mjs'
+import { TECH_LOGOS } from './tech-logos.mjs'
 
 // Stage 2 geometry generator — emits the repetitive architectural fragments
 // (floors, staircase, elevator, entrance, projecting-sign) from the shared
@@ -3460,23 +3463,58 @@ function architecturalDetails() {
   return group('architectural-details', [])
 }
 
+// --- QR code (Stage 7 information layer) ------------------------------------
+// Build a single-path QR for `text` with high error correction (level H, so a
+// centered logo is safely recoverable). Modules are run-length merged per row
+// to keep the path compact. Returns the path data and the module count
+// including the quiet-zone margin.
+function qrPath(text, margin = 2) {
+  const qr = QRCode.create(text, { errorCorrectionLevel: 'H' })
+  const n = qr.modules.size
+  const data = qr.modules.data
+  const dark = (r, c) => (r >= 0 && r < n && c >= 0 && c < n ? data[r * n + c] : 0)
+  let d = ''
+  for (let r = 0; r < n; r++) {
+    let c = 0
+    while (c < n) {
+      if (dark(r, c)) {
+        let c2 = c
+        while (c2 < n && dark(r, c2)) c2++
+        d += `M${c + margin} ${r + margin}h${c2 - c}v1h-${c2 - c}z`
+        c = c2
+      } else c++
+    }
+  }
+  return { d, total: n + 2 * margin }
+}
+
+// LinkedIn "in" mark (Ant Design `linkedin-filled`, MIT, viewBox 1024) drawn
+// with fill-rule evenodd so the inner cutouts read as the glyph. Used only as
+// the QR centre logo.
+const LINKEDIN_GLYPH =
+  'M880 112H144c-17.7 0-32 14.3-32 32v736c0 17.7 14.3 32 32 32h736c17.7 0 32-14.3 32-32V144c0-17.7-14.3-32-32-32M349.3 793.7H230.6V411.9h118.7zm-59.3-434a68.8 68.8 0 1 1 68.8-68.8c-.1 38-30.9 68.8-68.8 68.8m503.7 434H675.1V608c0-44.3-.8-101.2-61.7-101.2c-61.7 0-71.2 48.2-71.2 98v188.9H423.7V411.9h113.8v52.2h1.6c15.8-30 54.5-61.7 112.3-61.7c120.2 0 142.3 79.1 142.3 181.9z'
+
 // --- projecting-sign: vertical blade at the front-right corner --------------
-// Stage 6 (user revision): the old ground-standing entrance sign is removed
-// entirely. A vertical blade sign is mounted at the building's front-right
-// corner (corner B, where the absent front wall A-B meets the right wall B-D)
-// and projects outward along the building's DEPTH axis, rear -> front (toward
-// the viewer / -v) — the same direction as an arrow from the C-D rear wall to
-// the A-B front wall. It mounts on the right wall's front end (v = 0) with a
-// small gap. Its broad faces are therefore constant-u (perpendicular to the
-// front wall); the -u face is the one the camera sees. Two arms bridge the gap
-// from the wall end to the blade. Placeholder identity motif only (photo disc +
-// name bars), reflowed vertically; no real copy — the information layer is
-// Stage 7.
+// Stage 6: a vertical blade sign mounted at the building's front-right corner
+// (corner B) projecting outward along the DEPTH axis, rear -> front. Broad
+// faces are constant-u; the -u face is the one the camera sees. Stage 7 now
+// supplies the real personal-identification content: circular profile photo,
+// first + last name, a LinkedIn QR code and the LinkedIn URL (PROJECT_BRIEF.md
+// §8). Stage 7 review widened the blade 25% (deeper along -v) so the content
+// could be larger and more legible. The casing, mounting arms, perspective and
+// placement are unchanged; the sign carries NO current job titles, company or
+// technology lists.
+//
+// The panel content is authored in the panel's own local coordinates via one
+// matrix (like the wall sheets): origin at the panel's top-back corner, local
+// +x along -v (toward the viewer), local +y downward in h. This foreshortens
+// the content exactly with the sign face, so the decal reads as painted on the
+// blade rather than pasted facing the camera.
 function projectingSign() {
   const uNear = LW - 11 // visible (-u) broad face
   const uFar = LW - 1 // hidden (+u) broad face (blade thickness 10)
   const vBack = -12 // blade inner edge: small gap off the building front
-  const vFront = -100 // blade outer (front) edge
+  const vFront = -122 // blade outer (front) edge (was -100; +25% width review)
   const h0 = FH + 2 // spans the floor-2 story...
   const h1 = 3 * FH - 2 // ...and the floor-3 story
   const out = []
@@ -3498,13 +3536,54 @@ function projectingSign() {
   // Casing frame + inset panel on the visible (-u) face.
   out.push(el('dw-sign-frame', uFace(uNear, vFront, vBack, h0, h1)))
   out.push(el('dw-sign', uFace(uNear - 0.7, vFront + 5, vBack - 5, h0 + 5, h1 - 5)))
-  // Placeholder identity motif, vertical: photo disc above two name bars.
-  const vMid = (vFront + vBack) / 2
-  const hMid = (h0 + h1) / 2
-  const [dx, dy] = p(uNear - 1.4, vMid, hMid + 30).split(',').map(Number)
-  out.push(`<circle class="dw-shaft" cx="${round(dx)}" cy="${round(dy)}" r="15" />`)
-  out.push(el('dw-sign-bar', uFace(uNear - 1.2, vFront + 18, vBack - 18, hMid - 6, hMid + 1)))
-  out.push(el('dw-sign-bar', uFace(uNear - 1.2, vFront + 30, vBack - 18, hMid - 24, hMid - 17)))
+
+  // Panel-local matrix: local x (0..110, panel width toward -v), local y
+  // (0..206, panel height downward). Origin = panel top-back corner.
+  const [ox, oy] = p(uNear, vBack, h1).split(',').map(Number)
+  const cx = 55 // panel-local horizontal centre
+  const panel = []
+  // Circular profile photo (raster master, replaceable via IDENTITY.photo).
+  const pcy = 40
+  const pr = 24
+  panel.push(
+    `<defs><clipPath id="dw-sign-photo"><circle cx="${cx}" cy="${pcy}" r="${pr}" /></clipPath></defs>`,
+  )
+  panel.push(
+    `<image href="${inlineAsset(IDENTITY.photo)}" x="${cx - pr}" y="${pcy - pr}" width="${pr * 2}" height="${pr * 2}" preserveAspectRatio="xMidYMid slice" clip-path="url(#dw-sign-photo)" />`,
+  )
+  // Ring must be a dedicated fill:none class — a presentation fill attribute
+  // would be overridden by the CSS class (Stage 6 sign had none, so the wood
+  // fill painted a disc over the photo).
+  panel.push(`<circle class="dw-photo-ring" cx="${cx}" cy="${pcy}" r="${round(pr + 0.6)}" />`)
+  // First + last name.
+  panel.push(`<text class="dw-sign-name" x="${cx}" y="86" text-anchor="middle">${IDENTITY.name}</text>`)
+  // LinkedIn QR (ECC-H) with a centered LinkedIn logo.
+  const qr = qrPath(IDENTITY.linkedin, 2)
+  const qrSize = 64
+  const qrX = cx - qrSize / 2
+  const qrY = 100
+  const qs = qrSize / qr.total
+  panel.push(
+    `<rect class="dw-qr-plate" x="${round(qrX - 3)}" y="${round(qrY - 3)}" width="${qrSize + 6}" height="${qrSize + 6}" />`,
+  )
+  panel.push(
+    `<g transform="translate(${round(qrX)} ${round(qrY)}) scale(${round(qs)})"><path class="dw-qr" d="${qr.d}" /></g>`,
+  )
+  const gcx = qrX + qrSize / 2
+  const gcy = qrY + qrSize / 2
+  const gplate = 15
+  const gsize = 11.5
+  panel.push(
+    `<rect class="dw-qr-plate" x="${round(gcx - gplate / 2)}" y="${round(gcy - gplate / 2)}" width="${gplate}" height="${gplate}" rx="1.6" />`,
+  )
+  panel.push(
+    `<g transform="translate(${round(gcx - gsize / 2)} ${round(gcy - gsize / 2)}) scale(${round(gsize / 1024)})"><path class="dw-ln" fill-rule="evenodd" d="${LINKEDIN_GLYPH}" /></g>`,
+  )
+  // Full LinkedIn URL (the QR is the scannable copy).
+  const urlLabel = IDENTITY.linkedin.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')
+  panel.push(`<text class="dw-sign-link" x="${cx}" y="${round(qrY + qrSize + 16)}" text-anchor="middle">${urlLabel}</text>`)
+
+  out.push(`<g transform="matrix(0.7071 0.2475 0 1 ${round(ox)} ${round(oy)})">`, ...panel.map((p2) => `  ${p2}`), `</g>`)
   return group('projecting-sign', [tagGroup(out, 'dw-sign-group')])
 }
 
@@ -3565,6 +3644,166 @@ function experienceTags() {
   return group('tags', out)
 }
 
+// --- information: section roles + technology logos (Stage 7) -----------------
+// The information layer (STAGE_07_INFORMATION_LAYER.md). ALL content comes from
+// scripts/career-data.mjs (SECTIONS) and scripts/tech-logos.mjs — never from
+// geometry. Stage 7 review: the earlier all-in-one experience plaques were
+// removed in favour of two lighter devices, placed per section:
+//   - a small role label (e.g. "Unity Dev", "DBA", "Tech Lead"), set either
+//     over a section door, on the building's invisible left wall, or flat on
+//     the floor;
+//   - brand technology logos, lying flat on the section's floor (or on the
+//     left wall for the DBA / architect sections).
+// The current professional identity stays on the fifth-floor rear wall.
+// Everything is one `information` group so a future display-mode switch
+// (Stage 8) can show/hide it as a unit; no switch is implemented here.
+const INFO_WALL_U = -1.5 // the invisible left wall (same plane as the tags)
+// Floor plane, orientation-preserving: local +x → +u (up-right), local +y → -v
+// (down-right) so glyph "up" points up-left and text/logos are not mirrored.
+const FLOOR_MATRIX = '0.7071 -0.2475 0.7071 0.2475'
+const UPLANE_MATRIX = TAG_MATRIX // constant-u wall: +x→-v, +y down
+const VPLANE_MATRIX = '0.7071 -0.2475 0 1' // constant-v wall: +x→+u, +y down
+
+// One technology logo on its small plate, centred at local origin of `matrix`.
+function logoPlate(logo, ox, oy, matrix, size) {
+  const s = (size * 0.64) / 24 // 24 is the logo viewBox
+  const half = size / 2
+  const art = logo.body
+    ? `<g transform="translate(${round(-12 * s)} ${round(-12 * s)}) scale(${round(s)})">${logo.body}</g>`
+    : `<g transform="translate(${round(-size * 0.32)} ${round(-size * 0.32)}) scale(${round(s)})"><path fill="${logo.color}" d="${logo.d}" /></g>`
+  return [
+    `<g transform="matrix(${matrix} ${round(ox)} ${round(oy)})">`,
+    `  <rect class="dw-logo-plate" x="${-half}" y="${-half}" width="${size}" height="${size}" rx="${round(size * 0.16)}" />`,
+    `  ${art}`,
+    `</g>`,
+  ]
+}
+
+// A row of logo plates lying flat on a floor (u0 start, given v, given hTop).
+function floorLogoRow(keys, u0, v, hTop, size = 36) {
+  const step = size * 1.28
+  return keys.flatMap((key, i) => floorLogo(key, u0 + i * step, v, hTop, size))
+}
+function floorLogo(key, u, v, hTop, size = 36) {
+  const logo = TECH_LOGOS[key]
+  if (!logo) return []
+  const [ox, oy] = p(u, v, hTop).split(',').map(Number)
+  return logoPlate(logo, ox, oy, FLOOR_MATRIX, size)
+}
+
+// A row of logo plates on the invisible left wall (running along +v).
+function wallLogoRow(keys, v0, h, size = 34) {
+  const step = size * 1.28
+  return keys.flatMap((key, i) => {
+    const logo = TECH_LOGOS[key]
+    if (!logo) return []
+    const [ox, oy] = p(INFO_WALL_U, v0 + i * step, h).split(',').map(Number)
+    return logoPlate(logo, ox, oy, UPLANE_MATRIX, size)
+  })
+}
+
+const label = (text, x, y, matrix, cls) =>
+  `<text class="${cls}" transform="matrix(${matrix} ${x} ${y})" text-anchor="middle" dominant-baseline="central">${text}</text>`
+
+// Role text on the invisible left wall.
+function wallLabel(text, v, h, cls = 'dw-role-wall') {
+  if (!text) return []
+  const [x, y] = p(INFO_WALL_U, v, h).split(',')
+  return [label(text, x, y, UPLANE_MATRIX, cls)]
+}
+// Role text over a ground-floor section door (on the partition's near face).
+function doorLabel(text, v, cls = 'dw-role-door') {
+  if (!text) return []
+  const [x, y] = p(42.5, v, DOOR_H + 9).split(',')
+  return [label(text, x, y, VPLANE_MATRIX, cls)]
+}
+// Role text lying flat on a floor.
+function floorLabel(text, u, v, h, cls = 'dw-role-floor') {
+  if (!text) return []
+  const [x, y] = p(u, v, h).split(',')
+  return [label(text, x, y, FLOOR_MATRIX, cls)]
+}
+// Role text on a constant-v wall face (e.g. above the elevator doors).
+function frontLabel(text, u, v, h, cls = 'dw-role-wall') {
+  if (!text) return []
+  const [x, y] = p(u, v, h).split(',')
+  return [label(text, x, y, VPLANE_MATRIX, cls)]
+}
+
+// --- information layer, per floor (Stage 7) ---------------------------------
+// The layer is split into ONE fragment per floor so the floor above occludes
+// the deeper logos/labels exactly like any other prop (the earlier single
+// fragment was drawn last and floated over the building). Each fragment is
+// assembled immediately after its floor (see assemble-svg.mjs) and stays a
+// single toggleable group. Content comes from scripts/career-data.mjs and
+// scripts/tech-logos.mjs.
+function informationGround() {
+  const S = SECTIONS
+  const out = []
+  out.push(...doorLabel(S.puelo.role, PARTITION_G[0])) // over the Puelo↔BA door
+  out.push(...doorLabel(S.ba.role, PARTITION_G[1])) // over the BA↔Freelancer door
+  out.push(...floorLogo(S.puelo.tech[0], 119, 16, 0)) // unity: just inside the entrance
+  out.push(...floorLogo(S.puelo.tech[1], 38, 16, 0)) // c#: wall corner below the vent
+  out.push(...floorLogo(S.ba.tech[0], 26, 235, 0)) // php: near the left wall
+  out.push(...floorLogo(S.ba.tech[1], 26, 285, 0)) // mysql: near the left wall
+  out.push(...floorLogo(S.freelancer.tech[0], 104, 501, 0)) // unity: stair base / PC
+  out.push(...floorLogo(S.freelancer.tech[1], 62, 501, 0)) // c#: stair base / PC
+  return group('information-ground', out)
+}
+
+function information01() {
+  const S = SECTIONS
+  const out = []
+  out.push(...floorLogo('nodedotjs', 136, 560, FH)) // where the staircase ends
+  out.push(...floorLogo('mongodb', 188, 548, FH)) // past the desk, toward the interior
+  out.push(...floorLogo('angular', 26, 408, FH)) // between the boxes and the people
+  out.push(...floorLabel(S.nextcode.role, 96, 492, FH)) // Co-Founder
+  out.push(...wallLabel(S.health.role, 48, FH + 44)) // DBA on the left-wall section
+  out.push(...wallLogoRow(S.health.tech, 88, FH + 44))
+  return group('information-01', out)
+}
+
+function information02() {
+  const S = SECTIONS
+  const out = []
+  out.push(...frontLabel(S.interactica2right.role, 24, SHAFT_V0 - WALL_T, 2 * FH + DOOR_H + 18)) // Dev above the doors
+  out.push(...floorLogo('nestjs', 150, 118, 2 * FH)) // near the desks at the corner
+  out.push(...floorLogo('mongodb', 56, 200, 2 * FH)) // near the elevator doors
+  out.push(...floorLogo('angular', 24, 40, 2 * FH)) // near the left front wall corner
+  out.push(...floorLabel(S.interactica2left.role, 30, 452, 2 * FH)) // Tech Lead on the floor
+  out.push(...floorLogoRow(S.interactica2left.tech, 46, 470, 2 * FH))
+  return group('information-02', out)
+}
+
+function information03() {
+  const S = SECTIONS
+  const out = []
+  out.push(...wallLabel(S.interactica3right.role, 48, 3 * FH + 44)) // Soft Arch on the left wall
+  out.push(...wallLogoRow(S.interactica3right.tech, 88, 3 * FH + 44))
+  return group('information-03', out)
+}
+
+// Current identity title block on the fifth-floor rear wall, between the two
+// existing AI boards (AI-Acceleration screen u 19..75, AI-workflow board
+// u 192..218). Uses the established wall-sheet idiom (cdWallSheet).
+function identityBlock() {
+  const [w1, w2] = CURRENT_IDENTITY.primary.split(' ')
+  const focus = CURRENT_IDENTITY.focus.split(' · ')
+  const children = [
+    `<text class="dw-id-title" x="0" y="15">${w1}</text>`,
+    `<text class="dw-id-title" x="0" y="30">${w2}</text>`,
+    `<line class="dw-id-rule" x1="0" y1="38" x2="46" y2="38" />`,
+    `<text class="dw-id-sub" x="0" y="50">${CURRENT_IDENTITY.secondary}</text>`,
+    `<text class="dw-id-focus" x="0" y="63">${focus[0]}</text>`,
+    `<text class="dw-id-focus" x="0" y="73">${focus[1] ?? ''}</text>`,
+  ]
+  return cdWallSheet(108, 80, children, 5 * FH)
+}
+
+function information() {
+  return group('information', identityBlock())
+}
+
 // ---------------------------------------------------------------------------
 // Emit fragments
 // ---------------------------------------------------------------------------
@@ -3588,6 +3827,11 @@ const fragments = {
   entrance: entrance(),
   'projecting-sign': projectingSign(),
   tags: experienceTags(),
+  'information-ground': informationGround(),
+  'information-01': information01(),
+  'information-02': information02(),
+  'information-03': information03(),
+  information: information(),
   // The near (left) Indelve fleet must paint over the "Indelve" experience tag
   // (user r91 review), so it is emitted from its own fragment, assembled AFTER
   // `tags` (see assemble-svg.mjs); the far fleet stays in `floor-03` so the
