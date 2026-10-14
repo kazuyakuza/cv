@@ -18,6 +18,19 @@ The primary query contract is:
 
 Keep the implementation compatible with the current SVG authoring/generation workflow and the later Vue integration stage. Do not turn this into the full application integration work assigned to Stage 9.
 
+## Status — COMPLETE (2026-10-14)
+
+Implemented and visually verified. One canonical contract in
+`src/display-mode.ts`; `src/App.vue` resolves `?mode=` and swaps the root SVG's
+mode class; the assembled file ships `dw-mode-detailed`, so the standalone SVG
+stays Detailed. Mode rules are embedded in the SVG `<style>`
+(`scripts/style.mjs`): Overview hides the technology-logo plates and scales the
+company signs `1.8×` around their own centre (one per-sign origin tweak for
+Nextcode). Detailed is pixel-identical to the Stage 7 `r224` render. Per user
+decision Overview keeps all role labels, the identity block, year plaques and
+the projecting sign. `npm run lint`, `type-check`, `build` all clean. See the
+Completion Report at the end of this file.
+
 ## Read First
 
 Inspect these current repository sources before changing anything:
@@ -158,19 +171,19 @@ Inspect the full composition and close crops of every company sign that was scal
 
 ## Acceptance Criteria
 
-- [ ] Detailed is the default when no mode query parameter is present.
-- [ ] The canonical mode contract supports `?mode=detailed` and `?mode=overview`, with unknown values falling back to Detailed.
-- [ ] Detailed preserves the approved Stage 7 information and existing company-sign sizes.
-- [ ] Overview visibly reduces information density, including hiding technology-logo plates.
-- [ ] Overview company-name signs are substantially larger and readable at full-composition screenshot scale.
-- [ ] Company signs are not duplicated; each mode uses the same underlying sign elements.
-- [ ] Year plaques remain unchanged unless a specific collision is documented and approved.
-- [ ] The current professional identity and approved exterior-sign content are preserved.
-- [ ] The building's architectural scenes and props remain unchanged.
-- [ ] Both modes are rendered and visually inspected at the same dimensions.
-- [ ] Mode-specific styling is maintainable and survives SVG regeneration/assembly.
-- [ ] No full Stage 9 application integration or Stage 10 deployment work has been pulled into this stage.
-- [ ] The completion report accurately distinguishes tested behavior from the Stage 9 handoff.
+- [x] Detailed is the default when no mode query parameter is present.
+- [x] The canonical mode contract supports `?mode=detailed` and `?mode=overview`, with unknown values falling back to Detailed.
+- [x] Detailed preserves the approved Stage 7 information and existing company-sign sizes.
+- [x] Overview visibly reduces information density, including hiding technology-logo plates.
+- [x] Overview company-name signs are substantially larger and readable at full-composition screenshot scale.
+- [x] Company signs are not duplicated; each mode uses the same underlying sign elements.
+- [x] Year plaques remain unchanged unless a specific collision is documented and approved.
+- [x] The current professional identity and approved exterior-sign content are preserved.
+- [x] The building's architectural scenes and props remain unchanged.
+- [x] Both modes are rendered and visually inspected at the same dimensions.
+- [x] Mode-specific styling is maintainable and survives SVG regeneration/assembly.
+- [x] No full Stage 9 application integration or Stage 10 deployment work has been pulled into this stage.
+- [x] The completion report accurately distinguishes tested behavior from the Stage 9 handoff.
 
 ## Completion Report
 
@@ -183,3 +196,133 @@ Report:
 5. Render paths and screenshot dimensions used for both modes.
 6. Results of lint, type-check, build, SVG generation, and SVG assembly checks as applicable.
 7. Any remaining Stage 9 integration work or known limitations.
+
+### Report
+
+1. **Files changed / contract location.** The canonical contract is
+   **`src/display-mode.ts`** (`DisplayMode`, `MODE_PARAM = 'mode'`,
+   `MODE_CLASS`, `resolveMode(search)`). Changed: `src/App.vue` (resolve +
+   root-class swap), `scripts/style.mjs` (embedded mode rules),
+   `scripts/assemble-svg.mjs` (root `class="dw-mode-detailed"`),
+   `scripts/generate-geometry.mjs` (`logoPlate()` → `.dw-logo` wrapper;
+   `experienceTags()` → `dw-tag-<slug>` class), `eslint.config.js` (browser
+   globals for `src/**/*.ts`/`*.vue`). Regenerated `src/svg/fragments/*.svg`
+   (information fragments + `floor-ground` only) and `src/svg/diorama.svg`.
+   Docs: `src/svg/README.md` §Stage 8, `AGENTS.md`.
+2. **Selection — tested now vs Stage 9.** Verified end-to-end against the dev
+   server: no parameter → Detailed; `?mode=detailed` → Detailed;
+   `?mode=overview` → Overview; `?mode=OVERVIEW` → Overview (case-insensitive);
+   `?mode=xyz` → Detailed. `App.vue` reads `window.location.search` and swaps
+   the root SVG's mode class; the assembled file defaults to Detailed, so the
+   standalone SVG is unaffected. Stage 9 still owns real routing, the Vue
+   component/data model and any responsive behavior — `resolveMode()` is the
+   seam to reuse.
+3. **Overview visibility.** Hidden: the technology-logo plates only (via the
+   new `.dw-logo` wrapper, which hides the plate rect *and* the brand art).
+   Retained (user decision, 2026-10-13): all role labels, the current identity
+   block, year plaques, the projecting sign and every scene/prop. Rationale:
+   the user asked to keep all role labels; density is reduced by dropping the
+   numerous logo plates and by making the company signs the dominant
+   identifiers.
+4. **Sign scaling, no duplicates.** `.dw-mode-overview #tags .dw-tag-group`
+   applies a presentation-layer CSS transform (`transform-box: fill-box;
+   transform-origin: center; transform: scale(1.8)`) — the same underlying
+   elements are reused in both modes. All experience tags share the invisible
+   left wall (`u = -1.5`), so one screen-space scale fits every sign without
+   distorting glyphs; scoping to `#tags` leaves the year plaques and the 2013
+   entrance sign untouched. One collision was found (Nextcode sign rising into
+   the `Co-Founder` role label); `experienceTags()` now emits a stable
+   `dw-tag-<slug>` class and `.dw-mode-overview #tags .dw-tag-nextcode` uses
+   `transform-origin: 50% 0%` so that sign grows downward, clearing the label.
+5. **Renders.** Detailed: `generated/dev/r226.png` and the earlier
+   `r225.png` (2250×2387, S=2.5, viewBox `200 95 900 955`) — both pixel-
+   identical to the Stage 7 `r224.png`. Overview: `generated/dev/r226-overview.png`
+   (same 2250×2387), plus crops `ov2-nextco.png`, `ov2-tl.png`, `ov-ground.png`,
+   `ov-f12left.png`, `ov-f34.png`. Dev wrapper `generated/dev/make_chk_modes.py`
+   writes both `chk.html` and `chk-overview.html` (class-swapped, assets inlined).
+6. **Checks.** `npm run svg:generate` and `npm run svg:assemble` succeed;
+   `npm run lint`, `npm run type-check`, `npm run build` all clean.
+7. **Remaining / limitations.** Stage 9: connect `resolveMode()` to the final
+   router/query handling, bind the information data model, and add responsive
+   behavior. Known constraint: because the user chose to keep *all* role labels
+   while enlarging the signs `1.8×`, Overview is denser than the spec's
+   "reduced density" ideal; the Nextcode sign is the one element needing a
+   per-sign origin tweak. If review prefers a sparser Overview, hiding the
+   competing role labels is a one-line CSS change. Overview styling is
+   currently page/embedded-CSS only — it does not apply to a standalone
+   `diorama.svg` opened outside the app (by design; the standalone default is
+   Detailed).
+
+### Report — Overview review round (2026-10-14)
+
+Eight user-requested Overview fixes, implemented and rendered
+(`generated/dev/r228-overview.png`; detailed `r228.png`):
+
+1. **Puelo Games** — a second, smaller plaque now sits *above* the company sign
+   carrying `Unity Dev`. `experienceTags()` renders it from an optional `role`
+   on the `FLOOR_TAGS` entry (`<g class="dw-tag-role">`, `.dw-tag-role-text`),
+   hidden in Detailed and shown in Overview, so it scales with the sign; the
+   Puelo door label (`.dw-role-puelo`) is hidden in Overview.
+2. **Freelancer** — the company sign now reads `Freelancer Game Dev` (shared
+   source; also visible in Detailed).
+3. **Nextcode** — the `transform-origin: 50% 0%` hack was reverted; the sign
+   scales around its centre again (it overlaps `Co-Founder`; user will fix
+   differently next round).
+4. **Health Platforms / DBA** — enlarged +20% and moved down to the centre of
+   its wall part (partial wall v 20–150, h 105–197.5 → centre h 151.25; Δy =
+   +27.75 user units) via `modeLabelWrap('dw-role-dba', 0, 27.75, …)`.
+5. **Interactica f2-left / Tech Lead** — enlarged +20% (`.dw-role-floor-xl`
+   → 18.1px in Overview).
+6. **Interactica f3-right / Software Architect** — enlarged +15% and moved down
+   to the centre of its wall part (partial wall h 315–407.5 → centre 361.25;
+   Δy = +28.25) via `modeLabelWrap('dw-role-f3sa', 0, 28.25, …)`.
+7. **Indelve** — the near (left) fleet is now assembled *under* the `Indelve`
+   sign (moved before `tags` in `assemble-svg.mjs`); shared source, also
+   affects Detailed.
+8. **Pacer / Software Architect** — enlarged +15% (`.dw-role-pacer` → 11.5px in
+   Overview).
+
+Mechanism: Overview-only label moves use a wrapper group carrying the
+screen-space translate as CSS custom properties (`--ovx`/`--ovy`, px = user
+units) applied by `.dw-mode-overview .dw-role-*`; the inner text keeps its plane
+matrix, so Detailed is untouched. Detailed changed only for items 2 and 7.
+
+`npm run svg:generate`, `svg:assemble`, `lint`, `type-check`, `build` all clean.
+Verified: Detailed `r228.png` differs from `r224.png` only at the Freelancer
+sign and the Indelve tag/fleet (diff clusters); Overview crops confirmed each
+fix.
+
+### Report — Overview review round 2 (2026-10-14)
+
+The Puelo `Unity Dev` mini-board treatment was extended to the remaining role
+labels (`generated/dev/r229-overview.png`; detailed `r229.png`, byte-identical
+to `r228.png` — all Overview-only):
+
+- `FLOOR_TAGS` gained `role` on BA (`Jr. Developer`), Nextcode (`Co-Founder`),
+  Interactica f2 c=135 (`Dev`) and f2 c=470 (`Tech Lead`); `roleMiniBoard()` is
+  factored out and renders the board above each sign (hidden in Detailed).
+- The matching role labels are hidden in Overview via
+  `.dw-role-ba/-nextcode/-f2right/-f2left` (previously enlarged); this also
+  removes the Nextcode-sign/`Co-Founder` collision noted in round 1.
+- Pacer `Software Architect` is a standalone `.dw-tag-group.dw-tag-role` board
+  *between* the two Pacer signs, centred on the elevator's depth (c ≈ 302.5,
+  floor 4); the `.dw-role-pacer` floor label is hidden in Overview (its +15%
+  bump was dropped).
+
+Verified by crops: each mini board sits above its sign; the Pacer board is
+between the two Pacer signs near the elevator; the role labels are gone in
+Overview and unchanged in Detailed.
+
+### Report — Overview review round 3 (2026-10-14)
+
+Two more Overview-only scalings (`generated/dev/r230-overview.png`; detailed
+`r230.png`, byte-identical to `r229.png`):
+
+- **Year plaques +15%** — `#elevator` and `#entrance` `.dw-tag-group` scale
+  `1.15` around their own centre (elevator story years + the 2013 entrance
+  sign).
+- **Projecting sign +25%** — `#projecting-sign` scales `1.25` around its own
+  centre (photo, name, QR and LinkedIn label all enlarge). Verified the sign
+  stays attached to the wall and within the composition bounds.
+
+`lint`, `type-check`, `build` clean.

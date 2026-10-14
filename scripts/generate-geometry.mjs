@@ -3600,13 +3600,16 @@ const TAG_MATRIX = '0.7071 0.2475 0 1' // reads toward the front corner (-v)
 // per-side padding covering dot gap, dot radius and edge margin.
 const TAG_HALF_PAD = 7.5
 const FLOOR_TAGS = [
-  { text: 'Puelo Games', floor: 0, c: 82 },
-  { text: 'BA Technology', floor: 0, c: 282 },
-  { text: 'Freelancer Game Developer', floor: 0, c: 477 },
+  // `role` (optional, Stage 8): a second mini board ABOVE the company sign
+  // carrying the section role, so Overview associates the two (the role label
+  // moves off its door/wall/floor onto the sign). Hidden in Detailed.
+  { text: 'Puelo Games', floor: 0, c: 82, role: SECTIONS.puelo.role },
+  { text: 'BA Technology', floor: 0, c: 282, role: SECTIONS.ba.role },
+  { text: 'Freelancer Game Dev', floor: 0, c: 477 },
   { text: 'Health Platforms', floor: 1, c: 135 },
-  { text: 'Nextcode', floor: 1, c: 470 },
-  { text: 'Interactica', floor: 2, c: 135 },
-  { text: 'Interactica', floor: 2, c: 470 },
+  { text: 'Nextcode', floor: 1, c: 470, role: SECTIONS.nextcode.role },
+  { text: 'Interactica', floor: 2, c: 135, role: SECTIONS.interactica2right.role },
+  { text: 'Interactica', floor: 2, c: 470, role: SECTIONS.interactica2left.role },
   { text: 'Interactica', floor: 3, c: 135 },
   { text: 'Indelve', floor: 3, c: 470 },
   { text: 'Pacer', floor: 4, c: 135 },
@@ -3614,6 +3617,21 @@ const FLOOR_TAGS = [
   { text: 'WIP', floor: 5, c: 135 },
   { text: 'WIP', floor: 5, c: 470 },
 ]
+
+// A small role plaque on the invisible left wall (Stage 8 Overview): the board
+// faces + the role text, sized to the role string. Shared by the mini board
+// above a company sign and the standalone Pacer mid board.
+function roleMiniBoard(u, c, h0, h1, role) {
+  const roleHalf = (role.length * TAG_CHAR_W * 0.72) / 2 + 5
+  const hMid = (h0 + h1) / 2
+  const [x, y] = p(u, c, hMid).split(',')
+  return [
+    el('dw-tag', uFace(u, c - roleHalf, c + roleHalf, h0, h1)),
+    el('dw-tag', hFace(u, 0, c - roleHalf, c + roleHalf, h1)),
+    el('dw-tag', vFace(c - roleHalf, u, 0, h0, h1)),
+    `<text class="dw-tag-role-text" transform="matrix(${TAG_MATRIX} ${x} ${y})" text-anchor="middle" dominant-baseline="central">${role}</text>`,
+  ]
+}
 
 function experienceTags() {
   const out = []
@@ -3627,17 +3645,44 @@ function experienceTags() {
     const u = -1.5
     const hMid = (h0 + h1) / 2
     const [x, y] = p(u, tag.c, hMid).split(',')
-    out.push(
-      tagGroup([
-        el('dw-tag', uFace(u, tag.c - half, tag.c + half, h0, h1)),
-        el('dw-tag', hFace(u, 0, tag.c - half, tag.c + half, h1)),
-        el('dw-tag', vFace(tag.c - half, u, 0, h0, h1)),
-        dot(u, tag.c - textHalf - DOT_GAP, hMid),
-        dot(u, tag.c + textHalf + DOT_GAP, hMid),
-        `<text class="dw-tag-text" transform="matrix(${TAG_MATRIX} ${x} ${y})" text-anchor="middle" dominant-baseline="central">${tag.text}</text>`,
-      ]),
-    )
+    // Stable per-sign class (Stage 8) so a specific company sign can be
+    // scaled/tuned individually in Overview mode without duplicating it or
+    // touching inline attributes (see the `.dw-tag-*` rules in style.mjs).
+    const slug = tag.text.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+    const children = [
+      el('dw-tag', uFace(u, tag.c - half, tag.c + half, h0, h1)),
+      el('dw-tag', hFace(u, 0, tag.c - half, tag.c + half, h1)),
+      el('dw-tag', vFace(tag.c - half, u, 0, h0, h1)),
+      dot(u, tag.c - textHalf - DOT_GAP, hMid),
+      dot(u, tag.c + textHalf + DOT_GAP, hMid),
+      `<text class="dw-tag-text" transform="matrix(${TAG_MATRIX} ${x} ${y})" text-anchor="middle" dominant-baseline="central">${tag.text}</text>`,
+    ]
+    // Optional role mini board above the sign (Stage 8, Overview): the section
+    // role sits on its own smaller plaque just above the company sign, so it
+    // scales with the sign and reads as one unit. Hidden in Detailed
+    // (`.dw-tag-role`), shown in Overview.
+    if (tag.role) {
+      const rh0 = h1 + 2.5
+      children.push(
+        `<g class="dw-tag-role">`,
+        ...roleMiniBoard(u, tag.c, rh0, rh0 + 10, tag.role).map((l) => `  ${l}`),
+        `</g>`,
+      )
+    }
+    out.push(tagGroup(children, `dw-tag-group dw-tag-${slug}`))
   }
+  // Pacer (Stage 8 Overview): "Software Architect" is a standalone mid board
+  // BETWEEN the two Pacer signs (c 135 and 470), i.e. centred on the elevator's
+  // depth (c ≈ 302.5). It is its own `.dw-tag-group` so the Overview 1.8× rule
+  // scales it in place like the company signs; `.dw-tag-role` hides it in
+  // Detailed.
+  const pacerMidH0 = 4 * FH + TAG_H0 + 3
+  out.push(
+    tagGroup(
+      roleMiniBoard(-1.5, 302.5, pacerMidH0, pacerMidH0 + 10, SECTIONS.pacer.role),
+      'dw-tag-group dw-tag-role dw-tag-mid',
+    ),
+  )
   return group('tags', out)
 }
 
@@ -3667,6 +3712,9 @@ const VPLANE_MATRIX = '0.7071 -0.2475 0 1' // constant-v wall: +x→+u, +y down
 // One technology logo on its small plate, centred at local origin of `matrix`.
 // `dx`/`dy` are an optional SCREEN-space nudge (SVG user units) applied after
 // the plane projection — used for the user's fine per-logo position tweaks.
+// The wrapper carries the `dw-logo` class so the WHOLE plate (rect + brand art)
+// can be hidden as one unit in Overview mode (Stage 8) — hiding only
+// `.dw-logo-plate` would leave the logo artwork painted.
 function logoPlate(logo, ox, oy, matrix, size, dx = 0, dy = 0) {
   const s = (size * 0.64) / 24 // 24 is the logo viewBox
   const half = size / 2
@@ -3675,7 +3723,7 @@ function logoPlate(logo, ox, oy, matrix, size, dx = 0, dy = 0) {
     : `<g transform="translate(${round(-size * 0.32)} ${round(-size * 0.32)}) scale(${round(s)})"><path fill="${logo.color}" d="${logo.d}" /></g>`
   const shift = dx || dy ? `translate(${round(dx)} ${round(dy)}) ` : ''
   return [
-    `<g transform="${shift}matrix(${matrix} ${round(ox)} ${round(oy)})">`,
+    `<g class="dw-logo" transform="${shift}matrix(${matrix} ${round(ox)} ${round(oy)})">`,
     `  <rect class="dw-logo-plate" x="${-half}" y="${-half}" width="${size}" height="${size}" rx="${round(size * 0.16)}" />`,
     `  ${art}`,
     `</g>`,
@@ -3767,6 +3815,14 @@ function frontLabel(text, u, v, h, cls = 'dw-role-wall') {
   return [label(text, x, y, VPLANE_MATRIX, cls)]
 }
 
+// Wrap role-label element(s) so Overview can reposition them (Stage 8): the
+// inner text keeps its plane matrix; the wrapper <g> carries the Overview
+// screen-space translate (user units) as CSS custom properties, applied by the
+// matching `.dw-mode-overview .<cls>` rule in style.mjs. Detailed is untouched.
+function modeLabelWrap(cls, dx, dy, lines) {
+  return [`<g class="${cls}" style="--ovx:${round(dx)}px;--ovy:${round(dy)}px">`, ...lines, `</g>`]
+}
+
 // --- information layer, per floor (Stage 7) ---------------------------------
 // The layer is split into ONE fragment per floor so the floor above occludes
 // the deeper logos/labels exactly like any other prop (the earlier single
@@ -3777,8 +3833,8 @@ function frontLabel(text, u, v, h, cls = 'dw-role-wall') {
 function informationGround() {
   const S = SECTIONS
   const out = []
-  out.push(...doorLabel(S.puelo.role, PARTITION_G[0], 'dw-role-door-lg')) // Unity Dev (+15%)
-  out.push(...doorLabel(S.ba.role, PARTITION_G[1])) // over the BA↔Freelancer door
+  out.push(...doorLabel(S.puelo.role, PARTITION_G[0], 'dw-role-door-lg dw-role-puelo')) // Unity Dev (Overview: moved onto the sign's mini board)
+  out.push(...doorLabel(S.ba.role, PARTITION_G[1], 'dw-role-door dw-role-ba')) // over the BA↔Freelancer door (Overview: moved onto the sign's mini board)
   // Puelo: unity on the floor, moved toward the kiosk/TV (+u) so the entrance
   // jambs no longer cover it; c# mounted on the ground-floor left wall toward
   // the front-left corner, clearly on the wall (moved off the vent area), and
@@ -3811,13 +3867,16 @@ function information01() {
   // along the arrowed line (user revision), i.e. the u-axis at v ~ 530. Enlarged
   // 25% and given the same light keyline halo as the other role labels
   // (`.dw-role-floor-md`, in the role group).
-  out.push(...floorLabel(S.nextcode.role, 52, 530, FH, 'dw-role-floor-md'))
+  out.push(...floorLabel(S.nextcode.role, 52, 530, FH, 'dw-role-floor-md dw-role-nextcode'))
   // Health Platforms (left-wall part, centred on v 85): a diamond — DBA at the
   // top, aws/mysql on the sides, salesforce at the bottom. aws pulled further
   // left (+v) and mysql further right (−v) to open the gap to the salesforce
-  // plate's top corners (user revision).
+  // plate's top corners (user revision). Stage 8 Overview: the logo plates are
+  // hidden, so the DBA label is moved down (and enlarged) to the CENTRE of the
+  // wall part (the partial wall v 20–150, h FH–FH+STORY_H → centre h 151.25);
+  // Detailed keeps it at the top of the diamond. Δh = 151.25 − (FH+74) = −27.75.
   const hc = 85
-  out.push(...wallLabel(S.health.role, hc, FH + 74)) // DBA (top)
+  out.push(...modeLabelWrap('dw-role-dba', 0, 27.75, wallLabel(S.health.role, hc, FH + 74)))
   out.push(...wallLogo(S.health.tech[1], hc + 38, FH + 48, 34)) // aws (+v side)
   out.push(...wallLogo(S.health.tech[0], hc - 38, FH + 48, 34)) // mysql (−v side)
   out.push(...wallLogo(S.health.tech[2], hc, FH + 22, 34)) // salesforce (bottom)
@@ -3829,7 +3888,7 @@ function information02() {
   const out = []
   // f2-left: "Tech Lead" on the floor beside the tech-lead + seated devs,
   // read along the depth axis (user revision, matching the red line).
-  out.push(...floorLabelDepth(S.interactica2left.role, 55, 537, 2 * FH, 'dw-role-floor-xl')) // Tech Lead (+10% more + halo)
+  out.push(...floorLabelDepth(S.interactica2left.role, 55, 537, 2 * FH, 'dw-role-floor-xl dw-role-f2left')) // Tech Lead (Overview: moved onto the sign's mini board)
   out.push(...floorLogoRow(S.interactica2left.tech, 46, 470, 2 * FH))
   return group('information-02', out)
 }
@@ -3851,11 +3910,18 @@ function information03() {
   const out = []
   // Interactica f3 right ("Software Architect"): the label is two rows
   // ("Software" / "Architect", user revision) over the floor-3 left-wall part
-  // (partialWall v 75..161 → centre 118); tech logos −10%.
+  // (partialWall v 75..161 → centre 118); tech logos −10%. Stage 8 Overview:
+  // the logos are hidden, so the two-row label moves down (and enlarges) to the
+  // CENTRE of the wall part (partial wall h 3·FH–3·FH+STORY_H → centre 361.25;
+  // the two rows currently centre at 389.5). Δh = 361.25 − 389.5 = −28.25.
   const c = 118
   const [l1, l2] = S.interactica3right.role.split(' ')
-  out.push(...wallLabel(l1, c, 3 * FH + 80)) // "Software"
-  out.push(...wallLabel(l2, c, 3 * FH + 69)) // "Architect"
+  out.push(
+    ...modeLabelWrap('dw-role-f3sa', 0, 28.25, [
+      ...wallLabel(l1, c, 3 * FH + 80), // "Software"
+      ...wallLabel(l2, c, 3 * FH + 69), // "Architect"
+    ]),
+  )
   out.push(...wallLogoRowCentered([S.interactica3right.tech[0], S.interactica3right.tech[1]], c, 3 * FH + 44, 26))
   out.push(...wallLogoRowCentered([S.interactica3right.tech[2], S.interactica3right.tech[3]], c, 3 * FH + 16, 26))
   return group('information-03', out)
@@ -3876,7 +3942,7 @@ function information04() {
   // Pacer role label on the left side, close to the rear (C-D) wall (inner face
   // at v 580.5) and clear of the dev cluster (v 435), reading PARALLEL to the
   // rear wall (along the width axis, +u).
-  out.push(...floorLabel(S.pacer.role, 112, 566, H)) // Software Architect
+  out.push(...floorLabel(S.pacer.role, 112, 566, H, 'dw-role-pacer')) // Software Architect (+15% in Overview)
   out.push(...floorLogoDepth(S.pacer.tech[0], 24, 62, H)) // githubactions
   out.push(...floorLogoDepth(S.pacer.tech[1], 24, 132, H)) // nestjs
   out.push(...floorLogoDepth(S.pacer.tech[2], 24, 202, H)) // postgresql
@@ -3892,7 +3958,7 @@ function information04() {
 function informationElev() {
   const S = SECTIONS
   const out = []
-  out.push(...frontLabel(S.interactica2right.role, (DOOR_U0 + DOOR_U1) / 2, SHAFT_V0 - WALL_T, 2 * FH + DOOR_H + 18)) // Dev over the "2"
+  out.push(...frontLabel(S.interactica2right.role, (DOOR_U0 + DOOR_U1) / 2, SHAFT_V0 - WALL_T, 2 * FH + DOOR_H + 18, 'dw-role-wall dw-role-f2right')) // Dev over the "2" (Overview: moved onto the sign's mini board)
   return group('information-elev', out)
 }
 

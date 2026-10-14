@@ -54,7 +54,29 @@ Do not force every visual element to be vectorized.
   `tags`/`elevator`/`entrance` fragments are unchanged; no Stage 8 mode
   logic/variants. See `src/svg/README.md` §Stage 7 and
   `STAGE_07_INFORMATION_LAYER.md`.
-- **Next: Stage 8 (display modes)** → 9 Vue integration → 10 polish/deployment.
+- **Stage 8 (2026-10-14): COMPLETE — display modes.** One canonical mode
+  contract (`src/display-mode.ts`): `?mode=overview` selects Overview;
+  missing/empty/unknown (and `?mode=detailed`) fall back to Detailed;
+  case-insensitive. `src/App.vue` resolves `window.location.search` and swaps
+  the root SVG's mode class; the assembled file ships `dw-mode-detailed`, so
+  the standalone SVG stays Detailed and Detailed is pixel-identical to the
+  Stage 7 `r224` render. Mode rules are embedded in the SVG `<style>`
+  (`scripts/style.mjs`): Overview hides the technology-logo plates
+  (`logoPlate()` wraps each in a `.dw-logo` group) and scales the company signs
+  `1.8×` around their own centre (`#tags .dw-tag-group`, `fill-box`);
+  `experienceTags()` emits `dw-tag-<slug>` classes and an optional role mini
+  board above a sign. Overview keeps every role label — most are relocated onto
+  a mini board above their company sign (Puelo, BA, Nextcode, Interactica f2),
+  Pacer's onto a standalone board between its two signs — plus the identity
+  block, year plaques and the projecting sign; only logos are hidden and signs
+  enlarged. A 2026-10-14 review round added Overview-only label
+  re-centring/enlarging (DBA, f3 Software Architect), year-plaque +15% and
+  projecting-sign +25% scalings, and shared-source tweaks (Freelancer sign now
+  `Freelancer Game Dev`; Indelve fleet under its sign).
+  Query-parameter routing is exercised in the current scaffold; final
+  routing/data-model integration stays in Stage 9. See `src/svg/README.md`
+  §Stage 8 and `STAGE_08_DISPLAY_MODES.md`.
+- **Next: Stage 9 (Vue integration)** → 10 polish/deployment.
 
 ## Core Principles
 

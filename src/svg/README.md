@@ -546,10 +546,10 @@ Keep architectural geometry separate from professional information. The
 group (Stage 7) holds the secondary/supporting content — roles, periods,
 selected technologies and short project notes. Both are generated from
 `scripts/career-data.mjs` (a plain data module) into their own fragments, so
-changing a role/date/technology is a data edit that touches no geometry; the
-`information` group is a single unit so a future display-mode switch (Stage 8)
-can show/hide it wholesale. Final typography/HTML overlays and the data-model
-binding belong to later stages (Stage 9 Vue integration).
+changing a role/date/technology is a data edit that touches no geometry. The
+Stage 8 display-mode switch acts on this layer by class (see §Stage 8) rather
+than hiding the whole `information` group. Final typography/HTML overlays and
+the data-model binding belong to later stages (Stage 9 Vue integration).
 
 ## Stage 7 — information layer
 
@@ -606,6 +606,81 @@ scene sprites and visual references rather than textual plaques (user decisions,
 master in `src/assets/` and re-run `scripts/optimize-assets.py` (it scans
 `career-data.mjs` for `photo: '…'` too), then `npm run svg:generate` +
 `svg:assemble`.
+
+## Stage 8 — detailed & overview display modes
+
+The same diorama serves two presentation states selected by **one** query
+parameter (`?mode=`). The contract lives in **`src/display-mode.ts`** (the
+single source of truth; Stage 9 routing must import it):
+
+- no parameter, `?mode=detailed`, or any unknown/empty value → **Detailed**
+  (the default);
+- `?mode=overview` → **Overview**; matching is case-insensitive.
+
+`src/App.vue` resolves `window.location.search` with `resolveMode()` and swaps
+the root SVG's mode class accordingly. The assembled file ships with
+`class="dw-mode-detailed"` (set by `assemble-svg.mjs`), so the **standalone
+`diorama.svg` always renders Detailed**. The mode rules are embedded in the
+SVG's own `<style>` (`scripts/style.mjs`), so they travel with
+regeneration/assembly:
+
+- `.dw-mode-overview .dw-logo { display: none; }` — the technology-logo plates
+  (`logoPlate()` now wraps each plate in a `.dw-logo` group, so the rect *and*
+  the brand art hide together) are dropped; too numerous for a full-frame
+  screenshot.
+- `.dw-mode-overview #tags .dw-tag-group { transform-box: fill-box;
+  transform-origin: center; transform: scale(1.8); }` — company-name signs are
+  scaled **around their own visual centre** for full-composition legibility,
+  with no duplicated elements. Every experience tag lives on the same invisible
+  left wall (`u = -1.5`), so one screen-space scale fits them all. Scoping to
+  `#tags` leaves the elevator year plaques and the 2013 entrance sign untouched.
+  `experienceTags()` emits a stable `dw-tag-<slug>` class per sign for per-sign
+  tweaks (currently unused — the Nextcode top-edge origin hack was reverted on
+  user review).
+
+Per user decision (2026-10-13) Overview keeps **all** role labels, the current
+identity block, the year plaques and the projecting sign; only the technology
+plates are hidden and only the company signs are enlarged.
+
+**Overview-only information fixes (user review, 2026-10-14).** Because the logo
+plates are hidden, role labels that were positioned relative to them are
+re-tuned in Overview without touching Detailed:
+
+- **Role mini boards** — `experienceTags()` renders an optional second, smaller
+  plaque (`roleMiniBoard()` → `<g class="dw-tag-role">`, `.dw-tag-role-text`)
+  *above* a company sign when its `FLOOR_TAGS` entry has a `role`, so the role
+  label moves off its door/wall/floor onto the sign and scales with it. Applied
+  to Puelo `Unity Dev`, BA `Jr. Developer`, Nextcode `Co-Founder`, Interactica
+  f2-front `Dev` and f2-left `Tech Lead`. Hidden in Detailed
+  (`.dw-tag-role { display: none }`), shown in Overview; the matching role
+  labels (`.dw-role-puelo/-ba/-nextcode/-f2right/-f2left`) are hidden in
+  Overview.
+- **Pacer mid board** — `Software Architect` is instead a standalone
+  `.dw-tag-group.dw-tag-role` board *between* the two Pacer signs, centred on
+  the elevator's depth (c ≈ 302.5, floor 4), so it scales in place like the
+  signs; the floor label `.dw-role-pacer` is hidden in Overview.
+- **Re-centred role labels** — `modeLabelWrap(cls, dx, dy, lines)` wraps a label
+  in a group carrying the Overview translate as CSS custom properties
+  (`--ovx`/`--ovy` in px = SVG user units); the inner text keeps its plane
+  matrix. `.dw-mode-overview .dw-role-dba` / `.dw-role-f3sa` apply it, moving
+  the `DBA` and floor-3 `Software Architect` labels down to the centre of their
+  partial walls (which the hidden logo rows had left them above) and enlarging
+  them (+20% / +15%).
+- **Year plaques & projecting sign** — Overview scales the year plaques (the
+  elevator story years and the 2013 entrance sign, `#elevator`/`#entrance`
+  `.dw-tag-group`) up **15%** and the projecting identity sign (photo + QR,
+  `#projecting-sign`) up **25%**, both around their own centre.
+
+Two shared-source changes from the same review also affect Detailed: the
+Freelancer company sign now reads **`Freelancer Game Dev`**, and the near
+Indelve fleet is assembled **under** the `Indelve` sign (`assemble-svg.mjs`) so
+the enlarged Overview sign stays readable. Detailed therefore differs from the
+Stage 7 `r224` render only in those two places.
+
+Gotcha: `svgStyle` is a JS template literal and, because an inline SVG `<style>`
+is parsed as HTML raw text, **no `<` may appear in the CSS comments** — a
+literal `<svg>` (or `<g>`) in a comment is parsed as an element and silently
+truncates the rest of the stylesheet. Write "the root SVG element", not `<svg>`.
 
 ## Tooling rules
 

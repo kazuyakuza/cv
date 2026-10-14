@@ -29,13 +29,15 @@ npm run svg:optimize  # svgo → generated/svg (source in src/svg stays authorit
 
 - `.agent/project-info/PROJECT_BRIEF.md` — what the project is (career content, layout, concept)
 - `.agent/project-info/IMPLEMENTATION_PLAN.md` — the stage-by-stage roadmap
-- `.agent/todo/STAGE_00_PROJECT_FOUNDATION.md` — current stage specification
+- `.agent/todo/STAGE_*.md` — per-stage specifications and completion reports
 - `AGENTS.md` — conventions and constraints for coding agents
-- `src/svg/README.md` — SVG source organization and naming conventions
+- `src/svg/README.md` — SVG source organization, geometry parameters and naming conventions
 
 ## Status
 
-Stage 1 (Complete Building Wireframe) — the first full architectural wireframe
-lives in `src/svg/` (fragments + assembled `diorama.svg`, rendered by the app).
-Edit fragments, then run `npm run svg:assemble`. See `src/svg/README.md` for
-geometry parameters and conventions.
+**Stage 8 (Detailed & Overview display modes) is complete.** The diorama serves
+two presentation states from one SVG, selected by `?mode=` (default Detailed;
+`?mode=overview`). The career content, architecture and information layer are
+established through Stage 7. Next: **Stage 9 — Vue integration** (component
+structure, data model, final routing), then Stage 10 (polish/deployment). See
+`AGENTS.md` and `src/svg/README.md` for details.

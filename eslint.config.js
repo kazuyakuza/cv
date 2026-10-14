@@ -16,8 +16,10 @@ export default tseslint.config(
   ...tseslint.configs.recommended,
   ...pluginVue.configs['flat/recommended'],
   {
-    files: ['**/*.vue'],
+    files: ['**/*.vue', 'src/**/*.ts'],
     languageOptions: {
+      // Browser app: expose the DOM globals used by the Vue entry points.
+      globals: { window: 'readonly', document: 'readonly' },
       parserOptions: {
         parser: tseslint.parser,
       },

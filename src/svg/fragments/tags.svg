@@ -1,29 +1,41 @@
 <g id="tags">
-  <g class="dw-tag-group">
+  <g class="dw-tag-group dw-tag-puelo-games">
   <path class="dw-tag" d="M716.99,986.66 L665.81,968.56 L665.4,953.13 L716.27,970.75 Z" />
   <path class="dw-tag" d="M716.27,970.75 L717.55,969.84 L666.29,952.44 L665.4,953.13 Z" />
   <path class="dw-tag" d="M716.99,986.66 L717.87,986.43 L717.55,969.84 L716.27,970.75 Z" />
   <circle class="dw-dot" cx="713.89" cy="977.54" r="1.4" />
   <circle class="dw-dot" cx="667.27" cy="961.09" r="1.4" />
   <text class="dw-tag-text" transform="matrix(0.7071 0.2475 0 1 691.17 969.6)" text-anchor="middle" dominant-baseline="central">Puelo Games</text>
+  <g class="dw-tag-role">
+    <path class="dw-tag" d="M706.28,964.18 L675.18,953.76 L675.16,943.42 L706.68,954.02 Z" />
+    <path class="dw-tag" d="M706.68,954.02 L707.55,953.85 L676.11,943.26 L675.16,943.42 Z" />
+    <path class="dw-tag" d="M706.28,964.18 L706.97,963.57 L707.55,953.85 L706.68,954.02 Z" />
+    <text class="dw-tag-role-text" transform="matrix(0.7071 0.2475 0 1 690.98 954.39)" text-anchor="middle" dominant-baseline="central">Unity Dev</text>
+  </g>
 </g>
-  <g class="dw-tag-group">
+  <g class="dw-tag-group dw-tag-ba-technology">
   <path class="dw-tag" d="M578.27,938.53 L519.82,917.72 L520.77,901.32 L578.65,922.53 Z" />
   <path class="dw-tag" d="M578.65,922.53 L579.83,921.76 L521.06,901.34 L520.77,901.32 Z" />
   <path class="dw-tag" d="M578.27,938.53 L579.36,937.96 L579.83,921.76 L578.65,922.53 Z" />
   <circle class="dw-dot" cx="576.48" cy="929.47" r="1.4" />
   <circle class="dw-dot" cx="522.38" cy="911.1" r="1.4" />
   <text class="dw-tag-text" transform="matrix(0.7071 0.2475 0 1 549.39 919.97)" text-anchor="middle" dominant-baseline="central">BA Technology</text>
+  <g class="dw-tag-role">
+    <path class="dw-tag" d="M570.05,916.77 L528.64,902.03 L528.77,892.74 L570.4,907.28 Z" />
+    <path class="dw-tag" d="M570.4,907.28 L571.19,906.55 L529.87,891.91 L528.77,892.74 Z" />
+    <path class="dw-tag" d="M570.05,916.77 L570.9,916.23 L571.19,906.55 L570.4,907.28 Z" />
+    <text class="dw-tag-role-text" transform="matrix(0.7071 0.2475 0 1 549.82 904.55)" text-anchor="middle" dominant-baseline="central">Jr. Developer</text>
+  </g>
 </g>
-  <g class="dw-tag-group">
-  <path class="dw-tag" d="M463.42,898.23 L360.03,861.93 L360.04,845.78 L463.23,881.34 Z" />
-  <path class="dw-tag" d="M463.23,881.34 L463.86,881.84 L361.75,845.77 L360.04,845.78 Z" />
-  <path class="dw-tag" d="M463.42,898.23 L463.78,897.63 L463.86,881.84 L463.23,881.34 Z" />
-  <circle class="dw-dot" cx="461" cy="888.73" r="1.4" />
-  <circle class="dw-dot" cx="362.09" cy="854.34" r="1.4" />
-  <text class="dw-tag-text" transform="matrix(0.7071 0.2475 0 1 411.22 871.72)" text-anchor="middle" dominant-baseline="central">Freelancer Game Developer</text>
+  <g class="dw-tag-group dw-tag-freelancer-game-dev">
+  <path class="dw-tag" d="M451.49,894.36 L371.52,866.08 L371.04,849.5 L451.97,877.83 Z" />
+  <path class="dw-tag" d="M451.97,877.83 L452.94,877.49 L372.3,849.58 L371.04,849.5 Z" />
+  <path class="dw-tag" d="M451.49,894.36 L452.68,893.15 L452.94,877.49 L451.97,877.83 Z" />
+  <circle class="dw-dot" cx="449.38" cy="885.02" r="1.4" />
+  <circle class="dw-dot" cx="373.54" cy="858.38" r="1.4" />
+  <text class="dw-tag-text" transform="matrix(0.7071 0.2475 0 1 411.22 871.72)" text-anchor="middle" dominant-baseline="central">Freelancer Game Dev</text>
 </g>
-  <g class="dw-tag-group">
+  <g class="dw-tag-group dw-tag-health-platforms">
   <path class="dw-tag" d="M688.32,871.34 L618.92,847.3 L618.96,831.72 L688.61,855.35 Z" />
   <path class="dw-tag" d="M688.61,855.35 L689.64,855.15 L619.57,830.89 L618.96,831.72 Z" />
   <path class="dw-tag" d="M688.32,871.34 L688.8,871.59 L689.64,855.15 L688.61,855.35 Z" />
@@ -31,31 +43,49 @@
   <circle class="dw-dot" cx="621.01" cy="840.27" r="1.4" />
   <text class="dw-tag-text" transform="matrix(0.7071 0.2475 0 1 653.48 851.61)" text-anchor="middle" dominant-baseline="central">Health Platforms</text>
 </g>
-  <g class="dw-tag-group">
+  <g class="dw-tag-group dw-tag-nextcode">
   <path class="dw-tag" d="M436.29,783.77 L396.76,770.06 L396.32,753.88 L436.44,767.1 Z" />
   <path class="dw-tag" d="M436.44,767.1 L437.35,767.68 L397.36,753.23 L396.32,753.88 Z" />
   <path class="dw-tag" d="M436.29,783.77 L437.28,783.05 L437.35,767.68 L436.44,767.1 Z" />
   <circle class="dw-dot" cx="434.91" cy="774.69" r="1.4" />
   <circle class="dw-dot" cx="398.35" cy="762.22" r="1.4" />
   <text class="dw-tag-text" transform="matrix(0.7071 0.2475 0 1 416.15 769)" text-anchor="middle" dominant-baseline="central">Nextcode</text>
+  <g class="dw-tag-role">
+    <path class="dw-tag" d="M433.15,763.76 L399.87,751.85 L400.34,741.68 L433.82,754.23 Z" />
+    <path class="dw-tag" d="M433.82,754.23 L433.91,753.72 L401.39,741.41 L400.34,741.68 Z" />
+    <path class="dw-tag" d="M433.15,763.76 L434.36,763.96 L433.91,753.72 L433.82,754.23 Z" />
+    <text class="dw-tag-role-text" transform="matrix(0.7071 0.2475 0 1 416.94 752.71)" text-anchor="middle" dominant-baseline="central">Co-Founder</text>
+  </g>
 </g>
-  <g class="dw-tag-group">
+  <g class="dw-tag-group dw-tag-interactica">
   <path class="dw-tag" d="M678.77,763.05 L628.45,745.08 L627.57,729.15 L679.14,746.97 Z" />
   <path class="dw-tag" d="M679.14,746.97 L680.5,747.41 L628.76,729.24 L627.57,729.15 Z" />
   <path class="dw-tag" d="M678.77,763.05 L679.54,762.99 L680.5,747.41 L679.14,746.97 Z" />
   <circle class="dw-dot" cx="676.55" cy="754.8" r="1.4" />
   <circle class="dw-dot" cx="630.36" cy="738.47" r="1.4" />
   <text class="dw-tag-text" transform="matrix(0.7071 0.2475 0 1 653.08 746.63)" text-anchor="middle" dominant-baseline="central">Interactica</text>
+  <g class="dw-tag-role">
+    <path class="dw-tag" d="M660.98,738.7 L645.73,733.18 L646.24,722.79 L660.47,728.22 Z" />
+    <path class="dw-tag" d="M660.47,728.22 L661.68,727.93 L646.6,723.3 L646.24,722.79 Z" />
+    <path class="dw-tag" d="M660.98,738.7 L662.34,737.98 L661.68,727.93 L660.47,728.22 Z" />
+    <text class="dw-tag-role-text" transform="matrix(0.7071 0.2475 0 1 653.16 731.14)" text-anchor="middle" dominant-baseline="central">Dev</text>
+  </g>
 </g>
-  <g class="dw-tag-group">
+  <g class="dw-tag-group dw-tag-interactica">
   <path class="dw-tag" d="M441.87,680.16 L391.61,662.8 L391.02,646.35 L441.74,664.28 Z" />
   <path class="dw-tag" d="M441.74,664.28 L443.13,663.85 L391.93,646.35 L391.02,646.35 Z" />
   <path class="dw-tag" d="M441.87,680.16 L443.58,680.48 L443.13,663.85 L441.74,664.28 Z" />
   <circle class="dw-dot" cx="440.47" cy="671.38" r="1.4" />
   <circle class="dw-dot" cx="392.91" cy="655.85" r="1.4" />
   <text class="dw-tag-text" transform="matrix(0.7071 0.2475 0 1 416.86 663.03)" text-anchor="middle" dominant-baseline="central">Interactica</text>
+  <g class="dw-tag-role">
+    <path class="dw-tag" d="M431.85,658.25 L401.6,647.99 L400.94,637.33 L432.26,648.61 Z" />
+    <path class="dw-tag" d="M432.26,648.61 L432.83,647.87 L402.15,637.33 L400.94,637.33 Z" />
+    <path class="dw-tag" d="M431.85,658.25 L432.59,658 L432.83,647.87 L432.26,648.61 Z" />
+    <text class="dw-tag-role-text" transform="matrix(0.7071 0.2475 0 1 416.06 648.11)" text-anchor="middle" dominant-baseline="central">Tech Lead</text>
+  </g>
 </g>
-  <g class="dw-tag-group">
+  <g class="dw-tag-group dw-tag-interactica">
   <path class="dw-tag" d="M679.48,658.53 L627.83,640.28 L628.46,624.57 L678.52,642.37 Z" />
   <path class="dw-tag" d="M678.52,642.37 L680.58,641.49 L629.19,624.21 L628.46,624.57 Z" />
   <path class="dw-tag" d="M679.48,658.53 L680.47,658.24 L680.58,641.49 L678.52,642.37 Z" />
@@ -63,7 +93,7 @@
   <circle class="dw-dot" cx="630.58" cy="633.43" r="1.4" />
   <text class="dw-tag-text" transform="matrix(0.7071 0.2475 0 1 653.82 640.96)" text-anchor="middle" dominant-baseline="central">Interactica</text>
 </g>
-  <g class="dw-tag-group">
+  <g class="dw-tag-group dw-tag-indelve">
   <path class="dw-tag" d="M434.99,572.81 L397.92,560.05 L398.63,543.78 L434.7,556.37 Z" />
   <path class="dw-tag" d="M434.7,556.37 L436.3,556.23 L399.03,544.23 L398.63,543.78 Z" />
   <path class="dw-tag" d="M434.99,572.81 L435.91,572.31 L436.3,556.23 L434.7,556.37 Z" />
@@ -71,7 +101,7 @@
   <circle class="dw-dot" cx="400.14" cy="553.32" r="1.4" />
   <text class="dw-tag-text" transform="matrix(0.7071 0.2475 0 1 416.74 558.8)" text-anchor="middle" dominant-baseline="central">Indelve</text>
 </g>
-  <g class="dw-tag-group">
+  <g class="dw-tag-group dw-tag-pacer">
   <path class="dw-tag" d="M667.98,549.94 L639.35,539.2 L638.68,523.74 L668.38,533.46 Z" />
   <path class="dw-tag" d="M668.38,533.46 L669.27,533.03 L639.79,522.96 L638.68,523.74 Z" />
   <path class="dw-tag" d="M667.98,549.94 L668.89,549.69 L669.27,533.03 L668.38,533.46 Z" />
@@ -79,7 +109,7 @@
   <circle class="dw-dot" cx="641.61" cy="531.92" r="1.4" />
   <text class="dw-tag-text" transform="matrix(0.7071 0.2475 0 1 653.52 536.85)" text-anchor="middle" dominant-baseline="central">Pacer</text>
 </g>
-  <g class="dw-tag-group">
+  <g class="dw-tag-group dw-tag-pacer">
   <path class="dw-tag" d="M430.82,466.81 L402.39,456.9 L402.51,440.67 L431.25,450.48 Z" />
   <path class="dw-tag" d="M431.25,450.48 L432.63,449.88 L403.3,440.56 L402.51,440.67 Z" />
   <path class="dw-tag" d="M430.82,466.81 L432.51,465.76 L432.63,449.88 L431.25,450.48 Z" />
@@ -87,7 +117,7 @@
   <circle class="dw-dot" cx="404.71" cy="448.67" r="1.4" />
   <text class="dw-tag-text" transform="matrix(0.7071 0.2475 0 1 416.92 453.69)" text-anchor="middle" dominant-baseline="central">Pacer</text>
 </g>
-  <g class="dw-tag-group">
+  <g class="dw-tag-group dw-tag-wip">
   <path class="dw-tag" d="M664.47,443.73 L642.61,435.58 L642.11,419.35 L664.21,426.8 Z" />
   <path class="dw-tag" d="M664.21,426.8 L665.19,427.27 L644.1,419.22 L642.11,419.35 Z" />
   <path class="dw-tag" d="M664.47,443.73 L664.96,442.5 L665.19,427.27 L664.21,426.8 Z" />
@@ -95,12 +125,18 @@
   <circle class="dw-dot" cx="644.87" cy="428.18" r="1.4" />
   <text class="dw-tag-text" transform="matrix(0.7071 0.2475 0 1 653.89 431.92)" text-anchor="middle" dominant-baseline="central">WIP</text>
 </g>
-  <g class="dw-tag-group">
+  <g class="dw-tag-group dw-tag-wip">
   <path class="dw-tag" d="M427.77,360.62 L406.31,352.31 L406.28,336.99 L427.19,343.99 Z" />
   <path class="dw-tag" d="M427.19,343.99 L428.44,344.09 L407.24,335.91 L406.28,336.99 Z" />
   <path class="dw-tag" d="M427.77,360.62 L428.07,359.61 L428.44,344.09 L427.19,343.99 Z" />
   <circle class="dw-dot" cx="425.14" cy="351.89" r="1.4" />
   <circle class="dw-dot" cx="407.67" cy="345.69" r="1.4" />
   <text class="dw-tag-text" transform="matrix(0.7071 0.2475 0 1 416.6 348.21)" text-anchor="middle" dominant-baseline="central">WIP</text>
+</g>
+  <g class="dw-tag-group dw-tag-role dw-tag-mid">
+  <path class="dw-tag" d="M562.4,509.98 L508.13,490.55 L507.72,480.03 L562.38,499.06 Z" />
+  <path class="dw-tag" d="M562.38,499.06 L563.86,498.89 L508.61,480.6 L507.72,480.03 Z" />
+  <path class="dw-tag" d="M562.4,509.98 L563.11,508.96 L563.86,498.89 L562.38,499.06 Z" />
+  <text class="dw-tag-role-text" transform="matrix(0.7071 0.2475 0 1 534.86 494.46)" text-anchor="middle" dominant-baseline="central">Software Architect</text>
 </g>
 </g>

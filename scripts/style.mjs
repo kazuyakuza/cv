@@ -437,6 +437,9 @@ export const svgStyle = `
 
     /* Plaque typography (system font kept; final typography is Stage 7) */
     .dw-tag-text { fill: #45423c; font: 9.5px system-ui, sans-serif; letter-spacing: 0.03em; }
+    /* Role text on the Puelo mini board (Stage 8 Overview): smaller than the
+       company-sign text so the two read as a hierarchy. */
+    .dw-tag-role-text { fill: #45423c; font: 6.5px system-ui, sans-serif; letter-spacing: 0.03em; }
     .dw-year { fill: #45423c; font: 9.5px system-ui, sans-serif; letter-spacing: 0.03em; }
     /* Elevator floor indicator (user revision): the story number painted on
        the wall above each door — quieter than a plaque, no drop shadow.
@@ -449,6 +452,72 @@ export const svgStyle = `
     .dw-sign-group { filter: drop-shadow(1.5px 2px 1px rgb(70 68 63 / 0.18)); }
     /* Screw/nail heads flanking plaque text (Stage 4.5 user revision) */
     .dw-dot { fill: #9b968b; stroke: none; }
+
+    /* --- Display modes (Stage 8) ------------------------------------------
+       One query parameter (?mode=) selects the presentation; the root SVG
+       element carries exactly one mode class (dw-mode-detailed /
+       dw-mode-overview), set by the app (src/App.vue via
+       src/display-mode.ts) and defaulted to Detailed in the assembled file
+       (assemble-svg.mjs). Detailed is the baseline: no mode class means
+       nothing below applies, so the standalone SVG keeps the approved
+       Stage 7 appearance.
+
+       Overview reduces information DENSITY, not the illustration:
+         - technology-logo plates are hidden (too numerous for a full-frame
+           screenshot); role labels, year plaques, the current-identity block
+           and the exterior sign stay (user decision, 2026-10-13);
+         - company-name signs are scaled up around their own visual centre so
+           they read at full-composition scale. All experience tags live on
+           the same invisible left wall (u = -1.5), so one screen-space scale
+           serves every sign without distortion. Scoped to the #tags group so
+           the elevator year plaques and the 2013 entrance sign stay untouched. */
+    .dw-mode-overview .dw-logo { display: none; }
+    .dw-mode-overview #tags .dw-tag-group {
+      transform-box: fill-box;
+      transform-origin: center;
+      transform: scale(1.8);
+    }
+    /* Role mini boards (Stage 8 Overview): hidden in Detailed, shown in
+       Overview. Each board sits just above its company sign (inside that
+       sign's group, so it scales with it) — or, for Pacer, as a standalone
+       board between the two Pacer signs. The section role label is then hidden
+       in Overview so the role reads on the sign instead. */
+    .dw-tag-role { display: none; }
+    .dw-mode-overview .dw-tag-role { display: inline; }
+    .dw-mode-overview .dw-role-puelo,
+    .dw-mode-overview .dw-role-ba,
+    .dw-mode-overview .dw-role-nextcode,
+    .dw-mode-overview .dw-role-f2right,
+    .dw-mode-overview .dw-role-f2left,
+    .dw-mode-overview .dw-role-pacer {
+      display: none;
+    }
+    /* Overview-only label adjustments (user review, 2026-10-14): the
+       technology plates are hidden, so role labels stranded at the top of their
+       wall parts are re-centred (a wrapper group carries the translate via
+       --ovx/--ovy in px = SVG user units; the inner text keeps its plane
+       matrix) and enlarged. Detailed is untouched. */
+    .dw-mode-overview .dw-role-dba,
+    .dw-mode-overview .dw-role-f3sa {
+      transform: translate(var(--ovx, 0px), var(--ovy, 0px));
+    }
+    .dw-mode-overview .dw-role-dba text { font-size: 12px; }
+    .dw-mode-overview .dw-role-f3sa text { font-size: 11.5px; }
+    /* Overview: year plaques (the elevator story years and the 2013 entrance
+       sign) scale up 15% around their own centre, and the projecting identity
+       sign (photo + QR) scales up 25%, so both stay legible in a full-frame
+       screenshot. Detailed keeps both at their Stage 7 size. */
+    .dw-mode-overview #elevator .dw-tag-group,
+    .dw-mode-overview #entrance .dw-tag-group {
+      transform-box: fill-box;
+      transform-origin: center;
+      transform: scale(1.15);
+    }
+    .dw-mode-overview #projecting-sign {
+      transform-box: fill-box;
+      transform-origin: center;
+      transform: scale(1.25);
+    }
   `
 
 // Hand-drawn texture (Stage 4 §6): one very weak displacement filter shared

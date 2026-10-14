@@ -18,6 +18,14 @@ const readFragment = (name) => readFileSync(join(fragmentsDir, `${name}.svg`), '
 // diorama fills the frame. Keeps the blade sign (right) and fifth floor (top).
 const VIEW_BOX = '200 95 900 955'
 
+// Display-mode contract (Stage 8): the root <svg> carries exactly one mode
+// class. The assembled file defaults to Detailed so the standalone SVG keeps
+// the approved Stage 7 appearance; the app swaps this token for
+// `dw-mode-overview` when `?mode=overview` is requested (src/App.vue, via
+// src/display-mode.ts, which is the canonical contract). The class must stay
+// in sync with MODE_CLASS there and with the `.dw-mode-*` rules in style.mjs.
+const MODE_CLASS_DEFAULT = 'dw-mode-detailed'
+
 const indent = (text, spaces) => text.replace(/^/gm, ' '.repeat(spaces))
 
 // Root order inside the SVG (Stage 3 spec §7): background/base first, then
@@ -72,13 +80,13 @@ const buildingParts = [
   // legacy layers, below the floor-5 front shell (Stage 7 r222).
   'information-04',
   'floor-05-front',
+  // Stage 8 (user revision, 2026-10-14): the near (left) Indelve fleet now
+  // renders UNDER the "Indelve" experience tag (previously over it, UPDATE
+  // #53), so the enlarged Overview sign stays readable. The far fleet stays in
+  // `floor-03` under the elevator shaft.
+  'indelve-fleets',
   'tags',
   'information',
-  // UPDATE #53 (user): the near Indelve fleet must paint over the "Indelve"
-  // experience tag (and the floor base), so its fragment is stacked last —
-  // above `tags`. The far fleet deliberately stays in `floor-03`, under the
-  // elevator, so the shaft keeps occluding it.
-  'indelve-fleets',
 ]
 
 const fragmentsById = {
@@ -98,6 +106,7 @@ const svg = `<!--
 -->
 <svg
   xmlns="http://www.w3.org/2000/svg"
+  class="${MODE_CLASS_DEFAULT}"
   viewBox="${VIEW_BOX}"
   role="img"
   aria-labelledby="diorama-title"
