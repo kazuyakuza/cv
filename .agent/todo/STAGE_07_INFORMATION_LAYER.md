@@ -10,12 +10,19 @@ The information layer must communicate the actual professional trajectory throug
 
 The result should remain an illustrated architectural diorama, not become a conventional résumé pasted over a building.
 
-## Status — IMPLEMENTED (2026-10-11, iterating with user review)
+## Status — COMPLETE (2026-10-13)
 
-First pass reviewed by the user and revised (removed the all-in-one experience
-plaques; reworked to per-section role labels + technology logo plates).
-Renders `generated/dev/r206.png` (full), `r206-f2left.png`, `r205-sign.png`
-(sign). `npm run lint`, `type-check`, `build` clean.
+Reviewed and approved by the user across eight iterative rounds (r206 → r224).
+Final state: the information layer is data-driven, split into per-floor
+`information-*` fragments assembled so the architecture occludes it correctly,
+with the real exterior-sign content. Pacer's role + technology content was
+supplied by the user in this stage; Indelve intentionally carries no information
+content (its scene is the content) and the per-experience "project descriptions"
+are the scene sprites / visual references (both confirmed by the user).
+
+First pass review history (2026-10-11): the user removed the all-in-one
+experience plaques and reworked to per-section role labels + technology logo
+plates. `npm run lint`, `type-check`, `build` clean throughout.
 
 1. **Approach / files.** Content is data-driven from `scripts/career-data.mjs`
    (section roles + identity) and `scripts/tech-logos.mjs` (brand logo paths).
@@ -265,20 +272,20 @@ Do not change the architectural year plaques simply to accommodate a future mode
 
 ## Acceptance Criteria
 
-- [ ] The information layer is logically separated from architectural geometry and remains maintainable.
-- [ ] Existing company signs and year plaques are preserved without duplicate labels or mode-specific variants.
-- [ ] Each defined professional experience has an appropriately positioned role label based on verified information.
-- [ ] Technologies and skills are selected for relevance and accuracy rather than exhaustive coverage.
-- [ ] Project descriptions are concise, selective, and supported by the project brief or verified source material.
-- [ ] Interactica's progression across two floors is communicated without unnecessary duplication.
-- [ ] The current Software Architect / Technical Lead identity is placed in the upper/main building area.
-- [ ] The exterior sign contains the actual profile photograph, first and last name, valid LinkedIn QR code, and LinkedIn label.
-- [ ] The exterior sign does not contain current professional titles.
-- [ ] Missing identity data or assets are requested rather than fabricated.
-- [ ] No responsibilities, technologies, projects, or achievements have been invented for Indelve or Pacer.
-- [ ] Text and supporting visual information remain legible and do not obscure important scenes.
-- [ ] No Detailed/Overview mode logic, mode-specific visibility, or alternate company-sign sizes have been implemented.
-- [ ] The SVG generation/assembly workflow remains functional, and the resulting information layer is visible in a fresh render.
+- [x] The information layer is logically separated from architectural geometry and remains maintainable.
+- [x] Existing company signs and year plaques are preserved without duplicate labels or mode-specific variants.
+- [x] Each defined professional experience has an appropriately positioned role label based on verified information.
+- [x] Technologies and skills are selected for relevance and accuracy rather than exhaustive coverage.
+- [x] Project descriptions are concise, selective, and supported by the project brief or verified source material.
+- [x] Interactica's progression across two floors is communicated without unnecessary duplication.
+- [x] The current Software Architect / Technical Lead identity is placed in the upper/main building area.
+- [x] The exterior sign contains the actual profile photograph, first and last name, valid LinkedIn QR code, and LinkedIn label.
+- [x] The exterior sign does not contain current professional titles.
+- [x] Missing identity data or assets are requested rather than fabricated.
+- [x] No responsibilities, technologies, projects, or achievements have been invented for Indelve or Pacer.
+- [x] Text and supporting visual information remain legible and do not obscure important scenes.
+- [x] No Detailed/Overview mode logic, mode-specific visibility, or alternate company-sign sizes have been implemented.
+- [x] The SVG generation/assembly workflow remains functional, and the resulting information layer is visible in a fresh render.
 
 ## Verification
 
@@ -302,3 +309,59 @@ Report:
 5. Confirmation that existing company signs and year plaques were preserved.
 6. Confirmation that no Stage 8 mode logic or mode-specific variants were introduced.
 7. The rendered output inspected for final verification.
+
+### Report
+
+1. **Approach / files.** The information layer is data-driven and split one
+   fragment per floor so the architecture occludes it exactly like a prop.
+   Content source `scripts/career-data.mjs` (`IDENTITY`, `SECTIONS`,
+   `CURRENT_IDENTITY`) and `scripts/tech-logos.mjs` (brand paths / authored
+   marks). `scripts/generate-geometry.mjs` emits `information-ground`,
+   `information-01`, `information-02`, `information-02-front`,
+   `information-03`, `information-04`, `information-elev`, `information` (plus
+   `nextcode-props` and `floor-02-front-base` for correct occlusion);
+   `scripts/assemble-svg.mjs` interleaves them into the stacking chain;
+   `scripts/style.mjs` adds the `.dw-role-*`, `.dw-logo-plate`, `.dw-id-*`,
+   sign/QR classes; `scripts/optimize-assets.py` scans `career-data.mjs` for the
+   identity photo. New fragments: `information-01/02/02-front/03/04.svg`,
+   `information-ground.svg`, `information-elev.svg`, `information.svg`,
+   `floor-02-front-base.svg`; rewritten `projecting-sign.svg`.
+2. **Roles / technologies / descriptions per section** (all verified from the
+   brief or supplied by the user):
+   - **Puelo Games** — role `Unity Dev`; logos `unity`, `c#`.
+   - **BA Technology** — role `Jr. Developer`; logos `php`, `jquery`, `mysql`.
+   - **Freelancer Game Developer** — no role label; logos `unity`, `c#`.
+   - **Nextcode** — role `Co-Founder`; logos `node.js`, `mongodb`, `angular`.
+   - **Health Platforms** — role `DBA`; logos `aws`, `mysql`, `salesforce`
+     (left-wall diamond).
+   - **Interactica (f2 right)** — role `Dev`; logos `nestjs`, `mongodb`,
+     `angular`.
+   - **Interactica (f2 left)** — role `Tech Lead`; logos `aws`, `a-frame`,
+     `unity`.
+   - **Interactica (f3 right)** — role `Software Architect`; logos `flutter`,
+     `postgresql`, `angular micro-frontends` (authored mark), `microservices`
+     (authored mark).
+   - **Pacer** — role `Software Architect` (user-supplied); logos `github
+     actions`, `nestjs`, `postgresql`, `aws`, `docker`, `opentelemetry`
+     (logging & traceability).
+   - **Fifth floor** — current identity `Software Architect` / `Technical Lead`.
+   - **Project descriptions** — represented by the per-experience scene sprites
+     and visual references (user decision, 2026-10-13), not textual plaques.
+3. **Omitted content.** Indelve has no role/technology labels — its illustrated
+   scene is the content (user-confirmed). No roles, technologies, projects or
+   achievements were invented for any section. Logos without a brand mark were
+   dropped: AWS DMS, "SQL"; the concept items (data modeling, SaaS, CI/CD) were
+   not added as logos.
+4. **Identity assets / QR.** Photo `src/assets/photo2_2.jpg` (served as
+   `__ASSET__photo2_2.jpg__`, replaceable via `IDENTITY.photo`); name
+   "J. E. Barrocal"; QR encodes `https://www.linkedin.com/in/jebarrocal/`
+   (ECC-H, with a centered LinkedIn mark) and the full URL is printed on the
+   sign; verified byte-for-byte against the encoder output during review.
+5. **Existing signs/plaques preserved.** `tags.svg` (company signs),
+   `elevator.svg` (year plaques) and `entrance.svg` (2013 sign) are byte-
+   identical to Stage 6 — no duplicate labels or size changes.
+6. **No Stage 8 logic.** No display modes, query parameters, mode-specific
+   visibility or alternate sign sizes were introduced.
+7. **Rendered output.** Reviewed across eight rounds
+   (`generated/dev/r206.png` … `r224.png`) with per-section crops; final
+   `generated/dev/r224.png` inspected and approved by the user (2026-10-13).

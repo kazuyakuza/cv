@@ -1,32 +1,23 @@
-# Stage 07 Information Layer — Continuation #1 (fresh session handoff)
+# Stage 07 Information Layer — Continuation #1 (closed)
 
-> **STATUS: WIP — NOT COMPLETE.** Stage 7 is implemented but the information
-> layer is still being iterated with the user (per-section placement/size
-> reviews). This file is the self-contained handoff for the NEXT session: read
-> it first, then `AGENTS.md`, `.agent/todo/STAGE_07_INFORMATION_LAYER.md` (the
-> stage spec + acceptance criteria), `src/svg/README.md` §"Stage 7", and
-> `.agent/project-info/PROJECT_BRIEF.md`.
->
-> Do NOT mark Stage 7 complete or start Stage 8 until the user approves the
-> renders.
+> **STATUS: COMPLETE — CLOSED (2026-10-13).** The information layer was reviewed
+> and approved by the user across eight iterative rounds (r206 → r224); Stage 7
+> is complete (see `.agent/todo/STAGE_07_INFORMATION_LAYER.md` §Status/§Report).
+> This file is kept as the development log; it is **no longer a live handoff**.
+> The next stage is **Stage 8 (display modes)**.
 
-## 0. Current status & commit (2026-10-12)
+## 0. Final status & commit (2026-10-13)
 
 - **Base commit:** `c30e5b9` — "stage 7 WIP: information layer (per-section roles
   + tech logos + real projecting-sign content) + fresh-session handoff".
-- **This commit:** `bd14e30` — second feedback round r214–r217 (details in §1):
-  per-section placement/size fixes; new fragments `nextcode-props`,
-  `information-02-front`, `information-elev`; A-Frame official raster logo wired
-  through the `__ASSET__` pipeline; Health DBA diamond; Tech Lead depth-reading;
-  Soft Arch 2×2 centring. `npm run lint` / `type-check` / `build` clean; render
-  `generated/dev/r218.png` (byte-identical to `r217.png`), verified via
-  `r217b-*.png`.
-- **State:** Stage 7 **WIP — NOT COMPLETE**; placements await the user's review.
-  Stage 8 must not start.
-- **Continue in a new session:** read this file, then `AGENTS.md`,
-  `.agent/todo/STAGE_07_INFORMATION_LAYER.md`, `src/svg/README.md` §"Stage 7",
-  `.agent/project-info/PROJECT_BRIEF.md`. Re-render to confirm `r218`, get the
-  user's verdict on the §5 open items, then iterate or close out Stage 7.
+- **This stage's commits:** `bd14e30` (rounds r214–r217) and the Stage-7 COMPLETE
+  commit (rounds r219–r224 — see git log).
+- **Final round (r224):** Pacer "Software Architect" floor label moved up against
+  the rear (C-D) wall. `npm run lint` / `type-check` / `build` clean.
+- **State:** Stage 7 **COMPLETE**; all §5 open items marked approved by the user
+  (Indelve has no information content by design — its scene is the content; the
+  per-experience "project descriptions" are the scene sprites/visual references;
+  all Interactica elements approved). Stage 8 may now start.
 - **Git note:** `generated/` (dev scripts, `rNNN.png` renders, crops) and `dist/`
   are gitignored — re-render locally after checkout (`§2`).
 
@@ -44,6 +35,116 @@ Latest render: **`generated/dev/r218.png`** (full composition), re-rendered
 2026-10-12 and byte-identical to `r217.png`; from revision rounds r214–r217
 (2026-10-12). Crops: `r217b-*.png` (verification set). `npm run lint`,
 `type-check`, `build` all clean at r217.
+
+### Revision round r224 (applied 2026-10-13; awaiting user review)
+
+Eighth feedback pass: the Pacer "Software Architect" floor label moved closer to
+the rear wall — `floorLabel(S.pacer.role, 112, 512 → 566, 4·FH)`, i.e. ~14 units
+off the C-D wall's inner face (v 580.5), closing the gap while staying clear of
+the dev cluster. `npm run lint`, `type-check`, `build` clean; render
+`generated/dev/r224.png` (crop `r224-pacerleft.png`).
+
+### Revision round r223 (applied 2026-10-13; awaiting user review)
+
+Seventh feedback pass.
+
+- **Freelancer:** c# nudged another 5px toward the top-left (`dx,dy` 10,0 → 5,-5).
+- **Pacer:** `SECTIONS.pacer.role` set to `'Software Architect'`; rendered as a
+  floor label (`floorLabel`, reads along +u, parallel to the C-D rear wall) at
+  `(u112, v512, 4·FH)` — on the left side between the rear wall and the dev
+  cluster, clear of the Group-B logo row.
+
+`npm run lint`, `type-check`, `build` clean; render `generated/dev/r223.png`
+(crops `r223-*.png`).
+
+### Revision round r222 (applied 2026-10-13; awaiting user review)
+
+Sixth feedback pass (user list).
+
+- **Freelancer:** both staircase-wall logos −15% (27 → 23).
+- **Pacer (floor 4) — first logo content** (user-authorized tech list):
+  - Added `TECH_LOGOS.docker` (#2496ED), `.githubactions` (#2088FF),
+    `.opentelemetry` (#425CC7) from simple-icons; `SECTIONS.pacer = { role:null,
+    tech:[githubactions,nestjs,postgresql,aws,docker,opentelemetry] }`.
+  - New fragment **`information-04`** (`information04()`), assembled AFTER
+    `floor-04-front` and before `floor-05-front`.
+  - **Group A** (githubactions/nestjs/postgresql): floor row near the building's
+    left (A-C) wall at the front corner A — `floorLogoDepth(...,u24,v62/132/202,
+    4·FH)` (read along the depth axis).
+  - **Group B** (aws/docker/opentelemetry): floor row near the rear (C-D) wall on
+    the left, a line from just in front of the WhatsApp chat screen into the
+    interior — `floorLogoDepth(...,u36,v560/495/430,4·FH)`.
+  - All six use `floorLogoDepth` (flat on the floor, depth-axis reading).
+
+`npm run lint`, `type-check`, `build` clean; render `generated/dev/r222.png`
+(crops `r222-*.png`). Pacer placement is a first pass — the "left/right side of
+the floor" wording was ambiguous, awaiting the user's correction.
+
+### Revision round r221 (applied 2026-10-13; awaiting user review)
+
+Fifth feedback pass (user list; items 1–3):
+
+- **Puelo:** `c#` horizontally centred on its left-wall panel (`v 16 → 22`;
+  measured panel centre), size 29 unchanged.
+- **Freelancer:** c# nudged +10 svg-px right, unity +5/+5 down-right (new
+  screen-space offsets).
+- **Interactica f2-right:** mongodb nudged −10 svg-px left.
+- **Tooling:** `logoPlate()` now takes optional `dx`/`dy` (SVG user units,
+  applied as a `translate` before the plane matrix); `floorLogo`,
+  `floorLogoDepth` and `frontLogo` forward them.
+
+`npm run lint`, `type-check`, `build` clean; render `generated/dev/r221.png`
+(crops `r221-*.png`). All placements **not yet approved**.
+
+### Revision round r220 (applied 2026-10-12; awaiting user review)
+
+Fourth feedback pass (user list). Changes:
+
+- **Puelo:** `c#` reduced another 10% (32 → 29) and moved toward the front-left
+  corner (`wallLogo(..., v 16, h 38)`) so it sits clearly on the left wall,
+  clear of the vent.
+- **BA:** added the **jQuery** brand logo (`simple-icons`, `#0769AD`) between
+  php and mysql — new `TECH_LOGOS.jquery`, placed `floorLogoDepth('jquery', 26,
+  305, 0, 45)`; `SECTIONS.ba.tech` now `['php','mysql','jquery']`.
+- **Freelancer:** both staircase-wall logos reduced another 5% (28 → 27).
+- **Nextcode:** "Co-Founder" enlarged another 25% (`.dw-role-floor-md` now 15px).
+- **Interactica f2-left:** "Tech Lead" enlarged another 10% (`.dw-role-floor-xl`
+  now 15.1px).
+- **Halo bug fix:** `.dw-role-floor-md` and `.dw-role-floor-xl` were missing
+  from the shared role-group selector, so Co-Founder and Tech Lead had lost the
+  fill/font/light keyline halo — both classes are now in the group, giving the
+  new labels the same white border as the other role labels.
+
+`npm run lint`, `type-check`, `build` clean; render `generated/dev/r220.png`
+(crops `r220-*.png`). All placements **not yet approved**.
+
+### Revision round r219 (applied 2026-10-12; awaiting user review)
+
+Third feedback pass (user list). Changes:
+
+- **Puelo:** `c#` floor-left-wall logo reduced another 15% (size 38 → 32).
+- **BA:** php + mysql logos rotated 90° on the floor plane to read along the
+  depth axis (`FLOOR_MATRIX_D`; new `floorLogoDepth()` helper + the inline php
+  decal matrix in `floor-ground`). User chose "option 1" but was unsure; review.
+- **Freelancer:** both staircase-wall logos reduced another 10% (31 → 28).
+- **Nextcode:** `Co-Founder` enlarged 20% via new `.dw-role-floor-md` (12px).
+- **Health:** diamond spread — aws `hc+30 → hc+38`, mysql `hc−30 → hc−38`, to
+  open the gap to the salesforce plate's top corners.
+- **Interactica:**
+  - f2-left `Tech Lead` +10% via new `.dw-role-floor-xl` (13.75px).
+  - f2-right `nestjs` + `angular` re-layered: new fragment
+    **`floor-02-front-base`** holds the opaque floor repaint (`slabTriangle`),
+    `information-02-front` was moved BETWEEN it and `floor-02-front`, so the
+    plates sit above the floor repaint but BELOW the kiosk sprite and the
+    floor-2/3 corner line (`assemble-svg.mjs` `buildingParts` updated).
+  - f3-right logos −10% (29 → 26); `Soft Arch` → two-row `Software` /
+    `Architect` (`career-data.mjs` role `'Software Architect'`, split in
+    `information03()`).
+- **Floor 5 identity:** moved up to the right-wall arm's top border
+  (`bdWallSheet(…, TOP_H − 8)` instead of `5·FH + 60`).
+
+`npm run lint`, `type-check`, `build` clean; render `generated/dev/r219.png`
+(crops `r219-*.png`). All placements **not yet approved**.
 
 ### Revision round r214/r215/r216/r217 (applied; awaiting user review)
 
@@ -140,7 +241,7 @@ npm run lint ; npm run type-check ; npm run build
   `CURRENT_IDENTITY` (`Software Architect` / `Technical Lead` / AI focus).
 - **NEW `scripts/tech-logos.mjs`** — `TECH_LOGOS` map: brand mark path `d`
   (24×24 viewBox) + `color`, OR a raw `body` (used for the two authored marks).
-  Keys present: `unity, csharp, php, mysql, nodedotjs, mongodb, angular, aws
+  Keys present: `unity, csharp, php, jquery, mysql, nodedotjs, mongodb, angular, aws
   (amazonwebservices), aframe, flutter, postgresql, salesforce, nestjs,
   angularMfe, microservices`. Sources: Iconify `simple-icons` (free); the last
   two are hand-authored SVG (no official logo exists).
@@ -249,21 +350,18 @@ Lead` + AI focus, on the rear C-D wall via `cdWallSheet(108, 80, …, 5*FH)`.
 - QR verified byte-for-byte against `QRCode.create(url,{errorCorrectionLevel:'H'})`
   (a disposable `generated/dev/qr_check.mjs`).
 
-## 5. Open issues / user feedback not yet resolved (r217)
+## 5. Open issues — RESOLVED (user-approved 2026-10-13)
 
-The r209–r217 rounds actioned the user's first two feedback passes. Still
-needing the user's verdict (do NOT guess further — ask):
+All previously open items were approved by the user when closing Stage 7:
 
-1. **Nextcode `Co-Founder`** now reads along the arrowed line at (52,530,FH).
-   Confirm it matches the annotation.
-2. **BA `php`** is an inline decal in `floor-ground` before the BA stub wall
-   (literal floor matrix). Interpretation of "layer below the left-wall part"
-   is still a guess — confirm.
-3. **Puelo `unity`** at (170,42) is inside the entrance near the 2013 door;
-   confirm it clears the jambs as intended.
-4. **Health diamond** and **Soft Arch 2×2** centring (−15%) — confirm.
-5. **Indelve / Pacer** — still no content (must not be invented).
-6. General clutter / floating look of the larger plates remains a judgement call.
+1. **Nextcode `Co-Founder`** — approved (reads along the arrowed line).
+2. **BA `php`** layer — approved.
+3. **Puelo `unity`** entrance placement — approved.
+4. **Health diamond** / **f3 "Software Architect"** layout — approved.
+5. **Indelve** — approved: it intentionally carries no information content (its
+   scene is the content). **Pacer** — content supplied by the user (role +
+   technology logos).
+6. Plate sizing / general look — approved. All Interactica elements approved.
 
 ## 6. Crop helper used this round (paste into `python -`)
 
@@ -285,27 +383,52 @@ Useful existing dev tools in `generated/dev/`: `make_chk.py`, `qr_check.mjs`,
 
 - [x] Info layer separated from geometry + maintainable (data-driven).
 - [x] Existing company signs + year plaques preserved (byte-identical).
-- [~] Role label per experience — present but placements not approved.
-- [~] Technologies selected for relevance — present but placements not approved.
-- [ ] Project descriptions — **not implemented** (user dropped the plaque
-      approach; descriptions not currently rendered).
-- [~] Interactica two-floor continuity — split as f2 right `Dev` / f2 left
-      `Tech Lead` / f3 `Soft Arch`; not approved.
-- [~] Current identity in upper area — present on floor-5 rear wall; confirm.
+- [x] Role label per experience — present, approved (Indelve intentionally none).
+- [x] Technologies selected for relevance — present, approved.
+- [x] Project descriptions — the per-experience scene sprites / visual
+      references are the descriptions (user decision, 2026-10-13).
+- [x] Interactica two-floor continuity — f2 right `Dev` / f2 left `Tech Lead` /
+      f3 `Software Architect`; approved.
+- [x] Current identity in upper area — floor-5 rear wall; approved.
 - [x] Exterior sign: photo + name + valid LinkedIn QR + URL; no titles.
-- [x] No invented Indelve/Pacer content.
+- [x] No invented Indelve/Pacer content (Pacer supplied by the user).
 - [x] No Stage 8 mode logic / query params / alternate sign sizes.
 - [x] SVG generation/assembly functional; layer visible in a fresh render.
-- [ ] Legibility / no-obscuring — **not yet approved**.
+- [x] Legibility / no-obscuring — approved.
 
-## 8. Suggested next-session checklist
+## 8. Close-out checklist (done)
 
-1. Render the current state first: `svg:generate` + `svg:assemble` + `make_chk` +
-   msedge → `r218.png`; confirm it matches `r217.png`.
-2. Get the user's per-section correction list (positions/sizes + which wall for
-   DBA/Soft Arch). Do NOT guess further on the open items in §5 — ask.
-3. Implement corrections in `career-data.mjs` / `tech-logos.mjs` (content) and
-   `generate-geometry.mjs` (placement only). Regenerate + re-render + crops.
-4. When the user approves: fill the Completion Report in
-   `STAGE_07_INFORMATION_LAYER.md`, update `src/svg/README.md` §Stage 7 and
-   `AGENTS.md` Development Status, and commit.
+1. Render the current state (`svg:generate` + `svg:assemble` + `make_chk` +
+   msedge → `r224.png`).
+2. All §5 open items approved by the user on 2026-10-13.
+3. Corrections implemented in `career-data.mjs` / `tech-logos.mjs` (content) and
+   `generate-geometry.mjs` (placement).
+4. Completion Report filled in `STAGE_07_INFORMATION_LAYER.md`; `src/svg/README.md`
+   §Stage 7 and `AGENTS.md` Development Status updated; committed.
+
+## 9. Pacer logos — feasibility survey (r221; resolved in r222)
+
+User (r221 item 4) wants Pacer-floor logos for: **nestjs, aws, data modeling,
+postgresql, Logging & Traceability (microservices), SaaS, CI/CD, GitHub
+Actions, docker**. Survey (all free/open-source licenses; ready to add to
+`scripts/tech-logos.mjs`):
+
+- **Already have an official mark in `TECH_LOGOS`:** `nestjs` (#E0234E), `aws`
+  (#FF9900, `amazonwebservices`), `postgresql` (#4169E1).
+- **Add from simple-icons (CC0, 24×24 path):**
+  - **docker** — `simple-icons:docker` (#2496ED).
+  - **GitHub Actions** — `simple-icons:githubactions` (#2088FF).
+  - **Logging & Traceability** — propose **OpenTelemetry**
+    (`simple-icons:opentelemetry`), the de-facto tracing/observability standard;
+    a real brand rather than an invented glyph.
+- **No official brand** (concept, not a product) — `data modeling`, `SaaS`,
+  `CI/CD`. Two options:
+  1. **Author small SVG marks** in the existing `angularMfe` / `microservices`
+     hand-drawn style (full control, no attribution) — a schema/ER glyph, a
+     cloud-in-a-box glyph, and an infinity/loop pipeline glyph.
+  2. **Use free generic icons** (Material Design Icons, Apache-2.0, 24×24):
+     e.g. `mdi:database-cog` (data modeling), `mdi:cloud-sync` /
+     `mdi:cloud-check` (SaaS), `mdi:sync` / `mdi:refresh-auto` (CI/CD).
+- Open questions for the user: whether to use OpenTelemetry for logging/tracing;
+  author vs. generic for the three concepts; and whether "CI/CD" should instead
+  be represented solely by the GitHub Actions mark.

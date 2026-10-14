@@ -1791,8 +1791,9 @@ const floorGround = group('floor-ground', [
   ...baProps,
   // BA php decal, emitted BEFORE the BA wall/partition geometry so the
   // left-side wall parts occlude its far edge (user revision: "php in a layer
-  // below the building's left wall part in that section").
-  ...logoPlate(TECH_LOGOS.php, ...p(26, 235, 0).split(',').map(Number), '0.7071 -0.2475 0.7071 0.2475', 45),
+  // below the building's left wall part in that section"). Read along the depth
+  // axis (floor-plane matrix rotated 90°) like the BA mysql plate.
+  ...logoPlate(TECH_LOGOS.php, ...p(26, 235, 0).split(',').map(Number), '0.7071 0.2475 -0.7071 0.2475', 45),
   ...baArchitecture(),
   ...partition(PARTITION_G[0], 0, { opening: true }),
   ...pueloProps,
@@ -2063,18 +2064,23 @@ const floor02 = group('floor-02', [
   wallFixture('fixture-vent-01.png', 'v', -0.3, 570, 2 * FH + 52, 14, 14),
   ...partialWall('u', 216, 238, 0, 2 * FH, 2 * FH + STORY_H, { face: 'dw-wall', ends: [false, false], scrap: [true, false], scrapSeed: 43, outline: 0.5 }),
 ])
-const floor02Front = group('floor-02-front', [
+// The floor repaint over the elevator (slabTriangle) is its OWN base layer so
+// the f2-right information plates can render ABOVE it (still visible) while
+// sitting BELOW the kiosk sprite and the corner columns — the user's r219
+// revision (both nestjs and angular must go under the floor-2/3 corner line
+// and under the kiosk). Assembled before `information-02-front`.
+const floor02FrontBase = group('floor-02-front-base', [
   ...slabTriangle(2 * FH),
+])
+const floor02Front = group('floor-02-front', [
   // Cleverlit stand kiosk (r25 review): the congress info point in the
   // FRONT-LEFT corner area — the corner formed by the building's left wall
   // (u = 0) and front wall (v = 0) — but not 100% in the corner: aligned in u
   // with the data server's column (server u 52..68, kiosk u ≈ 50..71) and set
   // off the front edge with a little breathing room (object origin (50, 15),
   // anchor = the mirrored person's foot at (65, 11.5) → ~11u of clear floor
-  // between the kiosk and the front edge). Emitted last (in this later
-  // fragment) so it paints over the cable start — the cables AND the data
-  // server live in the layer below it (`floor-02`, i.e. also below the
-  // elevator, as the user requires).
+  // between the kiosk and the front edge). Emitted here (above the cables and
+  // the f2-right info plates) so it paints over the cable start.
   assetProp(STANDKIOSK, 65, 11.5, 2 * FH),
   ...columns(2 * FH, 2 * FH + STORY_H),
 ])
@@ -3659,14 +3665,17 @@ const UPLANE_MATRIX = TAG_MATRIX // constant-u wall: +x→-v, +y down
 const VPLANE_MATRIX = '0.7071 -0.2475 0 1' // constant-v wall: +x→+u, +y down
 
 // One technology logo on its small plate, centred at local origin of `matrix`.
-function logoPlate(logo, ox, oy, matrix, size) {
+// `dx`/`dy` are an optional SCREEN-space nudge (SVG user units) applied after
+// the plane projection — used for the user's fine per-logo position tweaks.
+function logoPlate(logo, ox, oy, matrix, size, dx = 0, dy = 0) {
   const s = (size * 0.64) / 24 // 24 is the logo viewBox
   const half = size / 2
   const art = logo.body
     ? `<g transform="translate(${round(-12 * s)} ${round(-12 * s)}) scale(${round(s)})">${logo.body}</g>`
     : `<g transform="translate(${round(-size * 0.32)} ${round(-size * 0.32)}) scale(${round(s)})"><path fill="${logo.color}" d="${logo.d}" /></g>`
+  const shift = dx || dy ? `translate(${round(dx)} ${round(dy)}) ` : ''
   return [
-    `<g transform="matrix(${matrix} ${round(ox)} ${round(oy)})">`,
+    `<g transform="${shift}matrix(${matrix} ${round(ox)} ${round(oy)})">`,
     `  <rect class="dw-logo-plate" x="${-half}" y="${-half}" width="${size}" height="${size}" rx="${round(size * 0.16)}" />`,
     `  ${art}`,
     `</g>`,
@@ -3678,11 +3687,21 @@ function floorLogoRow(keys, u0, v, hTop, size = 36) {
   const step = size * 1.28
   return keys.flatMap((key, i) => floorLogo(key, u0 + i * step, v, hTop, size))
 }
-function floorLogo(key, u, v, hTop, size = 36) {
+function floorLogo(key, u, v, hTop, size = 36, dx = 0, dy = 0) {
   const logo = TECH_LOGOS[key]
   if (!logo) return []
   const [ox, oy] = p(u, v, hTop).split(',').map(Number)
-  return logoPlate(logo, ox, oy, FLOOR_MATRIX, size)
+  return logoPlate(logo, ox, oy, FLOOR_MATRIX, size, dx, dy)
+}
+
+// Like floorLogo, but read ALONG THE DEPTH AXIS: the floor plane rotated 90°
+// (same orientation as the f2 "Tech Lead" label). Still lying flat on the
+// floor, just reading rear↔front instead of across the width.
+function floorLogoDepth(key, u, v, hTop, size = 36, dx = 0, dy = 0) {
+  const logo = TECH_LOGOS[key]
+  if (!logo) return []
+  const [ox, oy] = p(u, v, hTop).split(',').map(Number)
+  return logoPlate(logo, ox, oy, FLOOR_MATRIX_D, size, dx, dy)
 }
 
 // One logo plate on the invisible left wall at (v, h).
@@ -3707,11 +3726,11 @@ function wallLogoRowCentered(keys, vCenter, h, size = 34) {
 
 // One logo plate on a constant-v wall face (faces the viewer, -v); local +x
 // runs along +u. Used for logos mounted on the staircase's solid side wall.
-function frontLogo(key, u, v, h, size = 36) {
+function frontLogo(key, u, v, h, size = 36, dx = 0, dy = 0) {
   const logo = TECH_LOGOS[key]
   if (!logo) return []
   const [ox, oy] = p(u, v, h).split(',').map(Number)
-  return logoPlate(logo, ox, oy, VPLANE_MATRIX, size)
+  return logoPlate(logo, ox, oy, VPLANE_MATRIX, size, dx, dy)
 }
 
 const label = (text, x, y, matrix, cls) =>
@@ -3761,18 +3780,24 @@ function informationGround() {
   out.push(...doorLabel(S.puelo.role, PARTITION_G[0], 'dw-role-door-lg')) // Unity Dev (+15%)
   out.push(...doorLabel(S.ba.role, PARTITION_G[1])) // over the BA↔Freelancer door
   // Puelo: unity on the floor, moved toward the kiosk/TV (+u) so the entrance
-  // jambs no longer cover it; c# mounted on the ground-floor left wall just
-  // below the vent (vent at v 33, h 70..87), reduced 15%.
+  // jambs no longer cover it; c# mounted on the ground-floor left wall toward
+  // the front-left corner, clearly on the wall (moved off the vent area), and
+  // reduced another 10%.
   out.push(...floorLogo(S.puelo.tech[0], 170, 42, 0, 45)) // unity (+25%)
-  out.push(...wallLogo(S.puelo.tech[1], 30, 42, 38)) // c# (-15%): left wall below the vent
-  // BA: mysql by the BA↔Freelancer door. (php is emitted inside `floor-ground`
-  // BEFORE the BA wall/partition geometry so those occlude its far edge — user
-  // revision "in a layer below the left-wall part".)
-  out.push(...floorLogo(S.ba.tech[1], 26, 378, 0, 45)) // mysql: by the BA↔Freelancer door
+  out.push(...wallLogo(S.puelo.tech[1], 22, 38, 29)) // c# (-10% again): horizontally centred on the left wall
+  // BA: both logos lie flat on the floor but read ALONG THE DEPTH AXIS
+  // (user revision: "oriented from the building's right to left wall", still on
+  // the floor plane) — the same floor-plane matrix as the f2 "Tech Lead".
+  // (php is emitted inside `floor-ground` BEFORE the BA wall/partition geometry
+  // so those occlude its far edge — user revision "in a layer below the
+  // left-wall part".) jQuery sits between php and mysql (user revision).
+  out.push(...floorLogoDepth(S.ba.tech[1], 26, 378, 0, 45)) // mysql: by the BA↔Freelancer door
+  out.push(...floorLogoDepth('jquery', 26, 305, 0, 45)) // jquery: between php (v235) and mysql (v378)
   // Freelancer: both logos attached to the staircase's solid side wall
-  // (v = STAIR_V0), reduced 15%.
-  out.push(...frontLogo(S.freelancer.tech[1], 58, STAIR_V0 - 0.4, 15, 31)) // c#
-  out.push(...frontLogo(S.freelancer.tech[0], 88, STAIR_V0 - 0.4, 40, 31)) // unity
+  // (v = STAIR_V0). User r221: c# +10px right, unity +5px down-right.
+  // User r222: both −15%.
+  out.push(...frontLogo(S.freelancer.tech[1], 58, STAIR_V0 - 0.4, 15, 23, 5, -5)) // c# (r223: 5px left-top)
+  out.push(...frontLogo(S.freelancer.tech[0], 88, STAIR_V0 - 0.4, 40, 23, 5, 5)) // unity
   return group('information-ground', out)
 }
 
@@ -3783,14 +3808,18 @@ function information01() {
   out.push(...floorLogo('mongodb', 140, 479, FH)) // around/behind the dev sprites
   out.push(...floorLogo('angular', 26, 408, FH)) // between the boxes and the people
   // Co-Founder: moved onto the floor beside the staircase opening and read
-  // along the arrowed line (user revision), i.e. the u-axis at v ~ 530.
-  out.push(...floorLabel(S.nextcode.role, 52, 530, FH))
+  // along the arrowed line (user revision), i.e. the u-axis at v ~ 530. Enlarged
+  // 25% and given the same light keyline halo as the other role labels
+  // (`.dw-role-floor-md`, in the role group).
+  out.push(...floorLabel(S.nextcode.role, 52, 530, FH, 'dw-role-floor-md'))
   // Health Platforms (left-wall part, centred on v 85): a diamond — DBA at the
-  // top, aws/mysql on the sides, salesforce at the bottom.
+  // top, aws/mysql on the sides, salesforce at the bottom. aws pulled further
+  // left (+v) and mysql further right (−v) to open the gap to the salesforce
+  // plate's top corners (user revision).
   const hc = 85
   out.push(...wallLabel(S.health.role, hc, FH + 74)) // DBA (top)
-  out.push(...wallLogo(S.health.tech[1], hc + 30, FH + 48, 34)) // aws (+v side)
-  out.push(...wallLogo(S.health.tech[0], hc - 30, FH + 48, 34)) // mysql (−v side)
+  out.push(...wallLogo(S.health.tech[1], hc + 38, FH + 48, 34)) // aws (+v side)
+  out.push(...wallLogo(S.health.tech[0], hc - 38, FH + 48, 34)) // mysql (−v side)
   out.push(...wallLogo(S.health.tech[2], hc, FH + 22, 34)) // salesforce (bottom)
   return group('information-01', out)
 }
@@ -3800,18 +3829,19 @@ function information02() {
   const out = []
   // f2-left: "Tech Lead" on the floor beside the tech-lead + seated devs,
   // read along the depth axis (user revision, matching the red line).
-  out.push(...floorLabelDepth(S.interactica2left.role, 55, 537, 2 * FH, 'dw-role-floor-lg')) // Tech Lead
+  out.push(...floorLabelDepth(S.interactica2left.role, 55, 537, 2 * FH, 'dw-role-floor-xl')) // Tech Lead (+10% more + halo)
   out.push(...floorLogoRow(S.interactica2left.tech, 46, 470, 2 * FH))
   return group('information-02', out)
 }
 
-// Interactica f2-right floor logos. The floor-02-front `slabTriangle` (a floor
-// base layer) is drawn after information-02 and was cutting these plates, so
-// they live in their own fragment emitted AFTER floor-02-front.
+// Interactica f2-right floor logos. Assembled AFTER `floor-02-front-base` (the
+// opaque floor repaint) so they stay visible, but BEFORE `floor-02-front` — so
+// nestjs and angular sit BELOW the kiosk sprite and the floor-2/3 corner line
+// (user r219 revision).
 function information02Front() {
   const out = []
   out.push(...floorLogo('nestjs', 150, 118, 2 * FH, 41)) // +15%, same corner desks
-  out.push(...floorLogo('mongodb', 46, 178, 2 * FH)) // off the kiosk cable, toward the Interactica sign
+  out.push(...floorLogo('mongodb', 46, 178, 2 * FH, 36, -10, 0)) // off the kiosk cable; user r221: 10px left
   out.push(...floorLogo('angular', 24, 40, 2 * FH)) // near the left front wall corner
   return group('information-02-front', out)
 }
@@ -3819,13 +3849,41 @@ function information02Front() {
 function information03() {
   const S = SECTIONS
   const out = []
-  // Interactica f3 right (Soft Arch): 3 rows centred on the floor-3 left-wall
-  // part (partialWall v 75..161 → centre 118); tech logos −15%.
+  // Interactica f3 right ("Software Architect"): the label is two rows
+  // ("Software" / "Architect", user revision) over the floor-3 left-wall part
+  // (partialWall v 75..161 → centre 118); tech logos −10%.
   const c = 118
-  out.push(...wallLabel(S.interactica3right.role, c, 3 * FH + 72)) // Soft Arch (top row)
-  out.push(...wallLogoRowCentered([S.interactica3right.tech[0], S.interactica3right.tech[1]], c, 3 * FH + 44, 29))
-  out.push(...wallLogoRowCentered([S.interactica3right.tech[2], S.interactica3right.tech[3]], c, 3 * FH + 16, 29))
+  const [l1, l2] = S.interactica3right.role.split(' ')
+  out.push(...wallLabel(l1, c, 3 * FH + 80)) // "Software"
+  out.push(...wallLabel(l2, c, 3 * FH + 69)) // "Architect"
+  out.push(...wallLogoRowCentered([S.interactica3right.tech[0], S.interactica3right.tech[1]], c, 3 * FH + 44, 26))
+  out.push(...wallLogoRowCentered([S.interactica3right.tech[2], S.interactica3right.tech[3]], c, 3 * FH + 16, 26))
   return group('information-03', out)
+}
+
+// Pacer (floor-4) technology logos (user r222). Two floor rows, no role label:
+//   - GROUP A — near the building's LEFT wall (A-C) at the front (A) corner,
+//     read along the depth axis ("oriented to that side").
+//   - GROUP B — near the building's REAR wall (C-D), on the left, a line running
+//     from just in front of the WhatsApp chat screen into the interior.
+// Both rows lie flat on the floor. Emitted in their own fragment, assembled
+// AFTER `floor-04-front` (so the front slab repaint/legacy layers don't cut
+// them) and before `floor-05-front`.
+function information04() {
+  const S = SECTIONS
+  const H = 4 * FH
+  const out = []
+  // Pacer role label on the left side, close to the rear (C-D) wall (inner face
+  // at v 580.5) and clear of the dev cluster (v 435), reading PARALLEL to the
+  // rear wall (along the width axis, +u).
+  out.push(...floorLabel(S.pacer.role, 112, 566, H)) // Software Architect
+  out.push(...floorLogoDepth(S.pacer.tech[0], 24, 62, H)) // githubactions
+  out.push(...floorLogoDepth(S.pacer.tech[1], 24, 132, H)) // nestjs
+  out.push(...floorLogoDepth(S.pacer.tech[2], 24, 202, H)) // postgresql
+  out.push(...floorLogoDepth(S.pacer.tech[3], 36, 560, H)) // aws
+  out.push(...floorLogoDepth(S.pacer.tech[4], 36, 495, H)) // docker
+  out.push(...floorLogoDepth(S.pacer.tech[5], 36, 430, H)) // opentelemetry
+  return group('information-04', out)
 }
 
 // Elevator-mounted role labels. The elevator fragment paints the W2 face, so a
@@ -3864,7 +3922,9 @@ function bdWallSheet(vLeft, hTop, children) {
 }
 
 // Current identity block on the fifth floor's right-wall corner at the D
-// corner (user revision): the two verified titles only — no focus lines.
+// corner (user revision): the two verified titles only — no focus lines. Moved
+// up to the wall arm's TOP border (user r219 revision): the right-wall arm
+// spans 5·FH…TOP_H, so anchor the block's top edge just under TOP_H.
 function identityBlock() {
   const [w1, w2] = CURRENT_IDENTITY.primary.split(' ')
   const children = [
@@ -3873,7 +3933,7 @@ function identityBlock() {
     `<line class="dw-id-rule" x1="0" y1="38" x2="46" y2="38" />`,
     `<text class="dw-id-sub" x="0" y="50">${CURRENT_IDENTITY.secondary}</text>`,
   ]
-  return bdWallSheet(LD - WALL_T - 6, 5 * FH + 60, children)
+  return bdWallSheet(LD - WALL_T - 6, TOP_H - 8, children)
 }
 
 function information() {
@@ -3889,6 +3949,7 @@ const fragments = {
   'freelancer-props': freelancerProps,
   'floor-01': floor01,
   'floor-02': floor02,
+  'floor-02-front-base': floor02FrontBase,
   'floor-02-front': floor02Front,
   'floor-03': floor03,
   'floor-03-team': floor03Team,
@@ -3908,6 +3969,7 @@ const fragments = {
   'information-02': information02(),
   'information-02-front': information02Front(),
   'information-03': information03(),
+  'information-04': information04(),
   information: information(),
   'nextcode-props': nextcodeProps,
   'information-elev': informationElev(),

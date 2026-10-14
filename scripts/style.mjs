@@ -117,7 +117,9 @@ export const svgStyle = `
     .dw-role-door,
     .dw-role-floor,
     .dw-role-door-lg,
-    .dw-role-floor-lg {
+    .dw-role-floor-lg,
+    .dw-role-floor-md,
+    .dw-role-floor-xl {
       fill: #2f2c28;
       font: 700 10px system-ui, sans-serif;
       letter-spacing: 0.02em;
@@ -128,6 +130,8 @@ export const svgStyle = `
     }
     .dw-role-door-lg { font-size: 11.5px; }
     .dw-role-floor-lg { font-size: 12.5px; }
+    .dw-role-floor-md { font-size: 15px; }
+    .dw-role-floor-xl { font-size: 15.1px; }
     .dw-logo-plate { fill: #fbf9f2; fill-opacity: 0.94; stroke: #6b675e; stroke-width: 0.6; }
     /* Current-identity title block (fifth-floor rear wall) */
     .dw-id-title { fill: #33302a; font: 700 14px system-ui, sans-serif; letter-spacing: 0.02em; }

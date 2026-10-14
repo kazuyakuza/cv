@@ -28,15 +28,23 @@ export const IDENTITY = {
 // geometry and lives in generate-geometry.mjs.
 export const SECTIONS = {
   puelo: { role: 'Unity Dev', tech: ['unity', 'csharp'] },
-  ba: { role: 'Jr. Developer', tech: ['php', 'mysql'] },
+  ba: { role: 'Jr. Developer', tech: ['php', 'mysql', 'jquery'] },
   freelancer: { role: null, tech: ['unity', 'csharp'] },
   nextcode: { role: 'Co-Founder', tech: ['nodedotjs', 'mongodb', 'angular'] },
   health: { role: 'DBA', tech: ['mysql', 'aws', 'salesforce'] },
   interactica2right: { role: 'Dev', tech: ['nestjs', 'mongodb', 'angular'] },
   interactica2left: { role: 'Tech Lead', tech: ['aws', 'aframe', 'unity'] },
   interactica3right: {
-    role: 'Soft Arch',
+    role: 'Software Architect',
     tech: ['flutter', 'postgresql', 'angularMfe', 'microservices'],
+  },
+  // Pacer (floor 4): no verified role label; the user supplied the technology
+  // list (r222). Group A = GitHub Actions / NestJS / PostgreSQL, group B =
+  // AWS / Docker / OpenTelemetry (logging & traceability). Placement (two floor
+  // rows) is geometry and lives in generate-geometry.mjs.
+  pacer: {
+    role: 'Software Architect',
+    tech: ['githubactions', 'nestjs', 'postgresql', 'aws', 'docker', 'opentelemetry'],
   },
 }
 

@@ -35,22 +35,26 @@ Do not force every visual element to be vectorized.
   cropped the composed `viewBox`; the career scenes were reviewed and left
   unchanged. Documented in `src/svg/README.md` and
   `STAGE_06_CAREER_CONTENT.md`.
-- **Stage 7 (2026-10-11): information layer implemented** (iterating with user
-  review). Content is data-driven from `scripts/career-data.mjs` (section roles
-  + identity) and `scripts/tech-logos.mjs` (brand logo paths), emitted into a
-  dedicated generated `information` SVG fragment: short per-section role labels
-  (`Unity Dev`, `Jr. Developer`, `DBA`, `Dev`, `Tech Lead`, `Soft Arch`) and
-  technology logo plates (unity/c#/php/mysql/node/mongodb/angular/aws/aframe/
-  flutter/postgresql/salesforce/nestjs), plus the current `Software Architect` /
-  `Technical Lead` identity on the fifth-floor rear wall. The exterior
-  `projecting-sign` carries the real content — circular profile photo
-  (`src/assets/photo2_2.jpg`), name "J. E. Barrocal", a LinkedIn QR (generated
-  with `qrcode`, ECC-H, centered LinkedIn mark) and the full LinkedIn URL; no
-  titles on the sign. Existing `tags`/`elevator`/`entrance` fragments are
-  unchanged; indelve/pacer not yet populated; no Stage 8 mode logic/variants.
-  See `src/svg/README.md` and `STAGE_07_INFORMATION_LAYER.md`.
-- **Next: finish Stage 7 (Indelve/Pacer section content)** → Stage 8 (display
-  modes) → 9 Vue integration → 10 polish/deployment.
+- **Stage 7 (2026-10-13): COMPLETE — information layer.** Content is data-driven
+  from `scripts/career-data.mjs` (per-section roles + identity) and
+  `scripts/tech-logos.mjs` (brand marks), emitted into per-floor generated
+  `information-*` SVG fragments: per-section role labels (`Unity Dev`,
+  `Jr. Developer`, `Co-Founder`, `DBA`, `Dev`, `Tech Lead`, `Software
+  Architect`) and technology logo plates (unity, c#, php, jquery, mysql,
+  node, mongodb, angular, aws, a-frame, flutter, postgresql, salesforce,
+  nestjs, microservices, and Pacer's githubactions/docker/opentelemetry;
+  `angularMfe`/`microservices` are hand-authored marks), plus the current
+  `Software Architect` / `Technical Lead` identity on the fifth-floor rear
+  wall. Indelve intentionally carries no information content (its scene is the
+  content) and the per-experience "project descriptions" are the scene sprites
+  and visual references. The exterior `projecting-sign` carries the real
+  content — circular profile photo (`src/assets/photo2_2.jpg`), name
+  "J. E. Barrocal", a LinkedIn QR (generated with `qrcode`, ECC-H, centered
+  LinkedIn mark) and the full LinkedIn URL; no titles on the sign. Existing
+  `tags`/`elevator`/`entrance` fragments are unchanged; no Stage 8 mode
+  logic/variants. See `src/svg/README.md` §Stage 7 and
+  `STAGE_07_INFORMATION_LAYER.md`.
+- **Next: Stage 8 (display modes)** → 9 Vue integration → 10 polish/deployment.
 
 ## Core Principles
 
@@ -64,9 +68,11 @@ Do not force every visual element to be vectorized.
    enclosure only when visually justified.
 5. **Layer separation.** Keep architectural SVG geometry separate from the information
    layer (HTML/Vue or SVG text): company names, roles, years, technologies, descriptions.
-6. **Fixed content rules.** Indelve (3rd floor section) and Pacer (4th floor) content is
-   NOT yet defined — do not invent responsibilities, technologies, dates, or achievements
-   for them. The entrance sign must NOT contain current professional titles
+6. **Fixed content rules.** Indelve's information layer is intentionally empty
+   (its illustrated scene is the content) and Pacer's role/technology content was
+   supplied by the user in Stage 7 — **never invent** responsibilities,
+   technologies, dates, or achievements for a section without verified source
+   data. The entrance sign must NOT contain current professional titles
    (Software Architect / Technical Lead belong in the building's upper area).
 7. **Fifth floor is intentionally unfinished** (open-air / under construction) — it
    represents current AI-driven development work.

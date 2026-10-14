@@ -55,15 +55,22 @@ const buildingParts = [
   // Elevator-mounted role label (Dev over the floor-2 digit): must sit above
   // the elevator fragment, which paints its W2 face.
   'information-elev',
-  'floor-02-front',
-  // Interactica f2-right floor logos, above the floor-02-front base layer
-  // (its slabTriangle was cutting them).
+  // Floor-2 front split into two layers so the f2-right info plates can sit
+  // between them: the opaque floor repaint (base) stays BELOW the plates, the
+  // kiosk sprite + corner columns sit ABOVE them (Stage 7 r219 revision).
+  'floor-02-front-base',
+  // Interactica f2-right floor logos: above the floor repaint, below the kiosk
+  // sprite and the floor-2/3 corner line.
   'information-02-front',
+  'floor-02-front',
   // Left-wall information for floor 3 is emitted AFTER the floor-03 partial
   // wall so it reads as mounted on that wall (like the floor-1 Health labels).
   'floor-03-front',
   'information-03',
   'floor-04-front',
+  // Pacer (floor-4) technology logos: above the floor-04 front slab repaint /
+  // legacy layers, below the floor-5 front shell (Stage 7 r222).
+  'information-04',
   'floor-05-front',
   'tags',
   'information',

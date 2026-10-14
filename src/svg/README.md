@@ -271,7 +271,9 @@ src/svg/
 │   │                                                            entrance/projecting-sign generated)
 │   ├── floor-ground.svg, floor-01.svg … floor-05.svg          (generated)
 │   ├── staircase.svg, elevator.svg, tags.svg                  (generated)
-│   ├── information.svg                                        (generated, Stage 7)
+│   ├── information-ground.svg, information-01.svg … information-04.svg    (generated, Stage 7)
+│   ├── information-02-front.svg, information-elev.svg, information.svg     (generated, Stage 7)
+│   ├── nextcode-props.svg, floor-02-front-base.svg            (generated, Stage 7 occlusion)
 │   ├── ground-shadow.svg, architectural-details.svg           (generated, Stage 5)
 │   └── (labels.svg removed in Stage 3.5 — replaced by tags.svg)
 └── diorama.svg                 ← assembled single-SVG deliverable (committed)
@@ -557,18 +559,25 @@ The career is now readable as well as illustrated (see
 The generated `information` fragment holds two light devices, placed per
 section (no résumé plaques):
 
-- **Section role labels** — short text (`Unity Dev`, `Jr. Developer`, `DBA`,
-  `Dev`, `Tech Lead`, `Soft Arch`) set over a section door (on the partition's
-  near face), on the invisible left wall, or lying flat on the floor. Dark bold
-  text with a light keyline halo (`.dw-role-*`, `paint-order: stroke`) so it
-  stays legible over concrete, wood or the open background.
+- **Section role labels** — short text (`Unity Dev`, `Jr. Developer`,
+  `Co-Founder`, `DBA`, `Dev`, `Tech Lead`, `Software Architect`) set over a
+  section door (on the partition's near face), on the invisible left wall, or
+  lying flat on the floor. Dark bold text with a light keyline halo
+  (`.dw-role-*`, `paint-order: stroke`) so it stays legible over concrete, wood
+  or the open background.
 - **Technology logo plates** — monochrome brand marks on small near-white
   plates (`.dw-logo-plate`), lying flat on each section's floor (or on the left
   wall for the DBA / architect sections). Only verified brands with a logo are
   used; AWS DMS, "SQL", "angular micro-frontends" and "microservices" have no
   logo and are dropped.
   - floor plane matrix is **orientation-preserving**
-    (`0.7071 -0.2475 0.7071 0.2475`) so text/logos are not mirrored.
+    (`0.7071 -0.2475 0.7071 0.2475`) so text/logos are not mirrored; the BA
+    logos use the in-plane 90° variant (`FLOOR_MATRIX_D`, via
+    `floorLogoDepth()`) so they read along the depth axis.
+  - the f2-right plates live in `information-02-front`, assembled between
+    `floor-02-front-base` (the opaque floor repaint over the elevator) and
+    `floor-02-front` (kiosk sprite + corner columns), so they render above the
+    floor but below the kiosk and the floor-2/3 corner line.
 - **Current identity** — `Software Architect` / `Technical Lead` + the
   AI-workflow focus line, on the fifth (current-work) floor's rear C-D wall via
   `cdWallSheet` (the wall itself is untouched). Never on the exterior sign.
@@ -588,9 +597,13 @@ section (no résumé plaques):
   encoder output for the URL during review (a disposable dev check lives in the
   gitignored `generated/dev/` workspace).
 
-Indelve and Pacer get no role/logo content yet (unverified — nothing invented);
-they are the next section-by-section pass. If the profile photo changes, update
-the master in `src/assets/` and re-run `scripts/optimize-assets.py` (it scans
+Pacer carries a `Software Architect` role label plus GitHub Actions / NestJS /
+PostgreSQL / AWS / Docker / OpenTelemetry logo plates (user-supplied content,
+Stage 7). Indelve intentionally carries no information content — its illustrated
+scene is the content — and the per-experience "project descriptions" are the
+scene sprites and visual references rather than textual plaques (user decisions,
+2026-10-13). Stage 7 is **complete**. If the profile photo changes, update the
+master in `src/assets/` and re-run `scripts/optimize-assets.py` (it scans
 `career-data.mjs` for `photo: '…'` too), then `npm run svg:generate` +
 `svg:assemble`.
 
