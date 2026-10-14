@@ -682,6 +682,42 @@ is parsed as HTML raw text, **no `<` may appear in the CSS comments** — a
 literal `<svg>` (or `<g>`) in a comment is parsed as an element and silently
 truncates the rest of the stylesheet. Write "the root SVG element", not `<svg>`.
 
+## Stage 9 — Vue integration
+
+The diorama is now presented by a small, purposeful Vue app (see
+`STAGE_09_VUE_INTEGRATION.md`). The SVG artifact, the `__ASSET__` pipeline and
+the display-mode contract are unchanged; Stage 9 only wires them into the
+application and adds responsiveness + accessibility.
+
+- **Components.** `src/App.vue` is the page composition: it resolves the mode
+  and composes the page (`<main class="shell">` → diorama + a visually hidden
+  LinkedIn link). `src/components/DioramaView.vue` owns the inline SVG: it takes
+  a `mode` prop and renders the assembled SVG with the root mode class swapped.
+  `src/diorama.ts` holds the SVG `?raw` import, the one-time `__ASSET__` token
+  resolution (fails loudly on a missing asset) and the `applyModeClass()` swap.
+- **Mode / URL.** `src/composables/useDisplayMode.ts` mirrors
+  `resolveMode(window.location.search)` (the canonical contract in
+  `src/display-mode.ts`) into a reactive ref and re-reads it on `popstate`, so a
+  shared/edited URL and back/forward select the same mode. **No in-page mode
+  control** was added (Overview need not be discoverable per the brief), so no
+  second mode state exists that could diverge from the URL. The same single SVG
+  serves both modes — only its root class changes.
+- **Data model.** `src/data/career.ts` is a typed facade over the authoritative
+  `scripts/career-data.mjs` (typed by `scripts/career-data.d.mts`); it re-exports
+  only the field the interface actually uses (`IDENTITY`, for the accessible
+  link). No career content is transcribed or duplicated — the generator and the
+  app consume the same module. Indelve/Pacer rules are unchanged.
+- **Responsive.** `src/styles/base.css` keeps the dark radial backdrop and sizes
+  the SVG with `max-width: 100%` + `max-height: calc(100dvh - 2·padding)` at its
+  intrinsic ratio, so the whole viewBox (top rocket + projecting sign) is always
+  visible: width-bound on narrow screens (vertical scroll, never tiny), height-
+  bound on desktop (centred, no excessive margins). One `≤640px` breakpoint
+  reduces the page padding; the illustration's internal geometry is untouched.
+- **Accessibility.** The assembled SVG carries `<title>` + a concise `<desc>`
+  (`aria-labelledby`/`aria-describedby`, set in `assemble-svg.mjs`). The
+  projecting-sign QR is unchanged; the same LinkedIn destination is also a
+  visually hidden, keyboard-focusable link in the page.
+
 ## Tooling rules
 
 - Prettier ignores this directory (see `.prettierignore`): no formatting churn

@@ -1,9 +1,6 @@
-/* Minimal CSS foundation (Stage 0): reset defaults, predictable sizing,
-   neutral background, and a container for the future SVG. No final palette,
-   typography, responsive behavior, or effects — desktop composition first.
-   Stage 5.5 §4: the atmospheric backdrop lives here (page-level CSS), not
-   inside the SVG — the SVG stays transparent and self-contained, and a
-   future stars layer can be inserted between this backdrop and the diorama. */
+/* Stage 9 — page foundation: reset, the dark atmospheric backdrop (page-level,
+   never inside the SVG so the SVG stays transparent and self-contained), the
+   responsive shell, and accessible-link helpers. */
 
 *,
 *::before,
@@ -19,11 +16,10 @@ body {
 
 body {
   min-height: 100vh;
-  /* Stage 5.5 §4: dark muted, desaturated environment with a soft radial
-     falloff — the diorama reads as a standalone illustrated object under a
-     quiet spotlight. Never pure black; stays subordinate to the building. */
-  background:
-    radial-gradient(ellipse 120% 90% at 50% 38%, #343a3e 0%, #26292c 55%, #191b1d 100%);
+  /* Dark muted, desaturated environment with a soft radial falloff — the
+     diorama reads as a standalone illustrated object under a quiet spotlight.
+     Never pure black; stays subordinate to the building. */
+  background: radial-gradient(ellipse 120% 90% at 50% 38%, #343a3e 0%, #26292c 55%, #191b1d 100%);
   color: #d8d4ca;
   font-family:
     system-ui,
@@ -35,18 +31,82 @@ body {
   min-height: 100vh;
 }
 
+/* Page shell: centres the diorama and keeps the atmosphere around it. `safe
+   center` falls back to flex-start in browsers that do not support it, so an
+   over-tall composition is never clipped at the top when it must scroll. */
 .shell {
+  --shell-pad: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: safe center;
+  min-height: 100vh;
   max-width: 1240px;
   margin: 0 auto;
-  padding: 1.5rem;
+  padding: var(--shell-pad);
+}
+
+/* The assembled SVG keeps its viewBox and aspect ratio: it scales to fit the
+   available width AND height (max-width + max-height with the intrinsic ratio),
+   so the whole composition — the under-construction top floor and the
+   projecting sign included — is never cropped or distorted. On narrow screens
+   the width bounds first and the page scrolls vertically; the building is never
+   forced unreadably tiny to fit a fixed viewport height. */
+.diorama {
+  display: flex;
+  justify-content: center;
+  width: 100%;
 }
 
 .diorama svg {
   display: block;
-  width: 100%;
+  width: auto;
   height: auto;
+  max-width: 100%;
+  max-height: calc(100vh - (var(--shell-pad) * 2));
+  max-height: calc(100dvh - (var(--shell-pad) * 2));
 }
 
-.status {
-  color: #8d897d;
+/* Visually hidden but available to assistive technology; shown on focus so
+   keyboard users can see and use it. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.sr-only:focus-visible {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 0.4rem 0.75rem;
+  overflow: visible;
+  clip-path: none;
+  z-index: 10;
+  background: #1f2225;
+  color: #f0ece2;
+  border-radius: 4px;
+  outline: 2px solid #d8d4ca;
+  outline-offset: 2px;
+}
+
+/* Visible focus indicator for any real interactive control. */
+a:focus-visible {
+  outline: 2px solid #d8d4ca;
+  outline-offset: 2px;
+}
+
+@media (max-width: 640px) {
+  .shell {
+    --shell-pad: 0.75rem;
+  }
 }

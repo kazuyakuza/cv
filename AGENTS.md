@@ -76,7 +76,22 @@ Do not force every visual element to be vectorized.
   Query-parameter routing is exercised in the current scaffold; final
   routing/data-model integration stays in Stage 9. See `src/svg/README.md`
   §Stage 8 and `STAGE_08_DISPLAY_MODES.md`.
-- **Next: Stage 9 (Vue integration)** → 10 polish/deployment.
+- **Stage 9 (2026-10-14): COMPLETE — Vue integration.** The diorama is now a
+  maintainable, responsive Vue app. `src/App.vue` composes the page (resolves
+  the mode, renders `DioramaView`, adds a visually hidden LinkedIn link);
+  `src/components/DioramaView.vue` owns the inline SVG + root mode-class swap;
+  `src/diorama.ts` holds the `?raw` import, the one-time `__ASSET__` resolution
+  (fail-loud) and `applyModeClass()`; `src/composables/useDisplayMode.ts` mirrors
+  the canonical contract (`src/display-mode.ts`) from the URL into a reactive ref
+  and re-syncs on `popstate` (no in-page control → no divergent state).
+  `src/data/career.ts` is a typed facade over the authoritative
+  `scripts/career-data.mjs` (typed by `scripts/career-data.d.mts`), exposing only
+  `IDENTITY` — no duplicated content. Responsive sizing in `src/styles/base.css`
+  keeps the full viewBox visible at desktop/tablet/mobile with no horizontal
+  overflow; the assembled SVG gained `<desc>`/`aria-describedby`. Detailed is
+  unchanged (the only SVG-source change is the invisible `<desc>`). See
+  `src/svg/README.md` §Stage 9 and `STAGE_09_VUE_INTEGRATION.md`.
+- **Next: Stage 10 (final polish + deployment)**.
 
 ## Core Principles
 

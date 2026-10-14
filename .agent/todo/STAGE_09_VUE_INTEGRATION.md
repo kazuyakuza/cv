@@ -8,6 +8,19 @@ The project already has a working Vite/Vue scaffold, an inline SVG rendering pat
 
 This stage integrates the artifact; it is not another illustration/content stage. Preserve the approved Stage 8 visuals in both modes unless a specific integration defect requires a minimal correction.
 
+## Status — COMPLETE (2026-10-14)
+
+Implemented and verified. Component split (`App.vue` page + `DioramaView.vue`
+SVG + `useDisplayMode` URL layer), one-time `__ASSET__` resolution and mode-class
+swap in `src/diorama.ts`, a typed facade (`src/data/career.ts` +
+`scripts/career-data.d.mts`) over the authoritative `scripts/career-data.mjs`,
+responsive shell sizing (full viewBox at desktop/tablet/mobile, no overflow),
+and accessibility metadata (`<desc>`/`aria-describedby` + a visually hidden
+LinkedIn link). URL-only mode selection — no in-page control; `popstate` keeps
+the URL and the app in sync. Detailed is unchanged; Overview keeps all Stage 8
+styling. `svg:generate`/`svg:assemble`, `lint`, `type-check`, `build` all clean.
+See the Completion Report at the end of this file.
+
 ## Read First
 
 Inspect the current repository state, not older assumptions in this document:
@@ -160,20 +173,20 @@ Keep the diorama as the primary and dominant content.
 
 ## Acceptance Criteria
 
-- [ ] The application runs through the existing Vue/Vite entry point and renders the complete diorama inline.
-- [ ] SVG asset tokens resolve to valid optimized local assets in development and production builds.
-- [ ] Detailed remains the default and visually matches the approved Stage 8 Detailed baseline.
-- [ ] Overview is selected through `?mode=overview` and preserves all Stage 8 Overview styling.
-- [ ] Explicit Detailed, missing parameters, empty values, unknown values, and case/whitespace variations follow the canonical contract.
-- [ ] If a mode control is added, it stays synchronized with the URL and browser navigation.
-- [ ] No separate SVG copy or competing mode parser has been introduced.
-- [ ] The information data model reuses verified existing data and does not create unnecessary duplication.
-- [ ] Indelve and Pacer content has not been invented or expanded.
-- [ ] The entire building and projecting sign remain visible without distortion at desktop, tablet, and mobile viewport widths.
-- [ ] The app has sensible page metadata and an accessible description; any real controls are keyboard-accessible.
-- [ ] No unnecessary UI or interaction has been added.
-- [ ] SVG generation/assembly, lint, type-check, and production build pass.
-- [ ] Stage 10 deployment work has not been pulled into this stage.
+- [x] The application runs through the existing Vue/Vite entry point and renders the complete diorama inline.
+- [x] SVG asset tokens resolve to valid optimized local assets in development and production builds.
+- [x] Detailed remains the default and visually matches the approved Stage 8 Detailed baseline.
+- [x] Overview is selected through `?mode=overview` and preserves all Stage 8 Overview styling.
+- [x] Explicit Detailed, missing parameters, empty values, unknown values, and case/whitespace variations follow the canonical contract.
+- [x] If a mode control is added, it stays synchronized with the URL and browser navigation.
+- [x] No separate SVG copy or competing mode parser has been introduced.
+- [x] The information data model reuses verified existing data and does not create unnecessary duplication.
+- [x] Indelve and Pacer content has not been invented or expanded.
+- [x] The entire building and projecting sign remain visible without distortion at desktop, tablet, and mobile viewport widths.
+- [x] The app has sensible page metadata and an accessible description; any real controls are keyboard-accessible.
+- [x] No unnecessary UI or interaction has been added.
+- [x] SVG generation/assembly, lint, type-check, and production build pass.
+- [x] Stage 10 deployment work has not been pulled into this stage.
 
 ## Verification
 
@@ -202,3 +215,63 @@ Report:
 5. Responsive behavior and the viewport sizes tested.
 6. Results of SVG generation/assembly, lint, type-check, build, and mode tests.
 7. Any known limitation intentionally deferred to Stage 10.
+
+### Report
+
+1. **Component/file structure.** `src/App.vue` — page composition: resolves the
+   mode via `useDisplayMode()` and composes `<main class="shell">` (diorama +
+   visually hidden LinkedIn link). `src/components/DioramaView.vue` — the inline
+   SVG: takes a `mode` prop and renders the assembled SVG with the root mode
+   class swapped. `src/diorama.ts` — loads the SVG (`?raw`), resolves
+   `__ASSET__` tokens once, and exposes `resolveAssetTokens()`, `applyModeClass()`
+   and the resolved `DIORAMA_SVG`. `src/composables/useDisplayMode.ts` — mirrors
+   the URL mode into a reactive ref and re-syncs on `popstate`.
+   `src/data/career.ts` (+ `scripts/career-data.d.mts`) — typed facade over the
+   authoritative career data. `src/display-mode.ts` — unchanged canonical
+   contract. No new dependency; Vite/Vue 3 setup preserved.
+2. **SVG import / tokens / inline safety.** The SVG stays a `?raw` import of the
+   local, assembled `src/svg/diorama.svg` and is rendered inline via `v-html`
+   (required so the SVG's embedded `dw-mode-*` styles apply). It is trusted,
+   repository-owned content — the input is limited to that single local file and
+   no user-controlled markup enters the path. Tokens are resolved once against
+   the Vite-hashed URLs of `src/assets/serve/*` (glob `?url`); a missing asset
+   throws (dev and build), so broken tokens/references can never ship. Both modes
+   use the same SVG (only the root class changes); the standalone file keeps its
+   Detailed default.
+3. **URL mode contract / control.** `useDisplayMode` imports `resolveMode` from
+   `src/display-mode.ts` (the single source of truth) — no parsing rules are
+   reimplemented. It resolves on load and re-reads on `popstate` (so a shared URL
+   and back/forward select the same mode). **No in-page control was added** (the
+   brief says Overview need not be discoverable); therefore no URL writes occur,
+   unrelated query parameters are never touched, and there is no second mode
+   state that could diverge from the URL. Verified: `/`→Detailed,
+   `?mode=detailed`→Detailed, `?mode=DETAILED`→Detailed, `?mode=`→Detailed,
+   `?mode=unknown`→Detailed, `?mode=overview`→Overview, `?mode=OVERVIEW`→Overview,
+   `?mode=overview&x=1`→Overview (extra param preserved), `?x=1`→Detailed, and a
+   synthetic `popstate` re-resolves the mode without a reload.
+4. **Information data model.** `scripts/career-data.mjs` remains the single
+   authoritative source (the generator renders it into the `information`
+   fragments and the exterior sign). `src/data/career.ts` re-exports only
+   `IDENTITY` (typed via `scripts/career-data.d.mts`) for the accessible link —
+   no transcribing, no competing source, no invented Indelve/Pacer content and
+   no speculative search/filter/timeline layer.
+5. **Responsive behavior.** `src/styles/base.css` sizes the SVG at its intrinsic
+   ratio with `max-width: 100%` and `max-height: calc(100dvh − 2·padding)`:
+   width-bound on narrow screens (vertical scroll, never tiny), height-bound on
+   desktop (centred, whole viewBox visible — top rocket + projecting sign, no
+   crop/distortion). Shell uses `justify-content: safe center` (falls back to
+   start) so it never clips when scrolling is needed; one `≤640px` breakpoint
+   reduces padding. Verified with no horizontal overflow at **1440×900**
+   (Detailed 803×852, Overview 803×852), **768×1024** (720×764) and **390×844**
+   (366×388), both modes; 60 `<image>` assets load with 0 broken in every case;
+   Overview still hides `.dw-logo` and scales `#tags .dw-tag-group` by 1.8 at
+   every size.
+6. **Checks.** `npm run svg:generate` + `svg:assemble` succeed; `diorama.svg`
+   changed by only 2 lines (`aria-describedby` + `<desc>`) — fragments were
+   regenerated byte-identical (deterministic). `npm run lint`, `npm run
+   type-check` and `npm run build` all exit 0; the production build emits the
+   hashed serve-assets (no base64 inlining) and a single JS bundle.
+7. **Deferred to Stage 10.** GitHub Pages `base`/deployment and release
+   validation; final typography/spacing polish; any ultra-wide-margin tuning.
+   (Responsive rendering was verified against the production `dist` build via a
+   Playwright request interception harness — no dev server left running.)

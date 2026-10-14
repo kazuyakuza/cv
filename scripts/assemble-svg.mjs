@@ -110,8 +110,10 @@ const svg = `<!--
   viewBox="${VIEW_BOX}"
   role="img"
   aria-labelledby="diorama-title"
+  aria-describedby="diorama-desc"
 >
   <title id="diorama-title">Professional Career Diorama — sectional architectural illustration</title>
+  <desc id="diorama-desc">A sectional isometric illustration of a six-level building whose floors represent the stages of a software-development career, from a 2014 game-development start to current AI-driven work on the unfinished top floor. Company signs, role labels, technology logos and an exterior LinkedIn sign carry the professional information.</desc>
   <style>${svgStyle}</style>
   ${svgDefs}
   <!-- Hand-drawn texture: one global displacement field over the whole drawing -->

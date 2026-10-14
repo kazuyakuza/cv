@@ -35,9 +35,13 @@ npm run svg:optimize  # svgo → generated/svg (source in src/svg stays authorit
 
 ## Status
 
-**Stage 8 (Detailed & Overview display modes) is complete.** The diorama serves
-two presentation states from one SVG, selected by `?mode=` (default Detailed;
-`?mode=overview`). The career content, architecture and information layer are
-established through Stage 7. Next: **Stage 9 — Vue integration** (component
-structure, data model, final routing), then Stage 10 (polish/deployment). See
-`AGENTS.md` and `src/svg/README.md` for details.
+**Stage 9 (Vue integration) is complete.** The diorama is a maintainable,
+responsive Vue app: `src/App.vue` composes the page, `DioramaView.vue` renders
+the inline SVG, `src/diorama.ts` resolves the `__ASSET__` tokens and applies the
+mode class, `src/composables/useDisplayMode.ts` keeps the app in sync with the
+`?mode=` URL contract, and `src/data/career.ts` is a typed facade over the
+authoritative `scripts/career-data.mjs`. Detailed and Overview are preserved
+from Stage 8; the full composition stays visible (no overflow/clipping) at
+desktop, tablet and mobile widths, and the page is accessible (SVG
+title/desc + a hidden LinkedIn link). Next: **Stage 10 — final polish and
+deployment**. See `AGENTS.md` and `src/svg/README.md` for details.
