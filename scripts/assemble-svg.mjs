@@ -57,6 +57,13 @@ const buildingParts = [
   'floor-03',
   'floor-03-team',
   'floor-04',
+  // Pacer "Software Architect" role label: ABOVE the floor-04 slab (so it is not
+  // covered by it) but BELOW the floor-04 dev clusters (`floor-04-team`) — the
+  // enlarged label runs across the floor and the devs must paint over it.
+  'information-04-role',
+  // Pacer (floor-4) dev clusters: their OWN fragment, below `floor-05`/`elevator`
+  // so those still occlude the deep parts (mirrors `floor-03-team`).
+  'floor-04-team',
   'floor-05',
   'architectural-details',
   'elevator',

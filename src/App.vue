@@ -53,7 +53,7 @@ const viewportStyle = computed<Record<string, string> | undefined>(() =>
       :aria-label="zoomed ? 'Zoom out of the diorama' : 'Zoom into the diorama'"
       @click="toggleZoom"
     >
-      Zoom
+      {{ zoomed ? 'Zoom -' : 'Zoom +' }}
     </button>
 
     <!-- Non-visual accessible link to the same destination as the sign's QR

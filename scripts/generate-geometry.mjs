@@ -2849,9 +2849,14 @@ const floor04 = group('floor-04', [
   // Floor slab (§9): visible edge + one joint, a stronger underside than the
   // floors below and a support bracket under the open front edge.
   ...slabDetail(4 * FH, { seams: [64], brackets: [120] }),
-  // Two floor-3 Interactica team clusters (UPDATE #68/#69, user) filling the
-  // Pacer left half — far-to-near order (larger v first). In THIS group (before
-  // floor-05) so the floor-5 slab and the elevator paint OVER them.
+])
+// --- floor-04-team: the two Pacer dev clusters (UPDATE #68/#69, user). Split
+// into their OWN fragment (like floor-03-team) so the Pacer "Software Architect"
+// role label can sit BELOW them: the enlarged label runs across the floor and
+// would otherwise paint over the devs. Stacked in `assemble-svg.mjs` right after
+// `information-04-role` (label) and before `floor-05`, so the floor-5 slab and
+// the elevator still paint OVER the clusters. Far-to-near order (larger v first).
+const floor04Team = group('floor-04-team', [
   ...[...PACER_TEAMCROSS]
     .sort((a, b) => b[1] - a[1])
     .flatMap(([u, v]) => [
@@ -3618,7 +3623,7 @@ const FLOOR_TAGS = [
   // moves off its door/wall/floor onto the sign). Hidden in Detailed.
   { text: 'Puelo Games', floor: 0, c: 82, role: SECTIONS.puelo.role },
   { text: 'BA Technology', floor: 0, c: 282, role: SECTIONS.ba.role },
-  { text: 'Freelancer Game Dev', floor: 0, c: 477 },
+  { text: 'Freelancer Game Dev', floor: 0, c: 490 },
   { text: 'Health Platforms', floor: 1, c: 135 },
   { text: 'Nextcode', floor: 1, c: 470, role: SECTIONS.nextcode.role },
   { text: 'Interactica', floor: 2, c: 135, role: SECTIONS.interactica2right.role },
@@ -3851,9 +3856,10 @@ function informationGround() {
   // Puelo: unity on the floor, moved toward the kiosk/TV (+u) so the entrance
   // jambs no longer cover it; c# mounted on the ground-floor left wall toward
   // the front-left corner, clearly on the wall (moved off the vent area), and
-  // reduced another 10%.
+  // reduced another 10%. Lowered again (user revision) so a clear gap opens
+  // between it and the vent sprite above it on the front wall.
   out.push(...floorLogo(S.puelo.tech[0], 170, 42, 0, 45)) // unity (+25%)
-  out.push(...wallLogo(S.puelo.tech[1], 22, 38, 29)) // c# (-10% again): horizontally centred on the left wall
+  out.push(...wallLogo(S.puelo.tech[1], 22, 27, 29)) // c# (-10% again): centred on the left wall, below the vent
   // BA: both logos lie flat on the floor but read ALONG THE DEPTH AXIS
   // (user revision: "oriented from the building's right to left wall", still on
   // the floor plane) — the same floor-plane matrix as the f2 "Tech Lead".
@@ -3940,7 +3946,22 @@ function information03() {
   return group('information-03', out)
 }
 
-// Pacer (floor-4) technology logos (user r222). Two floor rows, no role label:
+// Pacer (floor-4) role label (user revision): "Software Architect" on the left
+// side, close to the rear (C-D) wall (inner face at v 580.5), reading PARALLEL
+// to the rear wall (along the width axis, +u), at the same size as the floor-2
+// Interactica "Tech Lead" (`dw-role-floor-xl`). Emitted in its OWN fragment so
+// it can sit ABOVE the floor-04 slab but BELOW the floor-04 dev clusters (see
+// `assemble-svg.mjs`) — the enlarged label runs across the floor and would
+// otherwise paint over the devs sprite.
+function information04Role() {
+  const S = SECTIONS
+  const out = []
+  out.push(...floorLabel(S.pacer.role, 112, 566, 4 * FH, 'dw-role-floor-xl dw-role-pacer'))
+  return group('information-04-role', out)
+}
+
+// Pacer (floor-4) technology logos (user r222). Two floor rows (the role label
+// lives in `information-04-role` above):
 //   - GROUP A — near the building's LEFT wall (A-C) at the front (A) corner,
 //     read along the depth axis ("oriented to that side").
 //   - GROUP B — near the building's REAR wall (C-D), on the left, a line running
@@ -3952,16 +3973,14 @@ function information04() {
   const S = SECTIONS
   const H = 4 * FH
   const out = []
-  // Pacer role label on the left side, close to the rear (C-D) wall (inner face
-  // at v 580.5) and clear of the dev cluster (v 435), reading PARALLEL to the
-  // rear wall (along the width axis, +u).
-  out.push(...floorLabel(S.pacer.role, 112, 566, H, 'dw-role-pacer')) // Software Architect (+15% in Overview)
   out.push(...floorLogoDepth(S.pacer.tech[0], 24, 62, H)) // githubactions
   out.push(...floorLogoDepth(S.pacer.tech[1], 24, 132, H)) // nestjs
   out.push(...floorLogoDepth(S.pacer.tech[2], 24, 202, H)) // postgresql
-  out.push(...floorLogoDepth(S.pacer.tech[3], 36, 560, H)) // aws
-  out.push(...floorLogoDepth(S.pacer.tech[4], 36, 495, H)) // docker
-  out.push(...floorLogoDepth(S.pacer.tech[5], 36, 430, H)) // opentelemetry
+  // Group B slid toward the elevator (user revision: reduce depth) so the aws
+  // plate stays clear of the enlarged "Software Architect" label above it.
+  out.push(...floorLogoDepth(S.pacer.tech[3], 36, 518, H)) // aws
+  out.push(...floorLogoDepth(S.pacer.tech[4], 36, 453, H)) // docker
+  out.push(...floorLogoDepth(S.pacer.tech[5], 36, 388, H)) // opentelemetry
   return group('information-04', out)
 }
 
@@ -4034,6 +4053,7 @@ const fragments = {
   'floor-03-team': floor03Team,
   'floor-03-front': floor03Front,
   'floor-04': floor04,
+  'floor-04-team': floor04Team,
   'floor-04-front': floor04Front,
   'floor-05': floor05,
   'floor-05-front': floor05Front,
@@ -4048,6 +4068,7 @@ const fragments = {
   'information-02': information02(),
   'information-02-front': information02Front(),
   'information-03': information03(),
+  'information-04-role': information04Role(),
   'information-04': information04(),
   information: information(),
   'nextcode-props': nextcodeProps,

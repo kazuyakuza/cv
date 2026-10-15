@@ -28,12 +28,12 @@
   </g>
 </g>
   <g class="dw-tag-group dw-tag-freelancer-game-dev">
-  <path class="dw-tag" d="M451.49,894.36 L371.52,866.08 L371.04,849.5 L451.97,877.83 Z" />
-  <path class="dw-tag" d="M451.97,877.83 L452.94,877.49 L372.3,849.58 L371.04,849.5 Z" />
-  <path class="dw-tag" d="M451.49,894.36 L452.68,893.15 L452.94,877.49 L451.97,877.83 Z" />
-  <circle class="dw-dot" cx="449.38" cy="885.02" r="1.4" />
-  <circle class="dw-dot" cx="373.54" cy="858.38" r="1.4" />
-  <text class="dw-tag-text" transform="matrix(0.7071 0.2475 0 1 411.22 871.72)" text-anchor="middle" dominant-baseline="central">Freelancer Game Dev</text>
+  <path class="dw-tag" d="M442.9,890.85 L361.79,862.05 L362.42,846.35 L442.68,874.58 Z" />
+  <path class="dw-tag" d="M442.68,874.58 L444.13,873.89 L363.52,846.44 L362.42,846.35 Z" />
+  <path class="dw-tag" d="M442.9,890.85 L443.67,890.55 L444.13,873.89 L442.68,874.58 Z" />
+  <circle class="dw-dot" cx="440.07" cy="881.46" r="1.4" />
+  <circle class="dw-dot" cx="364.23" cy="855.57" r="1.4" />
+  <text class="dw-tag-text" transform="matrix(0.7071 0.2475 0 1 402.46 868.08)" text-anchor="middle" dominant-baseline="central">Freelancer Game Dev</text>
 </g>
   <g class="dw-tag-group dw-tag-health-platforms">
   <path class="dw-tag" d="M688.32,871.34 L618.92,847.3 L618.96,831.72 L688.61,855.35 Z" />

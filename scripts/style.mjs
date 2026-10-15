@@ -133,10 +133,11 @@ export const svgStyle = `
     .dw-role-floor-md { font-size: 15px; }
     .dw-role-floor-xl { font-size: 15.1px; }
     .dw-logo-plate { fill: #fbf9f2; fill-opacity: 0.94; stroke: #6b675e; stroke-width: 0.6; }
-    /* Current-identity title block (fifth-floor rear wall) */
-    .dw-id-title { fill: #33302a; font: 700 14px system-ui, sans-serif; letter-spacing: 0.02em; }
+    /* Current-identity title block (fifth-floor rear wall). Carries the same
+       light keyline halo as the role labels so it reads over the wall. */
+    .dw-id-title { fill: #33302a; font: 700 14px system-ui, sans-serif; letter-spacing: 0.02em; paint-order: stroke; stroke: #f6f3ea; stroke-width: 1.7px; stroke-linejoin: round; }
     .dw-id-rule { stroke: #8a8579; stroke-width: 1; }
-    .dw-id-sub { fill: #4a463f; font: 600 10px system-ui, sans-serif; letter-spacing: 0.02em; }
+    .dw-id-sub { fill: #4a463f; font: 600 10px system-ui, sans-serif; letter-spacing: 0.02em; paint-order: stroke; stroke: #f6f3ea; stroke-width: 1.7px; stroke-linejoin: round; }
     .dw-id-focus { fill: #5c574e; font: 6px system-ui, sans-serif; }
 
     /* Restrained structural shading (Stage 5 §7): stepped translucent bands
@@ -501,8 +502,8 @@ export const svgStyle = `
     .dw-mode-overview .dw-role-f3sa {
       transform: translate(var(--ovx, 0px), var(--ovy, 0px));
     }
-    .dw-mode-overview .dw-role-dba text { font-size: 12px; }
-    .dw-mode-overview .dw-role-f3sa text { font-size: 11.5px; }
+    .dw-mode-overview .dw-role-dba text { font-size: 13.8px; }
+    .dw-mode-overview .dw-role-f3sa text { font-size: 12.65px; }
     /* Overview: year plaques (the elevator story years and the 2013 entrance
        sign) scale up 15% around their own centre, and the projecting identity
        sign (photo + QR) scales up 25%, so both stay legible in a full-frame
