@@ -1,5 +1,6 @@
 <g id="projecting-sign">
-  <g class="dw-sign-group">
+  <a href="https://www.linkedin.com/in/jebarrocal/" target="_blank" rel="noopener noreferrer" aria-label="Open LinkedIn profile">
+<g class="dw-sign-group">
   <path class="dw-sign" d="M1003.81,849.36 L925.84,822.51 L926.59,615.86 L1004.15,643.68 Z" />
   <path class="dw-sign-frame" d="M997.1,851.93 L1003.81,849.36 L925.84,822.51 L919.26,825.15 Z" />
   <path class="dw-sign-frame" d="M996.52,645.95 L1004.15,643.68 L926.59,615.86 L919.38,618.91 Z" />
@@ -28,4 +29,5 @@
     <text class="dw-sign-link" x="55" y="180" text-anchor="middle">linkedin.com/in/jebarrocal</text>
   </g>
 </g>
+</a>
 </g>

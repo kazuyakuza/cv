@@ -67,6 +67,90 @@ body {
   max-height: calc(100dvh - (var(--shell-pad) * 2));
 }
 
+/* Custom diorama zoom (Stage 10). At 1× the viewport is a normal block that
+   just centres the diorama. At 4× it becomes a fixed, scrollable pan surface;
+   the diorama gets an explicit enlarged width (via --dw-zoom-w) so its layout
+   box and the scroll range match the visual size — a CSS transform alone would
+   not grow the scrollable area. Only the diorama is scaled; the page background
+   and the floating button are untouched. */
+.zoom-viewport {
+  width: 100%;
+}
+
+.zoom-viewport.is-zoomed {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  overflow: auto;
+  padding: var(--shell-pad);
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  /* Keep the surface pan-/scroll-able but hide the scrollbar chrome (Firefox). */
+  scrollbar-width: none;
+}
+
+/* Hide scrollbar chrome in WebKit/Blink while keeping pan/scroll intact. */
+.zoom-viewport.is-zoomed::-webkit-scrollbar {
+  display: none;
+}
+
+.zoom-viewport.is-zoomed .diorama {
+  width: var(--dw-zoom-w, 100%);
+  max-width: none;
+}
+
+.zoom-viewport.is-zoomed .diorama svg {
+  width: 100%;
+  height: auto;
+  max-width: none;
+  max-height: none;
+}
+
+/* Floating zoom toggle: fixed to the top-left, clear of the centred diorama and
+   never hidden. Large and high-contrast at 1× (the zoom-in action); compact at
+   4×, where the same button is the zoom-out action. */
+.zoom-btn {
+  position: fixed;
+  top: calc(0.75rem + env(safe-area-inset-top, 0px));
+  left: calc(0.75rem + env(safe-area-inset-left, 0px));
+  z-index: 20;
+  min-width: 40px;
+  min-height: 40px;
+  padding: 0.85rem 1.7rem;
+  border: 2px solid #1b1914;
+  border-radius: 999px;
+  background: #ffb020;
+  color: #1b1914;
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 3px 12px rgb(0 0 0 / 0.45);
+  transition:
+    padding 0.12s ease,
+    font-size 0.12s ease,
+    background 0.12s ease;
+}
+
+.zoom-btn:hover {
+  background: #ffc44d;
+}
+
+.zoom-btn:active {
+  transform: scale(0.96);
+}
+
+.zoom-btn.is-zoomed {
+  padding: 0.4rem 0.85rem;
+  font-size: 0.8rem;
+}
+
+.zoom-btn:focus-visible {
+  outline: 3px solid #fffefb;
+  outline-offset: 2px;
+}
+
 /* Visually hidden but available to assistive technology; shown on focus so
    keyboard users can see and use it. */
 .sr-only {
@@ -84,7 +168,7 @@ body {
 .sr-only:focus-visible {
   position: fixed;
   top: 0.75rem;
-  left: 0.75rem;
+  right: 0.75rem;
   width: auto;
   height: auto;
   margin: 0;

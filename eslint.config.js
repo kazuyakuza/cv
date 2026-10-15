@@ -19,7 +19,9 @@ export default tseslint.config(
     files: ['**/*.vue', 'src/**/*.ts'],
     languageOptions: {
       // Browser app: expose the DOM globals used by the Vue entry points.
-      globals: { window: 'readonly', document: 'readonly' },
+      // HTMLElement is referenced as a template-ref type in App.vue; the base
+      // js recommended `no-undef` rule does not know ambient DOM types.
+      globals: { window: 'readonly', document: 'readonly', HTMLElement: 'readonly' },
       parserOptions: {
         parser: tseslint.parser,
       },

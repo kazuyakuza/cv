@@ -91,7 +91,26 @@ Do not force every visual element to be vectorized.
   overflow; the assembled SVG gained `<desc>`/`aria-describedby`. Detailed is
   unchanged (the only SVG-source change is the invisible `<desc>`). See
   `src/svg/README.md` §Stage 9 and `STAGE_09_VUE_INTEGRATION.md`.
-- **Next: Stage 10 (final polish + deployment)**.
+- **Stage 10 (2026-10-14): COMPLETE — final polish + deployment.** Compared
+  with Stage 9 the SVG artwork is unchanged. The whole exterior projecting sign
+  is now ONE link (generator `svgLink()` wraps its complete `dw-sign-group` in a
+  `target="_blank" rel="noopener noreferrer"` anchor). A custom diorama zoom
+  (independent of browser zoom) was added: `src/composables/useZoom.ts` holds the
+  `1×`/`4×` toggle and measures the default SVG width on activation;
+  `src/App.vue` wraps `DioramaView` in a scrollable `.zoom-viewport` and renders a
+  floating `Zoom` button (`src/styles/base.css`) — **Detailed mode only**;
+  **large amber, fixed top-left** at 1×, **small** (still the zoom-out action)
+  at 4×, never hidden within Detailed; the enlarged diorama pans natively with
+  **scrollbars hidden** and a window resize returns to 1×. Deployment: Vite
+  `base: '/cv/'` and `.github/workflows/deploy.yml` (official Pages artifact
+  flow, Node 22, `npm ci` + lint + type-check + build, least-privilege
+  permissions). Perf review found no justified optimization (raster assets served
+  as files, never base64; the inlined SVG dominates the JS bundle by design). A
+  one-time repo setting is still required (Settings → Pages → Source =
+  "GitHub Actions"); the live deployment is not yet verified. See
+  `STAGE_10_FINAL_POLISH.md` and `src/svg/README.md` §Stage 10.
+- **Next: verify the live GitHub Pages deployment** after enabling the Pages
+  source and pushing to `main`.
 
 ## Core Principles
 

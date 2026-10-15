@@ -1,0 +1,53 @@
+name: Deploy to GitHub Pages
+
+# Stage 10 — publish the Vite build to GitHub Pages with GitHub's official
+# artifact flow (no gh-pages branch). The repository Pages source must be set
+# once to "GitHub Actions" (Settings → Pages → Build and deployment → Source).
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Least privilege: only what the official Pages deployment needs. The build
+# job just reads the repo; the deploy job publishes the artifact via OIDC.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never run two Pages deployments at once; keep the newer push running.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      # Reproducible install from package-lock.json.
+      - run: npm ci
+      # Match the local validation gates (build runs vue-tsc too).
+      - run: npm run lint
+      - run: npm run type-check
+      - run: npm run build
+      # Emit the deployment artifact from the generated dist/ directory. Vite's
+      # `base: '/cv/'` already prefixes every asset URL for the /cv/ subpath.
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

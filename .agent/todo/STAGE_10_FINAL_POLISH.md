@@ -13,7 +13,111 @@ The primary deliverables are:
 
 ## Status
 
-Not started.
+Complete (2026-10-14), except verification of the live GitHub Pages
+deployment, which requires the repository Pages source to be switched to
+"GitHub Actions" and the first workflow run to succeed (see report).
+
+## Completion Report (2026-10-14)
+
+### Implementation and files changed
+
+- **Deployment (Scope C).** `vite.config.ts` now sets `base: '/cv/'` so every
+  built asset URL is prefixed for the project subpath; `index.html` uses an
+  absolute `/favicon.svg` so Vite rewrites it with the base. Added
+  `.github/workflows/deploy.yml` using GitHub's official Pages artifact flow
+  (`configure-pages` + `upload-pages-artifact` + `deploy-pages`), least-privilege
+  permissions (`contents: read`, `pages: write`, `id-token: write`), a
+  `pages` concurrency group, Node 22 (Vite 7 requires ≥20.19/≥22.12), `npm ci`,
+  `npm run lint`, `npm run type-check`, `npm run build`, triggered on pushes to
+  `main` and manual dispatch.
+- **Whole-sign link (Scope D).** `scripts/generate-geometry.mjs` gained a
+  `svgLink()` helper; `projectingSign()` now wraps the sign's complete graphical
+  group (`dw-sign-group`: casing, inset panel, photo, name, QR + LinkedIn mark,
+  URL, mounting arms) in ONE `<a href="https://www.linkedin.com/in/jebarrocal/"
+  target="_blank" rel="noopener noreferrer" aria-label="Open LinkedIn profile">`.
+  Regenerated `src/svg/fragments/projecting-sign.svg` and `src/svg/diorama.svg`
+  via `svg:generate` + `svg:assemble` (generator is the authority; output is not
+  hand-edited). The existing visually hidden Vue LinkedIn link is unchanged.
+- **Custom zoom (Scope E, user-revised UX).** New `src/composables/useZoom.ts`
+  (Vue state; `ZOOM_FACTOR = 4`; measures the default SVG width on zoom-in).
+  `src/App.vue` gained a `.zoom-viewport` wrapper around `DioramaView` and a
+  floating `.zoom-btn`. `src/styles/base.css` defines the 1×/4× sizing (an
+  explicit 4× width via `--dw-zoom-w` inside a fixed, scrollable viewport so the
+  layout box and scroll range match the enlarged artwork) and the button styling.
+- **Lint config.** `eslint.config.js` adds `HTMLElement` to the browser globals
+  for the template-ref type used in `App.vue`.
+
+### Validation / build / performance (Scope A)
+
+- `npm run lint`, `npm run type-check` and `npm run build` all pass.
+- Production build: `dist/index.html` 0.49 kB, CSS 2.17 kB (gzip 0.93 kB), JS
+  322.90 kB (gzip 91.87 kB). The JS is dominated by the inlined diorama SVG
+  (~254 kB source), which must stay inline for the embedded `dw-mode-*` styles;
+  the remaining weight is Vue itself.
+- Raster assets are emitted as separate hashed files under `/cv/assets/`; a scan
+  found **0** `data:image` occurrences in the JS bundle, confirming the
+  `assetsInlineLimit: 0` contract. The 48 served sprites were already downscaled
+  (≤768 px longest side) by `scripts/optimize-assets.py`; the largest
+  (`fixture-vent-01.png` 748 kB, `AI-Acceleration.png` 697 kB) are background/
+  sprite art already reduced from much larger masters.
+- **Conclusion: no further optimization was justified.** No new dependency,
+  library, or pipeline change was made, per the evidence-based rule.
+
+### Responsive checks (Scope B)
+
+Verified in a real browser at 1036×764, 800×600 and a narrow 375×812 mobile
+viewport, in both Detailed and `?mode=overview`:
+
+- Default 1×: the full `viewBox` (top rocket, terrain, projecting sign) is
+  visible, proportional and uncropped; the SVG is width-bound on mobile
+  (375 → 351 px wide, no horizontal overflow) and height-bound on desktop;
+  vertical page scroll remains available. No separate mobile SVG and no
+  proportion changes were made. The Stage 9 responsive baseline was kept
+  unchanged (no CSS fix was needed).
+
+### Zoom behavior (Scope E)
+
+- The zoom control is a **Detailed-mode affordance only**: the `Zoom` button is
+  rendered only when the resolved mode is Detailed (never shown in
+  `?mode=overview`); if the mode changes via browser back/forward while zoomed,
+  the zoom resets.
+- Default state is exactly 1× (SVG 675×716 at 1036×764; 351×373 at 375×812) with
+  a **large, high-contrast amber `Zoom` button fixed at the top-left**, clear of
+  the centred diorama.
+- Activating it scales the diorama to exactly **4×** of its default rendered
+  size (2700×2864 / 1404×1491) — the building fills well beyond the viewport
+  width as requested — while browser zoom and the `?mode=` parameter are
+  untouched. The same button becomes **small** (`Zoom`, `aria-pressed="true"`,
+  `aria-label="Zoom out of the diorama"`) and is **never hidden** (within
+  Detailed); clicking it returns to 1×.
+- The enlarged artwork is pannable/scrolled to every edge natively
+  (`overflow: auto`; verified scroll positions) with the **scrollbar chrome
+  hidden** at 4× (`scrollbar-width: none` + `::-webkit-scrollbar { display: none }`),
+  and resizing the window while zoomed returns to 1× so the measured baseline is
+  never stale.
+- Detailed-only on desktop and mobile.
+
+### Whole-sign link verification (Scope D)
+
+`elementFromPoint` at the centres of the profile photo, name, printed URL, QR
+code and casing frame all resolve to elements inside the single anchor, and
+clicking it opened a new tab to `https://www.linkedin.com/in/jebarrocal/`
+(redirected to LinkedIn's auth wall while signed out). The link remains active
+in Overview and while zoomed; no nested anchors and no unrelated element links
+to LinkedIn.
+
+### Deployment status (Scope C)
+
+- The workflow and Vite `base` are in place and the production build resolves
+  all assets under `/cv/` (verified in `dist/index.html` via `vite preview`).
+- **The public deployment has NOT been verified yet.** A push to `main` is
+  required to run the workflow, and the live URL must be checked afterwards.
+- **Manual repository setting required once:** GitHub → repository **Settings →
+  Pages → Build and deployment → Source = "GitHub Actions"**. Until this is set,
+  the `deploy` job will fail. After the first successful run, verify:
+  - `https://kazuyakuza.github.io/cv/` loads with all assets;
+  - `https://kazuyakuza.github.io/cv/?mode=overview` renders Overview;
+  - `https://kazuyakuza.github.io/cv/?mode=detailed` renders Detailed.
 
 ## Read First
 
@@ -73,7 +177,7 @@ https://github.com/kazuyakuza/cv
 Unless repository inspection shows otherwise, expect the project URL to use the repository subpath (typically `https://kazuyakuza.github.io/cv/`). Configure Vite's `base` accordingly while keeping local development at `localhost` working normally.
 
 Requirements:
-- Inspect and use the deployment pattern from `kazuyakuza/cobranza-app_landing` as the user's reference, adapting it to this repository rather than copying it blindly.
+- Inspect and use the deployment pattern from `kazuyakuza/cobranza-app_landing` (`https://github.com/kazuyakuza/cobranza-app_landing/blob/0ac6543db31f5b193b50c99cbec2aad55ea07494/.github/workflows/deploy.yml`, public repo) as the user's reference, adapting it to this repository rather than copying it blindly.
 - Add or update a GitHub Actions workflow that installs dependencies reproducibly, runs the project's relevant validation/build commands, and publishes the generated `dist/` directory to GitHub Pages on pushes to the intended deployment branch.
 - Use the existing npm scripts and Node version compatible with the project.
 - Ensure the built HTML, JavaScript, styles, SVG-linked assets, favicon, and other public assets resolve correctly under the repository subpath.

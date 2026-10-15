@@ -35,13 +35,17 @@ npm run svg:optimize  # svgo → generated/svg (source in src/svg stays authorit
 
 ## Status
 
-**Stage 9 (Vue integration) is complete.** The diorama is a maintainable,
-responsive Vue app: `src/App.vue` composes the page, `DioramaView.vue` renders
-the inline SVG, `src/diorama.ts` resolves the `__ASSET__` tokens and applies the
-mode class, `src/composables/useDisplayMode.ts` keeps the app in sync with the
-`?mode=` URL contract, and `src/data/career.ts` is a typed facade over the
-authoritative `scripts/career-data.mjs`. Detailed and Overview are preserved
-from Stage 8; the full composition stays visible (no overflow/clipping) at
-desktop, tablet and mobile widths, and the page is accessible (SVG
-title/desc + a hidden LinkedIn link). Next: **Stage 10 — final polish and
-deployment**. See `AGENTS.md` and `src/svg/README.md` for details.
+**Stage 10 (final polish + deployment) is complete.** The Vue app composes the
+page (`src/App.vue`), renders the inline, mode-swapped SVG
+(`src/components/DioramaView.vue` + `src/diorama.ts`), keeps the app in sync with
+the `?mode=` URL contract (`src/composables/useDisplayMode.ts`), and reads the
+authoritative career data through a typed facade (`src/data/career.ts`). Stage 10
+makes the whole exterior projecting sign a single LinkedIn link and adds a custom
+diorama zoom (`src/composables/useZoom.ts`): a fixed top-left `Zoom` button
+(Detailed mode only) toggles exactly 1×/4×, the enlarged diorama pans natively
+with the scrollbars hidden, and browser zoom is never touched. The whole composition stays visible with no overflow at desktop,
+tablet and mobile widths. Vite builds under the `/cv/` base and
+`.github/workflows/deploy.yml` publishes `dist/` to GitHub Pages via the official
+artifact flow — one manual step remains (Settings → Pages → Source = "GitHub
+Actions"), and the live deployment is not yet verified. See `AGENTS.md` and
+`src/svg/README.md` for details.

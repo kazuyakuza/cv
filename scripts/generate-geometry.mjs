@@ -1536,6 +1536,14 @@ const group = (id, lines) => `<g id="${id}">\n${lines.map((l) => `  ${l}`).join(
 const tagGroup = (lines, cls = 'dw-tag-group') =>
   `<g class="${cls}">\n${lines.map((l) => `  ${l}`).join('\n')}\n</g>`
 
+// Stage 10 — one external link covering a whole generated group. Used so the
+// entire projecting sign (photo, name, QR + mark, URL, casing, arms, background)
+// is a single click target, with no nested anchors and no dead regions. The
+// link opens safely in a new tab; an aria-label keeps it readable to assistive
+// tech even though its graphic content is not text.
+const svgLink = (href, inner, label = '') =>
+  `<a href="${href}" target="_blank" rel="noopener noreferrer"${label ? ` aria-label="${label}"` : ''}>\n${inner}\n</a>`
+
 // --- floor-ground: slab-0, story-0 walls, two partitions, props, columns ----
 // Puelo Games props (Stage 5.5 §10, user batch decisions): the demo kiosk
 // against the B-D wall with the SVG Space Invaders screen, the stool pair
@@ -3581,7 +3589,12 @@ function projectingSign() {
   panel.push(`<text class="dw-sign-link" x="${cx}" y="${round(qrY + qrSize + 16)}" text-anchor="middle">${urlLabel}</text>`)
 
   out.push(`<g transform="matrix(0.7071 0.2475 0 1 ${round(ox)} ${round(oy)})">`, ...panel.map((p2) => `  ${p2}`), `</g>`)
-  return group('projecting-sign', [tagGroup(out, 'dw-sign-group')])
+  // Stage 10 — the sign's complete graphical group is one link to the
+  // canonical profile, so clicking the photo, the name, the QR, the printed
+  // URL or any background/border area all open the same destination.
+  return group('projecting-sign', [
+    svgLink(IDENTITY.linkedin, tagGroup(out, 'dw-sign-group'), 'Open LinkedIn profile'),
+  ])
 }
 
 // --- experience tags: section names on the invisible left wall --------------

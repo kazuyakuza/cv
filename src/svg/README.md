@@ -718,6 +718,27 @@ application and adds responsiveness + accessibility.
   projecting-sign QR is unchanged; the same LinkedIn destination is also a
   visually hidden, keyboard-focusable link in the page.
 
+## Stage 10 — whole-sign link, custom zoom & deployment
+
+- **Whole-sign link.** The generator gained `svgLink()`; `projectingSign()` now
+  wraps its complete graphical group (`dw-sign-group`: casing, inset panel,
+  photo, name, QR + LinkedIn mark, URL and mounting arms) in ONE SVG anchor to
+  `IDENTITY.linkedin` (`target="_blank" rel="noopener noreferrer"`,
+  `aria-label="Open LinkedIn profile"`). The photo, name, QR, printed URL,
+  casing and background are therefore a single click target with no nested
+  anchors or dead regions. This lives in `scripts/generate-geometry.mjs` — edit
+  it and re-run `npm run svg:generate` + `svg:assemble`; the sign's appearance,
+  size, position and content are unchanged, and the link is active in Detailed
+  and Overview alike.
+- **Custom diorama zoom** does not touch the SVG source: `src/composables/useZoom.ts`
+  and the `.zoom-viewport`/`.zoom-btn` rules in `src/styles/base.css` scale the
+  rendered diorama (1×/4×) while the `viewBox`, artwork and inline mode styles
+  stay exactly as authored.
+- **Deployment.** Vite's `base: '/cv/'` (GitHub project-page subpath) only
+  affects how the built HTML references assets; the `__ASSET__` tokens still
+  resolve to Vite-hashed URLs at runtime, so the generator/assembly pipeline is
+  unchanged.
+
 ## Tooling rules
 
 - Prettier ignores this directory (see `.prettierignore`): no formatting churn
